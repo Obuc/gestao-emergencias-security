@@ -276,7 +276,6 @@ class CrudSharepoint {
       };
 
       const response = await axios.get(currentUserUrl, { headers });
-
       return response.data.d;
     } catch (error) {
       throw error;

@@ -7,6 +7,7 @@ interface ICurrentUser {
   Email: string;
   LoginName: string;
   Title: string;
+  photo: string;
 }
 
 interface IUserContext {
@@ -27,7 +28,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: async () => {
-      return await crud.getCurrentUser();
+      let photo = '';
+      const resp = await crud.getCurrentUser();
+
+      if (resp) {
+        photo = await crud.getUserPhoto(resp.Email);
+      }
+
+      return { ...resp, photo };
     },
     refetchOnWindowFocus: false,
   });

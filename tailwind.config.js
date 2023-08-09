@@ -13,6 +13,7 @@ export default {
         'background': '#FDFDFD',
         'blue': '#00BCFF',
         'pink': '#FF3162',
+        'red': '#F9121A'
       },
       keyframes: {
         overlayShow: {
