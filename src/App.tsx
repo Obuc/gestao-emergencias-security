@@ -1,14 +1,11 @@
-import { useSharepointContext } from './context/sharepointContext';
+import { Route, Routes } from 'react-router-dom';
 
 const App = () => {
-  const { crud } = useSharepointContext();
-
-  const handlePhoto = async () => {
-    const resp = await crud.getAllUsers({ url: 'http://localhost:8080', userName: 'Marcelo Silva' });
-    console.log(resp);
-  };
-
-  return <div onClick={handlePhoto}>Hello Word</div>;
+  return (
+    <Routes>
+      <Route path="/home" element={<h1>Teste</h1>} />
+    </Routes>
+  );
 };
 
 export default App;
