@@ -1,18 +1,10 @@
 import { Route, Routes } from 'react-router-dom';
-import Header from './components/Header';
+import Records from './pages/Records';
 
 const App = () => {
   return (
     <Routes>
-      <Route
-        path="/home"
-        element={
-          <h1>
-            <Header />
-            Teste
-          </h1>
-        }
-      />
+      <Route path="/records" element={<Records />} />
     </Routes>
   );
 };
