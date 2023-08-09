@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html {
+    font-size: 16px;
+
+    @media (min-width: 1100px) {
+      font-size: 75%;
+    }
+
+    @media (min-width: 1600px) {
+      font-size: 80%;
+    }
+
+    @media (min-width: 1800px) {
+      font-size: 88%;
+    }
+  }
+}
+
+.polygon {
+  clip-path: polygon(0 0, 75% 0, 100% 100%, 0% 100%);
+}
+
+.polygon-menu {
+  clip-path: polygon(50% 0, 100% 0%, 100% 100%, 0% 100%);
+}
+
+.polygon-select {
+  clip-path: polygon(20% 0, 100% 0%, 100% 100%, 0% 100%);
+}
+
+.polygon-select:hover {
+  clip-path: polygon(0% 0, 100% 0%, 100% 100%, 0% 100%);
+}
+
+.shadow-sm {
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.29);
+}
+
+.shadow-xmd {
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.29);
+}
+
+.shadow-xsm {
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.15);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #fff;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 4.5px;
+  background-color: #ddd;
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.29);
+  -webkit-border-radius: 4.5px;
+  -moz-border-radius: 4.5px;
+  -ms-border-radius: 4.5px;
+  -o-border-radius: 4.5px;
+}
