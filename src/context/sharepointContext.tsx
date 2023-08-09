@@ -9,8 +9,11 @@ const SharepointContext = createContext<ISharepointContext>({} as ISharepointCon
 export const useSharepointContext = () => useContext(SharepointContext);
 
 export const SharepointProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // const baseUrl = 'https://bayergroup.sharepoint.com/sites/005070';
-  const baseUrl = 'http://localhost:8080';
+  const baseUrl =
+    import.meta.env.VITE_ENV === 'development'
+      ? import.meta.env.VITE_BASE_URL_SHAREPOINT_DEV
+      : import.meta.env.VITE_BASE_URL_SHAREPOINT_PROD;
+
   const crud = new CrudSharepoint(baseUrl);
 
   return (
@@ -24,4 +27,4 @@ export const SharepointProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   );
 };
 
-export const useVariables = () => useContext(SharepointContext);
+export const sharepointContext = () => useContext(SharepointContext);
