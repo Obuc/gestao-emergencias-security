@@ -76,7 +76,7 @@ class CrudSharepoint {
     }
   }
 
-  async getPaged({ list, path, nextUrl }: { list: string; path?: string; nextUrl?: string }): Promise<any> {
+  async getPaged({ list, path, nextUrl }: { list?: string; path?: string; nextUrl?: string }): Promise<any> {
     const endUrl = path || '';
     const url = nextUrl || `${this.baseUrl}/_api/web/lists/GetByTitle('${list}')/items${endUrl}`;
     return axios.get(url);
@@ -112,6 +112,23 @@ class CrudSharepoint {
       }
     } catch (error) {
       throw new Error('Failed to get list items');
+    }
+  }
+
+  async getListItemCount(listTitle: string) {
+    try {
+      const url = `${this.baseUrl}/_api/web/lists/GetByTitle('${listTitle}')?$select=ItemCount`;
+
+      const response = await axios.get(url, {
+        headers: {
+          Accept: 'application/json;odata=verbose',
+        },
+      });
+
+      const itemCount = response.data.d.ItemCount;
+      return itemCount;
+    } catch (error) {
+      throw new Error('Failed to get list item count');
     }
   }
 

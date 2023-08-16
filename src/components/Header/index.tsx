@@ -36,7 +36,7 @@ const Header = () => {
           <div className="flex text-2xl gap-2 text-primary select-none">
             <h2>Business Security Brasil</h2>
             <span className=" font-bold text-red">///</span>
-            <h1 className="font-bold">Gestão Sitema de Emergência</h1>
+            <h1 className="font-bold">Gestão Sistema de Emergência</h1>
           </div>
         </div>
 
