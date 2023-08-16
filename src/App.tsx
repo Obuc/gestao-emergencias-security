@@ -5,6 +5,7 @@ const App = () => {
   return (
     <Routes>
       <Route path="/records" element={<Records />} />
+      <Route path="/records/:id" element={<Records />} />
     </Routes>
   );
 };

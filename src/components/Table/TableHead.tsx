@@ -3,5 +3,5 @@ interface ITableHeadProps {
 }
 
 export const TableHead = ({ children }: ITableHeadProps) => {
-  return <thead className="h-20 text-lg shadow-xs-primary-app bg-white">{children}</thead>;
+  return <thead className="h-14 text-lg shadow-xs-primary-app bg-white">{children}</thead>;
 };

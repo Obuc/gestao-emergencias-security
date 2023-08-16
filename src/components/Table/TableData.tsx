@@ -1,10 +1,15 @@
+import { ComponentProps } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-interface ITableDataProps {
+interface ITableDataProps extends ComponentProps<'td'> {
   children: React.ReactNode;
   className?: string;
 }
 
-export const TableData = ({ children, className }: ITableDataProps) => {
-  return <td className={twMerge('text-center w-[1%]', className)}>{children}</td>;
+export const TableData = ({ children, className, ...props }: ITableDataProps) => {
+  return (
+    <td {...props} className={twMerge('text-center w-[1%]', className)}>
+      {children}
+    </td>
+  );
 };

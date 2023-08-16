@@ -1,7 +1,9 @@
-import { UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery } from '@tanstack/react-query';
+import { useParams } from 'react-router-dom';
 import { sharepointContext } from '../../../context/sharepointContext';
+import { ExtinguisherDataModal } from '../types/ExtinguisherModalTypes';
+import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-interface Extinguisher {
+export interface Extinguisher {
   Area: string;
   AuthorId: number;
   Created: string;
@@ -43,18 +45,8 @@ interface Extinguisher {
 
 const useExtinguisher = () => {
   const { crud } = sharepointContext();
-
-  // const { data: extinguisher }: UseQueryResult<Array<Extinguisher>> = useQuery({
-  //   queryKey: ['extinguisher_data'],
-  //   queryFn: async () => {
-  //     const path = `?$Select=*,Responsavel1/Title,codExtintor/Title,codExtintor/codExtintor,codExtintor/validadeExtintor&$expand=Responsavel1,codExtintor&$top=100&$Orderby=Created desc`;
-
-  //     const resp = await crud.getListItemsv2('Extintores', path);
-
-  //     return resp.results;
-  //   },
-  //   refetchOnWindowFocus: false,
-  // });
+  const params = useParams();
+  const queryClient = useQueryClient();
 
   const path = `?$Select=*,Responsavel1/Title,codExtintor/Title,codExtintor/codExtintor,codExtintor/validadeExtintor&$expand=Responsavel1,codExtintor&$top=50&$Orderby=Created desc`;
 
@@ -75,12 +67,53 @@ const useExtinguisher = () => {
     staleTime: 1000 * 60,
   });
 
+  const { data: extinguisherModal, isLoading: isLoadingExtinguisherModal }: UseQueryResult<Extinguisher> = useQuery({
+    queryKey: params.id ? ['extinguisher_data_modal', params.id] : ['extinguisher_data_modal'],
+    queryFn: async () => {
+      if (params.id) {
+        const pathModal = `?$Select=*,Responsavel1/Title,codExtintor/Title,codExtintor/codExtintor,codExtintor/validadeExtintor&$expand=Responsavel1,AttachmentFiles,codExtintor&$filter=Id eq ${params.id}`;
+
+        const resp = await crud.getListItemsv2('Extintores', pathModal);
+        return resp.results[0];
+      } else {
+        return [];
+      }
+    },
+    staleTime: 5000 * 60, // 5 Minute
+    refetchOnWindowFocus: false,
+  });
+
+  const { mutateAsync: mutateRemoveExtinguisher, isLoading: IsLoadingMutateRemoveExtinguisher } = useMutation({
+    mutationFn: async (itemId: number) => {
+      if (itemId) {
+        await crud.deleteItemList('Extintores', itemId);
+      }
+    },
+  });
+
+  const { mutateAsync: mutateEditExtinguisher, isLoading: IsLoadingMutateEditExtinguisher } = useMutation({
+    mutationFn: async (values: ExtinguisherDataModal) => {
+      if (values.ID && values) {
+        await crud.updateItemList('Extintores', values.ID, values);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['extinguisher_data_modal', params.id] });
+    },
+  });
+
   return {
     extinguisher,
     fetchNextPage,
     hasNextPage,
     isLoading,
     isError,
+    extinguisherModal,
+    isLoadingExtinguisherModal,
+    mutateRemoveExtinguisher,
+    IsLoadingMutateRemoveExtinguisher,
+    mutateEditExtinguisher,
+    IsLoadingMutateEditExtinguisher,
   };
 };
 

@@ -39,6 +39,10 @@ const ButtonRootStyle = styled(ButtonBase)<IButtonProps>(({ fill }) => ({
   },
 }));
 
-export const ButtonRoot = ({ children, ...props }: IButtonProps) => {
-  return <ButtonRootStyle {...props}>{children}</ButtonRootStyle>;
+export const ButtonRoot = ({ fill, children, ...props }: IButtonProps) => {
+  return (
+    <ButtonRootStyle fill={fill?.toString()} {...props}>
+      {children}
+    </ButtonRootStyle>
+  );
 };

@@ -1,20 +1,37 @@
-import React from 'react';
+import { useState } from 'react';
 import { ptBR } from 'date-fns/locale';
+import { Skeleton } from '@mui/material';
 import { format, parseISO } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroller';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { Table } from '../../../../components/Table';
 import ExtinguisherModal from '../modals/ExtinguisherModal';
+import PopoverTables from '../../../../components/PopoverTables';
+import RemoveItem from '../../../../components/AppModals/RemoveItem';
 import useExtinguisher, { Extinguisher } from '../../hooks/useExtinguisher';
 
 const ExtinguisherTable = () => {
-  const { extinguisher, fetchNextPage, hasNextPage } = useExtinguisher();
+  const {
+    extinguisher,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    mutateRemoveExtinguisher,
+    IsLoadingMutateRemoveExtinguisher,
+  } = useExtinguisher();
 
+  const params = useParams();
   const navigate = useNavigate();
 
-  const handleRowModal = (id: number) => {
-    navigate(`/records/${id}`);
+  const [removeItem, setRemoveItem] = useState<number | null>(null);
+
+  const handleView = (id: number) => {
+    navigate(`/records/${id}?edit=false`);
+  };
+
+  const handleEdit = (id: number) => {
+    navigate(`/records/${id}?edit=true`);
   };
 
   return (
@@ -37,49 +54,83 @@ const ExtinguisherTable = () => {
       </Table.Root>
 
       <div className="min-[1100px]:h-[35.6rem] min-[1600px]:h-[41rem] min-[1800px]:h-[46rem] w-full overflow-y-scroll">
-        <InfiniteScroll
-          pageStart={0}
-          loadMore={() => fetchNextPage()}
-          hasMore={hasNextPage}
-          useWindow={false}
-          loader={<div>Loading...</div>}
-        >
+        {isLoading && (
           <Table.Root>
             <Table.Tbody>
-              {extinguisher?.pages.map((item, index) => (
-                <React.Fragment key={index}>
-                  {item?.data?.value?.map((item: Extinguisher) => (
-                    <Table.Tr
-                      onClick={() => handleRowModal(item.Id)}
-                      key={item.Id}
-                      className="hover:bg-[#E9F0F3] hover:cursor-pointer duration-200"
-                    >
-                      <Table.Td className="pl-8">{item.Responsavel1.Title}</Table.Td>
-                      <Table.Td>{format(parseISO(item.Created), 'dd MMM yyyy', { locale: ptBR })}</Table.Td>
-                      <Table.Td>
-                        {item.DataVenc ? format(parseISO(item.DataVenc), 'dd MMM yyyy', { locale: ptBR }) : 'N/A'}
-                      </Table.Td>
-                      <Table.Td>
-                        {item.DataPesagem ? format(parseISO(item.DataPesagem), 'dd MMM yyyy', { locale: ptBR }) : 'N/A'}
-                      </Table.Td>
-                      <Table.Td>{item.Title}</Table.Td>
-                      <Table.Td>{item.Local}</Table.Td>
-                      <Table.Td>{item.Pavimento}</Table.Td>
-                      <Table.Td>{item.Site}</Table.Td>
-                      <Table.Td>{item.Status}</Table.Td>
-                      <Table.Td>{''}</Table.Td>
-                    </Table.Tr>
-                  ))}
-                </React.Fragment>
+              {Array.from({ length: 15 }).map((_, index) => (
+                <Table.Tr key={index}>
+                  <Table.Td colSpan={10}>
+                    <Skeleton height="3.5rem" animation="wave" />
+                  </Table.Td>
+                </Table.Tr>
               ))}
             </Table.Tbody>
           </Table.Root>
-        </InfiniteScroll>
+        )}
+
+        {!isLoading && (
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={() => fetchNextPage()}
+            hasMore={hasNextPage}
+            useWindow={false}
+            loader={<div>Loading...</div>}
+          >
+            <Table.Root>
+              <Table.Tbody>
+                {extinguisher?.pages.map(
+                  (item) =>
+                    item?.data?.value?.map((item: Extinguisher) => (
+                      <Table.Tr key={item.Id} className="hover:bg-[#E9F0F3] hover:cursor-pointer duration-200">
+                        <Table.Td className="pl-8">{item.Responsavel1.Title}</Table.Td>
+                        <Table.Td>{format(parseISO(item.Created), 'dd MMM yyyy', { locale: ptBR })}</Table.Td>
+                        <Table.Td>
+                          {item.DataVenc ? format(parseISO(item.DataVenc), 'dd MMM yyyy', { locale: ptBR }) : 'N/A'}
+                        </Table.Td>
+                        <Table.Td>
+                          {item.DataPesagem
+                            ? format(parseISO(item.DataPesagem), 'dd MMM yyyy', { locale: ptBR })
+                            : 'N/A'}
+                        </Table.Td>
+                        <Table.Td>{item.Title}</Table.Td>
+                        <Table.Td>{item.Local}</Table.Td>
+                        <Table.Td>{item.Pavimento}</Table.Td>
+                        <Table.Td>{item.Site}</Table.Td>
+                        <Table.Td>{item.Status}</Table.Td>
+                        <Table.Td>
+                          <PopoverTables
+                            onView={() => handleView(item.Id)}
+                            onDelete={() => setRemoveItem(item.Id)}
+                            onEdit={() => handleEdit(item.Id)}
+                          />
+                        </Table.Td>
+                      </Table.Tr>
+                    )),
+                )}
+              </Table.Tbody>
+            </Table.Root>
+          </InfiniteScroll>
+        )}
       </div>
 
-      {/* {extinguisherItem && (
-        )} */}
+      {/* {isLoadingExtinguisherModal && (
+        <div className="h-screen justify-center items-center">
+          <Spinner />
+        </div>
+      )} */}
+
+      {/* {!isLoadingExtinguisherModal && params.id && <ExtinguisherModal />} */}
+
       <ExtinguisherModal />
+
+      {removeItem !== null && (
+        <RemoveItem
+          handleRemove={async () => await mutateRemoveExtinguisher(removeItem)}
+          isLoading={IsLoadingMutateRemoveExtinguisher}
+          onOpenChange={() => setRemoveItem(null)}
+          open={removeItem !== null}
+        />
+      )}
     </>
   );
 };

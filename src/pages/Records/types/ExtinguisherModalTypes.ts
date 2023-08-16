@@ -1,0 +1,31 @@
+export interface ExtinguisherDataModal {
+  ID: number;
+  Created: string;
+  Responsavel1: { Title: string };
+  codigo: string;
+  UF: string;
+  Municipios: string;
+  Site: string;
+  Area: string;
+  Local: string;
+  Pavimento: string;
+  LocalEsp: string;
+  DataVenc: string;
+  Tipo: string;
+  Massa: string;
+  Title: string;
+  OData__x004d_an1: boolean;
+  OData__x004d_an2: boolean;
+  OData__x0043_ar1: boolean;
+  OData__x0043_ar2: boolean;
+  OData__x0043_il1: boolean;
+  OData__x0043_il2: boolean;
+  OData__x0043_il3: boolean;
+  OData__x0053_in1: boolean;
+  OData__x0053_in2: boolean;
+  Obst1: boolean;
+  Obst2: boolean;
+  OData__x004c_tv1: boolean;
+  OData__x004c_tv2: boolean;
+  Observacao?: string;
+}
