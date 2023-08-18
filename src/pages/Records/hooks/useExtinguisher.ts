@@ -48,10 +48,10 @@ const useExtinguisher = () => {
   const params = useParams();
   const queryClient = useQueryClient();
 
-  const path = `?$Select=*,Responsavel1/Title,codExtintor/Title,codExtintor/codExtintor,codExtintor/validadeExtintor&$expand=Responsavel1,codExtintor&$top=50&$Orderby=Created desc`;
+  const path = `?$Select=*,extintor_id/Id&$top=50&$Orderby=Created desc&$expand=extintor_id`;
 
   const fetchExtinguisher = async ({ pageParam }: { pageParam?: string }) =>
-    await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'Extintores', path });
+    await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'registros_extintor', path });
 
   const {
     data: extinguisher,
@@ -73,7 +73,8 @@ const useExtinguisher = () => {
       if (params.id) {
         const pathModal = `?$Select=*,Responsavel1/Title,codExtintor/Title,codExtintor/codExtintor,codExtintor/validadeExtintor&$expand=Responsavel1,AttachmentFiles,codExtintor&$filter=Id eq ${params.id}`;
 
-        const resp = await crud.getListItemsv2('Extintores', pathModal);
+        const resp = await crud.getListItemsv2('registros_extintor', pathModal);
+
         return resp.results[0];
       } else {
         return [];

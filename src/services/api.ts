@@ -79,7 +79,8 @@ class CrudSharepoint {
   async getPaged({ list, path, nextUrl }: { list?: string; path?: string; nextUrl?: string }): Promise<any> {
     const endUrl = path || '';
     const url = nextUrl || `${this.baseUrl}/_api/web/lists/GetByTitle('${list}')/items${endUrl}`;
-    return axios.get(url);
+    const resp = axios.get(url);
+    return resp;
   }
 
   async getListItems(list: string, path: string = '', arrayResp: any[] = []): Promise<any[]> {
@@ -495,6 +496,9 @@ class CrudSharepoint {
       });
 
       const digestToken = response.data.d.GetContextWebInformation.FormDigestValue;
+
+      console.log(digestToken);
+
       return digestToken;
     } catch (error) {
       throw error;

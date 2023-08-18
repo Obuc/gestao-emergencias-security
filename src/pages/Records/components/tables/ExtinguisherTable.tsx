@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { ptBR } from 'date-fns/locale';
 import { Skeleton } from '@mui/material';
 import { format, parseISO } from 'date-fns';
@@ -53,31 +53,23 @@ const ExtinguisherTable = () => {
         </Table.Thead>
       </Table.Root>
 
-      <div className="min-[1100px]:h-[35.6rem] min-[1600px]:h-[41rem] min-[1800px]:h-[46rem] w-full overflow-y-scroll">
-        {isLoading && (
-          <Table.Root>
-            <Table.Tbody>
-              {Array.from({ length: 15 }).map((_, index) => (
-                <Table.Tr key={index}>
-                  <Table.Td colSpan={10}>
-                    <Skeleton height="3.5rem" animation="wave" />
-                  </Table.Td>
-                </Table.Tr>
-              ))}
-            </Table.Tbody>
-          </Table.Root>
-        )}
-
+      <div className="min-[1100px]:max-h-[35.6rem] min-[1600px]:max-h-[38rem] min-[1800px]:max-h-[36rem] w-full overflow-y-auto">
         {!isLoading && (
           <InfiniteScroll
             pageStart={0}
             loadMore={() => fetchNextPage()}
             hasMore={hasNextPage}
             useWindow={false}
-            loader={<div>Loading...</div>}
+            loader={<div key="1">Loading...</div>}
           >
             <Table.Root>
               <Table.Tbody>
+                {!extinguisher?.pages[0].data.value.lengh && (
+                  <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
+                    <Table.Td colSpan={9}>Nenhum registro encontrado!</Table.Td>
+                  </Table.Tr>
+                )}
+
                 {extinguisher?.pages.map(
                   (item) =>
                     item?.data?.value?.map((item: Extinguisher) => (
