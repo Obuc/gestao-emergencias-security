@@ -186,7 +186,8 @@ class CrudSharepoint {
         this.digestToken = await this.getDigest();
       }
 
-      const listName = `${list[0].toUpperCase()}${list.substring(1)}`;
+      // const listName = `${list[0].toUpperCase()}${list.substring(1)}`;
+      const listName = `${list.charAt(0).toUpperCase()}${list.substring(1)}ListItem`.replace('_', '_x005f_');
       const url = `${this.baseUrl}/_api/web/lists/GetByTitle('${list}')/items(${id})`;
 
       const headers = {
@@ -197,11 +198,7 @@ class CrudSharepoint {
         'X-HTTP-Method': 'MERGE',
       };
 
-      const response = await axios.post(
-        url,
-        { ...data, __metadata: { type: `SP.Data.${listName}ListItem` } },
-        { headers },
-      );
+      const response = await axios.post(url, { ...data, __metadata: { type: `SP.Data.${listName}` } }, { headers });
 
       return response.data;
     } catch (error) {
@@ -496,9 +493,6 @@ class CrudSharepoint {
       });
 
       const digestToken = response.data.d.GetContextWebInformation.FormDigestValue;
-
-      console.log(digestToken);
-
       return digestToken;
     } catch (error) {
       throw error;

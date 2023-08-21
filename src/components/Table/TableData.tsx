@@ -8,7 +8,7 @@ interface ITableDataProps extends ComponentProps<'td'> {
 
 export const TableData = ({ children, className, ...props }: ITableDataProps) => {
   return (
-    <td {...props} className={twMerge('text-center w-[1%]', className)}>
+    <td {...props} className={twMerge('text-start w-[3%]', className)}>
       {children}
     </td>
   );

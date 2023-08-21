@@ -1,12 +1,14 @@
-import { RespostaExtintor } from './Extinguisher';
-
-export interface ExtinguisherDataModal {
+export interface Extinguisher {
+  Attachments: boolean;
+  AuthorId: number;
   Created: string;
   Id: number;
   Modified: string;
   Title: null;
+  bombeiro_idId: number;
   bombeiro: string;
   data_pesagem: string;
+  extintor_idId: number;
   extintor: {
     site: string;
     predio: string;
@@ -23,4 +25,18 @@ export interface ExtinguisherDataModal {
   novo: boolean;
   observacao: string;
   status: null;
+}
+
+export interface RespostaExtintor {
+  Id: number;
+  extintor_idId: number;
+  pergunta_id: PerguntaExtintor;
+  registro_idId: number;
+  resposta: boolean;
+}
+
+export interface PerguntaExtintor {
+  Title: string;
+  categoria: string;
+  Id: number;
 }
