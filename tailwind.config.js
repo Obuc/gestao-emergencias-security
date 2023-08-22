@@ -7,13 +7,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        'primary': '#0C2A3A',
+        'primary': '#0B2736',
         'primary-opacity': 'rgba(16, 56, 79, .18)',
         'secondary': '#89D329',
         'background': '#FDFDFD',
         'blue': '#00BCFF',
         'pink': '#FF3162',
-        'red': '#F9121A'
+        'red': '#F82B50'
       },
       keyframes: {
         overlayShow: {
@@ -67,10 +67,10 @@ export default {
         'montserrat': ['Montserrat', 'sans-serif'],
       },
       backgroundImage: {
-        'bg-home': 'linear-gradient(180deg, #09222F 0%, #0C2B3C 100%)',
-        'bg-home-2': 'linear-gradient(45deg, #09222F 0%, #0C2B3C 100%);',
-        'bg-file': 'linear-gradient(180deg, #D9EFFF 0%, #7EA5FF 100%);'
-
+        'bg-home': 'linear-gradient(43deg, #10384F 0%, rgba(255, 49, 98, 0.95) 100%);',
+        'bg-home-2': 'linear-gradient(36deg, rgba(16, 56, 79, 0.19) 0%, rgba(250, 49, 98, 0.72) 100%);',
+        'bg-file': 'linear-gradient(180deg, #D9EFFF 0%, #7EA5FF 100%);',
+        'bg-image': ''
       }
     },
   },

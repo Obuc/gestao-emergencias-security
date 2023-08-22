@@ -11,6 +11,7 @@ import { SharepointProvider } from './context/sharepointContext.tsx';
 const queryClient = new QueryClient();
 
 import 'react-datepicker/dist/react-datepicker.css';
+import { AppContextProvider } from './context/appContext.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -18,7 +19,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <HashRouter>
         <SharepointProvider>
           <UserProvider>
-            <App />
+            <AppContextProvider>
+              <App />
+            </AppContextProvider>
           </UserProvider>
         </SharepointProvider>
       </HashRouter>
