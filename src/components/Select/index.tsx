@@ -11,7 +11,7 @@ const select = tv({
     base: 'flex w-full h-full flex-col bg-white',
     labelStyle: 'text-primary text-base pb-2 bg-[#F1F1F1] font-medium',
     trigger: 'min-w-full outline-none py-2 pl-2 flex group justify-between items-center h-10 leading-none',
-    triggerIcon: 'ml-2 w-10 h-[2.375rem] flex justify-center items-center duration-150',
+    triggerIcon: 'ml-2 w-[3.125rem] h-10 flex justify-center items-center duration-150',
     content: 'overflow-hidden bg-white shadow-lg-app',
     viewport: 'py-1',
     arrow: 'fill-white',
@@ -22,7 +22,7 @@ const select = tv({
         trigger: 'border-pink',
       },
       false: {
-        trigger: 'border-white',
+        trigger: '',
       },
     },
     mode: {
@@ -31,7 +31,7 @@ const select = tv({
         triggerIcon: 'bg-[#00354F]',
       },
       light: {
-        trigger: 'border text-[#3E3E3E] data-[placeholder:text-gray-400]',
+        trigger: ' text-[#3E3E3E] data-[placeholder:text-gray-400]',
         triggerIcon: 'bg-primary',
       },
     },
