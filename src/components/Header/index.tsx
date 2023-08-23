@@ -5,6 +5,8 @@ import { faHouse, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 import Avatar from '../Avatar';
 import Tooltip from '../Tooltip';
+import BXOLogo from '../Icons/BXOLogo';
+import SPOLogo from '../Icons/SPOLogo';
 import BayerLogo from '../../assets/Bayer Cross.svg';
 import { userContext } from '../../context/userContext';
 
@@ -24,6 +26,13 @@ const BackButton = () => {
 const Header = () => {
   const navigate = useNavigate();
   const { user } = userContext();
+  const site = localStorage.getItem('user_site');
+
+  const handleChangeSite = () => {
+    localStorage.removeItem('user_site');
+
+    navigate('/');
+  };
 
   return (
     <>
@@ -40,7 +49,18 @@ const Header = () => {
           </div>
         </div>
 
-        <div className="flex h-full  items-center gap-2">
+        <div className="flex h-full  items-center gap-5">
+          <Tooltip label="Alterar Site">
+            <div
+              onClick={handleChangeSite}
+              className="cursor-pointer px-4 py-2 bg-[#F6F6F6] shadow-xs-primary-app text-primary flex justify-center items-center gap-2"
+            >
+              {site === 'BXO' && <BXOLogo />}
+              {site === 'SPO' && <SPOLogo />}
+              <span className="font-medium">Site {site}</span>
+            </div>
+          </Tooltip>
+
           <Tooltip label="Inicio">
             <IconButton onClick={() => navigate('/')}>
               <FontAwesomeIcon
@@ -52,7 +72,7 @@ const Header = () => {
 
           {user && (
             <>
-              <div className="w-11 h-11 ml-10 rounded-full shadow flex justify-center items-center ">
+              <div className="w-11 h-11 rounded-full shadow flex justify-center items-center ">
                 <Avatar image={user.photo ? user.photo : undefined} username={user?.Title} />
               </div>
               <div className="flex flex-col gap-1 select-none ml-3">
