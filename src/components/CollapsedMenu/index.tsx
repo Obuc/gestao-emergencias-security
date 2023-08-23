@@ -48,13 +48,17 @@ const CollapsedMenu = ({ items }: { items: Array<MenuItem> }) => {
   };
 
   const handleNavigate = (route: string) => {
+    if (route.includes('https')) {
+      window.open(route, '_blank');
+      return;
+    }
     navigate(route);
   };
 
   return (
     <CollapsedMenuRoot>
       {items.map((item, index) => {
-        const isLocationActive = localtion.pathname === item.path;
+        const isLocationActive = localtion.pathname.includes(item.path!);
 
         const handleCollapsedMenuItemAction = () => {
           if (item.path) return handleNavigate(item.path);

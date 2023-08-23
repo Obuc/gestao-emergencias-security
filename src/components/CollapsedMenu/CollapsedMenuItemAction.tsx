@@ -2,7 +2,7 @@ import { ButtonBase, ButtonBaseProps, styled } from '@mui/material';
 
 const BayerButton = styled(ButtonBase)(({ active }: { active: string }) => ({
   position: 'relative',
-  maxHeight: '3rem',
+  maxHeight: '3.125rem',
   height: '100%',
   width: '100%',
   display: 'flex',

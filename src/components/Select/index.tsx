@@ -1,5 +1,6 @@
 import { twMerge } from 'tailwind-merge';
 import React, { forwardRef } from 'react';
+import { Skeleton } from '@mui/material';
 import * as Label from '@radix-ui/react-label';
 import { VariantProps, tv } from 'tailwind-variants';
 import * as SelectRadix from '@radix-ui/react-select';
@@ -95,31 +96,36 @@ const Select = ({
   });
 
   return (
-    <div className={base({ class: className })}>
-      {label && (
-        <Label.Root className={labelStyle()} htmlFor={id}>
-          {label}
-        </Label.Root>
-      )}
+    <>
+      <div className={base({ class: className })}>
+        {label && (
+          <Label.Root className={labelStyle()} htmlFor={id}>
+            {label}
+          </Label.Root>
+        )}
 
-      <SelectRadix.Root {...props}>
-        <SelectRadix.Trigger id={id} aria-invalid="true" disabled={isLoading || disabled} className={trigger()}>
-          <SelectRadix.Value placeholder={isLoading ? 'Carregando...' : placeholder} />
-          <SelectRadix.Icon className={triggerIcon()}>
-            <FontAwesomeIcon icon={faChevronDown} />
-          </SelectRadix.Icon>
-        </SelectRadix.Trigger>
+        {!isLoading && (
+          <SelectRadix.Root {...props}>
+            <SelectRadix.Trigger id={id} aria-invalid="true" disabled={isLoading || disabled} className={trigger()}>
+              <SelectRadix.Value placeholder={placeholder} />
+              <SelectRadix.Icon className={triggerIcon()}>
+                <FontAwesomeIcon icon={faChevronDown} />
+              </SelectRadix.Icon>
+            </SelectRadix.Trigger>
 
-        <SelectRadix.Portal>
-          <SelectRadix.Content className={content()}>
-            <SelectRadix.Viewport className={arrow()}>
-              <SelectRadix.Group>{children}</SelectRadix.Group>
-            </SelectRadix.Viewport>
-            <SelectRadix.Arrow className={viewport()} />
-          </SelectRadix.Content>
-        </SelectRadix.Portal>
-      </SelectRadix.Root>
-    </div>
+            <SelectRadix.Portal>
+              <SelectRadix.Content className={content()}>
+                <SelectRadix.Viewport className={arrow()}>
+                  <SelectRadix.Group>{children}</SelectRadix.Group>
+                </SelectRadix.Viewport>
+                <SelectRadix.Arrow className={viewport()} />
+              </SelectRadix.Content>
+            </SelectRadix.Portal>
+          </SelectRadix.Root>
+        )}
+      </div>
+      {isLoading && <Skeleton className="min-w-full outline-none py-2 pl-2 h-10" />}
+    </>
   );
 };
 

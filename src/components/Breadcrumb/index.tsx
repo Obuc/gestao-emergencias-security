@@ -24,9 +24,7 @@ const Breadcrumb = () => {
           separator={<FontAwesomeIcon icon={faAngleRight} className="text-primary" />}
           aria-label="breadcrumb"
         >
-          <a className="text-primary font-montserrat text-base" href="/">
-            Gestão Sistema de Emergência
-          </a>
+          <span className="text-primary font-montserrat text-base">Gestão Sistema de Emergência</span>
 
           {breadcrumbLinks.map((item, index) => (
             <a

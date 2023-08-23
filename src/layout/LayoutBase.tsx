@@ -36,12 +36,12 @@ const menuItems: MenuItem[] = [
   },
   {
     icon: Statistics,
-    path: '/requests-returns',
+    path: 'https://app.powerbi.com/groups/me/apps/67ad2565-370a-44b3-8c39-bb9496f3d5a7/reports/7c8808bf-83a8-4b72-854c-66ca77422b65/ReportSection92e9e4850ebd49723e0e?ctid=fcb2b37b-5da0-466b-9b83-0014b67a7c78',
     label: 'Estastísticas',
   },
   {
     icon: Actions,
-    path: '/requests-returns',
+    path: 'https://bayergroup.sharepoint.com/sites/005070/system/plano_de_acao.html',
     label: 'Ações',
   },
 ];

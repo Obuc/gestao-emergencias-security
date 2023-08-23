@@ -1,7 +1,7 @@
+import { twMerge } from 'tailwind-merge';
 import * as Dialog from '@radix-ui/react-dialog';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { twMerge } from 'tailwind-merge';
 
 interface IModalProps {
   open: boolean;
@@ -15,7 +15,8 @@ const Modal = ({ open, onOpenChange, title, className, children }: IModalProps) 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="bg-primary-opacity data-[state=open]:animate-overlayShow fixed inset-0 " />
+        <Dialog.Overlay className="bg-primary-opacity data-[state=open]:animate-overlayShow fixed inset-0" />
+
         <Dialog.Content
           className={twMerge(
             'data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-w-[54.625rem] translate-x-[-50%] translate-y-[-50%] bg-white shadow focus:outline-none',
@@ -27,7 +28,7 @@ const Modal = ({ open, onOpenChange, title, className, children }: IModalProps) 
             {title}
           </Dialog.Title>
 
-          <div className="max-h-[80vh] overflow-y-auto">{children}</div>
+          <div className="max-h-[80vh] overflow-y-scroll">{children}</div>
 
           <Dialog.Close asChild>
             <button

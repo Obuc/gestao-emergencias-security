@@ -10,7 +10,7 @@ import BgGradient from '../../components/Icons/BgGradient';
 import Select, { SelectItem } from '../../components/Select';
 
 const Home = () => {
-  const { sites } = appContext();
+  const { sites, isLoadingSites } = appContext();
   const [site, setSite] = useState<string>('');
   const navigate = useNavigate();
 
@@ -51,6 +51,7 @@ const Home = () => {
               name="county_id"
               className="w-[22.25rem]"
               value={site}
+              isLoading={isLoadingSites}
               onValueChange={(value) => setSite(value)}
             >
               {sites?.length &&
@@ -63,7 +64,7 @@ const Home = () => {
           </div>
 
           <div className="self-end mt-2 -mr-1">
-            <Button.Root className="w-[11.25rem] h-10" onClick={handleStart} disabled={site === ''}>
+            <Button.Root className="w-[11.25rem] h-10" onClick={handleStart} fill disabled={site === ''}>
               <Button.Label>Iniciar</Button.Label>
             </Button.Root>
           </div>

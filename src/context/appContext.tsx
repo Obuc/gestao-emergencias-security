@@ -9,6 +9,7 @@ interface IAppContext {
   sites?: Array<ISite>;
   formularios?: Array<IFormulario>;
   isLoadingFormularios: boolean;
+  isLoadingSites: boolean;
 }
 
 const AppContext = createContext<IAppContext>({} as IAppContext);
@@ -17,7 +18,7 @@ export const useSharepointContext = () => useContext(AppContext);
 export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { crud } = sharepointContext();
 
-  const { data: sites }: UseQueryResult<Array<ISite>> = useQuery({
+  const { data: sites, isLoading: isLoadingSites }: UseQueryResult<Array<ISite>> = useQuery({
     queryKey: ['sites'],
     queryFn: async () => {
       const resp = await crud.getListItemsv2('site', '?$Select=Id,Title');
@@ -37,7 +38,11 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     refetchOnWindowFocus: false,
   });
 
-  return <AppContext.Provider value={{ sites, formularios, isLoadingFormularios }}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={{ sites, formularios, isLoadingFormularios, isLoadingSites }}>
+      {children}
+    </AppContext.Provider>
+  );
 };
 
 export const appContext = () => useContext(AppContext);
