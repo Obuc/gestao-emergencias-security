@@ -1,7 +1,12 @@
 import Header from '../components/Header';
 import Breadcrumb from '../components/Breadcrumb';
+import Reports from '../components/Icons/Reports';
+import Actions from '../components/Icons/Actions';
+import FileText from '../components/Icons/fileText';
+import Calendar from '../components/Icons/Calendar';
+import Statistics from '../components/Icons/Statistics';
+import Extinguisher from '../components/Icons/Extinguisher';
 import CollapsibleMenu, { MenuItem } from '../components/CollapsedMenu';
-import Requests from '../components/Icons/Requests';
 
 interface ILayoutBaseProps {
   children: React.ReactNode;
@@ -10,32 +15,32 @@ interface ILayoutBaseProps {
 
 const menuItems: MenuItem[] = [
   {
-    icon: Requests,
+    icon: FileText,
     path: '/records',
     label: 'Registros',
   },
   {
-    icon: Requests,
+    icon: Extinguisher,
     path: '/equipments',
     label: 'Mapa de Equipamentos',
   },
   {
-    icon: Requests,
+    icon: Calendar,
     path: '/schedule',
     label: 'Agenda',
   },
   {
-    icon: Requests,
+    icon: Reports,
     path: '/reports',
     label: 'Laudos',
   },
   {
-    icon: Requests,
+    icon: Statistics,
     path: '/requests-returns',
     label: 'Estastísticas',
   },
   {
-    icon: Requests,
+    icon: Actions,
     path: '/requests-returns',
     label: 'Ações',
   },
