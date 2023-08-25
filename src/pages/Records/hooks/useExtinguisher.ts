@@ -10,10 +10,9 @@ const useExtinguisher = () => {
   const params = useParams();
   const queryClient = useQueryClient();
 
-  const path = `?$Select=*&$top=50&$Orderby=Created desc`;
+  const path = `?$Select=*&$Orderby=Created desc`;
   const fetchExtinguisher = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'registros_extintor', path });
-
     const dataWithTransformations = await Promise.all(
       response.data.value.map(async (item: any) => {
         const bombeiroResponse = await crud.getListItemsv2(
@@ -84,7 +83,7 @@ const useExtinguisher = () => {
   const fetchExtintorData = async (extintorId: number) => {
     const extintorResponse = await crud.getListItemsv2(
       'extintores',
-      `?$Select=predio/Title,pavimento/Title,local/Title,site/Title,tipo_extintor/Title,cod_extintor,validade,conforme,massa,cod_qrcode&$expand=predio,pavimento,local,site,tipo_extintor&$Filter(Id eq ${extintorId})`,
+      `?$Select=massa/Title,predio/Title,pavimento/Title,local/Title,site/Title,tipo_extintor/Title,cod_extintor,validade,conforme,massa,cod_qrcode&$expand=massa,predio,pavimento,local,site,tipo_extintor&$Filter(Id eq ${extintorId})`,
     );
     return extintorResponse.results[0] || null;
   };
@@ -127,7 +126,7 @@ const useExtinguisher = () => {
               cod_extintor: extintor.cod_extintor,
               validade: extintor.validade,
               conforme: extintor.conforme,
-              massa: extintor.massa,
+              massa: extintor.massa.Title,
               cod_qrcode: extintor.cod_qrcode,
               tipo_extintor: extintor.tipo_extintor.Title,
             }

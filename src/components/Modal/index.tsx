@@ -28,7 +28,7 @@ const Modal = ({ open, onOpenChange, title, className, children }: IModalProps) 
             {title}
           </Dialog.Title>
 
-          <div className="max-h-[80vh] overflow-y-scroll">{children}</div>
+          <div className="max-h-[80vh] overflow-y-auto">{children}</div>
 
           <Dialog.Close asChild>
             <button

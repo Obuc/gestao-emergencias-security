@@ -52,9 +52,9 @@ const Records = () => {
 
           {formValue === 'Extintores' && <ExtinguisherTable />}
         </div>
-        <div className="bg-white h-16 flex justify-end items-center px-10 py-5">
-          {/* <Pagination setPage={setPage} pageCount={pageCount} page={page} /> */}
-        </div>
+        {/* <div className="bg-white h-16 flex justify-end items-center px-10 py-5">
+          <Pagination setPage={setPage} pageCount={pageCount} page={page} />
+        </div> */}
       </div>
     </LayoutBase>
   );

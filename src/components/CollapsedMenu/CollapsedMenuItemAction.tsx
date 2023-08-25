@@ -10,7 +10,7 @@ const BayerButton = styled(ButtonBase)(({ active }: { active: string }) => ({
   paddingLeft: '.875rem',
   textAlign: 'left',
   fontFamily: 'Montserrat',
-  backgroundColor: active === 'true' ? '#274150' : '#0C2A3A',
+  backgroundColor: active === 'true' ? '#1C4B62' : '#10384F',
   color: '#FFF',
   fontWeight: 400,
   transition: 'all 0.3s ease-out',

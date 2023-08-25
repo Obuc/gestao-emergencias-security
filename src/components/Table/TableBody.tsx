@@ -3,5 +3,5 @@ interface ITableBodyProps {
 }
 
 export const TableBody = ({ children }: ITableBodyProps) => {
-  return <tbody className="w-full">{children}</tbody>;
+  return <tbody className="w-full h-full">{children}</tbody>;
 };

@@ -4,7 +4,7 @@ interface ITableRootProps {
 
 export const TableRoot = ({ children }: ITableRootProps) => {
   return (
-    <table className="w-full block overflow-hidden text-primary -mt-2 border-spacing-y-2 border-separate p-px">
+    <table className="w-full h-full block bg-white text-primary border-spacing-y-2 p-px overflow-hidden">
       {children}
     </table>
   );
