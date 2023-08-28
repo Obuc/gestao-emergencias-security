@@ -5,12 +5,15 @@ import LayoutBase from '../../layout/LayoutBase';
 import { Button } from '../../components/Button';
 import { appContext } from '../../context/appContext';
 import Select, { SelectItem } from '../../components/Select';
+import GenerateQRCode from './components/modals/GenerateQRCode';
 import EquipmentsTable from './components/tables/EquipmentsTable';
 
 const Equipments = () => {
   const { formularios, isLoadingFormularios } = appContext();
   const localSite = localStorage.getItem('user_site');
-  const [formValue, setFormValue] = useState<string>('Extintores');
+  const equipments_value = localStorage.getItem('equipments_value');
+  const [formValue, setFormValue] = useState<string>(equipments_value ?? 'Extintores');
+  const [openModalGenerateQRCode, setOpenModalGenerateQRCode] = useState<boolean | null>(null);
 
   const filteredForms =
     formularios && formularios.filter((form) => form.todos_sites === true || form.site.Title === localSite);
@@ -31,7 +34,10 @@ const Equipments = () => {
                 value={formValue}
                 className="w-[22.25rem]"
                 isLoading={isLoadingFormularios}
-                onValueChange={(value) => setFormValue(value)}
+                onValueChange={(value) => {
+                  setFormValue(value);
+                  localStorage.setItem('equipments_value', value);
+                }}
               >
                 {filteredForms?.map((form) => (
                   <SelectItem key={form.Id} value={form.Title}>
@@ -47,7 +53,7 @@ const Equipments = () => {
                 <Button.Icon icon={faDownload} />
               </Button.Root>
 
-              <Button.Root className="w-[14.0625rem] h-10" fill>
+              <Button.Root className="w-[14.0625rem] h-10" fill onClick={() => setOpenModalGenerateQRCode(true)}>
                 <Button.Label>Gerar QRCode</Button.Label>
                 <Button.Icon icon={faExpand} />
               </Button.Root>
@@ -57,6 +63,8 @@ const Equipments = () => {
           {formValue === 'Extintores' && <EquipmentsTable />}
         </div>
       </div>
+
+      <GenerateQRCode open={openModalGenerateQRCode} onOpenChange={() => setOpenModalGenerateQRCode(null)} />
     </LayoutBase>
   );
 };

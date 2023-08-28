@@ -1,32 +1,29 @@
+import jsPDF from 'jspdf';
+import QRCode from 'qrcode.react';
 import { format } from 'date-fns';
+import html2canvas from 'html2canvas';
 import { ptBR } from 'date-fns/locale';
 import { useEffect, useRef, useState } from 'react';
-import { Formik, FormikProps } from 'formik';
-import { faArrowUpRightFromSquare, faDownload, faExpand } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { faExpand } from '@fortawesome/free-solid-svg-icons';
 
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-
-import Modal from '../../../../components/Modal';
-import { Button } from '../../../../components/Button';
-import TextArea from '../../../../components/TextArea';
-import TextField from '../../../../components/TextField';
-import { Answers } from '../../../../components/Answers';
-import useEquipments from '../../hooks/useEquipments';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { EquipmentCard } from '../ui/Card';
+import Modal from '../../../../components/Modal';
+import useEquipments from '../../hooks/useEquipments';
+import { Button } from '../../../../components/Button';
+import TextField from '../../../../components/TextField';
+import BXOLogo from '../../../../components/Icons/BXOLogo';
+import SPOLogo from '../../../../components/Icons/SPOLogo';
 
 const EqExtinguisherModal = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const pdfContainerRef = useRef(null);
 
+  const [showQrCode, setShowQrCode] = useState(false);
   const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
-
   const { eqExtinguisherModal, isLoadingEqExtinguisherModal } = useEquipments();
-
-  console.log(eqExtinguisherModal);
+  const qrCodeValue = `Extintor;${eqExtinguisherModal?.site};${eqExtinguisherModal?.cod_qrcode}`;
 
   useEffect(() => {
     if (params?.id) {
@@ -36,7 +33,31 @@ const EqExtinguisherModal = () => {
 
   const handleOnOpenChange = () => {
     setExtinguisherItem(null);
-    navigate('/records');
+    navigate('/equipments');
+  };
+
+  const generateQrCodePdf = () => {
+    if (pdfContainerRef.current) {
+      html2canvas(pdfContainerRef.current, {
+        scrollY: -window.scrollY,
+        useCORS: true,
+        scale: 2,
+      })
+        .then((canvas) => {
+          const imgData = canvas.toDataURL('image/png');
+
+          const pdf = new jsPDF('p', 'px', [595.28, canvas.height], false);
+          const imgProps = pdf.getImageProperties(imgData);
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+          pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+          pdf.save(`teste.pdf`);
+          setShowQrCode(false);
+        })
+        .catch((error) => {
+          console.error('Erro ao gerar o PDF:', error);
+        });
+    }
   };
 
   return (
@@ -120,244 +141,64 @@ const EqExtinguisherModal = () => {
           </div>
         </div>
 
-        <div className="w-full h-[6.25rem] flex justify-center items-center my-10 bg-primary-opacity">
-          <Button.Root className="w-[11.375rem] h-10" fill>
-            <Button.Label>Gerar QRCode</Button.Label>
+        <div className="w-full p-4 gap-3 flex flex-col justify-center items-center my-10 bg-[#00354F0F]">
+          {showQrCode && (
+            <div
+              ref={pdfContainerRef}
+              id="container"
+              className="w-full h-full p-4 flex flex-col justify-center items-center gap-10"
+            >
+              <div className="flex flex-col justify-center items-center gap-6 bg-white border-[.1875rem] border-black px-6 py-4">
+                {eqExtinguisherModal?.site === 'BXO' && <BXOLogo width="7.5rem" height="7.5rem" />}
+                {eqExtinguisherModal?.site === 'SPO' && <SPOLogo />}
+                <QRCode value={qrCodeValue} size={160} fgColor="#000" bgColor="#fff" />
+                <span className="font-medium">{`Extintor/${eqExtinguisherModal?.predio}/${eqExtinguisherModal?.pavimento}/${eqExtinguisherModal?.cod_qrcode}/${eqExtinguisherModal?.local}`}</span>
+              </div>
+            </div>
+          )}
+
+          <Button.Root
+            fill
+            disabled={isLoadingEqExtinguisherModal}
+            className="w-[13.75rem] h-10"
+            onClick={() => {
+              generateQrCodePdf();
+              setShowQrCode(true);
+            }}
+          >
+            <Button.Label>Baixar QRCode</Button.Label>
             <Button.Icon icon={faExpand} />
           </Button.Root>
         </div>
 
-        <div className="py-6 px-8">
-          {/* <div className="w-full h-[11rem] rounded-lg p-6 flex flex-col bg-[#282828]/5 text-[#282828]">
-            <div className="flex w-full h-10 justify-between pb-4  border-b-[.0625rem] border-b-[#ADADAD]">
-              <span className="text-xl h-10 font-semibold">Verificação Inconforme</span>
-              <div className="uppercase flex gap-2 justify-center items-center cursor-default">
-                Visualizar Registro <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-              </div>
-            </div>
+        <div className="py-4 px-8">
+          {eqExtinguisherModal?.history &&
+            eqExtinguisherModal?.history.map((item) => {
+              const cardVariant =
+                item.conforme && !item.novo ? 'modification' : item.conforme && item.novo ? 'new' : 'noncompliant';
 
-            <div className="flex gap-4 flex-col mt-4">
-              <div className="flex w-full justify-between">
-                <span>
-                  <strong className="text-[#282828]">Responsável:</strong> Davi Alves dos Santos
-                </span>
-                <span>
-                  <strong className="text-[#282828]">Data:</strong> 25 Ago 2023
-                </span>
-              </div>
-              <span className="flex w-full ">Ação: Verificação de Extintor</span>
-            </div>
-          </div> */}
+              const cardTitle =
+                item.conforme && !item.novo
+                  ? 'Alteração Equipamento'
+                  : item.conforme && item.novo
+                  ? 'Nova Verificação'
+                  : 'Verificação Inconforme';
 
-          <EquipmentCard.Root>
-            <EquipmentCard.Header title="Teste" link="#" />
-            <EquipmentCard.Content date="ss" responsible="ss" action="ss" />
-          </EquipmentCard.Root>
+              const cardDate = format(new Date(item.Created), 'dd MMM yyyy', { locale: ptBR });
+
+              return (
+                <EquipmentCard.Root key={item.Id} variant={cardVariant}>
+                  <EquipmentCard.Header title={cardTitle} link={`/records/${item.Id}`} />
+                  <EquipmentCard.Content
+                    date={cardDate}
+                    responsible={item.bombeiro_id.Title}
+                    action={item.observacao}
+                  />
+                </EquipmentCard.Root>
+              );
+            })}
         </div>
       </>
-
-      {/* <div ref={componentRef} id="container">
-        <div className="py-6 px-8">
-          <div className="flex gap-2 py-2">
-            <TextField
-              id="Id"
-              name="Id"
-              label="Número"
-              width="w-[6.25rem]"
-              disabled
-              onChange={props.handleChange}
-              value={props.values.Id}
-              isLoading={isLoadingExtinguisherModal}
-            />
-
-            <TextField
-              id="Created"
-              name="Created"
-              label="Data"
-              disabled
-              onChange={props.handleChange}
-              value={props.values?.Created && format(new Date(props.values?.Created), 'dd MMM yyyy', { locale: ptBR })}
-              isLoading={isLoadingExtinguisherModal}
-            />
-
-            <TextField
-              id="bombeiro"
-              name="bombeiro"
-              label="Responsável"
-              width="w-[25rem]"
-              disabled
-              onChange={props.handleChange}
-              value={props.values.bombeiro}
-              isLoading={isLoadingExtinguisherModal}
-            />
-          </div>
-
-          <div className="flex gap-2 py-2">
-            <TextField
-              id="extintor.cod_qrcode"
-              name="extintor.cod_qrcode"
-              label="Cód. Área"
-              width="w-[16.25rem]"
-              disabled
-              onChange={props.handleChange}
-              value={props.values.extintor.cod_qrcode}
-              isLoading={isLoadingExtinguisherModal}
-            />
-
-            <TextField
-              id="extintor.site"
-              name="extintor.site"
-              label="Site"
-              disabled
-              onChange={props.handleChange}
-              value={props.values.extintor.site}
-              isLoading={isLoadingExtinguisherModal}
-            />
-
-            <TextField
-              id="extintor.predio"
-              name="extintor.predio"
-              label="Prédio"
-              width="w-[12.5rem]"
-              disabled
-              onChange={props.handleChange}
-              value={props.values.extintor.predio}
-              isLoading={isLoadingExtinguisherModal}
-            />
-          </div>
-
-          <div className="flex gap-2 py-2">
-            <TextField
-              id="extintor.pavimento"
-              name="extintor.pavimento"
-              label="Pavimento"
-              width="w-[12.5rem]"
-              disabled
-              onChange={props.handleChange}
-              value={props.values.extintor.pavimento}
-              isLoading={isLoadingExtinguisherModal}
-            />
-
-            <TextField
-              id="extintor.local"
-              name="extintor.local"
-              label="Local Específico"
-              disabled
-              onChange={props.handleChange}
-              value={props.values.extintor.local}
-              isLoading={isLoadingExtinguisherModal}
-            />
-          </div>
-
-          <div className="flex gap-2 py-2">
-            <TextField
-              id="extintor.validade"
-              name="extintor.validade"
-              label="Data de Vencimento"
-              disabled
-              onChange={props.handleChange}
-              value={
-                props.values?.extintor.validade &&
-                format(new Date(props.values?.extintor.validade), 'dd MMM yyyy', { locale: ptBR })
-              }
-              isLoading={isLoadingExtinguisherModal}
-            />
-
-            <TextField
-              id="extintor.tipo_extintor"
-              name="extintor.tipo_extintor"
-              label="Tipo"
-              width="w-[6.25rem]"
-              disabled
-              onChange={props.handleChange}
-              value={props.values.extintor.tipo_extintor}
-              isLoading={isLoadingExtinguisherModal}
-            />
-
-            <TextField
-              id="extintor.massa"
-              name="extintor.massa"
-              label="Peso"
-              width="w-[6.25rem]"
-              disabled
-              onChange={props.handleChange}
-              value={props.values.extintor.massa}
-              isLoading={isLoadingExtinguisherModal}
-            />
-
-            <TextField
-              id="extintor.cod_extintor"
-              name="extintor.cod_extintor"
-              label="Cód. Extintor"
-              disabled
-              onChange={props.handleChange}
-              value={props.values.extintor.cod_extintor}
-              isLoading={isLoadingExtinguisherModal}
-            />
-          </div>
-        </div>
-        <div className="w-full h-px bg-primary-opacity" />
-
-        <div className="bg-[#F1F3F5] w-full py-6 px-8 text-[#474747]">
-          {props.values.respostas &&
-            Object.keys(props.values.respostas).map((categoria) => (
-              <Answers.Root key={categoria} label={categoria} isLoading={isLoadingExtinguisherModal}>
-                <Answers.Content key={categoria}>
-                  {props.values.respostas &&
-                    props.values.respostas[categoria].map((pergunta: RespostaExtintor, index) => (
-                      <Answers.ContentItem key={index} isLoading={isLoadingExtinguisherModal}>
-                        <Answers.Label label={pergunta.pergunta_id.Title} />
-                        <Answers.Button
-                          disabled={!isEdit}
-                          onClick={() => {
-                            const updatedResposta = !pergunta.resposta;
-                            props.setFieldValue(`respostas.${categoria}[${index}].resposta`, updatedResposta);
-                          }}
-                          answersValue={pergunta.resposta}
-                        />
-                      </Answers.ContentItem>
-                    ))}
-                </Answers.Content>
-              </Answers.Root>
-            ))}
-
-          {props.values.observacao && (
-            <TextArea
-              id="observacao"
-              name="observacao"
-              label="Observações"
-              disabled
-              value={props.values.observacao}
-              onChange={props.handleChange}
-              isLoading={isLoadingExtinguisherModal}
-            />
-          )}
-        </div>
-
-        <div className="flex w-full gap-2 py-4 justify-end items-center pr-8">
-          {!isEdit && (
-            <Button.Root onClick={expotToPdf} disabled={isLoadingExtinguisherModal} fill className="h-10">
-              <Button.Label>Exportar para PDF</Button.Label>
-              <Button.Icon icon={faDownload} />
-            </Button.Root>
-          )}
-
-          <Button.Root onClick={handleOnOpenChange} disabled={isLoadingExtinguisherModal} className="w-[10rem] h-10">
-            <Button.Label>Fechar</Button.Label>
-          </Button.Root>
-
-          {isEdit && (
-            <Button.Root
-              onClick={() => handleSubmit(props.values)}
-              disabled={isLoadingExtinguisherModal}
-              fill
-              className="w-[10rem] h-10"
-            >
-              {IsLoadingMutateEditExtinguisher ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
-            </Button.Root>
-          )}
-        </div>
-      </div> */}
     </Modal>
   );
 };

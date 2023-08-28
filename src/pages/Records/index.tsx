@@ -34,7 +34,9 @@ const Records = () => {
                 value={formValue}
                 className="w-[22.25rem]"
                 isLoading={isLoadingFormularios}
-                onValueChange={(value) => setFormValue(value)}
+                onValueChange={(value) => {
+                  setFormValue(value);
+                }}
               >
                 {filteredForms?.map((form) => (
                   <SelectItem key={form.Id} value={form.Title}>

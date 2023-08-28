@@ -1,13 +1,14 @@
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { sharepointContext } from '../../../context/sharepointContext';
 import { useParams } from 'react-router-dom';
-import { EqExtinguisherModal } from '../types/EquipmentsExtinguisher';
+import { EqExtinguisherModal, EquipmentsExtinguisher } from '../types/EquipmentsExtinguisher';
 
 const useEquipments = () => {
   const { crud } = sharepointContext();
   const params = useParams();
+  const user_site = localStorage.getItem('user_site');
 
-  const path = `?$Select=Id,cod_qrcode,cod_extintor,conforme,site/Title,pavimento/Title,local/Title&$expand=site,pavimento,local&$Orderby=Created desc`;
+  const path = `?$Select=Id,cod_qrcode,cod_extintor,conforme,site/Title,pavimento/Title,local/Title&$expand=site,pavimento,local&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'extintores', path });
     const dataWithTransformations = await Promise.all(
@@ -37,7 +38,7 @@ const useEquipments = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['equipments_data'],
+    queryKey: ['equipments_data', user_site],
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -52,7 +53,7 @@ const useEquipments = () => {
   const fechRecordsExtinguisherData = async (extinguisherId: number) => {
     const resp = await crud.getListItemsv2(
       'registros_extintor',
-      `?$Select=Id,extintor_idId,bombeiro_id/Title,data_pesagem,novo,observacao,status&$expand=bombeiro_id&$Filter(extintor_idId eq ${extinguisherId})`,
+      `?$Select=Id,extintor_idId,bombeiro_id/Title,data_pesagem,novo,observacao,status,conforme,Created&$expand=bombeiro_id&$Filter(extintor_idId eq ${extinguisherId})`,
     );
     return resp.results || null;
   };
@@ -77,7 +78,34 @@ const useEquipments = () => {
             tipo_extintor: eqExtinguisherData.tipo_extintor.Title,
             history: recordsExtinguisherData,
           };
+        } else {
+          return [];
         }
+      },
+      staleTime: 5000 * 60, // 5 Minute
+      refetchOnWindowFocus: false,
+    });
+
+  const { data: eqExtinguisher, isLoading: isLoadingEqExtinguisher }: UseQueryResult<Array<EquipmentsExtinguisher>> =
+    useQuery({
+      queryKey: ['eq_extinguisher_data'],
+      queryFn: async () => {
+        const path = `?$Select=Id,cod_qrcode,predio/Title,pavimento/Title,local/Title,site/Title,cod_extintor,conforme&$expand=predio,site,pavimento,local&$Filter(site/Title eq '${user_site}')`;
+        const resp = await crud.getListItems('extintores', path);
+
+        const dataWithTransformations = await Promise.all(
+          resp.map(async (item: any) => {
+            return {
+              ...item,
+              local: item.local?.Title,
+              pavimento: item.pavimento?.Title,
+              site: item.site?.Title,
+              predio: item.predio?.Title,
+            };
+          }),
+        );
+
+        return dataWithTransformations;
       },
       staleTime: 5000 * 60, // 5 Minute
       refetchOnWindowFocus: false,
@@ -101,6 +129,8 @@ const useEquipments = () => {
     isLoadingMutateRemoveEquipment,
     eqExtinguisherModal,
     isLoadingEqExtinguisherModal,
+    eqExtinguisher,
+    isLoadingEqExtinguisher,
   };
 };
 

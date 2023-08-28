@@ -4,7 +4,7 @@ import { faEllipsisVertical, faEye, faPencil, faTrash } from '@fortawesome/free-
 
 interface IPopoverProps {
   onView: () => void;
-  onEdit: () => void;
+  onEdit?: () => void;
   onDelete: () => void;
 }
 
@@ -22,7 +22,7 @@ const PopoverTables = ({ onEdit, onDelete, onView }: IPopoverProps) => (
       >
         <div className="flex flex-col">
           <PopoverItem label="Visualizar" icon={<FontAwesomeIcon icon={faEye} />} onClick={onView} />
-          <PopoverItem label="Editar" icon={<FontAwesomeIcon icon={faPencil} />} onClick={onEdit} />
+          {onEdit && <PopoverItem label="Editar" icon={<FontAwesomeIcon icon={faPencil} />} onClick={onEdit} />}
           <PopoverItem label="Excluir" icon={<FontAwesomeIcon icon={faTrash} />} onClick={onDelete} />
         </div>
         <PopoverRadix.Arrow className="fill-white" />

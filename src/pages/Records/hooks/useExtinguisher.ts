@@ -9,8 +9,9 @@ const useExtinguisher = () => {
   const { crud } = sharepointContext();
   const params = useParams();
   const queryClient = useQueryClient();
+  const user_site = localStorage.getItem('user_site');
 
-  const path = `?$Select=*&$Orderby=Created desc`;
+  const path = `?$Select=*,site/Title&$expand=site&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
   const fetchExtinguisher = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'registros_extintor', path });
     const dataWithTransformations = await Promise.all(
@@ -21,7 +22,7 @@ const useExtinguisher = () => {
         );
         const extintorResponse = await crud.getListItemsv2(
           'extintores',
-          `?$Select=predio/Title,pavimento/Title,local/Title,cod_extintor,validade,conforme,cod_qrcode&$expand=predio,pavimento,local&$Filter(Id eq ${item.extintor_idId})`,
+          `?$Select=*,predio/Title,pavimento/Title,local/Title,cod_extintor,validade,conforme,cod_qrcode&$expand=predio,pavimento,local&$Filter(Id eq ${item.extintor_idId})`,
         );
 
         const bombeiro = bombeiroResponse.results[0] || null;
@@ -63,7 +64,7 @@ const useExtinguisher = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['extinguisher_data'],
+    queryKey: ['extinguisher_data', user_site],
     queryFn: fetchExtinguisher,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,

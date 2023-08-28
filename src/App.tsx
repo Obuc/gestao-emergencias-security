@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Records from './pages/Records';
 import Equipments from './pages/Equipments';
+import EquipmentsQRCode from './pages/Equipments/components/pages/EquipmentsQRCode';
 
 const App = () => {
   return (
@@ -14,6 +15,8 @@ const App = () => {
 
       <Route path="/equipments" element={<Equipments />} />
       <Route path="/equipments/:id" element={<Equipments />} />
+
+      <Route path="/generateqrcodes" element={<EquipmentsQRCode />} />
     </Routes>
   );
 };

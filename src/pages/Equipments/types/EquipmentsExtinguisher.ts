@@ -4,6 +4,7 @@ export interface EquipmentsExtinguisher {
   site?: string;
   pavimento?: string;
   local?: string;
+  predio?: string;
   cod_extintor: string;
   conforme: boolean;
 
@@ -40,5 +41,7 @@ export interface EqExtinguisherModal {
     novo: boolean;
     observacao: string;
     status?: string;
+    conforme: boolean;
+    Created: string;
   }>;
 }
