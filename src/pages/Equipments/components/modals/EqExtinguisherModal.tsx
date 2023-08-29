@@ -46,7 +46,7 @@ const EqExtinguisherModal = () => {
         .then((canvas) => {
           const imgData = canvas.toDataURL('image/png');
 
-          const pdf = new jsPDF('p', 'px', [595.28, canvas.height], false);
+          const pdf = new jsPDF('p', 'px', [1100, canvas.height], false);
           const imgProps = pdf.getImageProperties(imgData);
           const pdfWidth = pdf.internal.pageSize.getWidth();
           const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;

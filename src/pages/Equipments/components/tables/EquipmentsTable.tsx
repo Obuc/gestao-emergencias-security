@@ -32,7 +32,7 @@ const EquipmentsTable = () => {
 
   return (
     <>
-      <div className="min-[1100px]:max-h-[34rem] relative min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[41rem] w-full overflow-y-auto">
+      <div className="min-[1100px]:max-h-[38rem] min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[41rem] w-full overflow-y-auto">
         <InfiniteScroll
           pageStart={0}
           loadMore={() => fetchNextPage()}
@@ -53,7 +53,7 @@ const EquipmentsTable = () => {
               </Table.Tr>
             </Table.Thead>
 
-            <Table.Tbody>
+            <Table.Tbody className="max-h-[28rem] overflow-y-scroll">
               {equipments?.pages[0].data.value.length === 0 && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
                   <Table.Td colSpan={9} className="text-center text-primary">

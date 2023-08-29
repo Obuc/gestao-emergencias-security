@@ -70,7 +70,7 @@ export default {
         'bg-home': 'linear-gradient(43deg, #10384F 0%, rgba(255, 49, 98, 0.95) 100%);',
         'bg-home-2': 'linear-gradient(36deg, rgba(16, 56, 79, 0.19) 0%, rgba(250, 49, 98, 0.72) 100%);',
         'bg-file': 'linear-gradient(180deg, #D9EFFF 0%, #7EA5FF 100%);',
-        'bg-image': ''
+        'bg-qrcode': 'linear-gradient(215deg, rgba(5, 44, 66, 0.65) 0%, rgba(82, 45, 76, 0.60) 41.28%, rgba(255, 49, 98, 0.71) 100%), #00354F;'
       }
     },
   },
