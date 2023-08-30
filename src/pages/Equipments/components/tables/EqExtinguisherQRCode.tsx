@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Checkbox from '../../../../components/Checkbox';
 import { Table } from '../../../../components/Table';
-import useEquipments from '../../hooks/useEquipments';
+import useEquipments from '../../hooks/useEqExtinguisher';
 import { EquipmentsExtinguisher } from '../../types/EquipmentsExtinguisher';
 
 interface IEqExtinguisherQRCodeProps {

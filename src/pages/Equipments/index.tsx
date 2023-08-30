@@ -6,7 +6,8 @@ import { Button } from '../../components/Button';
 import { appContext } from '../../context/appContext';
 import Select, { SelectItem } from '../../components/Select';
 import GenerateQRCode from './components/modals/GenerateQRCode';
-import EquipmentsTable from './components/tables/EquipmentsTable';
+import EqExtinguisherTable from './components/tables/EqExtinguisherTable';
+import EqEqGovernanceValve from './components/tables/EqEqGovernanceValve';
 
 const Equipments = () => {
   const { formularios, isLoadingFormularios } = appContext();
@@ -60,7 +61,8 @@ const Equipments = () => {
             </div>
           </div>
 
-          {formValue === 'Extintores' && <EquipmentsTable />}
+          {formValue === 'Extintores' && <EqExtinguisherTable />}
+          {formValue === 'Válvulas de Governo' && <EqEqGovernanceValve />}
         </div>
       </div>
 

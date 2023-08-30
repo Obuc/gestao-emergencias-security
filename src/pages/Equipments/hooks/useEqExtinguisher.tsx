@@ -3,7 +3,7 @@ import { sharepointContext } from '../../../context/sharepointContext';
 import { useParams } from 'react-router-dom';
 import { EqExtinguisherModal, EquipmentsExtinguisher } from '../types/EquipmentsExtinguisher';
 
-const useEquipments = () => {
+const useEqExtinguisher = () => {
   const { crud } = sharepointContext();
   const params = useParams();
   const user_site = localStorage.getItem('user_site');
@@ -53,7 +53,7 @@ const useEquipments = () => {
   const fechRecordsExtinguisherData = async (extinguisherId: number) => {
     const resp = await crud.getListItemsv2(
       'registros_extintor',
-      `?$Select=Id,extintor_idId,bombeiro_id/Title,data_pesagem,novo,observacao,status,conforme,Created&$expand=bombeiro_id&$Filter(extintor_idId eq ${extinguisherId})`,
+      `?$Select=Id,extintor_id/Id,bombeiro_id/Title,data_pesagem,novo,observacao,status,conforme,Created&$expand=bombeiro_id,extintor_id&$Filter=(extintor_id/Id eq '${extinguisherId}')`,
     );
     return resp.results || null;
   };
@@ -134,4 +134,4 @@ const useEquipments = () => {
   };
 };
 
-export default useEquipments;
+export default useEqExtinguisher;

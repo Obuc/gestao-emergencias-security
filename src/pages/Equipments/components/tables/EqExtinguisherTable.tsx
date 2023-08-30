@@ -5,14 +5,14 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 import { Table } from '../../../../components/Table';
-import useEquipments from '../../hooks/useEquipments';
+import useEqExtinguisher from '../../hooks/useEqExtinguisher';
 import EqExtinguisherModal from '../modals/EqExtinguisherModal';
 import PopoverTables from '../../../../components/PopoverTables';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
 import { EquipmentsExtinguisher } from '../../types/EquipmentsExtinguisher';
 
-const EquipmentsTable = () => {
+const EqExtinguisherTable = () => {
   const {
     equipments,
     fetchNextPage,
@@ -21,7 +21,7 @@ const EquipmentsTable = () => {
     isLoading,
     isLoadingMutateRemoveEquipment,
     mutateRemoveEquipment,
-  } = useEquipments();
+  } = useEqExtinguisher();
 
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
@@ -43,8 +43,7 @@ const EquipmentsTable = () => {
           <Table.Root>
             <Table.Thead>
               <Table.Tr className="bg-[#FCFCFC]">
-                <Table.Th className="pl-8">Código</Table.Th>
-                <Table.Th>Site</Table.Th>
+                <Table.Th className="pl-8">Site</Table.Th>
                 <Table.Th>Pavimento</Table.Th>
                 <Table.Th>Local</Table.Th>
                 <Table.Th>N° Extintor</Table.Th>
@@ -89,8 +88,7 @@ const EquipmentsTable = () => {
                   (item: any) =>
                     item?.data?.value?.map((item: EquipmentsExtinguisher) => (
                       <Table.Tr key={item.Id}>
-                        <Table.Td className="pl-8">{item.cod_qrcode}</Table.Td>
-                        <Table.Td>{item?.site}</Table.Td>
+                        <Table.Td className="pl-8">{item?.site}</Table.Td>
                         <Table.Td>{item?.pavimento}</Table.Td>
                         <Table.Td>{item?.local}</Table.Td>
                         <Table.Td>{item.cod_extintor}</Table.Td>
@@ -132,4 +130,4 @@ const EquipmentsTable = () => {
   );
 };
 
-export default EquipmentsTable;
+export default EqExtinguisherTable;

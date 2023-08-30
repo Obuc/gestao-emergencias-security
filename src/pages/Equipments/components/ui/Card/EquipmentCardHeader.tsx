@@ -17,7 +17,10 @@ export const EquipmentCardHeader = ({ title, link }: IEquipmentCardHeaderProps) 
   return (
     <div className="flex w-full h-10 justify-between pb-4  border-b-[.0625rem] border-b-[#ADADAD]">
       <span className="text-xl h-10 font-semibold">{title}</span>
-      <div onClick={handleOpenLink} className="uppercase flex gap-2 justify-center items-center cursor-default">
+      <div
+        onClick={handleOpenLink}
+        className="uppercase flex gap-2 justify-center items-center cursor-default border-b border-b-transparent hover:border-b hover:border-b-black duration-200"
+      >
         Visualizar Registro <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
       </div>
     </div>
