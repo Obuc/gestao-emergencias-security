@@ -1,31 +1,28 @@
 import { useState } from 'react';
-import Checkbox from '../../../../components/Checkbox';
-import { Table } from '../../../../components/Table';
-import useEquipments from '../../hooks/useEqExtinguisher';
-import { EquipmentsExtinguisher } from '../../types/EquipmentsExtinguisher';
 
-interface IEqExtinguisherQRCodeProps {
-  selectedItems: EquipmentsExtinguisher[];
-  setSelectedItems: React.Dispatch<React.SetStateAction<EquipmentsExtinguisher[]>>;
+import { Table } from '../../../../components/Table';
+import Checkbox from '../../../../components/Checkbox';
+
+interface IEqExtinguisherQRCodeProps<T> {
+  data?: Array<T>;
+  isLoading: boolean;
 }
 
-const EqExtinguisherQRCode = ({ selectedItems, setSelectedItems }: IEqExtinguisherQRCodeProps) => {
-  const { eqExtinguisher } = useEquipments();
-
+const EqExtinguisherQRCode = <T extends Record<string, any>>({ data }: IEqExtinguisherQRCodeProps<T>) => {
   const [selectAll, setSelectAll] = useState(false);
-  // const [selectedItems, setSelectedItems] = useState<EquipmentsExtinguisher[]>([]);
+  const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<any[]>([]);
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
-    if (!selectAll && eqExtinguisher) {
-      setSelectedItems(eqExtinguisher);
+    if (!selectAll && data) {
+      setSelectedItemsExtinguisher(data);
     } else {
-      setSelectedItems([]);
+      setSelectedItemsExtinguisher([]);
     }
   };
 
-  const toggleSelectItem = (item: EquipmentsExtinguisher) => {
-    setSelectedItems((prevSelected) =>
+  const toggleSelectItem = (item: T) => {
+    setSelectedItemsExtinguisher((prevSelected) =>
       prevSelected.some((selectedItem) => selectedItem.Id === item.Id)
         ? prevSelected.filter((selectedItem) => selectedItem.Id !== item.Id)
         : [...prevSelected, item],
@@ -46,12 +43,12 @@ const EqExtinguisherQRCode = ({ selectedItems, setSelectedItems }: IEqExtinguish
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody className="block max-h-[28rem] overflow-y-scroll">
-        {eqExtinguisher &&
-          eqExtinguisher.map((item) => (
+        {data &&
+          data.map((item) => (
             <Table.Tr key={item.Id}>
               <Table.Td className="pl-8">
                 <Checkbox
-                  checked={selectedItems.some((selectedItem) => selectedItem.Id === item.Id)}
+                  checked={selectedItemsExtinguisher.some((selectedItem) => selectedItem.Id === item.Id)}
                   onClick={() => toggleSelectItem(item)}
                 />
               </Table.Td>

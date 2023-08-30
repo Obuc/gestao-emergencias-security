@@ -7,16 +7,18 @@ import { appContext } from '../../context/appContext';
 import useExtinguisher from './hooks/useExtinguisher';
 import Select, { SelectItem } from '../../components/Select';
 import ExtinguisherTable from './components/tables/ExtinguisherTable';
+import GovernanceValveTable from './components/tables/GovernanceValveTable';
 
 const Records = () => {
   const { isLoading } = useExtinguisher();
   const { formularios, isLoadingFormularios } = appContext();
   const localSite = localStorage.getItem('user_site');
+  const equipments_value = localStorage.getItem('equipments_value');
 
   const filteredForms =
     formularios && formularios.filter((form) => form.todos_sites === true || form.site.Title === localSite);
 
-  const [formValue, setFormValue] = useState<string>('Extintores');
+  const [formValue, setFormValue] = useState<string>(equipments_value ?? 'Extintores');
 
   return (
     <LayoutBase showMenu>
@@ -36,6 +38,7 @@ const Records = () => {
                 isLoading={isLoadingFormularios}
                 onValueChange={(value) => {
                   setFormValue(value);
+                  localStorage.setItem('equipments_value', value);
                 }}
               >
                 {filteredForms?.map((form) => (
@@ -46,13 +49,14 @@ const Records = () => {
               </Select>
             </div>
 
-            <Button.Root className="w-[14.0625rem] h-10" disabled={isLoading}>
+            <Button.Root className="min-w-[14.0625rem] h-10" disabled={isLoading}>
               <Button.Label>Exportar Planilha</Button.Label>
               <Button.Icon icon={faDownload} />
             </Button.Root>
           </div>
 
           {formValue === 'Extintores' && <ExtinguisherTable />}
+          {formValue === 'Válvulas de Governo' && <GovernanceValveTable />}
         </div>
         {/* <div className="bg-white h-16 flex justify-end items-center px-10 py-5">
           <Pagination setPage={setPage} pageCount={pageCount} page={page} />

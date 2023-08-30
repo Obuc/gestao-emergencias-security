@@ -7,6 +7,7 @@ const useEqExtinguisher = () => {
   const { crud } = sharepointContext();
   const params = useParams();
   const user_site = localStorage.getItem('user_site');
+  const equipments_value = localStorage.getItem('equipments_value');
 
   const path = `?$Select=Id,cod_qrcode,cod_extintor,conforme,site/Title,pavimento/Title,local/Title&$expand=site,pavimento,local&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
@@ -62,7 +63,7 @@ const useEqExtinguisher = () => {
     useQuery({
       queryKey: params.id ? ['eq_extinguisher_data_modal', params.id] : ['eq_extinguisher_data_modal'],
       queryFn: async () => {
-        if (params.id) {
+        if (params.id && equipments_value === 'Extintores') {
           const eqExtinguisherData = await fetchEqExtinguisherData();
 
           const recordsExtinguisherData =
@@ -113,9 +114,7 @@ const useEqExtinguisher = () => {
 
   const { mutateAsync: mutateRemoveEquipment, isLoading: isLoadingMutateRemoveEquipment } = useMutation({
     mutationFn: async (itemId: number) => {
-      if (itemId) {
-        await crud.deleteItemList('Extintores', itemId);
-      }
+      await crud.deleteItemList('Extintores', itemId);
     },
   });
 

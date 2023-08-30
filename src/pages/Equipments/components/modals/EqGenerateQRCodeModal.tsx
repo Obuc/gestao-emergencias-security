@@ -1,47 +1,39 @@
-import jsPDF from 'jspdf';
-import QRCode from 'qrcode.react';
-import html2canvas from 'html2canvas';
-import { useRef, useState } from 'react';
 import { faExpand } from '@fortawesome/free-solid-svg-icons';
 
 import Modal from '../../../../components/Modal';
 import { Button } from '../../../../components/Button';
-import EqExtinguisherQRCode from '../tables/EqExtinguisherQRCode';
 import { ButtonIcon } from '../../../../components/Button/ButtonIcon';
-import BayerLogoBlack from '../../../../components/Icons/BayerLogoBlack';
-import { EquipmentsExtinguisher } from '../../types/EquipmentsExtinguisher';
 
-interface IGenerateQRCodeProps {
+interface IEqGenerateQRCodeModalProps {
   open: boolean | null;
   onOpenChange: () => void;
+  children: React.ReactNode;
 }
 
-const GenerateQRCode = ({ open, onOpenChange }: IGenerateQRCodeProps) => {
+const EqGenerateQRCodeModal = ({ open, onOpenChange, children }: IEqGenerateQRCodeModalProps) => {
+  // const pdfContainerRef = useRef(null);
   const equipments_value = localStorage.getItem('equipments_value');
-  const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<EquipmentsExtinguisher[]>([]);
 
-  const pdfContainerRef = useRef(null);
-
-  const generateQrCodePdf = async () => {
-    if (pdfContainerRef.current) {
-      await html2canvas(pdfContainerRef.current, {
-        useCORS: true,
-        scale: 5,
-      }).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'px', [595.28, canvas.height], false);
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`teste.pdf`);
-      });
-    }
-  };
+  // const generateQrCodePdf = async () => {
+  //   if (pdfContainerRef.current) {
+  //     await html2canvas(pdfContainerRef.current, {
+  //       useCORS: true,
+  //       scale: 5,
+  //     }).then((canvas) => {
+  //       const imgData = canvas.toDataURL('image/png');
+  //       const pdf = new jsPDF('p', 'px', [595.28, canvas.height], false);
+  //       const imgProps = pdf.getImageProperties(imgData);
+  //       const pdfWidth = pdf.internal.pageSize.getWidth();
+  //       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+  //       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+  //       pdf.save(`teste.pdf`);
+  //     });
+  //   }
+  // };
 
   const handleOnOpenChange = () => {
     onOpenChange();
-    setSelectedItemsExtinguisher([]);
+    // setSelectedItems([]);
   };
 
   return (
@@ -52,15 +44,12 @@ const GenerateQRCode = ({ open, onOpenChange }: IGenerateQRCodeProps) => {
       title={`Gerar QRCodes: ${equipments_value}`}
     >
       <div className="flex flex-col gap-2 px-8 py-6 text-primary">
-        <span className="text-xl py-4">Selecione abaixo os equipamentos que deseja gerar os QRCodes.</span>
+        <span className="text-lg py-4">Selecione abaixo os equipamentos que deseja gerar os QRCodes.</span>
 
-        <EqExtinguisherQRCode
-          selectedItems={selectedItemsExtinguisher}
-          setSelectedItems={setSelectedItemsExtinguisher}
-        />
+        {children}
 
-        <div className="w-full grid grid-cols-2 justify-center gap-4" ref={pdfContainerRef}>
-          {selectedItemsExtinguisher.map((qrCodeValue) => {
+        {/* <div className="w-full grid grid-cols-2 justify-center gap-4" ref={pdfContainerRef}>
+          {selectedItems.map((qrCodeValue) => {
             const value = `Extintor;${qrCodeValue?.site};${qrCodeValue?.cod_qrcode}`;
 
             return (
@@ -80,14 +69,14 @@ const GenerateQRCode = ({ open, onOpenChange }: IGenerateQRCodeProps) => {
               </div>
             );
           })}
-        </div>
+        </div> */}
 
         <div className="flex w-full gap-2 pt-14 justify-end items-center">
           <Button.Root className="w-[10rem] h-10" onClick={onOpenChange}>
             <Button.Label>Cancelar</Button.Label>
           </Button.Root>
 
-          <Button.Root className="w-[14.0625rem] h-10" fill onClick={generateQrCodePdf}>
+          <Button.Root className="w-[14.0625rem] h-10" fill>
             <Button.Label>Gerar QRCodes</Button.Label>
             <ButtonIcon icon={faExpand} />
           </Button.Root>
@@ -97,4 +86,4 @@ const GenerateQRCode = ({ open, onOpenChange }: IGenerateQRCodeProps) => {
   );
 };
 
-export default GenerateQRCode;
+export default EqGenerateQRCodeModal;

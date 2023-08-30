@@ -2,6 +2,7 @@ import { VariantProps, tv } from 'tailwind-variants';
 
 interface IEquipmentCardRootProps {
   children: React.ReactNode;
+  isLoading?: boolean;
 }
 
 const cardRoot = tv({

@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
-import { EqGovernanceValveModal } from '../types/EquipmentsGovernanceValve';
+import { EqGovernanceValveModal, EquipmentsGovernanceValve } from '../types/EquipmentsGovernanceValve';
 
 const useEqGovernanceValve = () => {
   const { crud } = sharepointContext();
@@ -34,13 +34,13 @@ const useEqGovernanceValve = () => {
   };
 
   const {
-    data: eqGovernanceValve,
+    data: governanceValve,
     fetchNextPage,
     hasNextPage,
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['eq_governance_valve_data', user_site],
+    queryKey: ['governance_valve_data', user_site],
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -67,7 +67,7 @@ const useEqGovernanceValve = () => {
   }: UseQueryResult<EqGovernanceValveModal> = useQuery({
     queryKey: params.id ? ['eq_governance_valve_modal', params.id] : ['eq_governance_valve_modal'],
     queryFn: async () => {
-      if (params.id) {
+      if (params.id && equipments_value === 'Válvulas de Governo') {
         const eqGovernanceValveData = await fetchEqGovernanceValveData();
 
         const recordsGovernanceValveData =
@@ -89,6 +89,35 @@ const useEqGovernanceValve = () => {
     refetchOnWindowFocus: false,
   });
 
+  const {
+    data: eqGovernanceValve,
+    isLoading: isLoadingEqGovernanceValve,
+  }: UseQueryResult<Array<EquipmentsGovernanceValve>> = useQuery({
+    queryKey: ['eq_governance_valve_data'],
+    queryFn: async () => {
+
+      const path = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,cod_equipamento,conforme&$expand=site,predio,pavimento,local,tipo_equipamento&$Filter=((tipo_equipamento/Title eq '${equipments_value}') and (site/Title eq '${user_site}'))`;
+
+      const resp = await crud.getListItems('equipamentos_diversos', path);
+
+      const dataWithTransformations = await Promise.all(
+        resp.map(async (item: any) => {
+          return {
+            ...item,
+            local: item.local?.Title,
+            pavimento: item.pavimento?.Title,
+            site: item.site?.Title,
+            predio: item.predio?.Title,
+          };
+        }),
+      );
+
+      return dataWithTransformations;
+    },
+    staleTime: 5000 * 60, // 5 Minute
+    refetchOnWindowFocus: false,
+  });
+
   const { mutateAsync: mutateRemoveEqGovernanceValve, isLoading: isLoadingMutateRemoveEqGovernanceValve } = useMutation(
     {
       mutationFn: async (itemId: number) => {
@@ -100,7 +129,7 @@ const useEqGovernanceValve = () => {
   );
 
   return {
-    eqGovernanceValve,
+    governanceValve,
     fetchNextPage,
     hasNextPage,
     isLoading,
@@ -111,6 +140,9 @@ const useEqGovernanceValve = () => {
 
     mutateRemoveEqGovernanceValve,
     isLoadingMutateRemoveEqGovernanceValve,
+
+    eqGovernanceValve,
+    isLoadingEqGovernanceValve,
   };
 };
 

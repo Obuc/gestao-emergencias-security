@@ -7,7 +7,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { faExpand } from '@fortawesome/free-solid-svg-icons';
 
+import CardEmpy from '../ui/CardEmpy';
 import { EquipmentCard } from '../ui/Card';
+import CardSkeleton from '../ui/CardSkeleton';
 import Modal from '../../../../components/Modal';
 import { Button } from '../../../../components/Button';
 import TextField from '../../../../components/TextField';
@@ -77,7 +79,7 @@ const EqGovernanceValveModal = () => {
               id="cod_equipamento"
               name="cod_equipamento"
               label="N° Válvula"
-              width="w-[8rem]"
+              width="w-[10rem]"
               value={eqEqGovernanceValveModal?.cod_equipamento ?? ''}
               isLoading={isLoadingEqEqGovernanceValveModal}
             />
@@ -155,6 +157,9 @@ const EqGovernanceValveModal = () => {
         </div>
 
         <div className="py-4 px-8 gap-2">
+          {!eqEqGovernanceValveModal?.history?.length && !isLoadingEqEqGovernanceValveModal && <CardEmpy />}
+          {isLoadingEqEqGovernanceValveModal && <CardSkeleton />}
+
           {eqEqGovernanceValveModal?.history &&
             eqEqGovernanceValveModal?.history.map((item) => {
               const cardVariant = item.conforme ? 'new' : 'noncompliant';

@@ -287,6 +287,7 @@ class CrudSharepoint {
       const currentUserUrl = `${this.baseUrl}/_api/web/currentuser`;
 
       const headers = {
+        'Content-Type': 'application/json;odata=verbose',
         Accept: 'application/json;odata=verbose',
       };
 

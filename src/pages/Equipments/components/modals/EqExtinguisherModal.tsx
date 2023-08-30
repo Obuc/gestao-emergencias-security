@@ -14,6 +14,8 @@ import { Button } from '../../../../components/Button';
 import TextField from '../../../../components/TextField';
 import BXOLogo from '../../../../components/Icons/BXOLogo';
 import SPOLogo from '../../../../components/Icons/SPOLogo';
+import CardSkeleton from '../ui/CardSkeleton';
+import CardEmpy from '../ui/CardEmpy';
 
 const EqExtinguisherModal = () => {
   const params = useParams();
@@ -172,6 +174,9 @@ const EqExtinguisherModal = () => {
         </div>
 
         <div className="py-4 px-8">
+          {!eqExtinguisherModal?.history?.length && !isLoadingEqExtinguisherModal && <CardEmpy />}
+          {isLoadingEqExtinguisherModal && <CardSkeleton />}
+
           {eqExtinguisherModal?.history &&
             eqExtinguisherModal?.history.map((item) => {
               const cardVariant =

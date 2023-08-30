@@ -15,7 +15,7 @@ export const EquipmentCardHeader = ({ title, link }: IEquipmentCardHeaderProps) 
   };
 
   return (
-    <div className="flex w-full h-10 justify-between pb-4  border-b-[.0625rem] border-b-[#ADADAD]">
+    <div className="flex w-full h-10 justify-between pb-4  border-b-[.0625rem] border-b-[#ADADAD] ">
       <span className="text-xl h-10 font-semibold">{title}</span>
       <div
         onClick={handleOpenLink}
