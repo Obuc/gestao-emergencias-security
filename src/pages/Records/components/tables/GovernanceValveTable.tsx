@@ -12,6 +12,7 @@ import useGovernanceValve from '../../hooks/useGovernanceValve';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PopoverTables from '../../../../components/PopoverTables';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
+import GovernanceValveModal from '../modals/GovernanceValveModal';
 
 const GovernanceValveTable = () => {
   const {
@@ -102,7 +103,7 @@ const GovernanceValveTable = () => {
                           : format(parseISO(item.Created), 'dd MMM yyyy', { locale: ptBR })}
                       </Table.Td>
                       <Table.Td>
-                        {item.valvula.conforme ? (
+                        {item.conforme ? (
                           <div className="flex justify-center items-center gap-2 px-4 py-1 rounded-full bg-[#EBFFE2] max-w-[8.4375rem]">
                             <div className="w-3 h-3 rounded-full bg-[#70EC36]" />
                             <span>Conforme</span>
@@ -129,7 +130,7 @@ const GovernanceValveTable = () => {
         </InfiniteScroll>
       </div>
 
-      {/* <ExtinguisherModal /> */}
+      <GovernanceValveModal />
 
       {removeItem !== null && (
         <RemoveItem

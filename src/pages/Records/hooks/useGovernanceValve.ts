@@ -2,8 +2,8 @@ import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { RespostaExtintor } from '../types/Extinguisher';
+import { GovernanceValve } from '../types/GovernanceValve';
 import { sharepointContext } from '../../../context/sharepointContext';
-import { ExtinguisherDataModal } from '../types/ExtinguisherModalTypes';
 
 const useGovernanceValve = () => {
   const { crud } = sharepointContext();
@@ -68,29 +68,24 @@ const useGovernanceValve = () => {
     staleTime: 1000 * 60,
   });
 
-  const fetchExtinguisherData = async () => {
-    const pathModal = `?$Select=*&$filter=Id eq ${params.id}`;
-    const resp = await crud.getListItemsv2('registros_extintor', pathModal);
+  const fetchGovernaceValveModalData = async () => {
+    const pathModal = `?$Select=*,bombeiro_id/Title&$expand=bombeiro_id&$filter=Id eq ${params.id}`;
+    const resp = await crud.getListItemsv2('registros_valvula_governo', pathModal);
     return resp.results[0];
   };
 
-  const fetchBombeiroData = async (bombeiroId: number) => {
-    const bombeiroResponse = await crud.getListItemsv2('bombeiros', `?$Select=Title&$Filter(Id eq ${bombeiroId})`);
-    return bombeiroResponse.results[0] || null;
-  };
-
-  const fetchExtintorData = async (extintorId: number) => {
-    const extintorResponse = await crud.getListItemsv2(
-      'extintores',
-      `?$Select=massa/Title,predio/Title,pavimento/Title,local/Title,site/Title,tipo_extintor/Title,cod_extintor,validade,conforme,massa,cod_qrcode&$expand=massa,predio,pavimento,local,site,tipo_extintor&$Filter(Id eq ${extintorId})`,
+  const fetchGovernaceValveData = async (extintorId: number) => {
+    const response = await crud.getListItemsv2(
+      'equipamentos_diversos',
+      `?$Select=Id,tipo_equipamento/Title,predio/Title,site/Title,pavimento/Title,local/Title,cod_equipamento,conforme,cod_qrcode,excluido&$expand=predio,pavimento,local,tipo_equipamento,site&$Filter=((Id eq ${extintorId}) and (tipo_equipamento/Title eq '${equipments_value}'))`,
     );
-    return extintorResponse.results[0] || null;
+    return response.results[0] || null;
   };
 
-  const fetchRespostasExtintor = async () => {
+  const fetchRespostasValvulas = async () => {
     const respostasExtintorResponse = await crud.getListItemsv2(
-      'respostas_extintor',
-      `?$Select=Id,extintor_idId,pergunta_idId,registro_idId,resposta,pergunta_id/Title,pergunta_id/categoria&$expand=pergunta_id&$filter=(registro_idId eq ${params.id})`,
+      'respostas_valvula_governo',
+      `?$Select=Id,valvula_idId,pergunta_idId,registro_idId,resposta,pergunta_id/Title,pergunta_id/categoria&$expand=pergunta_id&$filter=(registro_idId eq ${params.id})`,
     );
 
     const respostasPorCategoria: Record<string, Array<RespostaExtintor>> = {};
@@ -105,36 +100,32 @@ const useGovernanceValve = () => {
     return respostasPorCategoria;
   };
 
-  const { data: extinguisherModal, isLoading: isLoadingExtinguisherModal } = useQuery({
-    queryKey: params.id ? ['extinguisher_data_modal', params.id] : ['extinguisher_data_modal'],
+  const { data: governaceValveModal, isLoading: isLoadingGovernaceValveModal } = useQuery({
+    queryKey: params.id ? ['governace_valve_modal', params.id] : ['governace_valve_modal'],
     queryFn: async () => {
       if (params.id) {
-        const extinguisherData = await fetchExtinguisherData();
-        const bombeiro = await fetchBombeiroData(extinguisherData.bombeiro_idId);
-        const extintor = await fetchExtintorData(extinguisherData.extintor_idId);
-        const respostas = await fetchRespostasExtintor();
+        const governaceValveModalData = await fetchGovernaceValveModalData();
+        const valvula = await fetchGovernaceValveData(governaceValveModalData.valvula_idId);
+        const respostas = await fetchRespostasValvulas();
 
-        const bombeiroValue = bombeiro ? bombeiro.Title : null;
-
-        const extintorValues = extintor
+        const valvulaValues = valvula
           ? {
-              site: extintor.site.Title,
-              predio: extintor.predio.Title,
-              pavimento: extintor.pavimento.Title,
-              local: extintor.local.Title,
-              cod_extintor: extintor.cod_extintor,
-              validade: extintor.validade,
-              conforme: extintor.conforme,
-              massa: extintor.massa.Title,
-              cod_qrcode: extintor.cod_qrcode,
-              tipo_extintor: extintor.tipo_extintor.Title,
+              Id: valvula.Id,
+              site: valvula.site.Title,
+              predio: valvula.predio.Title,
+              pavimento: valvula.pavimento.Title,
+              local: valvula.local.Title,
+              validade: valvula.validade,
+              conforme: valvula.conforme,
+              cod_qrcode: valvula.cod_qrcode,
+              cod_equipamento: valvula.cod_equipamento,
             }
           : null;
 
         return {
-          ...extinguisherData,
-          bombeiro: bombeiroValue,
-          extintor: extintorValues,
+          ...governaceValveModalData,
+          bombeiro: governaceValveModalData.bombeiro_id.Title,
+          extintor: valvulaValues,
           respostas: respostas,
         };
       } else {
@@ -153,30 +144,58 @@ const useGovernanceValve = () => {
     },
   });
 
-  const { mutateAsync: mutateEditExtinguisher, isLoading: IsLoadingMutateEditExtinguisher } = useMutation({
-    mutationFn: async (values: ExtinguisherDataModal) => {
-      if (values.Id && values.respostas && extinguisherModal.respostas) {
+  const { mutateAsync: mutateEditGovernanceValve, isLoading: IsLoadingMutateEditGovernanceValve } = useMutation({
+    mutationFn: async (values: GovernanceValve) => {
+      const idRegistrosValvulaGoverno = values.Id;
+      const idValvulaGoverno = +values.valvula.Id;
+
+      let hasAccording = [];
+
+      if (values.Id && values.respostas && governaceValveModal.respostas) {
         for (const categoria in values.respostas) {
           const perguntasRespostas = values.respostas[categoria];
-          const perguntasRespostasOriginais = extinguisherModal.respostas[categoria];
+          const perguntasRespostasOriginais = governaceValveModal.respostas[categoria];
 
           for (let i = 0; i < perguntasRespostas.length; i++) {
             const item = perguntasRespostas[i];
             const itemOriginal = perguntasRespostasOriginais[i];
+
+            hasAccording.push(item.resposta);
 
             if (item.resposta !== itemOriginal.resposta) {
               const postData = {
                 resposta: item.resposta,
               };
 
-              await crud.updateItemList('respostas_extintor', item.Id, postData);
+              await crud.updateItemList('respostas_valvula_governo', item.Id, postData);
             }
           }
+        }
+
+        const hasFalseAccording = hasAccording.some((item) => item === false);
+
+        if (hasFalseAccording) {
+          await crud.updateItemList('registros_valvula_governo', idRegistrosValvulaGoverno, {
+            conforme: false,
+          });
+          await crud.updateItemList('equipamentos_diversos', idValvulaGoverno, {
+            conforme: false,
+          });
+        }
+
+        if (!hasFalseAccording) {
+          await crud.updateItemList('registros_valvula_governo', idRegistrosValvulaGoverno, {
+            conforme: true,
+          });
+          await crud.updateItemList('equipamentos_diversos', idValvulaGoverno, {
+            conforme: true,
+          });
         }
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['extinguisher_data_modal', params.id] });
+      queryClient.invalidateQueries({ queryKey: ['governace_valve_modal', params.id] });
+      queryClient.invalidateQueries({ queryKey: ['governace_valve_data', user_site] });
     },
   });
 
@@ -186,12 +205,15 @@ const useGovernanceValve = () => {
     hasNextPage,
     isLoading,
     isError,
-    extinguisherModal,
-    isLoadingExtinguisherModal,
+
+    governaceValveModal,
+    isLoadingGovernaceValveModal,
+
     mutateRemoveExtinguisher,
     IsLoadingMutateRemoveExtinguisher,
-    mutateEditExtinguisher,
-    IsLoadingMutateEditExtinguisher,
+
+    mutateEditGovernanceValve,
+    IsLoadingMutateEditGovernanceValve,
   };
 };
 

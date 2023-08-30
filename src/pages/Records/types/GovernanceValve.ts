@@ -4,6 +4,7 @@ export interface GovernanceValve {
   Id: number;
   Title: null;
   bombeiro: string;
+  conforme: boolean;
   valvula: {
     Id: string;
     site: string;
@@ -14,11 +15,11 @@ export interface GovernanceValve {
     conforme: boolean;
     cod_qrcode: string;
   };
-  respostas?: Record<string, Array<RespostaExtintor>>;
+  respostas?: Record<string, Array<RespostaValvulas>>;
   observacao: string;
 }
 
-export interface RespostaExtintor {
+export interface RespostaValvulas {
   Id: number;
   extintor_idId: number;
   pergunta_id: PerguntaExtintor;

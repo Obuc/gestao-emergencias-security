@@ -186,8 +186,12 @@ class CrudSharepoint {
         this.digestToken = await this.getDigest();
       }
 
-      // const listName = `${list[0].toUpperCase()}${list.substring(1)}`;
-      const listName = `${list.charAt(0).toUpperCase()}${list.substring(1)}ListItem`.replace('_', '_x005f_');
+      const formattedListName = list
+        .split('_')
+        .map((word, index) => (index === 0 ? word.charAt(0).toUpperCase() + word.substring(1) : word.toLowerCase()))
+        .join('_x005f_');
+
+      const listName = `${formattedListName}ListItem`;
       const url = `${this.baseUrl}/_api/web/lists/GetByTitle('${list}')/items(${id})`;
 
       const headers = {

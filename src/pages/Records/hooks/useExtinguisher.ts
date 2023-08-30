@@ -1,15 +1,15 @@
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { RespostaExtintor } from '../types/Extinguisher';
+import { ExtinguisherDataModal, RespostaExtintor } from '../types/Extinguisher';
 import { sharepointContext } from '../../../context/sharepointContext';
-import { ExtinguisherDataModal } from '../types/ExtinguisherModalTypes';
 
 const useExtinguisher = () => {
   const { crud } = sharepointContext();
   const params = useParams();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
+  const equipments_value = localStorage.getItem('equipments_value');
 
   const path = `?$Select=*,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
   const fetchExtinguisher = async ({ pageParam }: { pageParam?: string }) => {
@@ -19,13 +19,14 @@ const useExtinguisher = () => {
       response.data.value.map(async (item: any) => {
         const extintorResponse = await crud.getListItemsv2(
           'extintores',
-          `?$Select=*,predio/Title,pavimento/Title,local/Title,cod_extintor,validade,conforme,cod_qrcode&$expand=predio,pavimento,local&$Filter(Id eq ${item.extintor_idId})`,
+          `?$Select=*,Id,predio/Title,pavimento/Title,local/Title,cod_extintor,validade,conforme,cod_qrcode&$expand=predio,pavimento,local&$Filter=(Id eq ${item.extintor_idId})`,
         );
 
         const extintor = extintorResponse.results[0] || null;
 
         const extintorValues = extintor
           ? {
+              Id: extintor.Id,
               predio: extintor.predio.Title,
               pavimento: extintor.pavimento.Title,
               local: extintor.local.Title,
@@ -105,7 +106,7 @@ const useExtinguisher = () => {
   const { data: extinguisherModal, isLoading: isLoadingExtinguisherModal } = useQuery({
     queryKey: params.id ? ['extinguisher_data_modal', params.id] : ['extinguisher_data_modal'],
     queryFn: async () => {
-      if (params.id) {
+      if (params.id && equipments_value === 'Extintor') {
         const extinguisherData = await fetchExtinguisherData();
         const bombeiro = await fetchBombeiroData(extinguisherData.bombeiro_idId);
         const extintor = await fetchExtintorData(extinguisherData.extintor_idId);
@@ -142,73 +143,6 @@ const useExtinguisher = () => {
     refetchOnWindowFocus: false,
   });
 
-  // const { data: extinguisherModal, isLoading: isLoadingExtinguisherModal }: UseQueryResult<Extinguisher> = useQuery({
-  //   queryKey: params.id ? ['extinguisher_data_modal', params.id] : ['extinguisher_data_modal'],
-  //   queryFn: async () => {
-  //     if (params.id) {
-  //       const pathModal = `?$Select=*&$filter=Id eq ${params.id}`;
-
-  //       const resp = await crud.getListItemsv2('registros_extintor', pathModal);
-
-  //       const bombeiroResponse = await crud.getListItemsv2(
-  //         'bombeiros',
-  //         `?$Select=Title&$Filter(Id eq ${resp.results[0].bombeiro_idId})`,
-  //       );
-  //       const extintorResponse = await crud.getListItemsv2(
-  //         'extintores',
-  //         `?$Select=predio/Title,pavimento/Title,local/Title,site/Title,tipo_extintor/Title,cod_extintor,validade,conforme,massa,cod_qrcode&$expand=predio,pavimento,local,site,tipo_extintor&$Filter(Id eq ${resp.results[0].extintor_idId})`,
-  //       );
-
-  //       const respostasExtintorResponse = await crud.getListItemsv2(
-  //         'respostas_extintor',
-  //         `?$Select=extintor_idId,pergunta_idId,registro_idId,resposta,pergunta_id/Title,pergunta_id/categoria&$expand=pergunta_id&$filter=(registro_idId eq ${params.id})`,
-  //       );
-
-  //       const respostasPorCategoria: Record<string, Array<RespostaExtintor>> = {};
-  //       respostasExtintorResponse.results.forEach((resposta: any) => {
-  //         const categoria = resposta.pergunta_id.categoria;
-
-  //         if (!respostasPorCategoria[categoria]) {
-  //           respostasPorCategoria[categoria] = [];
-  //         }
-
-  //         respostasPorCategoria[categoria].push(resposta);
-  //       });
-
-  //       const bombeiro = bombeiroResponse.results[0] || null;
-  //       const extintor = extintorResponse.results[0] || null;
-
-  //       const bombeiroValue = bombeiro ? bombeiro.Title : null;
-
-  //       const extintorValues = extintor
-  //         ? {
-  //             site: extintor.site.Title,
-  //             predio: extintor.predio.Title,
-  //             pavimento: extintor.pavimento.Title,
-  //             local: extintor.local.Title,
-  //             cod_extintor: extintor.cod_extintor,
-  //             validade: extintor.validade,
-  //             conforme: extintor.conforme,
-  //             massa: extintor.massa,
-  //             cod_qrcode: extintor.cod_qrcode,
-  //             tipo_extintor: extintor.tipo_extintor.Title,
-  //           }
-  //         : null;
-
-  //       return {
-  //         ...resp.results[0],
-  //         bombeiro: bombeiroValue,
-  //         extintor: extintorValues,
-  //         respostas: respostasPorCategoria,
-  //       };
-  //     } else {
-  //       return [];
-  //     }
-  //   },
-  //   staleTime: 5000 * 60, // 5 Minute
-  //   refetchOnWindowFocus: false,
-  // });
-
   const { mutateAsync: mutateRemoveExtinguisher, isLoading: IsLoadingMutateRemoveExtinguisher } = useMutation({
     mutationFn: async (itemId: number) => {
       if (itemId) {
@@ -219,6 +153,13 @@ const useExtinguisher = () => {
 
   const { mutateAsync: mutateEditExtinguisher, isLoading: IsLoadingMutateEditExtinguisher } = useMutation({
     mutationFn: async (values: ExtinguisherDataModal) => {
+      const idRegistrosExtintor = values.Id;
+      const idExtintor = +values.extintor.Id;
+
+      let hasAccording = [];
+
+      console.log(values);
+
       if (values.Id && values.respostas && extinguisherModal.respostas) {
         for (const categoria in values.respostas) {
           const perguntasRespostas = values.respostas[categoria];
@@ -229,6 +170,8 @@ const useExtinguisher = () => {
             const itemOriginal = perguntasRespostasOriginais[i];
 
             if (item.resposta !== itemOriginal.resposta) {
+              hasAccording.push(item.resposta);
+
               const postData = {
                 resposta: item.resposta,
               };
@@ -238,40 +181,31 @@ const useExtinguisher = () => {
           }
         }
       }
+
+      const hasFalseAccording = hasAccording.some((item) => item === false);
+
+      if (hasFalseAccording) {
+        await crud.updateItemList('registros_extintor', idRegistrosExtintor, {
+          conforme: false,
+        });
+        await crud.updateItemList('extintores', idExtintor, {
+          conforme: false,
+        });
+      }
+
+      if (!hasFalseAccording) {
+        await crud.updateItemList('registros_extintor', idRegistrosExtintor, {
+          conforme: true,
+        });
+        await crud.updateItemList('extintores', idExtintor, {
+          conforme: true,
+        });
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['extinguisher_data_modal', params.id] });
     },
   });
-
-  // const { data: perguntasExtintor }: UseQueryResult<Array<PerguntasExtintor>> = useQuery({
-  //   queryKey: params.id ? ['respostas_extintor', params.id] : ['respostas_extintor'],
-  //   queryFn: async () => {
-  //     if (!params.id) return [];
-
-  //     const resp = await crud.getListItemsv2(
-  //       'respostas_extintor',
-  //       `?$Select=extintor_idId,pergunta_idId,registro_idId,resposta&$filter=(registro_idId eq ${params.id})`,
-  //     );
-
-  //     const perguntaResponse = await crud.getListItemsv2('perguntas_extintor', `?$Select=Title,categoria,Id`);
-
-  //     const perguntasMap = perguntaResponse.results.reduce((map: any, pergunta: any) => {
-  //       map[pergunta.Id] = pergunta;
-  //       return map;
-  //     }, {});
-
-  //     const perguntasExtintorComPerguntas = resp.results.map((resposta: any) => {
-  //       const pergunta = perguntasMap[resposta.pergunta_idId];
-  //       return {
-  //         ...resposta,
-  //         pergunta,
-  //       };
-  //     });
-
-  //     return perguntasExtintorComPerguntas;
-  //   },
-  // });
 
   return {
     extinguisher,
