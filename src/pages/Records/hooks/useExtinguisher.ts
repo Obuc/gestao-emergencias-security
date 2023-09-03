@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { ExtinguisherDataModal, RespostaExtintor } from '../types/Extinguisher';
 import { sharepointContext } from '../../../context/sharepointContext';
+import { ExtinguisherDataModal, RespostaExtintor } from '../types/Extinguisher';
 
 const useExtinguisher = () => {
   const { crud } = sharepointContext();
@@ -106,7 +106,7 @@ const useExtinguisher = () => {
   const { data: extinguisherModal, isLoading: isLoadingExtinguisherModal } = useQuery({
     queryKey: params.id ? ['extinguisher_data_modal', params.id] : ['extinguisher_data_modal'],
     queryFn: async () => {
-      if (params.id && equipments_value === 'Extintor') {
+      if (params.id && equipments_value === 'Extintores') {
         const extinguisherData = await fetchExtinguisherData();
         const bombeiro = await fetchBombeiroData(extinguisherData.bombeiro_idId);
         const extintor = await fetchExtintorData(extinguisherData.extintor_idId);
@@ -158,8 +158,6 @@ const useExtinguisher = () => {
 
       let hasAccording = [];
 
-      console.log(values);
-
       if (values.Id && values.respostas && extinguisherModal.respostas) {
         for (const categoria in values.respostas) {
           const perguntasRespostas = values.respostas[categoria];
@@ -204,6 +202,7 @@ const useExtinguisher = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['extinguisher_data_modal', params.id] });
+      queryClient.invalidateQueries({ queryKey: ['extinguisher_data', user_site] });
     },
   });
 

@@ -38,6 +38,8 @@ const ExtinguisherModal = () => {
     navigate('/records');
   };
 
+  console.log(extinguisherModal);
+
   const expotToPdf = () => {
     html2canvas(document.querySelector('#container')!, {
       scrollY: -window.scrollY,
