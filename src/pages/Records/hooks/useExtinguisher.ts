@@ -157,8 +157,6 @@ const useExtinguisher = () => {
       const idRegistrosExtintor = values.Id;
       const idExtintor = +values.extintor.Id;
 
-      console.log(idExtintor);
-
       let hasAccording = [];
 
       if (values.Id && values.respostas && extinguisherModal.respostas) {

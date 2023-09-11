@@ -6,6 +6,7 @@ import LayoutBase from '../../layout/LayoutBase';
 import { appContext } from '../../context/appContext';
 import useExtinguisher from './hooks/useExtinguisher';
 import Select, { SelectItem } from '../../components/Select';
+import { exportTableToXlsx } from '../../utils/exportTableToSlsx';
 import ExtinguisherTable from './components/tables/ExtinguisherTable';
 import GovernanceValveTable from './components/tables/GovernanceValveTable';
 
@@ -21,8 +22,12 @@ const Records = () => {
   const [formValue, setFormValue] = useState<string>(equipments_value ?? 'Extintores');
 
   useEffect(() => {
-    !equipments_value?.length && localStorage.setItem('equipments_value', 'Extintores2');
+    !equipments_value?.length && localStorage.setItem('equipments_value', 'Extintores');
   }, []);
+
+  const handleExport = () => {
+    exportTableToXlsx({ type: 'Registros', formValue, tableId: 'table' });
+  };
 
   return (
     <LayoutBase showMenu>
@@ -53,14 +58,16 @@ const Records = () => {
               </Select>
             </div>
 
-            <Button.Root className="min-w-[14.0625rem] h-10" disabled={isLoading}>
+            <Button.Root className="min-w-[14.0625rem] h-10" disabled={isLoading} onClick={handleExport}>
               <Button.Label>Exportar Planilha</Button.Label>
               <Button.Icon icon={faDownload} />
             </Button.Root>
           </div>
 
-          {formValue === 'Extintores' && <ExtinguisherTable />}
-          {formValue === 'Válvulas de Governo' && <GovernanceValveTable />}
+          <div id="table">
+            {formValue === 'Extintores' && <ExtinguisherTable />}
+            {formValue === 'Válvulas de Governo' && <GovernanceValveTable />}
+          </div>
         </div>
         {/* <div className="bg-white h-16 flex justify-end items-center px-10 py-5">
           <Pagination setPage={setPage} pageCount={pageCount} page={page} />

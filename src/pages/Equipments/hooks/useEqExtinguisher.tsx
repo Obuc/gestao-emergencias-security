@@ -13,7 +13,7 @@ const useEqExtinguisher = () => {
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'extintores', path });
     const dataWithTransformations = await Promise.all(
-      response.data.value.map(async (item: any) => {
+      response?.data?.value?.map(async (item: any) => {
         return {
           ...item,
           local: item.local?.Title,
@@ -41,22 +41,26 @@ const useEqExtinguisher = () => {
   } = useInfiniteQuery({
     queryKey: ['equipments_data', user_site],
     queryFn: fetchEquipments,
-    getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
+    getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
   });
 
   const fetchEqExtinguisherData = async () => {
-    const pathModal = `?$Select=Id,cod_extintor,cod_qrcode,conforme,local/Title,massa/Title,pavimento/Title,predio/Title,site/Title,tipo_extintor/Title,validade,ultima_inspecao&$expand=local,massa,pavimento,predio,site,tipo_extintor&$filter=Id eq ${params.id}`;
-    const resp = await crud.getListItemsv2('extintores', pathModal);
-    return resp.results[0];
+    if (params.id && equipments_value === 'Extintores') {
+      const pathModal = `?$Select=Id,cod_extintor,cod_qrcode,conforme,local/Title,massa/Title,pavimento/Title,predio/Title,site/Title,tipo_extintor/Title,validade,ultima_inspecao&$expand=local,massa,pavimento,predio,site,tipo_extintor&$filter=Id eq ${params.id}`;
+      const resp = await crud.getListItemsv2('extintores', pathModal);
+      return resp.results[0];
+    }
   };
 
   const fechRecordsExtinguisherData = async (extinguisherId: number) => {
-    const resp = await crud.getListItemsv2(
-      'registros_extintor',
-      `?$Select=Id,extintor_id/Id,bombeiro_id/Title,data_pesagem,novo,observacao,status,conforme,Created&$expand=bombeiro_id,extintor_id&$Filter=(extintor_id/Id eq '${extinguisherId}')`,
-    );
-    return resp.results || null;
+    if (params.id && equipments_value === 'Extintores') {
+      const resp = await crud.getListItemsv2(
+        'registros_extintor',
+        `?$Select=Id,extintor_id/Id,bombeiro_id/Title,data_pesagem,novo,observacao,status,conforme,Created&$expand=bombeiro_id,extintor_id&$Filter=(extintor_id/Id eq '${extinguisherId}')`,
+      );
+      return resp.results || null;
+    }
   };
 
   const { data: eqExtinguisherModal, isLoading: isLoadingEqExtinguisherModal }: UseQueryResult<EqExtinguisherModal> =

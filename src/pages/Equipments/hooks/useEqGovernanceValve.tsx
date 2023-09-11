@@ -11,26 +11,29 @@ const useEqGovernanceValve = () => {
   const equipments_value = localStorage.getItem('equipments_value');
 
   const path = `?$Select=Id,cod_qrcode,cod_equipamento,tipo_equipamento/Title,conforme,site/Title,pavimento/Title,local/Title&$expand=site,tipo_equipamento,pavimento,local&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq '${equipments_value}')`;
-  const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
-    const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'equipamentos_diversos', path });
-    const dataWithTransformations = await Promise.all(
-      response.data.value.map(async (item: any) => {
-        return {
-          ...item,
-          local: item.local?.Title,
-          pavimento: item.pavimento?.Title,
-          site: item.site?.Title,
-        };
-      }),
-    );
 
-    return {
-      ...response,
-      data: {
-        ...response.data,
-        value: dataWithTransformations,
-      },
-    };
+  const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
+      const response = await crud.getPaged(
+        pageParam ? { nextUrl: pageParam } : { list: 'equipamentos_diversos', path },
+      );
+      const dataWithTransformations = await Promise.all(
+        response?.data?.value?.map(async (item: any) => {
+          return {
+            ...item,
+            local: item.local?.Title,
+            pavimento: item.pavimento?.Title,
+            site: item.site?.Title,
+          };
+        }),
+      );
+
+      return {
+        ...response,
+        data: {
+          ...response.data,
+          value: dataWithTransformations,
+        },
+      };
   };
 
   const {
@@ -42,23 +45,27 @@ const useEqGovernanceValve = () => {
   } = useInfiniteQuery({
     queryKey: ['governance_valve_data', user_site],
     queryFn: fetchEquipments,
-    getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
+    getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
   });
 
   const fetchEqGovernanceValveData = async () => {
-    const pathModal = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,cod_equipamento,conforme&$expand=site,predio,pavimento,local,tipo_equipamento&$Filter=((tipo_equipamento/Title eq '${equipments_value}') and (Id eq ${params.id}) and (site/Title eq '${user_site}'))`;
+    if (params.id && equipments_value === 'Válvulas de Governo') {
+      const pathModal = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,cod_equipamento,conforme&$expand=site,predio,pavimento,local,tipo_equipamento&$Filter=((tipo_equipamento/Title eq '${equipments_value}') and (Id eq ${params.id}) and (site/Title eq '${user_site}'))`;
 
-    const resp = await crud.getListItemsv2('equipamentos_diversos', pathModal);
-    return resp.results[0];
+      const resp = await crud.getListItemsv2('equipamentos_diversos', pathModal);
+      return resp.results[0];
+    }
   };
 
   const fechRecordsGovernanceValveData = async (governanceValveId: number) => {
-    const resp = await crud.getListItemsv2(
-      'registros_valvula_governo',
-      `?$Select=Id,valvula_id/Id,bombeiro_id/Title,observacao,conforme,Created,data_legado&$expand=bombeiro_id,valvula_id&$Filter=(valvula_id/Id eq '${governanceValveId}')`,
-    );
-    return resp.results || null;
+    if (params.id && equipments_value === 'Válvulas de Governo') {
+      const resp = await crud.getListItemsv2(
+        'registros_valvula_governo',
+        `?$Select=Id,valvula_id/Id,bombeiro_id/Title,observacao,conforme,Created,data_legado&$expand=bombeiro_id,valvula_id&$Filter=(valvula_id/Id eq '${governanceValveId}')`,
+      );
+      return resp.results || null;
+    }
   };
 
   const {
@@ -95,7 +102,6 @@ const useEqGovernanceValve = () => {
   }: UseQueryResult<Array<EquipmentsGovernanceValve>> = useQuery({
     queryKey: ['eq_governance_valve_data'],
     queryFn: async () => {
-
       const path = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,cod_equipamento,conforme&$expand=site,predio,pavimento,local,tipo_equipamento&$Filter=((tipo_equipamento/Title eq '${equipments_value}') and (site/Title eq '${user_site}'))`;
 
       const resp = await crud.getListItems('equipamentos_diversos', path);

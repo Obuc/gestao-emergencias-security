@@ -28,6 +28,7 @@
     "@tanstack/react-query": "^4.32.6",
     "axios": "^1.4.0",
     "date-fns": "^2.30.0",
+    "file-saver": "^2.0.5",
     "formik": "^2.4.3",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
@@ -39,9 +40,11 @@
     "react-router-dom": "^6.14.2",
     "tailwind-merge": "^1.14.0",
     "tailwind-variants": "^0.1.13",
+    "xlsx": "^0.18.5",
     "yup": "^1.2.0"
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.5",
     "@types/react": "^18.2.15",
     "@types/react-datepicker": "^4.15.0",
     "@types/react-dom": "^18.2.7",

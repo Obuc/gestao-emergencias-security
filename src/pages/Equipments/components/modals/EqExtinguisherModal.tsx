@@ -1,4 +1,3 @@
-import jsPDF from 'jspdf';
 import QRCode from 'qrcode.react';
 import { format } from 'date-fns';
 import html2canvas from 'html2canvas';
@@ -6,6 +5,8 @@ import { ptBR } from 'date-fns/locale';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { faExpand } from '@fortawesome/free-solid-svg-icons';
+
+import { saveAs } from 'file-saver';
 
 import CardEmpy from '../ui/CardEmpy';
 import { EquipmentCard } from '../ui/Card';
@@ -40,19 +41,15 @@ const EqExtinguisherModal = () => {
   const generateQrCodePdf = () => {
     if (pdfContainerRef.current) {
       html2canvas(pdfContainerRef.current, {
-        scrollY: -window.scrollY,
         useCORS: true,
-        scale: 3,
+        scale: 10,
       })
         .then((canvas) => {
-          const imgData = canvas.toDataURL('image/png');
-
-          const pdf = new jsPDF('p', 'px', [1100, canvas.height], false);
-          const imgProps = pdf.getImageProperties(imgData);
-          const pdfWidth = pdf.internal.pageSize.getWidth();
-          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-          pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-          pdf.save(`teste.pdf`);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              saveAs(blob, 'captured_image.jpeg');
+            }
+          }, 'image/jpeg');
           setShowQrCode(false);
         })
         .catch((error) => {
@@ -144,19 +141,6 @@ const EqExtinguisherModal = () => {
 
         <div className="w-full p-4 gap-3 flex flex-col justify-center items-center my-10 bg-[#00354F0F]">
           {showQrCode && (
-            // <div
-            //   ref={pdfContainerRef}
-            //   id="container"
-            //   className="w-full h-full p-4 flex flex-col justify-center items-center gap-10"
-            // >
-            //   <div className="flex flex-col justify-center items-center gap-6 bg-white border-[.1875rem] border-black px-6 py-4">
-            //     {eqExtinguisherModal?.site === 'BXO' && <BXOLogo width="7.5rem" height="7.5rem" />}
-            //     {eqExtinguisherModal?.site === 'SPO' && <SPOLogo />}
-            //     <QRCode value={qrCodeValue} size={160} fgColor="#000" bgColor="#fff" />
-            //     <span className="font-medium">{`Extintor/${eqExtinguisherModal?.predio}/${eqExtinguisherModal?.pavimento}/${eqExtinguisherModal?.local}`}</span>
-            //   </div>
-            // </div>
-
             <div
               ref={pdfContainerRef}
               id="container"
