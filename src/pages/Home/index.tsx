@@ -74,7 +74,7 @@ const Home = () => {
       <div
         className="flex-1 h-full bg-cover [clip-path:polygon(25%_0%,100%_0%,100%_100%,0%_100%)] bg-right relative flex flex-col items-center justify-center"
         style={{
-          backgroundImage: 'url("/bombeiros.png")',
+          backgroundImage: 'url("./assets/bombeiros.png")',
         }}
       >
         <div className="absolute bottom-0 left-0 w-full">

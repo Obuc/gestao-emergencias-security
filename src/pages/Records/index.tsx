@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import { Button } from '../../components/Button';
@@ -19,6 +19,10 @@ const Records = () => {
     formularios && formularios.filter((form) => form.todos_sites === true || form.site.Title === localSite);
 
   const [formValue, setFormValue] = useState<string>(equipments_value ?? 'Extintores');
+
+  useEffect(() => {
+    !equipments_value?.length && localStorage.setItem('equipments_value', 'Extintores2');
+  }, []);
 
   return (
     <LayoutBase showMenu>

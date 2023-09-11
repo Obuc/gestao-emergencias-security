@@ -73,14 +73,14 @@ const useExtinguisher = () => {
   };
 
   const fetchBombeiroData = async (bombeiroId: number) => {
-    const bombeiroResponse = await crud.getListItemsv2('bombeiros', `?$Select=Title&$Filter(Id eq ${bombeiroId})`);
+    const bombeiroResponse = await crud.getListItemsv2('bombeiros', `?$Select=Title&$Filter=(Id eq ${bombeiroId})`);
     return bombeiroResponse.results[0] || null;
   };
 
   const fetchExtintorData = async (extintorId: number) => {
     const extintorResponse = await crud.getListItemsv2(
       'extintores',
-      `?$Select=massa/Title,predio/Title,pavimento/Title,local/Title,site/Title,tipo_extintor/Title,cod_extintor,validade,conforme,massa,cod_qrcode&$expand=massa,predio,pavimento,local,site,tipo_extintor&$Filter(Id eq ${extintorId})`,
+      `?$Select=Id,massa/Title,predio/Title,pavimento/Title,local/Title,site/Title,tipo_extintor/Title,cod_extintor,validade,conforme,massa,cod_qrcode&$expand=massa,predio,pavimento,local,site,tipo_extintor&$Filter=(Id eq ${extintorId})`,
     );
     return extintorResponse.results[0] || null;
   };
@@ -116,6 +116,7 @@ const useExtinguisher = () => {
 
         const extintorValues = extintor
           ? {
+              Id: extintor.Id,
               site: extintor.site.Title,
               predio: extintor.predio.Title,
               pavimento: extintor.pavimento.Title,
@@ -155,6 +156,8 @@ const useExtinguisher = () => {
     mutationFn: async (values: ExtinguisherDataModal) => {
       const idRegistrosExtintor = values.Id;
       const idExtintor = +values.extintor.Id;
+
+      console.log(idExtintor);
 
       let hasAccording = [];
 

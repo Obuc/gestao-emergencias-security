@@ -7,15 +7,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { faExpand } from '@fortawesome/free-solid-svg-icons';
 
+import CardEmpy from '../ui/CardEmpy';
 import { EquipmentCard } from '../ui/Card';
+import CardSkeleton from '../ui/CardSkeleton';
 import Modal from '../../../../components/Modal';
-import useEquipments from '../../hooks/useEqExtinguisher';
 import { Button } from '../../../../components/Button';
 import TextField from '../../../../components/TextField';
-import BXOLogo from '../../../../components/Icons/BXOLogo';
-import SPOLogo from '../../../../components/Icons/SPOLogo';
-import CardSkeleton from '../ui/CardSkeleton';
-import CardEmpy from '../ui/CardEmpy';
+import useEquipments from '../../hooks/useEqExtinguisher';
+import BayerLogoBlack from '../../../../components/Icons/BayerLogoBlack';
 
 const EqExtinguisherModal = () => {
   const params = useParams();
@@ -25,7 +24,7 @@ const EqExtinguisherModal = () => {
   const [showQrCode, setShowQrCode] = useState(false);
   const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
   const { eqExtinguisherModal, isLoadingEqExtinguisherModal } = useEquipments();
-  const qrCodeValue = `Extintor;${eqExtinguisherModal?.site};${eqExtinguisherModal?.cod_qrcode}`;
+  const qrCodeValue = `Extintor;${eqExtinguisherModal?.site};${eqExtinguisherModal?.cod_qrcode};${eqExtinguisherModal?.tipo_extintor}`;
 
   useEffect(() => {
     if (params?.id) {
@@ -43,7 +42,7 @@ const EqExtinguisherModal = () => {
       html2canvas(pdfContainerRef.current, {
         scrollY: -window.scrollY,
         useCORS: true,
-        scale: 2,
+        scale: 3,
       })
         .then((canvas) => {
           const imgData = canvas.toDataURL('image/png');
@@ -145,16 +144,35 @@ const EqExtinguisherModal = () => {
 
         <div className="w-full p-4 gap-3 flex flex-col justify-center items-center my-10 bg-[#00354F0F]">
           {showQrCode && (
+            // <div
+            //   ref={pdfContainerRef}
+            //   id="container"
+            //   className="w-full h-full p-4 flex flex-col justify-center items-center gap-10"
+            // >
+            //   <div className="flex flex-col justify-center items-center gap-6 bg-white border-[.1875rem] border-black px-6 py-4">
+            //     {eqExtinguisherModal?.site === 'BXO' && <BXOLogo width="7.5rem" height="7.5rem" />}
+            //     {eqExtinguisherModal?.site === 'SPO' && <SPOLogo />}
+            //     <QRCode value={qrCodeValue} size={160} fgColor="#000" bgColor="#fff" />
+            //     <span className="font-medium">{`Extintor/${eqExtinguisherModal?.predio}/${eqExtinguisherModal?.pavimento}/${eqExtinguisherModal?.local}`}</span>
+            //   </div>
+            // </div>
+
             <div
               ref={pdfContainerRef}
               id="container"
               className="w-full h-full p-4 flex flex-col justify-center items-center gap-10"
             >
-              <div className="flex flex-col justify-center items-center gap-6 bg-white border-[.1875rem] border-black px-6 py-4">
-                {eqExtinguisherModal?.site === 'BXO' && <BXOLogo width="7.5rem" height="7.5rem" />}
-                {eqExtinguisherModal?.site === 'SPO' && <SPOLogo />}
-                <QRCode value={qrCodeValue} size={160} fgColor="#000" bgColor="#fff" />
-                <span className="font-medium">{`Extintor/${eqExtinguisherModal?.predio}/${eqExtinguisherModal?.pavimento}/${eqExtinguisherModal?.cod_qrcode}/${eqExtinguisherModal?.local}`}</span>
+              <div className="flex flex-col justify-center w-[20rem] items-center gap-6 bg-white border-[.0625rem]">
+                <div className="uppercase text-lg font-semibold py-4 m-auto bg-bg-home w-full text-center text-white">
+                  Gestão de Emergência
+                </div>
+
+                <div className="px-2 py-2 gap-3 flex flex-col justify-center items-center">
+                  <QRCode value={qrCodeValue} size={160} fgColor="#000" bgColor="#fff" />
+                  <span className="font-medium text-sm italic">{`Extintor/${eqExtinguisherModal?.predio}/${eqExtinguisherModal?.pavimento}/${eqExtinguisherModal?.local}`}</span>
+
+                  <BayerLogoBlack />
+                </div>
               </div>
             </div>
           )}
@@ -168,7 +186,9 @@ const EqExtinguisherModal = () => {
               setShowQrCode(true);
             }}
           >
-            <Button.Label>Baixar QRCode</Button.Label>
+            <Button.Label>
+              {showQrCode && 'Baixar QRCode'} {!showQrCode && 'Gerar QRCode'}
+            </Button.Label>
             <Button.Icon icon={faExpand} />
           </Button.Root>
         </div>

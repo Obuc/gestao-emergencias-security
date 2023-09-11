@@ -33,6 +33,7 @@ export interface Extinguisher {
   Title: null;
   bombeiro_idId: number;
   bombeiro: string;
+  conforme: boolean;
   data_pesagem: string;
   extintor_idId: number;
   extintor: {

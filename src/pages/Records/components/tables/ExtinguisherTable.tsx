@@ -113,7 +113,7 @@ const ExtinguisherTable = () => {
                       <Table.Td>{item.extintor.local}</Table.Td>
                       <Table.Td>{item.extintor.pavimento}</Table.Td>
                       <Table.Td>
-                        {item.extintor.conforme ? (
+                        {item?.conforme ? (
                           <div className="flex justify-center items-center gap-2 px-4 py-1 rounded-full bg-[#EBFFE2] max-w-[8.4375rem]">
                             <div className="w-3 h-3 rounded-full bg-[#70EC36]" />
                             <span>Conforme</span>

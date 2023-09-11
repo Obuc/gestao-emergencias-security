@@ -38,8 +38,6 @@ const ExtinguisherModal = () => {
     navigate('/records');
   };
 
-  console.log(extinguisherModal);
-
   const expotToPdf = () => {
     html2canvas(document.querySelector('#container')!, {
       scrollY: -window.scrollY,
@@ -67,7 +65,7 @@ const ExtinguisherModal = () => {
     bombeiro: extinguisherModal?.bombeiro ?? '',
     data_pesagem: extinguisherModal?.data_pesagem || '',
     extintor: {
-      Id: extinguisherModal?.Id || '',
+      Id: extinguisherModal?.extintor?.Id || '',
       site: extinguisherModal?.extintor?.site || '',
       predio: extinguisherModal?.extintor?.predio || '',
       pavimento: extinguisherModal?.extintor?.pavimento || '',
