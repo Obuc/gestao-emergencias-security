@@ -3,7 +3,7 @@ import QRCode from 'qrcode.react';
 
 import { Table } from '../../../../components/Table';
 import Checkbox from '../../../../components/Checkbox';
-import BayerLogoBlack from '../../../../components/Icons/BayerLogoBlack';
+import BXOLogo from '../../../../components/Icons/BXOLogo';
 
 interface IEqExtinguisherQRCodeProps<T> {
   data?: Array<T>;
@@ -83,10 +83,22 @@ const EqExtinguisherQRCode = <T extends Record<string, any>>({ data }: IEqExting
                 </div>
 
                 <div className="px-2 py-2 gap-3 flex flex-col justify-center items-center">
-                  <QRCode value={value} size={150} fgColor="#000" bgColor="#fff" />
-                  <span className="font-medium text-sm italic">{`Extintor/${qrCodeValue?.predio}/${qrCodeValue?.pavimento}/${qrCodeValue?.local}`}</span>
+                  <QRCode
+                    renderAs="svg"
+                    value={value}
+                    size={150}
+                    fgColor="#000"
+                    bgColor="#fff"
+                    // imageSettings={{
+                    //   src: LogoBXO,
+                    //   height: 55,
+                    //   width: 50,
+                    //   excavate: true,
+                    // }}
+                  />
+                  <span className="font-medium text-sm italic">{`Extintor/${qrCodeValue?.predio}/${qrCodeValue?.pavimento}/${qrCodeValue?.local}/${qrCodeValue.tipo_extintor}`}</span>
 
-                  <BayerLogoBlack />
+                  <BXOLogo height="50" width="45" />
                 </div>
               </div>
             </div>

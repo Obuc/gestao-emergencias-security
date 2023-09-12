@@ -14,6 +14,7 @@ interface IEqGenerateQRCodeModalProps {
 
 const EqGenerateQRCodeModal = ({ open, onOpenChange, children }: IEqGenerateQRCodeModalProps) => {
   const equipments_value = localStorage.getItem('equipments_value');
+  const site_value = localStorage.getItem('user_site');
 
   const generateQrCodePdf = () => {
     const element = document.getElementById('qrCodeElement');
@@ -26,7 +27,7 @@ const EqGenerateQRCodeModal = ({ open, onOpenChange, children }: IEqGenerateQRCo
         .then((canvas) => {
           canvas.toBlob((blob) => {
             if (blob) {
-              saveAs(blob, 'captured_image.jpeg');
+              saveAs(blob, `QRCode - ${site_value}.jpeg`);
             }
           }, 'image/jpeg');
         })

@@ -95,7 +95,7 @@ const useEqExtinguisher = () => {
     useQuery({
       queryKey: ['eq_extinguisher_data'],
       queryFn: async () => {
-        const path = `?$Select=Id,cod_qrcode,predio/Title,pavimento/Title,local/Title,site/Title,cod_extintor,conforme&$expand=predio,site,pavimento,local&$Filter(site/Title eq '${user_site}')`;
+        const path = `?$Select=Id,cod_qrcode,predio/Title,tipo_extintor/Title,pavimento/Title,local/Title,site/Title,cod_extintor,conforme&$expand=tipo_extintor,predio,site,pavimento,local&$Filter(site/Title eq '${user_site}')`;
         const resp = await crud.getListItems('extintores', path);
 
         const dataWithTransformations = await Promise.all(
@@ -106,6 +106,7 @@ const useEqExtinguisher = () => {
               pavimento: item.pavimento?.Title,
               site: item.site?.Title,
               predio: item.predio?.Title,
+              tipo_extintor: item.tipo_extintor?.Title,
             };
           }),
         );
