@@ -142,6 +142,9 @@ const useGovernanceValve = () => {
         await crud.deleteItemList('Extintores', itemId);
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['governace_valve_data', user_site] });
+    },
   });
 
   const { mutateAsync: mutateEditGovernanceValve, isLoading: IsLoadingMutateEditGovernanceValve } = useMutation({

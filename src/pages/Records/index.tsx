@@ -5,11 +5,12 @@ import { Button } from '../../components/Button';
 import LayoutBase from '../../layout/LayoutBase';
 import { appContext } from '../../context/appContext';
 import useExtinguisher from './hooks/useExtinguisher';
+import TestCmiTable from './components/tables/TestCmiTable';
 import Select, { SelectItem } from '../../components/Select';
 import { exportTableToXlsx } from '../../utils/exportTableToSlsx';
 import ExtinguisherTable from './components/tables/ExtinguisherTable';
+import InspectionCmiTable from './components/tables/InspectionCmiTable';
 import GovernanceValveTable from './components/tables/GovernanceValveTable';
-import TestCmiTable from './components/tables/TestCmiTable';
 
 const Records = () => {
   const { isLoading } = useExtinguisher();
@@ -69,11 +70,9 @@ const Records = () => {
             {formValue === 'Extintores' && <ExtinguisherTable />}
             {formValue === 'Válvulas de Governo' && <GovernanceValveTable />}
             {formValue === 'Teste CMI' && <TestCmiTable />}
+            {formValue === 'Inspeção CMI' && <InspectionCmiTable />}
           </div>
         </div>
-        {/* <div className="bg-white h-16 flex justify-end items-center px-10 py-5">
-          <Pagination setPage={setPage} pageCount={pageCount} page={page} />
-        </div> */}
       </div>
     </LayoutBase>
   );

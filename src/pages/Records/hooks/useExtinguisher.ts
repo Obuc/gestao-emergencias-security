@@ -150,6 +150,9 @@ const useExtinguisher = () => {
         await crud.deleteItemList('Extintores', itemId);
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['extinguisher_data', user_site] });
+    },
   });
 
   const { mutateAsync: mutateEditExtinguisher, isLoading: IsLoadingMutateEditExtinguisher } = useMutation({
@@ -168,9 +171,9 @@ const useExtinguisher = () => {
             const item = perguntasRespostas[i];
             const itemOriginal = perguntasRespostasOriginais[i];
 
-            if (item.resposta !== itemOriginal.resposta) {
-              hasAccording.push(item.resposta);
+            hasAccording.push(item.resposta);
 
+            if (item.resposta !== itemOriginal.resposta) {
               const postData = {
                 resposta: item.resposta,
               };

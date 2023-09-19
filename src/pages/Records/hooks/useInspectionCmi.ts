@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { ResponstaTestCmi, TestCmiDataModal } from '../types/TestCMI';
 import { sharepointContext } from '../../../context/sharepointContext';
+import { InspectionCmiDataModal, ResponstaInspectionCMI } from '../types/InspectionCMI';
 
-const useTestCMI = () => {
+const useInspectionCmi = () => {
   const { crud } = sharepointContext();
   const params = useParams();
   const queryClient = useQueryClient();
@@ -13,7 +13,7 @@ const useTestCMI = () => {
 
   const path = `?$Select=*,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
   const fetchTestCMI = async ({ pageParam }: { pageParam?: string }) => {
-    const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'registros_teste_cmi', path });
+    const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'registros_inspecao_cmi', path });
 
     const dataWithTransformations = await Promise.all(
       response.data.value.map(async (item: any) => {
@@ -49,23 +49,21 @@ const useTestCMI = () => {
   };
 
   const {
-    data: test_cmi,
+    data: inspection_cmi,
     fetchNextPage,
     hasNextPage,
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['test_cmi_data', user_site],
+    queryKey: ['inspection_cmi_data', user_site],
     queryFn: fetchTestCMI,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
   });
 
-  //
-
   const fetchCmiData = async () => {
     const pathModal = `?$Select=*,bombeiro_id/Title&$expand=bombeiro_id&$filter=Id eq ${params.id}`;
-    const resp = await crud.getListItemsv2('registros_teste_cmi', pathModal);
+    const resp = await crud.getListItemsv2('registros_inspecao_cmi', pathModal);
     return resp.results[0];
   };
 
@@ -77,13 +75,13 @@ const useTestCMI = () => {
     return cmiResponse.results[0] || null;
   };
 
-  const fetchResponseTestCmi = async () => {
+  const fetchResponseInspectionCmi = async () => {
     const response = await crud.getListItemsv2(
-      'respostas_teste_cmi',
-      `?$Select=Id,cmi_idId,pergunta_idId,registro_idId,resposta,resposta_2,pergunta_id/Title,pergunta_id/categoria&$expand=pergunta_id&$filter=(registro_idId eq ${params.id})`,
+      'respostas_inspecao_cmi',
+      `?$Select=Id,cmi_idId,pergunta_idId,registro_idId,resposta,pergunta_id/Title,pergunta_id/categoria&$expand=pergunta_id&$filter=(registro_idId eq ${params.id})`,
     );
 
-    const respostasPorCategoria: Record<string, Array<ResponstaTestCmi>> = {};
+    const respostasPorCategoria: Record<string, Array<ResponstaInspectionCMI>> = {};
     response.results.forEach((resposta: any) => {
       const categoria = resposta.pergunta_id.categoria;
       if (!respostasPorCategoria[categoria]) {
@@ -95,14 +93,14 @@ const useTestCMI = () => {
     return respostasPorCategoria;
   };
 
-  const { data: testCmiDataModal, isLoading: isLoadingTestCmiDataModal } = useQuery({
-    queryKey: params.id ? ['teste_cmi_data_modal', params.id] : ['teste_cmi_data_modal'],
+  const { data: inspectionCmiDataModal, isLoading: isLoadingInspectionCmiDataModal } = useQuery({
+    queryKey: params.id ? ['inspection_cmi_data_modal', params.id] : ['inspection_cmi_data_modal'],
     queryFn: async () => {
-      if (params.id && equipments_value === 'Teste CMI') {
+      if (params.id && equipments_value === 'Inspeção CMI') {
         const cmiData = await fetchCmiData();
         const cmi = await fetchEquipmentCmiData(cmiData.cmi_idId);
 
-        const respostas = await fetchResponseTestCmi();
+        const respostas = await fetchResponseInspectionCmi();
 
         const cmiValues = cmi
           ? {
@@ -128,19 +126,19 @@ const useTestCMI = () => {
     refetchOnWindowFocus: false,
   });
 
-  const { mutateAsync: mutateRemoveTestCmi, isLoading: IsLoadingMutateRemoveTestCmi } = useMutation({
+  const { mutateAsync: mutateRemoveInspectionCmi, isLoading: IsLoadingMutateRemoveInspectionCmi } = useMutation({
     mutationFn: async (itemId: number) => {
       if (itemId) {
-        // Remove List: respostas_teste_cmi
+        // Remove List: respostas_inspecao_cmi
         const itemResponse = await crud.getListItemsv2(
-          'respostas_teste_cmi',
+          'respostas_inspecao_cmi',
           `?$Select=Id,registro_id/Id&$expand=registro_id&$Filter=(registro_id/Id eq ${itemId})`,
         );
 
         if (itemResponse.results.length > 0) {
           for (const item of itemResponse.results) {
             const itemIdToDelete = item.Id;
-            await crud.deleteItemList('respostas_teste_cmi', itemIdToDelete);
+            await crud.deleteItemList('respostas_inspecao_cmi', itemIdToDelete);
           }
         } else {
           console.log('Nenhum item encontrado para excluir.');
@@ -148,24 +146,24 @@ const useTestCMI = () => {
       }
 
       // Remove List: registros_teste_cmi
-      await crud.deleteItemList('registros_teste_cmi', itemId);
+      await crud.deleteItemList('registros_inspecao_cmi', itemId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['test_cmi_data', user_site] });
+      queryClient.invalidateQueries({ queryKey: ['inspection_cmi_data', user_site] });
     },
   });
 
-  const { mutateAsync: mutateEditTestCmi, isLoading: isLoadingMutateEditTestCmi } = useMutation({
-    mutationFn: async (values: TestCmiDataModal) => {
+  const { mutateAsync: mutateEditInspectionCmi, isLoading: isLoadingMutateEditInspectionCmi } = useMutation({
+    mutationFn: async (values: InspectionCmiDataModal) => {
       const idRecordTestCmi = values.Id;
       const idCmi = +values.cmi.Id;
 
       let hasAccording = [];
 
-      if (values.Id && values.respostas && testCmiDataModal.respostas) {
+      if (values.Id && values.respostas && inspectionCmiDataModal.respostas) {
         for (const categoria in values.respostas) {
           const perguntasRespostas = values.respostas[categoria];
-          const perguntasRespostasOriginais = testCmiDataModal.respostas[categoria];
+          const perguntasRespostasOriginais = inspectionCmiDataModal.respostas[categoria];
 
           for (let i = 0; i < perguntasRespostas.length; i++) {
             const item = perguntasRespostas[i];
@@ -173,13 +171,12 @@ const useTestCMI = () => {
 
             hasAccording.push(item.resposta);
 
-            if (item.resposta !== itemOriginal.resposta || item.resposta_2 !== itemOriginal.resposta_2) {
+            if (item.resposta !== itemOriginal.resposta) {
               const postData = {
                 resposta: item.resposta,
-                resposta_2: item.resposta_2,
               };
 
-              await crud.updateItemList('respostas_teste_cmi', item.Id, postData);
+              await crud.updateItemList('respostas_inspecao_cmi', item.Id, postData);
             }
           }
         }
@@ -188,7 +185,7 @@ const useTestCMI = () => {
       const hasFalseAccording = hasAccording.some((item) => item === false);
 
       if (hasFalseAccording) {
-        await crud.updateItemList('registros_teste_cmi', idRecordTestCmi, {
+        await crud.updateItemList('registros_inspecao_cmi', idRecordTestCmi, {
           conforme: false,
         });
         await crud.updateItemList('equipamentos_diversos', idCmi, {
@@ -197,7 +194,7 @@ const useTestCMI = () => {
       }
 
       if (!hasFalseAccording) {
-        await crud.updateItemList('registros_teste_cmi', idRecordTestCmi, {
+        await crud.updateItemList('registros_inspecao_cmi', idRecordTestCmi, {
           conforme: true,
         });
         await crud.updateItemList('equipamentos_diversos', idCmi, {
@@ -206,24 +203,24 @@ const useTestCMI = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['teste_cmi_data_modal', params.id] });
-      queryClient.invalidateQueries({ queryKey: ['test_cmi_data', user_site] });
+      queryClient.invalidateQueries({ queryKey: ['inspection_cmi_data_modal', params.id] });
+      queryClient.invalidateQueries({ queryKey: ['inspection_cmi_data', user_site] });
     },
   });
 
   return {
-    test_cmi,
+    inspection_cmi,
     fetchNextPage,
     hasNextPage,
     isLoading,
     isError,
-    testCmiDataModal,
-    isLoadingTestCmiDataModal,
-    mutateRemoveTestCmi,
-    IsLoadingMutateRemoveTestCmi,
-    mutateEditTestCmi,
-    isLoadingMutateEditTestCmi,
+    inspectionCmiDataModal,
+    isLoadingInspectionCmiDataModal,
+    mutateRemoveInspectionCmi,
+    IsLoadingMutateRemoveInspectionCmi,
+    mutateEditInspectionCmi,
+    isLoadingMutateEditInspectionCmi,
   };
 };
 
-export default useTestCMI;
+export default useInspectionCmi;
