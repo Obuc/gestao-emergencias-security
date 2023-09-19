@@ -7,7 +7,7 @@ interface IAnswersContentProps {
 
 export const AnswersContent = ({ className, children }: IAnswersContentProps) => {
   return (
-    <div className={twMerge('w-full bg-white shadow-xs-app py-4 px-3 grid grid-cols-2 gap-2', className)}>
+    <div className={twMerge('w-full bg-white shadow-xs-app py-4 px-3 grid gap-4 grid-cols-2', className)}>
       {children}
     </div>
   );

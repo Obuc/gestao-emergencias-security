@@ -6,25 +6,25 @@ import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroller';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
+import CmiModal from '../modals/TestCmiModal';
+import { TestCMI } from '../../types/TestCMI';
+import useTestCMI from '../../hooks/useTestCMI';
 import { Table } from '../../../../components/Table';
-import { GovernanceValve } from '../../types/GovernanceValve';
-import useGovernanceValve from '../../hooks/useGovernanceValve';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PopoverTables from '../../../../components/PopoverTables';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
-import GovernanceValveModal from '../modals/GovernanceValveModal';
 
-const GovernanceValveTable = () => {
+const TestCmiTable = () => {
   const {
-    governaceValve,
+    test_cmi,
     fetchNextPage,
     hasNextPage,
     isLoading,
     isError,
 
-    mutateRemoveExtinguisher,
-    IsLoadingMutateRemoveExtinguisher,
-  } = useGovernanceValve();
+    mutateRemoveTestCmi,
+    IsLoadingMutateRemoveTestCmi,
+  } = useTestCMI();
 
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
@@ -35,6 +35,13 @@ const GovernanceValveTable = () => {
 
   const handleEdit = (id: number) => {
     navigate(`/records/${id}?edit=true`);
+  };
+
+  const handleRemove = async () => {
+    if (removeItem !== null) {
+      await mutateRemoveTestCmi(removeItem);
+      setRemoveItem(null);
+    }
   };
 
   return (
@@ -51,17 +58,15 @@ const GovernanceValveTable = () => {
             <Table.Thead>
               <Table.Tr className="bg-[#FCFCFC]">
                 <Table.Th className="pl-8">Responsável</Table.Th>
-                <Table.Th>N° Registro</Table.Th>
-                <Table.Th>N° Válvula</Table.Th>
                 <Table.Th>Prédio</Table.Th>
-                <Table.Th>Data</Table.Th>
+                <Table.Th>Data Registro</Table.Th>
                 <Table.Th>Conformidade</Table.Th>
                 <Table.Th>{''}</Table.Th>
               </Table.Tr>
             </Table.Thead>
 
             <Table.Tbody>
-              {governaceValve?.pages[0].data.value.length === 0 && (
+              {test_cmi?.pages[0].data.value.length === 0 && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
                   <Table.Td colSpan={9} className="text-center text-primary">
                     Nenhum registro encontrado!
@@ -89,21 +94,15 @@ const GovernanceValveTable = () => {
                 </>
               )}
 
-              {governaceValve?.pages.map(
+              {test_cmi?.pages.map(
                 (item: any) =>
-                  item?.data?.value?.map((item: GovernanceValve) => (
+                  item?.data?.value?.map((item: TestCMI) => (
                     <Table.Tr key={item.Id}>
-                      <Table.Td className="pl-8">{item.bombeiro}</Table.Td>
-                      <Table.Td>{item.Id}</Table.Td>
-                      <Table.Td>{item.valvula.cod_equipamento}</Table.Td>
-                      <Table.Td>{item.valvula.predio}</Table.Td>
+                      <Table.Td className="pl-8">{item.bombeiro_id.Title}</Table.Td>
+                      <Table.Td>{item.cmi.predio}</Table.Td>
+                      <Table.Td>{format(parseISO(item.Created), 'dd MMM yyyy', { locale: ptBR })}</Table.Td>
                       <Table.Td>
-                        {/* {item.data_legado
-                          ? format(parseISO(item.data_legado), 'dd MMM yyyy', { locale: ptBR })
-                          : format(parseISO(item.Created), 'dd MMM yyyy', { locale: ptBR })} */}
-                      </Table.Td>
-                      <Table.Td>
-                        {item.conforme ? (
+                        {item?.conforme ? (
                           <div className="flex justify-center items-center gap-2 px-4 py-1 rounded-full bg-[#EBFFE2] max-w-[8.4375rem]">
                             <div className="w-3 h-3 rounded-full bg-[#70EC36]" />
                             <span>Conforme</span>
@@ -130,12 +129,12 @@ const GovernanceValveTable = () => {
         </InfiniteScroll>
       </div>
 
-      <GovernanceValveModal />
+      <CmiModal />
 
       {removeItem !== null && (
         <RemoveItem
-          handleRemove={async () => await mutateRemoveExtinguisher(removeItem)}
-          isLoading={IsLoadingMutateRemoveExtinguisher}
+          handleRemove={handleRemove}
+          isLoading={IsLoadingMutateRemoveTestCmi}
           onOpenChange={() => setRemoveItem(null)}
           open={removeItem !== null}
         />
@@ -144,4 +143,4 @@ const GovernanceValveTable = () => {
   );
 };
 
-export default GovernanceValveTable;
+export default TestCmiTable;

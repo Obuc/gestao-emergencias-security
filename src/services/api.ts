@@ -212,23 +212,31 @@ class CrudSharepoint {
 
   async deleteItemList(list: string, id: number): Promise<any> {
     try {
-      if (this.digestToken.length === 0) {
-        this.digestToken = await this.getDigest();
+      let digestToken = '';
+      if (digestToken.length === 0) {
+        digestToken = await this.getDigest();
       }
 
-      const url = `${this.baseUrl}/_api/web/lists/GetByTitle('${list}')/items(${id})/recycle()`;
-
-      const headers = {
-        'Content-Type': 'application/json;odata=verbose',
-        Accept: 'application/json;odata=verbose',
-        'X-RequestDigest': this.digestToken,
-        'IF-MATCH': '*',
-        'X-HTTP-Method': 'DELETE',
+      const requestOptions = {
+        method: 'POST',
+        url: `${this.baseUrl}/_api/web/lists/GetByTitle('${list}')/items(${id})/recycle()`,
+        headers: {
+          'Content-Type': 'application/json;odata=verbose',
+          Accept: 'application/json;odata=verbose',
+          'X-RequestDigest': digestToken,
+          'IF-MATCH': '*',
+          'X-HTTP-Method': 'DELETE',
+        },
       };
 
-      const response = await axios.post(url, null, { headers });
+      const response = await axios(requestOptions);
 
-      return response.data;
+      if (typeof response.data !== 'object') {
+        const responseData = JSON.parse(response.data);
+        return responseData;
+      } else {
+        return response.data;
+      }
     } catch (error) {
       throw error;
     }

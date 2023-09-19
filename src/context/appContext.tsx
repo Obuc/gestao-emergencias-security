@@ -31,7 +31,7 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const { data: formularios, isLoading: isLoadingFormularios }: UseQueryResult<Array<IFormulario>> = useQuery({
     queryKey: ['formularios'],
     queryFn: async () => {
-      const resp = await crud.getListItemsv2('formularios', '?$Select=Id,Title,site/Title,todos_sites&$expand=site');
+      const resp = await crud.getListItemsv2('menu', '?$Select=Id,Title,site/Title,todos_sites&$expand=site');
       return resp.results;
     },
     staleTime: 5000 * 60, // 5 Minute

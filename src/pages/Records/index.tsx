@@ -9,6 +9,7 @@ import Select, { SelectItem } from '../../components/Select';
 import { exportTableToXlsx } from '../../utils/exportTableToSlsx';
 import ExtinguisherTable from './components/tables/ExtinguisherTable';
 import GovernanceValveTable from './components/tables/GovernanceValveTable';
+import TestCmiTable from './components/tables/TestCmiTable';
 
 const Records = () => {
   const { isLoading } = useExtinguisher();
@@ -67,6 +68,7 @@ const Records = () => {
           <div id="table">
             {formValue === 'Extintores' && <ExtinguisherTable />}
             {formValue === 'Válvulas de Governo' && <GovernanceValveTable />}
+            {formValue === 'Teste CMI' && <TestCmiTable />}
           </div>
         </div>
         {/* <div className="bg-white h-16 flex justify-end items-center px-10 py-5">
