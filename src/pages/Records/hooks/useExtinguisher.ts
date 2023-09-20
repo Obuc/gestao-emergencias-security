@@ -1,10 +1,10 @@
 import * as XLSX from 'xlsx';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
 import { ExtinguisherDataModal, RespostaExtintor } from '../types/Extinguisher';
-import { useState } from 'react';
 
 const useExtinguisher = () => {
   const { crud } = sharepointContext();

@@ -11,12 +11,12 @@ import CardEmpy from '../ui/CardEmpy';
 import { EquipmentCard } from '../ui/Card';
 import CardSkeleton from '../ui/CardSkeleton';
 import Modal from '../../../../components/Modal';
-import useEqTestCmi from '../../hooks/useEqTestCmi';
 import { Button } from '../../../../components/Button';
 import TextField from '../../../../components/TextField';
+import useEqInspectionCmi from '../../hooks/useEqInspectionCmi';
 import BayerLogoBlack from '../../../../components/Icons/BayerLogoBlack';
 
-const EqCmiTestModal = () => {
+const EqCmiInspectionModal = () => {
   const params = useParams();
   const navigate = useNavigate();
   const pdfContainerRef = useRef(null);
@@ -24,7 +24,7 @@ const EqCmiTestModal = () => {
   const [showQrCode, setShowQrCode] = useState(false);
   const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
 
-  const { eqTestCmiModal, isLoadingEqTestCmiModal, qrCodeValue } = useEqTestCmi();
+  const { eqInspectionCmiModal, isLoadingeEInspectionCmiModal, qrCodeValue } = useEqInspectionCmi();
 
   useEffect(() => {
     if (params?.id) {
@@ -46,7 +46,7 @@ const EqCmiTestModal = () => {
         .then((canvas) => {
           canvas.toBlob((blob) => {
             if (blob) {
-              saveAs(blob, `Teste CMI - ${eqTestCmiModal?.Id} - ${eqTestCmiModal?.site}.jpeg`);
+              saveAs(blob, `Teste CMI - ${eqInspectionCmiModal?.Id} - ${eqInspectionCmiModal?.site}.jpeg`);
             }
           }, 'image/jpeg');
           setShowQrCode(false);
@@ -73,16 +73,16 @@ const EqCmiTestModal = () => {
               label="Número"
               width="w-[6.25rem]"
               disabled
-              value={eqTestCmiModal?.Id || ''}
-              isLoading={isLoadingEqTestCmiModal}
+              value={eqInspectionCmiModal?.Id || ''}
+              isLoading={isLoadingeEInspectionCmiModal}
             />
             <TextField
               id="cod_qrcode"
               name="cod_qrcode"
               label="Pavimento"
               disabled
-              value={eqTestCmiModal?.pavimento || ''}
-              isLoading={isLoadingEqTestCmiModal}
+              value={eqInspectionCmiModal?.pavimento || ''}
+              isLoading={isLoadingeEInspectionCmiModal}
             />
 
             <TextField
@@ -90,8 +90,8 @@ const EqCmiTestModal = () => {
               name="predio"
               label="Prédio"
               disabled
-              value={eqTestCmiModal?.predio || ''}
-              isLoading={isLoadingEqTestCmiModal}
+              value={eqInspectionCmiModal?.predio || ''}
+              isLoading={isLoadingeEInspectionCmiModal}
             />
           </div>
 
@@ -101,16 +101,16 @@ const EqCmiTestModal = () => {
               name="site"
               label="Site"
               disabled
-              value={eqTestCmiModal?.site || ''}
-              isLoading={isLoadingEqTestCmiModal}
+              value={eqInspectionCmiModal?.site || ''}
+              isLoading={isLoadingeEInspectionCmiModal}
             />
             <TextField
               id="tipo_equipamento"
               name="tipo_equipamento"
               label="Tipo Equipamento"
               disabled
-              value={eqTestCmiModal?.tipo_equipamento || ''}
-              isLoading={isLoadingEqTestCmiModal}
+              value={eqInspectionCmiModal?.tipo_equipamento || ''}
+              isLoading={isLoadingeEInspectionCmiModal}
             />
           </div>
         </div>
@@ -129,7 +129,7 @@ const EqCmiTestModal = () => {
 
                 <div className="px-2 py-2 gap-3 flex flex-col justify-center items-center">
                   <QRCode renderAs="svg" value={qrCodeValue} size={160} fgColor="#000" bgColor="#fff" />
-                  <span className="font-medium text-sm italic">{`Teste CMI/${eqTestCmiModal?.site}/${eqTestCmiModal?.predio}/${eqTestCmiModal?.pavimento}`}</span>
+                  <span className="font-medium text-sm italic">{`Inspeção CMI/${eqInspectionCmiModal?.site}/${eqInspectionCmiModal?.predio}/${eqInspectionCmiModal?.pavimento}`}</span>
 
                   <BayerLogoBlack />
                 </div>
@@ -139,7 +139,7 @@ const EqCmiTestModal = () => {
 
           <Button.Root
             fill
-            disabled={isLoadingEqTestCmiModal}
+            disabled={isLoadingeEInspectionCmiModal}
             className="w-[13.75rem] h-10"
             onClick={() => {
               generateQrCodePdf();
@@ -154,11 +154,11 @@ const EqCmiTestModal = () => {
         </div>
 
         <div className="py-4 px-8">
-          {!eqTestCmiModal?.history?.length && !isLoadingEqTestCmiModal && <CardEmpy />}
-          {isLoadingEqTestCmiModal && <CardSkeleton />}
+          {!eqInspectionCmiModal?.history?.length && !isLoadingeEInspectionCmiModal && <CardEmpy />}
+          {isLoadingeEInspectionCmiModal && <CardSkeleton />}
 
-          {eqTestCmiModal?.history &&
-            eqTestCmiModal?.history.map((item) => {
+          {eqInspectionCmiModal?.history &&
+            eqInspectionCmiModal?.history.map((item) => {
               const cardVariant = item.conforme ? 'new' : 'noncompliant';
               const cardTitle = item.conforme ? 'Nova Verificação' : 'Verificação Inconforme';
 
@@ -181,4 +181,4 @@ const EqCmiTestModal = () => {
   );
 };
 
-export default EqCmiTestModal;
+export default EqCmiInspectionModal;
