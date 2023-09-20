@@ -1,14 +1,19 @@
-function SPOLogo() {
+interface ISPOLogoProps {
+  width?: string;
+  height?: string;
+}
+
+function SPOLogo({ width = '2.25rem', height = '2.25rem' }: ISPOLogoProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
-      width="2.25rem"
-      height="2.25rem"
+      width={width}
+      height={height}
       fill="none"
       viewBox="0 0 197 194"
     >
-      <path fill="url(#pattern0)" d="M0 0.381H196.689V193.81H0z"></path>
+      <path fill="url(#pattern0)" d="M0 0.431H196.689V193.86H0z"></path>
       <defs>
         <pattern id="pattern0" width="1" height="1" patternContentUnits="objectBoundingBox">
           <use transform="scale(.0011 .00112)" xlinkHref="#image0_2_4652"></use>

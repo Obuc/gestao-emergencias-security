@@ -4,6 +4,7 @@ export interface EquipmentsTestCmi {
   site?: string;
   pavimento?: string;
   conforme: boolean;
+  predio: string;
 }
 
 export interface EqTestCmiModal {

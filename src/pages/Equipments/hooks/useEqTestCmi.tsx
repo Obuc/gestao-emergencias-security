@@ -1,8 +1,9 @@
+import * as XLSX from 'xlsx';
 import { useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { EqTestCmiModal } from '../types/EquipmentsTestCmi';
 import { sharepointContext } from '../../../context/sharepointContext';
+import { EqTestCmiModal, EquipmentsTestCmi } from '../types/EquipmentsTestCmi';
 
 const useEqTestCmi = () => {
   const { crud } = sharepointContext();
@@ -49,7 +50,7 @@ const useEqTestCmi = () => {
 
   const fetchEqCmiData = async () => {
     if (params.id && equipments_value === 'Teste CMI') {
-      const path = `?$Select=Id,cod_qrcode,conforme,predio/Title,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,predio,tipo_equipamento&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq '${equipments_value}')`;
+      const path = `?$Select=Id,cod_qrcode,conforme,predio/Title,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,predio,tipo_equipamento&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq '${equipments_value}') and (excluido eq 'false')`;
 
       const resp = await crud.getListItemsv2('equipamentos_diversos', path);
       return resp.results[0];
@@ -89,33 +90,36 @@ const useEqTestCmi = () => {
     refetchOnWindowFocus: false,
   });
 
-  // const { data: eqExtinguisher, isLoading: isLoadingEqExtinguisher }: UseQueryResult<Array<EquipmentsTestCmi>> =
-  //   useQuery({
-  //     queryKey: ['eq_test_cmi_data'],
-  //     queryFn: async () => {
-  //       const path = `?$Select=Id,cod_qrcode,predio/Title,tipo_extintor/Title,pavimento/Title,local/Title,site/Title,cod_extintor,conforme&$expand=tipo_extintor,predio,site,pavimento,local&$Filter(site/Title eq '${user_site}')`;
-  //       const resp = await crud.getListItems('extintores', path);
+  const { data: eqTestCmi, isLoading: isLoadingEqTestCmi }: UseQueryResult<Array<EquipmentsTestCmi>> = useQuery({
+    queryKey: ['eq_test_cmi_data'],
+    queryFn: async () => {
+      const path = `?$Select=Id,cod_qrcode,conforme,predio/Title,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,predio,tipo_equipamento&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq '${equipments_value}') and (excluido eq 'false')`;
 
-  //       const dataWithTransformations = await Promise.all(
-  //         resp.map(async (item: any) => {
-  //           return {
-  //             ...item,
-  //             local: item.local?.Title,
-  //             pavimento: item.pavimento?.Title,
-  //             site: item.site?.Title,
-  //             predio: item.predio?.Title,
-  //             tipo_extintor: item.tipo_extintor?.Title,
-  //           };
-  //         }),
-  //       );
+      const resp = await crud.getListItems('equipamentos_diversos', path);
 
-  //       return dataWithTransformations;
-  //     },
-  //     staleTime: 5000 * 60, // 5 Minute
-  //     refetchOnWindowFocus: false,
-  //   });
+      const dataWithTransformations = await Promise.all(
+        resp.map(async (item: any) => {
+          return {
+            ...item,
+            pavimento: item.pavimento?.Title,
+            site: item.site?.Title,
+            predio: item.predio?.Title,
+            tipo_equipamento: item.tipo_equipamento?.Title,
+          };
+        }),
+      );
 
-  const { mutateAsync: mutateRemoveEqTestCmi, isLoading: isLoadingMutateRemoveEqTestCmi } = useMutation({
+      return dataWithTransformations;
+    },
+    staleTime: 5000 * 60, // 5 Minute
+    refetchOnWindowFocus: false,
+  });
+
+  const {
+    mutateAsync: mutateRemoveEqTestCmi,
+    isLoading: isLoadingMutateRemoveEqTestCmi,
+    isError: isErrorEqTestCmi,
+  } = useMutation({
     mutationFn: async (itemId: number) => {
       await crud.updateItemList('equipamentos_diversos', itemId, { excluido: true });
     },
@@ -123,6 +127,35 @@ const useEqTestCmi = () => {
       queryClient.invalidateQueries({ queryKey: ['equipments_data_test_cmi', user_site] });
     },
   });
+
+  const qrCodeValue =
+    eqTestCmiModal?.site === 'BXO'
+      ? `TesteCMIBXO;${eqTestCmiModal?.site};${eqTestCmiModal?.cod_qrcode}`
+      : `Bomba;${eqTestCmiModal?.site};${eqTestCmiModal?.cod_qrcode}`;
+
+  const handleExportEqTestCmiToExcel = () => {
+    const columns: (keyof EquipmentsTestCmi)[] = ['Id', 'cod_qrcode', 'predio', 'pavimento', 'conforme', 'site'];
+
+    const headerRow = columns.map((column) => column.toString());
+
+    const dataFiltered = eqTestCmi?.map((item) => {
+      const newItem: { [key: string]: any } = {};
+      columns.forEach((column) => {
+        newItem[column] = item[column];
+      });
+      return newItem;
+    });
+
+    if (dataFiltered) {
+      const dataArray = [headerRow, ...dataFiltered.map((item) => columns.map((column) => item[column]))];
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(dataArray);
+
+      XLSX.utils.book_append_sheet(wb, ws, '');
+      XLSX.writeFile(wb, `Equipamentos - Teste CMI.xlsx`);
+    }
+  };
 
   return {
     equipments,
@@ -136,8 +169,12 @@ const useEqTestCmi = () => {
     eqTestCmiModal,
     isLoadingEqTestCmiModal,
 
-    // eqExtinguisher,
-    // isLoadingEqExtinguisher,
+    eqTestCmi,
+    isLoadingEqTestCmi,
+    isErrorEqTestCmi,
+
+    qrCodeValue,
+    handleExportEqTestCmiToExcel,
   };
 };
 

@@ -14,7 +14,7 @@ import CardSkeleton from '../ui/CardSkeleton';
 import Modal from '../../../../components/Modal';
 import { Button } from '../../../../components/Button';
 import TextField from '../../../../components/TextField';
-import useEquipments from '../../hooks/useEqExtinguisher';
+import useEqExtinguisher from '../../hooks/useEqExtinguisher';
 import BayerLogoBlack from '../../../../components/Icons/BayerLogoBlack';
 
 const EqExtinguisherModal = () => {
@@ -24,8 +24,7 @@ const EqExtinguisherModal = () => {
 
   const [showQrCode, setShowQrCode] = useState(false);
   const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
-  const { eqExtinguisherModal, isLoadingEqExtinguisherModal } = useEquipments();
-  const qrCodeValue = `Extintor;${eqExtinguisherModal?.site};${eqExtinguisherModal?.cod_qrcode};${eqExtinguisherModal?.tipo_extintor}`;
+  const { eqExtinguisherModal, isLoadingEqExtinguisherModal, qrCodeExtinguisherValue } = useEqExtinguisher();
 
   useEffect(() => {
     if (params?.id) {
@@ -152,7 +151,7 @@ const EqExtinguisherModal = () => {
                 </div>
 
                 <div className="px-2 py-2 gap-3 flex flex-col justify-center items-center">
-                  <QRCode value={qrCodeValue} size={160} fgColor="#000" bgColor="#fff" />
+                  <QRCode value={qrCodeExtinguisherValue} size={160} fgColor="#000" bgColor="#fff" />
                   <span className="font-medium text-sm italic">{`Extintor/${eqExtinguisherModal?.predio}/${eqExtinguisherModal?.pavimento}/${eqExtinguisherModal?.local}`}</span>
 
                   <BayerLogoBlack />

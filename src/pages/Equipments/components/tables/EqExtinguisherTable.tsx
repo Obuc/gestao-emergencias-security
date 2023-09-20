@@ -30,6 +30,13 @@ const EqExtinguisherTable = () => {
     navigate(`/equipments/${id}`);
   };
 
+  const handleRemove = async () => {
+    if (removeItem) {
+      await mutateRemoveEquipment(removeItem);
+      setRemoveItem(null);
+    }
+  };
+
   return (
     <>
       <div className="min-[1100px]:max-h-[38rem] min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[41rem] w-full overflow-y-auto">
@@ -120,7 +127,7 @@ const EqExtinguisherTable = () => {
 
       {removeItem !== null && (
         <RemoveItem
-          handleRemove={async () => await mutateRemoveEquipment(removeItem)}
+          handleRemove={handleRemove}
           isLoading={isLoadingMutateRemoveEquipment}
           onOpenChange={() => setRemoveItem(null)}
           open={removeItem !== null}

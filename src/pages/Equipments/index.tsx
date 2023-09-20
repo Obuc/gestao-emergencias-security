@@ -1,19 +1,18 @@
 import { useState } from 'react';
-import * as XLSX from 'xlsx';
 import { faDownload, faExpand } from '@fortawesome/free-solid-svg-icons';
 
+import useEqTestCmi from './hooks/useEqTestCmi';
 import LayoutBase from '../../layout/LayoutBase';
 import { Button } from '../../components/Button';
 import { appContext } from '../../context/appContext';
-import useEqExtinguisher from './hooks/useEqExtinguisher';
 import Select, { SelectItem } from '../../components/Select';
-import useEqGovernanceValve from './hooks/useEqGovernanceValve';
 import EqCmiTestTable from './components/tables/EqCmiTestTable';
-import { EquipmentsExtinguisher } from './types/EquipmentsExtinguisher';
+import EqTestCmiQRCode from './components/tables/QRCode/EqTestCmiQRCode';
 import EqExtinguisherTable from './components/tables/EqExtinguisherTable';
 import EqEqGovernanceValve from './components/tables/EqEqGovernanceValve';
-import EqExtinguisherQRCode from './components/tables/EqExtinguisherQRCode';
 import EqGenerateQRCodeModal from './components/modals/EqGenerateQRCodeModal';
+import EqExtinguisherQRCode from './components/tables/QRCode/EqExtinguisherQRCode';
+import useEqExtinguisher from './hooks/useEqExtinguisher';
 
 const Equipments = () => {
   const { formularios, isLoadingFormularios } = appContext();
@@ -24,36 +23,21 @@ const Equipments = () => {
   const [formValue, setFormValue] = useState<string>(equipments_value ?? 'Extintores');
   const [openModalGenerateQRCode, setOpenModalGenerateQRCode] = useState<boolean | null>(null);
 
-  const { eqExtinguisher, isLoadingEqExtinguisher } = useEqExtinguisher();
-  const { eqGovernanceValve, isLoadingEqGovernanceValve } = useEqGovernanceValve();
+  const { handleExportEqTestCmiToExcel } = useEqTestCmi();
+  const { handleExportExtinguisherToExcel } = useEqExtinguisher();
 
   const filteredForms =
-    formularios &&
-    formularios.filter(
-      (form) => form.menu_equipamento === true || form.todos_sites === true || form.site.Title === localSite,
-    );
+    formularios && formularios.filter((form) => form.todos_sites === true || form.site.Title === localSite);
 
-  const handleExport = () => {
-    const columns: (keyof EquipmentsExtinguisher)[] = ['Id', 'cod_extintor', 'local', 'pavimento', 'conforme', 'site'];
+  const handleExportToExcel = () => {
+    switch (formValue) {
+      case 'Teste CMI':
+        handleExportEqTestCmiToExcel();
+        break;
 
-    const headerRow = columns.map((column) => column.toString());
-
-    const dataFiltered = eqExtinguisher?.map((item) => {
-      const newItem: { [key: string]: any } = {};
-      columns.forEach((column) => {
-        newItem[column] = item[column];
-      });
-      return newItem;
-    });
-
-    if (dataFiltered) {
-      const dataArray = [headerRow, ...dataFiltered.map((item) => columns.map((column) => item[column]))];
-
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.aoa_to_sheet(dataArray);
-
-      XLSX.utils.book_append_sheet(wb, ws, '');
-      XLSX.writeFile(wb, 'dados_excel.xlsx');
+      case 'Extintores':
+        handleExportExtinguisherToExcel();
+        break;
     }
   };
 
@@ -87,7 +71,7 @@ const Equipments = () => {
             </div>
 
             <div className="flex gap-2">
-              <Button.Root className="min-w-[14.0625rem] h-10" onClick={handleExport}>
+              <Button.Root className="min-w-[14.0625rem] h-10" onClick={handleExportToExcel}>
                 <Button.Label>Exportar Planilha</Button.Label>
                 <Button.Icon icon={faDownload} />
               </Button.Root>
@@ -109,13 +93,12 @@ const Equipments = () => {
 
       {openModalGenerateQRCode && (
         <EqGenerateQRCodeModal open={openModalGenerateQRCode} onOpenChange={() => setOpenModalGenerateQRCode(null)}>
-          {formValue === 'Extintores' && (
-            <EqExtinguisherQRCode data={eqExtinguisher} isLoading={isLoadingEqExtinguisher} />
-          )}
+          {formValue === 'Extintores' && <EqExtinguisherQRCode />}
+          {formValue === 'Teste CMI' && <EqTestCmiQRCode />}
 
-          {formValue === 'Válvulas de Governo' && (
-            <EqExtinguisherQRCode data={eqGovernanceValve} isLoading={isLoadingEqGovernanceValve} />
-          )}
+          {/* {formValue === 'Válvulas de Governo' && (
+            // <EqExtinguisherQRCode data={eqGovernanceValve} isLoading={isLoadingEqGovernanceValve} />
+          )} */}
         </EqGenerateQRCodeModal>
       )}
     </LayoutBase>
