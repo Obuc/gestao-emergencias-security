@@ -1,8 +1,10 @@
+import * as XLSX from 'xlsx';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
 import { ExtinguisherDataModal, RespostaExtintor } from '../types/Extinguisher';
+import { useState } from 'react';
 
 const useExtinguisher = () => {
   const { crud } = sharepointContext();
@@ -10,6 +12,8 @@ const useExtinguisher = () => {
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
+
+  const [isLoadingExtinguisherExportToExcel, setIsLoadingExtinguisherExportToExcel] = useState<boolean>(false);
 
   const path = `?$Select=*,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
   const fetchExtinguisher = async ({ pageParam }: { pageParam?: string }) => {
@@ -210,6 +214,76 @@ const useExtinguisher = () => {
     },
   });
 
+  const fetchExtinguisherAllRecords = async () => {
+    const path = `?$Select=*,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+    const response = await crud.getListItems('registros_extintor', path);
+
+    const dataWithTransformations = await Promise.all(
+      response.map(async (item: any) => {
+        const extintorResponse = await crud.getListItemsv2(
+          'extintores',
+          `?$Select=*,Id,predio/Title,pavimento/Title,local/Title,cod_extintor,validade,conforme,cod_qrcode&$expand=predio,pavimento,local&$Filter=(Id eq ${item.extintor_idId})`,
+        );
+
+        const extintor = extintorResponse.results[0] || null;
+
+        return {
+          ...item,
+          bombeiro: item.bombeiro_id?.Title,
+          extintor_id: extintor?.Id,
+          predio: extintor?.predio,
+          pavimento: extintor?.pavimento,
+          local: extintor?.local,
+          cod_extintor: extintor?.cod_extintor,
+          validade: extintor?.validade,
+        };
+      }),
+    );
+
+    return dataWithTransformations;
+  };
+
+  const handleExportExtinguisherToExcel = async () => {
+    setIsLoadingExtinguisherExportToExcel(true);
+
+    const data = await fetchExtinguisherAllRecords();
+
+    const columns = [
+      'Id',
+      'bombeiro',
+      'data_pesagem',
+      'extintor_id',
+      'predio',
+      'pavimento',
+      'local',
+      'cod_extintor',
+      'validade',
+      'conforme',
+    ];
+
+    const headerRow = columns.map((column) => column.toString());
+
+    const dataFiltered = data?.map((item) => {
+      const newItem: { [key: string]: any } = {};
+      columns.forEach((column) => {
+        newItem[column] = item[column];
+      });
+      return newItem;
+    });
+
+    if (dataFiltered) {
+      const dataArray = [headerRow, ...dataFiltered.map((item) => columns.map((column) => item[column]))];
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(dataArray);
+
+      XLSX.utils.book_append_sheet(wb, ws, '');
+      XLSX.writeFile(wb, `Registros - Extintores.xlsx`);
+    }
+
+    setIsLoadingExtinguisherExportToExcel(false);
+  };
+
   return {
     extinguisher,
     fetchNextPage,
@@ -222,6 +296,8 @@ const useExtinguisher = () => {
     IsLoadingMutateRemoveExtinguisher,
     mutateEditExtinguisher,
     IsLoadingMutateEditExtinguisher,
+    handleExportExtinguisherToExcel,
+    isLoadingExtinguisherExportToExcel,
   };
 };
 

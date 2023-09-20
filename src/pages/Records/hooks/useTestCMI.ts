@@ -1,8 +1,10 @@
+import * as XLSX from 'xlsx';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { ResponstaTestCmi, TestCmiDataModal } from '../types/TestCMI';
 import { sharepointContext } from '../../../context/sharepointContext';
+import { useState } from 'react';
 
 const useTestCMI = () => {
   const { crud } = sharepointContext();
@@ -10,6 +12,8 @@ const useTestCMI = () => {
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
+
+  const [isLoadingTestCmiExportToExcel, setIsLoadingTestCmiExportToExcel] = useState<boolean>(false);
 
   const path = `?$Select=*,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
   const fetchTestCMI = async ({ pageParam }: { pageParam?: string }) => {
@@ -211,6 +215,60 @@ const useTestCMI = () => {
     },
   });
 
+  const fetchCmiTestAllRecords = async () => {
+    const path = `?$Select=*,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+    const response = await crud.getListItems('registros_teste_cmi', path);
+
+    const dataWithTransformations = await Promise.all(
+      response.map(async (item: any) => {
+        const cmiResponse = await crud.getListItemsv2(
+          'equipamentos_diversos',
+          `?$Select=*,Id,predio/Title,conforme,cod_qrcode&$expand=predio&$Filter=(Id eq ${item.cmi_idId})`,
+        );
+        const cmi = cmiResponse.results[0] || null;
+
+        return {
+          ...item,
+          bombeiro: item.bombeiro_id?.Title,
+          cmi_id: cmi?.Id,
+          predio: cmi?.predio.Title,
+        };
+      }),
+    );
+
+    return dataWithTransformations;
+  };
+
+  const handleExportTestCmiToExcel = async () => {
+    setIsLoadingTestCmiExportToExcel(true);
+
+    const data = await fetchCmiTestAllRecords();
+
+    const columns = ['Id', 'bombeiro', 'cmi_id', 'predio', 'conforme'];
+
+    const headerRow = columns.map((column) => column.toString());
+
+    const dataFiltered = data?.map((item) => {
+      const newItem: { [key: string]: any } = {};
+      columns.forEach((column) => {
+        newItem[column] = item[column];
+      });
+      return newItem;
+    });
+
+    if (dataFiltered) {
+      const dataArray = [headerRow, ...dataFiltered.map((item) => columns.map((column) => item[column]))];
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(dataArray);
+
+      XLSX.utils.book_append_sheet(wb, ws, '');
+      XLSX.writeFile(wb, `Registros - Teste CMI.xlsx`);
+    }
+
+    setIsLoadingTestCmiExportToExcel(false);
+  };
+
   return {
     test_cmi,
     fetchNextPage,
@@ -223,6 +281,8 @@ const useTestCMI = () => {
     IsLoadingMutateRemoveTestCmi,
     mutateEditTestCmi,
     isLoadingMutateEditTestCmi,
+    isLoadingTestCmiExportToExcel,
+    handleExportTestCmiToExcel,
   };
 };
 

@@ -1,3 +1,5 @@
+import * as XLSX from 'xlsx';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -10,6 +12,8 @@ const useInspectionCmi = () => {
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
+
+  const [isLoadingInspectionCmiExportToExcel, setIsLoadingInspectionCmiExportToExcel] = useState<boolean>(false);
 
   const path = `?$Select=*,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
   const fetchTestCMI = async ({ pageParam }: { pageParam?: string }) => {
@@ -208,6 +212,60 @@ const useInspectionCmi = () => {
     },
   });
 
+  const fetchCmiInspectionAllRecords = async () => {
+    const path = `?$Select=*,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+    const response = await crud.getListItems('registros_inspecao_cmi', path);
+
+    const dataWithTransformations = await Promise.all(
+      response.map(async (item: any) => {
+        const cmiResponse = await crud.getListItemsv2(
+          'equipamentos_diversos',
+          `?$Select=*,Id,predio/Title,conforme,cod_qrcode&$expand=predio&$Filter=(Id eq ${item.cmi_idId})`,
+        );
+        const cmi = cmiResponse.results[0] || null;
+
+        return {
+          ...item,
+          bombeiro: item.bombeiro_id?.Title,
+          cmi_id: cmi?.Id,
+          predio: cmi?.predio.Title,
+        };
+      }),
+    );
+
+    return dataWithTransformations;
+  };
+
+  const handleExportInspectionCmiToExcel = async () => {
+    setIsLoadingInspectionCmiExportToExcel(true);
+
+    const data = await fetchCmiInspectionAllRecords();
+
+    const columns = ['Id', 'bombeiro', 'cmi_id', 'predio', 'conforme'];
+
+    const headerRow = columns.map((column) => column.toString());
+
+    const dataFiltered = data?.map((item) => {
+      const newItem: { [key: string]: any } = {};
+      columns.forEach((column) => {
+        newItem[column] = item[column];
+      });
+      return newItem;
+    });
+
+    if (dataFiltered) {
+      const dataArray = [headerRow, ...dataFiltered.map((item) => columns.map((column) => item[column]))];
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(dataArray);
+
+      XLSX.utils.book_append_sheet(wb, ws, '');
+      XLSX.writeFile(wb, `Registros - Inspeção CMI.xlsx`);
+    }
+
+    setIsLoadingInspectionCmiExportToExcel(false);
+  };
+
   return {
     inspection_cmi,
     fetchNextPage,
@@ -220,6 +278,9 @@ const useInspectionCmi = () => {
     IsLoadingMutateRemoveInspectionCmi,
     mutateEditInspectionCmi,
     isLoadingMutateEditInspectionCmi,
+
+    isLoadingInspectionCmiExportToExcel,
+    handleExportInspectionCmiToExcel,
   };
 };
 
