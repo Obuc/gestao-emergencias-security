@@ -8,6 +8,7 @@ import { appContext } from '../../context/appContext';
 import useEqExtinguisher from './hooks/useEqExtinguisher';
 import Select, { SelectItem } from '../../components/Select';
 import useEqGovernanceValve from './hooks/useEqGovernanceValve';
+import EqCmiTestTable from './components/tables/EqCmiTestTable';
 import { EquipmentsExtinguisher } from './types/EquipmentsExtinguisher';
 import EqExtinguisherTable from './components/tables/EqExtinguisherTable';
 import EqEqGovernanceValve from './components/tables/EqEqGovernanceValve';
@@ -27,7 +28,10 @@ const Equipments = () => {
   const { eqGovernanceValve, isLoadingEqGovernanceValve } = useEqGovernanceValve();
 
   const filteredForms =
-    formularios && formularios.filter((form) => form.todos_sites === true || form.site.Title === localSite);
+    formularios &&
+    formularios.filter(
+      (form) => form.menu_equipamento === true || form.todos_sites === true || form.site.Title === localSite,
+    );
 
   const handleExport = () => {
     const columns: (keyof EquipmentsExtinguisher)[] = ['Id', 'cod_extintor', 'local', 'pavimento', 'conforme', 'site'];
@@ -98,6 +102,7 @@ const Equipments = () => {
           <div id="table-equipment">
             {formValue === 'Extintores' && <EqExtinguisherTable />}
             {formValue === 'Válvulas de Governo' && <EqEqGovernanceValve />}
+            {formValue === 'Teste CMI' && <EqCmiTestTable />}
           </div>
         </div>
       </div>

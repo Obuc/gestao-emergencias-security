@@ -5,4 +5,5 @@ export interface IFormulario {
     Title?: string;
   };
   todos_sites: boolean;
+  menu_equipamento: boolean;
 }
