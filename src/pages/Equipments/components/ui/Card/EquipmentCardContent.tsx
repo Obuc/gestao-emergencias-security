@@ -2,10 +2,10 @@ interface IEquipmentCardContentProps {
   responsible: string;
   date: string;
   action?: string;
-  new_cod?: string;
+  cod?: string;
 }
 
-export const EquipmentCardContent = ({ responsible, date, action, new_cod }: IEquipmentCardContentProps) => {
+export const EquipmentCardContent = ({ responsible, date, action, cod }: IEquipmentCardContentProps) => {
   return (
     <div className="flex gap-4 flex-col mt-4">
       <div className="flex w-full justify-between">
@@ -17,7 +17,11 @@ export const EquipmentCardContent = ({ responsible, date, action, new_cod }: IEq
         </span>
       </div>
       {action && <span className="flex w-full ">{action}</span>}
-      {new_cod && <span className="flex w-full ">{new_cod}</span>}
+      {cod && (
+        <span>
+          <strong className="text-[#282828]">Código Equipamento:</strong> {cod}
+        </span>
+      )}
     </div>
   );
 };

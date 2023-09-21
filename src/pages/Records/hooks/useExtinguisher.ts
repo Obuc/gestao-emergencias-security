@@ -118,6 +118,8 @@ const useExtinguisher = () => {
 
         const bombeiroValue = bombeiro ? bombeiro.Title : null;
 
+        console.log(extintor);
+
         const extintorValues = extintor
           ? {
               Id: extintor.Id,
@@ -296,6 +298,7 @@ const useExtinguisher = () => {
     IsLoadingMutateRemoveExtinguisher,
     mutateEditExtinguisher,
     IsLoadingMutateEditExtinguisher,
+
     handleExportExtinguisherToExcel,
     isLoadingExtinguisherExportToExcel,
   };

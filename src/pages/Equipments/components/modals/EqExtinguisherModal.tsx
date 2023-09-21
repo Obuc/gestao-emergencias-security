@@ -183,13 +183,13 @@ const EqExtinguisherModal = () => {
           {eqExtinguisherModal?.history &&
             eqExtinguisherModal?.history.map((item) => {
               const cardVariant =
-                item.conforme && !item.novo ? 'modification' : item.conforme && item.novo ? 'new' : 'noncompliant';
+                item.conforme && !item.novo ? 'new' : item.conforme && item.novo ? 'modification' : 'noncompliant';
 
               const cardTitle =
                 item.conforme && !item.novo
                   ? 'Nova Verificação'
                   : item.conforme && item.novo
-                  ? 'Alteração Equipamento'
+                  ? 'Alteração do Equipamento'
                   : 'Verificação Inconforme';
 
               const cardDate = format(new Date(item.Created), 'dd MMM yyyy', { locale: ptBR });
@@ -201,7 +201,7 @@ const EqExtinguisherModal = () => {
                     date={cardDate}
                     responsible={item.bombeiro_id.Title}
                     action={item.observacao}
-                    new_cod={item?.cod_extintor}
+                    cod={item?.cod_extintor}
                   />
                 </EquipmentCard.Root>
               );
