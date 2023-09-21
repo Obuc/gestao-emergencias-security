@@ -12,7 +12,7 @@ const useEqExtinguisher = () => {
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
 
-  const path = `?$Select=Id,cod_qrcode,cod_extintor,excluido,conforme,site/Title,pavimento/Title,local/Title&$expand=site,pavimento,local&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
+  const path = `?$Select=Id,cod_qrcode,cod_extintor,excluido,Modified,conforme,site/Title,pavimento/Title,local/Title&$expand=site,pavimento,local&$Orderby=Modified desc&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'extintores', path });
     const dataWithTransformations = await Promise.all(
@@ -60,7 +60,7 @@ const useEqExtinguisher = () => {
     if (params.id && equipments_value === 'Extintores') {
       const resp = await crud.getListItemsv2(
         'registros_extintor',
-        `?$Select=Id,extintor_id/Id,bombeiro_id/Title,data_pesagem,novo,observacao,status,conforme,Created&$expand=bombeiro_id,extintor_id&$Filter=(extintor_id/Id eq '${extinguisherId}')`,
+        `?$Select=Id,extintor_id/Id,bombeiro_id/Title,cod_extintor,data_pesagem,novo,observacao,status,conforme,Created&$expand=bombeiro_id,extintor_id&$Filter=(extintor_id/Id eq '${extinguisherId}')`,
       );
       return resp.results || null;
     }

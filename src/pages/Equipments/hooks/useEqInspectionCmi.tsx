@@ -136,8 +136,8 @@ const useEqInspectionCmi = () => {
 
   const qrCodeValue =
     eqInspectionCmiModal?.site === 'BXO'
-      ? `TesteCMIBXO;${eqInspectionCmiModal?.site};${eqInspectionCmiModal?.cod_qrcode}`
-      : `Bomba;${eqInspectionCmiModal?.site};${eqInspectionCmiModal?.cod_qrcode}`;
+      ? `InspecaoCMIBXO;${eqInspectionCmiModal?.site};${eqInspectionCmiModal?.cod_qrcode}`
+      : `Casa;${eqInspectionCmiModal?.site};${eqInspectionCmiModal?.cod_qrcode}`;
 
   const handleExportEqInspectionCmiToExcel = () => {
     setIsLoadinghandleExportEqInspectionCmiToExcel(true);

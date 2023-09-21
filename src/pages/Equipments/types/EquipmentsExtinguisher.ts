@@ -43,5 +43,6 @@ export interface EqExtinguisherModal {
     status?: string;
     conforme: boolean;
     Created: string;
+    cod_extintor: string;
   }>;
 }

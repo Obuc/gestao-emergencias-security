@@ -90,7 +90,7 @@ const EqInspectionCmiQRCode = () => {
 
                 <div className="px-2 py-2 gap-3 flex flex-col justify-center items-center">
                   <QRCode renderAs="svg" value={qrCodeValue} size={150} fgColor="#000" bgColor="#fff" />
-                  <span className="font-medium text-sm italic">{`Teste CMI/${value?.site}/${value?.predio}/${value?.pavimento}`}</span>
+                  <span className="font-medium text-sm italic">{`Inspeção CMI/${value?.site}/${value?.predio}/${value?.pavimento}`}</span>
 
                   {value?.site === 'BXO' && <BXOLogo height="50" width="45" />}
                   {value?.site === 'SPO' && <SPOLogo height="50" width="45" />}

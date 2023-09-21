@@ -187,9 +187,9 @@ const EqExtinguisherModal = () => {
 
               const cardTitle =
                 item.conforme && !item.novo
-                  ? 'Alteração Equipamento'
-                  : item.conforme && item.novo
                   ? 'Nova Verificação'
+                  : item.conforme && item.novo
+                  ? 'Alteração Equipamento'
                   : 'Verificação Inconforme';
 
               const cardDate = format(new Date(item.Created), 'dd MMM yyyy', { locale: ptBR });
@@ -201,6 +201,7 @@ const EqExtinguisherModal = () => {
                     date={cardDate}
                     responsible={item.bombeiro_id.Title}
                     action={item.observacao}
+                    new_cod={item?.cod_extintor}
                   />
                 </EquipmentCard.Root>
               );
