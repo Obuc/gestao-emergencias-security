@@ -2,6 +2,7 @@ import { forwardRef } from 'react';
 import DatePickerReact, { registerLocale } from 'react-datepicker';
 
 import { ptBR } from 'date-fns/locale';
+import { Skeleton } from '@mui/material';
 
 registerLocale('pt-BR', ptBR);
 
@@ -13,6 +14,7 @@ interface IDatePickerProps {
   onChange: (date: any) => void;
   errors?: string;
   touched?: boolean;
+  isLoading?: boolean;
 }
 
 interface IInputDateProps {
@@ -31,7 +33,7 @@ const InputDate = forwardRef<HTMLInputElement, IInputDateProps>((props, ref) => 
 
   return (
     <input
-      className={`${errors && touched && 'border-pink'} w-full h-10 outline-none border shadow-lg-app p-2`}
+      className={`${errors && touched && 'border-pink'} w-full h-10 outline-none border shadow-xs-app px-2`}
       type="text"
       value={dateValue}
       onClick={onClick}
@@ -42,28 +44,33 @@ const InputDate = forwardRef<HTMLInputElement, IInputDateProps>((props, ref) => 
 });
 
 const DatePicker = (props: IDatePickerProps) => {
-  const { name, label, width, value, onChange, errors, touched } = props;
+  const { name, label, width, value, onChange, errors, touched, isLoading } = props;
 
   return (
     <div className={`flex flex-col text-primary ${width ? width : 'w-full'}`}>
       <label className="pb-2">{label ? label : ''}</label>
-      <DatePickerReact
-        name={name}
-        dateFormat="dd/MM/yyyy"
-        locale="pt-BR"
-        selected={value}
-        onChange={onChange}
-        customInput={
-          <InputDate
-            name={name}
-            value={value}
-            errors={errors}
-            touched={touched}
-            onClick={() => {}}
-            onChange={onChange}
-          />
-        }
-      />
+
+      {!isLoading && (
+        <DatePickerReact
+          name={name}
+          dateFormat="dd/MM/yyyy"
+          locale="pt-BR"
+          selected={value}
+          onChange={onChange}
+          customInput={
+            <InputDate
+              name={name}
+              value={value}
+              errors={errors}
+              touched={touched}
+              onClick={() => {}}
+              onChange={onChange}
+            />
+          }
+        />
+      )}
+
+      {isLoading && <Skeleton className="min-w-full outline-none py-2 pl-2 h-10" />}
     </div>
   );
 };

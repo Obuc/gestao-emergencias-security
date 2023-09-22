@@ -18,7 +18,7 @@ class CrudSharepoint {
     return `${this.baseUrl}/_layouts/15/userphoto.aspx?username=${email}`;
   }
 
-  async postAllAttachments(list: string, id: string, input: FileList): Promise<any[]> {
+  async postAllAttachments(list: string, id: string, input: Array<File>): Promise<any[]> {
     if (this.digestToken.length === 0) {
       this.digestToken = await this.getDigest();
     }

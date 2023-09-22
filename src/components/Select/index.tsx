@@ -10,7 +10,7 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 const select = tv({
   slots: {
     base: 'flex w-full h-full flex-col bg-white',
-    labelStyle: 'text-primary text-base pb-2 bg-[#F1F1F1] font-medium',
+    labelStyle: 'text-primary text-base pb-2',
     trigger: 'min-w-full outline-none py-2 pl-2 flex group justify-between items-center h-10 leading-none',
     triggerIcon: 'ml-2 w-[3.125rem] h-10 flex justify-center items-center duration-150',
     content: 'overflow-hidden bg-white shadow-xs-primary-app',
@@ -32,8 +32,13 @@ const select = tv({
         triggerIcon: 'bg-[#00354F]',
       },
       light: {
+        trigger: ' text-primary data-[placeholder:text-gray-400]',
+        triggerIcon: 'bg-primary',
+      },
+      gray: {
         trigger: ' text-[#3E3E3E] data-[placeholder:text-gray-400]',
         triggerIcon: 'bg-primary',
+        labelStyle: 'bg-[#F1F1F1]',
       },
     },
     disabled: {
@@ -46,7 +51,7 @@ const select = tv({
     },
     variant: {
       filled: {
-        trigger: 'shadow-xs-primary-app',
+        trigger: 'shadow-xs-app border',
         triggerIcon: 'group-data-[state="open"]:bg-primary polygon-select text-white',
       },
       outline: {
@@ -123,8 +128,8 @@ const Select = ({
             </SelectRadix.Portal>
           </SelectRadix.Root>
         )}
+        {isLoading && <Skeleton className="min-w-full outline-none py-2 pl-2 h-10" />}
       </div>
-      {isLoading && <Skeleton className="min-w-full outline-none py-2 pl-2 h-10" />}
     </>
   );
 };

@@ -1,22 +1,26 @@
 import { useState } from 'react';
 import { ptBR } from 'date-fns/locale';
 import { Skeleton } from '@mui/material';
-import { format, parseISO } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroller';
+import { differenceInDays, format } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 
 import { IReports } from '../../types/Reports';
 import useReports from '../../hooks/useReports';
+import ReportsModal from '../modals/ReportsModal';
 import { Table } from '../../../../components/Table';
+import Tooltip from '../../../../components/Tooltip';
 import PopoverTables from '../../../../components/PopoverTables';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
-import ReportsModal from '../modals/ReportsModal';
 
 const ReportsTable = () => {
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
+
+  const now = new Date();
+  const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
   const { reports, fetchNextPage, hasNextPage, isError, isLoading, mutateRemoveReport, isLoadingMutateRemoveReport } =
     useReports();
@@ -51,7 +55,7 @@ const ReportsTable = () => {
               <Table.Tr className="bg-[#FCFCFC]">
                 <Table.Th className="pl-8">Id</Table.Th>
                 <Table.Th>Data</Table.Th>
-                <Table.Th>Tipo de Laudo</Table.Th>
+                <Table.Th className="w-[10%]">Tipo de Laudo</Table.Th>
                 <Table.Th>Documento</Table.Th>
                 <Table.Th>Emissão Laudo</Table.Th>
                 <Table.Th>Validade</Table.Th>
@@ -60,7 +64,7 @@ const ReportsTable = () => {
             </Table.Thead>
 
             <Table.Tbody>
-              {reports?.pages[0].data.value.length === 0 && (
+              {reports?.pages[0]?.data?.value?.length === 0 && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
                   <Table.Td colSpan={7} className="text-center text-primary">
                     Nenhum laudo encontrado!
@@ -90,34 +94,68 @@ const ReportsTable = () => {
 
               {reports?.pages.map(
                 (item: any) =>
-                  item?.data?.value?.map((item: IReports) => (
-                    <Table.Tr key={item.Id}>
-                      <Table.Td className="pl-8">{item.Id}</Table.Td>
-                      <Table.Td>{format(parseISO(item.Created), 'dd MMM yyyy', { locale: ptBR })}</Table.Td>
-                      <Table.Td>{item.tipo_laudo.Title}</Table.Td>
-                      <Table.Td>
-                        <a
-                          className="flex items-center text-[#303030] gap-2"
-                          href={item.AttachmentFiles[0].ServerRelativeUrl}
-                          target="_blank"
-                        >
-                          <span>Abrir</span>
+                  item?.data?.value?.map((item: IReports) => {
+                    const dateValidade = item.validade && new Date(item.validade);
 
-                          <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                        </a>
-                      </Table.Td>
-                      <Table.Td>{format(parseISO(item.emissao), 'dd MMM yyyy', { locale: ptBR })}</Table.Td>
-                      <Table.Td>{format(parseISO(item.validade), 'dd MMM yyyy', { locale: ptBR })}</Table.Td>
+                    const daysAdvance = item.dias_antecedentes_alerta;
+                    const isExpired = dateValidade ? differenceInDays(dateValidade, nowDate) : null;
+                    const daysToExpire = dateValidade ? differenceInDays(dateValidade, nowDate) : null;
+                    const isAlert = daysToExpire !== null && daysToExpire <= daysAdvance && daysToExpire >= 0;
 
-                      <Table.Td>
-                        <PopoverTables
-                          onView={() => handleView(item.Id)}
-                          onDelete={() => setRemoveItem(item.Id)}
-                          onEdit={() => handleEdit(item.Id)}
-                        />
-                      </Table.Td>
-                    </Table.Tr>
-                  )),
+                    return (
+                      <Table.Tr key={item.Id}>
+                        <Table.Td className="pl-8">{item.Id}</Table.Td>
+                        <Table.Td>{item.Created && format(item.Created, 'dd MMM yyyy', { locale: ptBR })}</Table.Td>
+                        <Table.Td>{item.tipo_laudo.Title}</Table.Td>
+                        <Table.Td>
+                          {item.AttachmentFiles[0] && (
+                            <a
+                              className="flex items-center text-[#303030] gap-2 p-4 group"
+                              href={'https://bayergroup.sharepoint.com' + item.AttachmentFiles[0].ServerRelativeUrl}
+                              target="_blank"
+                            >
+                              <Tooltip label="Visualizar documento">
+                                <span className="group-hover:border-b">Abrir</span>
+                              </Tooltip>
+                              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                            </a>
+                          )}
+                        </Table.Td>
+                        <Table.Td>{item.emissao && format(item.emissao, 'dd MMM yyyy', { locale: ptBR })}</Table.Td>
+                        <Table.Td>
+                          <Tooltip
+                            label={
+                              isExpired !== null && !item.revalidado
+                                ? isExpired < 0
+                                  ? 'Laudo vencido!'
+                                  : daysToExpire === 0
+                                  ? 'Laudo vence hoje!'
+                                  : isAlert
+                                  ? `Dias restantes para o vencimento do laudo: ${daysToExpire}`
+                                  : 'Laudo dentro do prazo de validade!'
+                                : 'Prazo de validade do Laudo'
+                            }
+                          >
+                            <span
+                              data-alert={isAlert !== null && !item.revalidado && isAlert}
+                              data-expired={isExpired !== null && !item.revalidado && isExpired < 0}
+                              className="p-4 cursor-default data-[alert=true]:bg-[#FFEE57] data-[alert=true]:text-[#303030] data-[expired=true]:bg-[#FF3162]/20 data-[expired=true]:text-[#FF3162]"
+                            >
+                              {item.validade && format(item.validade, 'dd MMM yyyy', { locale: ptBR })}
+                            </span>
+                          </Tooltip>
+                        </Table.Td>
+
+                        <Table.Td>
+                          <PopoverTables
+                            onView={() => handleView(item.Id)}
+                            onDelete={() => setRemoveItem(item.Id)}
+                            onEdit={() => handleEdit(item.Id)}
+                          />
+                        </Table.Td>
+                      </Table.Tr>
+                    );
+                  }),
               )}
             </Table.Tbody>
           </Table.Root>

@@ -10,10 +10,10 @@ export const FileImportAction = ({ ...props }: IFileImportActionProps) => {
       {...props}
       type="button"
       className={`w-7 h-7 p-2 rounded-full flex justify-center items-center ${
-        props.disabled ? 'bg-gray-100' : 'bg-[#D5E3FF]'
+        props.disabled ? 'bg-gray-100' : 'bg-[#EDEDED]'
       } hover:cursor-pointer`}
     >
-      <FontAwesomeIcon icon={faXmark} className={`${props.disabled ? 'text-gray-300' : 'text-blue'}`} />
+      <FontAwesomeIcon icon={faXmark} className={`${props.disabled ? 'text-gray-300' : 'text-pink'}`} />
     </button>
   );
 };

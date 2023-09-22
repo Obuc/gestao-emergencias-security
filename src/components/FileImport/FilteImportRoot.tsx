@@ -6,7 +6,7 @@ interface IFilteImportRootProps extends ComponentProps<'div'> {
 
 export const FilteImportRoot = ({ children, ...props }: IFilteImportRootProps) => {
   return (
-    <div {...props} className="flex flex-col gap-2 w-[33rem]">
+    <div {...props} className="flex flex-col gap-2 w-full">
       {children}
     </div>
   );
