@@ -62,7 +62,8 @@ const Records = () => {
                 id="state_id"
                 name="state_id"
                 value={formValue}
-                className="w-full"
+                className="w-[22.5rem]"
+                mode="gray"
                 isLoading={isLoadingFormularios}
                 onValueChange={(value) => {
                   setFormValue(value);

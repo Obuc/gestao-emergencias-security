@@ -8,6 +8,7 @@ export interface IReports {
   file: Array<File>;
   Attachments: boolean;
   Created: Date | null;
+  numero_laudo_revalidado: number | null;
   Id: number;
   dias_antecedentes_alerta: number;
   emissao: Date | null;

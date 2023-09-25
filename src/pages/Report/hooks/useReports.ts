@@ -68,7 +68,7 @@ const useReports = () => {
     queryKey: params.id !== undefined && params.id !== 'new' ? ['report_data_modal', params.id] : ['report_data_modal'],
     queryFn: async () => {
       if (params.id !== undefined && params.id !== 'new') {
-        const patch = `?$Select=Id,Created,tipo_laudo/Title,tipo_laudoId,siteId,tipo_laudo/Id,site/Title,emissao,validade,dias_antecedentes_alerta,excluido,Attachments&$expand=site,tipo_laudo,AttachmentFiles&$Orderby=Created desc&$filter=Id eq ${params.id}`;
+        const patch = `?$Select=Id,Created,tipo_laudo/Title,tipo_laudoId,siteId,numero_laudo_revalidado,tipo_laudo/Id,site/Title,emissao,validade,dias_antecedentes_alerta,excluido,Attachments&$expand=site,tipo_laudo,AttachmentFiles&$Orderby=Created desc&$filter=Id eq ${params.id}`;
 
         const resp = await crud.getListItemsv2('laudos', patch);
         const data = resp.results[0];
@@ -116,6 +116,7 @@ const useReports = () => {
             siteId: data.values.siteId,
             validade: data.values.validade.split('T')[0] + 'T00:00:00Z',
             tipo_laudoId: data.values.tipo_laudoId && +data.values.tipo_laudoId,
+            numero_laudo_revalidado: data.values.revalidateValue,
           };
           const resp = await crud.postItemList('laudos', dataNew);
           return resp;

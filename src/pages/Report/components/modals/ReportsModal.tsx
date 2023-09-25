@@ -16,6 +16,12 @@ import { appContext } from '../../../../context/appContext';
 import { FileImport } from '../../../../components/FileImport';
 import { arraysAreEqual } from '../../../../utils/arraysAreEqual';
 import Select, { SelectItem } from '../../../../components/Select';
+import { RadioGroup } from '../../../../components/RadioGroup';
+
+interface IReportsModal extends Partial<IReports> {
+  isRevalidate: string;
+  revalidateValue: number | null;
+}
 
 const ReportsModal = () => {
   const params = useParams();
@@ -23,6 +29,7 @@ const ReportsModal = () => {
   const { sites } = appContext();
   const [searchParams] = useSearchParams();
   const localSite = localStorage.getItem('user_site');
+  const [reporItem, setReportItem] = useState<boolean | null>(null);
   const isEdit = searchParams.get('edit') === 'true' || params.id === 'new' ? true : false;
 
   const {
@@ -38,16 +45,14 @@ const ReportsModal = () => {
     isLoadingMutateAddAttachments,
   } = useReports();
 
-  const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
-
   useEffect(() => {
     if (params?.id) {
-      setExtinguisherItem(true);
+      setReportItem(true);
     }
   }, [params.id]);
 
   const handleOnOpenChange = () => {
-    setExtinguisherItem(null);
+    setReportItem(null);
     navigate('/reports');
   };
 
@@ -57,7 +62,19 @@ const ReportsModal = () => {
     dias_antecedentes_alerta: yup.number().min(1).required(),
     tipo_laudoId: yup.number().min(1).required(),
 
-    AttachmentFiles: yup.array().of(yup.object()), // Use a tipagem correta aqui
+    AttachmentFiles: yup.array().of(yup.object()),
+
+    isRevalidate: yup.string(),
+    revalidateValue: yup
+      .number()
+      .min(1)
+      .test('is-required', 'Este campo é obrigatório quando isRevalidate é verdadeiro', function (value) {
+        const isRevalidate = this.parent.isRevalidate;
+        if (isRevalidate === 'true') {
+          return value !== undefined;
+        }
+        return true;
+      }),
 
     file: yup.array().test('hasFile', 'Pelo menos 1 anexo é necessário', function (value) {
       const { AttachmentFiles } = this.parent;
@@ -68,7 +85,7 @@ const ReportsModal = () => {
     }),
   });
 
-  const initialRequestBadgeValues: IReports = {
+  const initialRequestBadgeValues: IReportsModal = {
     Attachments: params.id !== 'new' ? reportModal?.Attachments || false : false,
     AttachmentFiles: params.id !== 'new' ? reportModal?.AttachmentFiles || [] : [],
     Created: params.id !== 'new' ? reportModal?.Created || null : null,
@@ -85,19 +102,24 @@ const ReportsModal = () => {
 
     revalidado: params.id !== 'new' ? reportModal?.revalidado || false : false,
 
+    numero_laudo_revalidado: params.id !== 'new' ? reportModal?.numero_laudo_revalidado || null : null,
+
     file: [],
+    isRevalidate: 'false',
+    revalidateValue: 0,
   };
 
-  const handleSubmit = async (values: IReports) => {
+  const handleSubmit = async (values: IReportsModal) => {
     if (values) {
       const isFormEdit = searchParams.get('edit') === 'true';
       const newData = await mutateReport({ values, isEdit: isFormEdit });
 
-      if (values.file.length > 0 && newData.Id) {
+      if (values.file && values.file?.length > 0 && newData.Id) {
         await mutateAddAttachments({ attachments: values.file, itemId: newData.Id });
       }
       // Lógica para excluir anexos
-      const isAttachmentFilesChanged = !arraysAreEqual(values.AttachmentFiles, reportModal?.AttachmentFiles || []);
+      const isAttachmentFilesChanged =
+        values.AttachmentFiles && !arraysAreEqual(values.AttachmentFiles, reportModal?.AttachmentFiles || []);
       if (isAttachmentFilesChanged) {
         await mutateRemoveAttachments({ attachments: reportModal?.AttachmentFiles, itemId: reportModal?.Id });
       }
@@ -105,14 +127,14 @@ const ReportsModal = () => {
     }
   };
 
-  const handleRemoveItem = async (index: number, props: FormikProps<IReports>, isLocalFile: boolean) => {
+  const handleRemoveItem = async (index: number, props: FormikProps<IReportsModal>, isLocalFile: boolean) => {
     if (isLocalFile) {
-      const updatedFiles = props.values.file.filter((_, indexItem) => indexItem !== index);
+      const updatedFiles = props.values.file?.filter((_, indexItem) => indexItem !== index);
       props.setFieldValue('file', updatedFiles);
     }
     if (!isLocalFile) {
       // Lógica para apagar 'AttachmentFiles' somente localmente
-      const updatedAttachmentFiles = props.values.AttachmentFiles.filter((_, indexItem) => indexItem !== index);
+      const updatedAttachmentFiles = props.values.AttachmentFiles?.filter((_, indexItem) => indexItem !== index);
       props.setFieldValue('AttachmentFiles', updatedAttachmentFiles);
       // await mutateRemoveAttachments({ attachments: props.values.AttachmentFiles, itemId: props.values.Id });
     }
@@ -122,7 +144,7 @@ const ReportsModal = () => {
     <>
       <Modal
         className="w-[71rem]"
-        open={extinguisherItem !== null}
+        open={reporItem !== null}
         onOpenChange={handleOnOpenChange}
         title={params.id === 'new' ? 'Novo Laudo' : `Laudo ${params.id}`}
       >
@@ -130,9 +152,9 @@ const ReportsModal = () => {
           enableReinitialize={true}
           initialValues={initialRequestBadgeValues}
           validationSchema={validationSchema}
-          onSubmit={(values: IReports) => handleSubmit(values)}
+          onSubmit={(values: IReportsModal) => handleSubmit(values)}
         >
-          {(props: FormikProps<IReports>) => (
+          {(props: FormikProps<IReportsModal>) => (
             <>
               <form onSubmit={props.handleSubmit}>
                 <div className="py-6 px-8">
@@ -170,7 +192,7 @@ const ReportsModal = () => {
                       name="site.Title"
                       disabled
                       isLoading={isLoadingReportModal}
-                      value={params.id === 'new' ? localSite ?? '' : props.values.site.Title}
+                      value={params.id === 'new' ? localSite ?? '' : props.values.site?.Title}
                     />
                   </div>
 
@@ -181,7 +203,11 @@ const ReportsModal = () => {
                         name="emissao_view"
                         label="Data Emissão"
                         disabled
-                        // value={props.values.emissao ? format(props.values.emissao, 'dd/MM/yyyy', { locale: ptBR }) : ''}
+                        value={
+                          props.values.emissao && typeof props.values.emissao !== 'string'
+                            ? format(props.values.emissao, 'dd/MM/yyyy', { locale: ptBR })
+                            : ''
+                        }
                         isLoading={isLoadingReportModal}
                       />
                     )}
@@ -205,9 +231,11 @@ const ReportsModal = () => {
                         name="validade"
                         label="Data Validade"
                         disabled
-                        // value={
-                        //   props.values.validade ? format(props.values.validade, 'dd/MM/yyyy', { locale: ptBR }) : ''
-                        // }
+                        value={
+                          props.values.validade && typeof props.values.validade !== 'string'
+                            ? format(props.values.validade, 'dd/MM/yyyy', { locale: ptBR })
+                            : ''
+                        }
                         isLoading={isLoadingReportModal}
                       />
                     )}
@@ -232,6 +260,7 @@ const ReportsModal = () => {
                       name="dias_antecedentes_alerta"
                       label="Dias antecedentes para aviso"
                       onChange={props.handleChange}
+                      onBlur={props.handleBlur}
                       value={props.values.dias_antecedentes_alerta}
                       isLoading={isLoadingReportModal}
                       errors={props.errors.dias_antecedentes_alerta}
@@ -246,7 +275,7 @@ const ReportsModal = () => {
                         name="tipo_laudo.Title"
                         label="Tipo"
                         disabled
-                        value={props.values.tipo_laudo.Title}
+                        value={props.values.tipo_laudo?.Title}
                         isLoading={isLoadingReportModal}
                       />
                     )}
@@ -273,6 +302,73 @@ const ReportsModal = () => {
                     )}
                   </div>
 
+                  {params.id === 'new' && (
+                    <div className="flex gap-2 py-2">
+                      <div className="flex flex-col gap-4">
+                        <RadioGroup.Label>Revalidar Laudo ? </RadioGroup.Label>
+                        <RadioGroup.Root
+                          id="isRevalidate"
+                          name="isRevalidate"
+                          defaultValue={props.values.isRevalidate}
+                          orientation="horizontal"
+                          onValueChange={(value) => {
+                            props.setFieldValue('isRevalidate', value);
+                          }}
+                        >
+                          <RadioGroup.Content>
+                            <RadioGroup.Item
+                              className="bg-white w-6 h-6 rounded-full shadow-md-app hover:bg-primary-opacity focus:shadow-2xl outline-none cursor-default"
+                              value="true"
+                              id="1"
+                            >
+                              <RadioGroup.Indicator className="flex items-center justify-center w-full h-full relative after:content-[''] after:block after:w-[.6875rem] after:h-[.6875rem] after:rounded-[50%] after:bg-primary" />
+                            </RadioGroup.Item>
+                            <RadioGroup.Label htmlFor="1">Sim</RadioGroup.Label>
+                          </RadioGroup.Content>
+
+                          <RadioGroup.Content>
+                            <RadioGroup.Item
+                              className="bg-white w-6 h-6 rounded-full shadow-md-app hover:bg-primary-opacity focus:shadow-2xl outline-none cursor-default"
+                              value="false"
+                              id="2"
+                            >
+                              <RadioGroup.Indicator className="flex items-center justify-center w-full h-full relative after:content-[''] after:block after:w-[.6875rem] after:h-[.6875rem] after:rounded-[50%] after:bg-primary" />
+                            </RadioGroup.Item>
+                            <RadioGroup.Label htmlFor="2">Não</RadioGroup.Label>
+                          </RadioGroup.Content>
+                        </RadioGroup.Root>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex gap-2 py-2">
+                    {props.values.isRevalidate === 'true' && (
+                      <TextField
+                        id="revalidateValue"
+                        name="revalidateValue"
+                        label="Número do laudo a ser revalidado"
+                        isLoading={isLoadingReportModal}
+                        type="number"
+                        value={props.values.revalidateValue ?? 0}
+                        onChange={props.handleChange}
+                        errors={props.errors.revalidateValue}
+                        touched={props.touched.revalidateValue}
+                      />
+                    )}
+
+                    {props.values.numero_laudo_revalidado && (
+                      <TextField
+                        type="number"
+                        disabled
+                        id="numero_laudo_revalidado"
+                        name="numero_laudo_revalidado"
+                        isLoading={isLoadingReportModal}
+                        label="Número do laudo revalidado"
+                        value={props.values.numero_laudo_revalidado ?? ''}
+                      />
+                    )}
+                  </div>
+
                   <div className="flex gap-2 py-2">
                     {!isLoadingReportModal && (
                       <FileImport.Root>
@@ -286,7 +382,7 @@ const ReportsModal = () => {
                           }}
                         />
                         {props.values.Attachments &&
-                          props.values.AttachmentFiles.map((item, index) => (
+                          props.values.AttachmentFiles?.map((item, index) => (
                             <FileImport.RootItem key={index}>
                               {item.ServerRelativeUrl && (
                                 <>

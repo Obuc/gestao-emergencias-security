@@ -63,7 +63,7 @@ const Equipments = () => {
                 id="state_id"
                 name="state_id"
                 value={formValue}
-                className="w-[22.25rem]"
+                className="w-[22.5rem]"
                 isLoading={isLoadingFormularios}
                 onValueChange={(value) => {
                   setFormValue(value);
