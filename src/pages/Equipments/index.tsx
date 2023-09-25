@@ -11,11 +11,12 @@ import Select, { SelectItem } from '../../components/Select';
 import EqCmiTestTable from './components/tables/EqCmiTestTable';
 import EqTestCmiQRCode from './components/tables/QRCode/EqTestCmiQRCode';
 import EqExtinguisherTable from './components/tables/EqExtinguisherTable';
-import EqEqGovernanceValve from './components/tables/EqEqGovernanceValve';
+// import EqEqGovernanceValve from './components/tables/EqEqGovernanceValve';
 import EqCmiInspectionTable from './components/tables/EqCmiInspectionTable';
 import EqGenerateQRCodeModal from './components/modals/EqGenerateQRCodeModal';
 import EqExtinguisherQRCode from './components/tables/QRCode/EqExtinguisherQRCode';
 import EqInspectionCmiQRCode from './components/tables/QRCode/EqInspectionCmiQRCode';
+// import EqGovernanceValveQRCode from './components/tables/QRCode/EqGovernanceValveQRCode';
 
 const Equipments = () => {
   const { formularios, isLoadingFormularios } = appContext();
@@ -102,7 +103,7 @@ const Equipments = () => {
           </div>
 
           {formValue === 'Extintores' && <EqExtinguisherTable />}
-          {formValue === 'Válvulas de Governo' && <EqEqGovernanceValve />}
+          {/* {formValue === 'Válvulas de Governo' && <EqEqGovernanceValve />} */}
           {formValue === 'Teste CMI' && <EqCmiTestTable />}
           {formValue === 'Inspeção CMI' && <EqCmiInspectionTable />}
         </div>
@@ -113,10 +114,7 @@ const Equipments = () => {
           {formValue === 'Extintores' && <EqExtinguisherQRCode />}
           {formValue === 'Teste CMI' && <EqTestCmiQRCode />}
           {formValue === 'Inspeção CMI' && <EqInspectionCmiQRCode />}
-
-          {/* {formValue === 'Válvulas de Governo' && (
-            // <EqExtinguisherQRCode data={eqGovernanceValve} isLoading={isLoadingEqGovernanceValve} />
-          )} */}
+          {/* {formValue === 'Válvulas de Governo' && <EqGovernanceValveQRCode />} */}
         </EqGenerateQRCodeModal>
       )}
     </LayoutBase>

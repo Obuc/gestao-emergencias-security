@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { ptBR } from 'date-fns/locale';
 import { Skeleton } from '@mui/material';
-import { format, parseISO } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroller';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';

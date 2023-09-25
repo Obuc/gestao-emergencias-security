@@ -1,12 +1,11 @@
 import QRCode from 'qrcode.react';
 import { format } from 'date-fns';
+import { saveAs } from 'file-saver';
 import html2canvas from 'html2canvas';
 import { ptBR } from 'date-fns/locale';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { faExpand } from '@fortawesome/free-solid-svg-icons';
-
-import { saveAs } from 'file-saver';
 
 import CardEmpy from '../ui/CardEmpy';
 import { EquipmentCard } from '../ui/Card';
@@ -14,8 +13,9 @@ import CardSkeleton from '../ui/CardSkeleton';
 import Modal from '../../../../components/Modal';
 import { Button } from '../../../../components/Button';
 import TextField from '../../../../components/TextField';
+import BXOLogo from '../../../../components/Icons/BXOLogo';
+import SPOLogo from '../../../../components/Icons/SPOLogo';
 import useEqExtinguisher from '../../hooks/useEqExtinguisher';
-import BayerLogoBlack from '../../../../components/Icons/BayerLogoBlack';
 
 const EqExtinguisherModal = () => {
   const params = useParams();
@@ -154,7 +154,8 @@ const EqExtinguisherModal = () => {
                   <QRCode value={qrCodeExtinguisherValue} size={160} fgColor="#000" bgColor="#fff" />
                   <span className="font-medium text-sm italic">{`Extintor/${eqExtinguisherModal?.predio}/${eqExtinguisherModal?.pavimento}/${eqExtinguisherModal?.local}`}</span>
 
-                  <BayerLogoBlack />
+                  {eqExtinguisherModal?.site === 'BXO' && <BXOLogo height="50" width="45" />}
+                  {eqExtinguisherModal?.site === 'SPO' && <SPOLogo height="50" width="45" />}
                 </div>
               </div>
             </div>

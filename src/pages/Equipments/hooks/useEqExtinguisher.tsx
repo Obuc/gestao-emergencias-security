@@ -42,7 +42,11 @@ const useEqExtinguisher = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['equipments_data', user_site],
+    queryKey:
+      equipments_value === 'Extintores'
+        ? ['equipments_data', user_site]
+        : ['equipments_data', user_site, equipments_value],
+
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -68,7 +72,10 @@ const useEqExtinguisher = () => {
 
   const { data: eqExtinguisherModal, isLoading: isLoadingEqExtinguisherModal }: UseQueryResult<EqExtinguisherModal> =
     useQuery({
-      queryKey: params.id ? ['eq_extinguisher_data_modal', params.id] : ['eq_extinguisher_data_modal'],
+      queryKey:
+        params.id && equipments_value === 'Extintores'
+          ? ['eq_extinguisher_data_modal', params.id, equipments_value]
+          : ['eq_extinguisher_data_modal'],
       queryFn: async () => {
         if (params.id && equipments_value === 'Extintores') {
           const eqExtinguisherData = await fetchEqExtinguisherData();

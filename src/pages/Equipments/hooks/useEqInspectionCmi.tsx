@@ -46,7 +46,10 @@ const useEqInspectionCmi = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['equipments_data_inspection_cmi', user_site],
+    queryKey:
+      equipments_value === 'Inspeção CMI'
+        ? ['equipments_data_inspection_cmi', user_site, equipments_value]
+        : ['equipments_data_inspection_cmi', user_site],
     queryFn: fetchEqInspectionCmi,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -73,7 +76,10 @@ const useEqInspectionCmi = () => {
 
   const { data: eqInspectionCmiModal, isLoading: isLoadingeEInspectionCmiModal }: UseQueryResult<EqInspectionCmiModal> =
     useQuery({
-      queryKey: params.id ? ['eq_inspection_cmi_data_modal', params.id] : ['eq_inspection_cmi_data_modal'],
+      queryKey:
+        params.id && equipments_value === 'Inspeção CMI'
+          ? ['eq_inspection_cmi_data_modal', params.id, equipments_value]
+          : ['eq_inspection_cmi_data_modal'],
       queryFn: async () => {
         if (params.id && equipments_value === 'Inspeção CMI') {
           const eqInspectionCmiData = await fetchEqCmiData();

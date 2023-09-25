@@ -42,7 +42,10 @@ const useEqTestCmi = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['equipments_data_test_cmi', user_site],
+    queryKey:
+      equipments_value === 'Teste CMI'
+        ? ['equipments_data_test_cmi', user_site, equipments_value]
+        : ['equipments_data_test_cmi', user_site],
     queryFn: fetchEqTestCmi,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -68,7 +71,10 @@ const useEqTestCmi = () => {
   };
 
   const { data: eqTestCmiModal, isLoading: isLoadingEqTestCmiModal }: UseQueryResult<EqTestCmiModal> = useQuery({
-    queryKey: params.id ? ['eq_test_cmi_data_modal', params.id] : ['eq_test_cmi_data_modal'],
+    queryKey:
+      params.id && equipments_value === 'Teste CMI'
+        ? ['eq_test_cmi_data_modal', params.id, equipments_value]
+        : ['eq_test_cmi_data_modal'],
     queryFn: async () => {
       if (params.id && equipments_value === 'Teste CMI') {
         const eqTestCmiData = await fetchEqCmiData();

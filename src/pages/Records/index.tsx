@@ -11,7 +11,7 @@ import TestCmiTable from './components/tables/TestCmiTable';
 import Select, { SelectItem } from '../../components/Select';
 import ExtinguisherTable from './components/tables/ExtinguisherTable';
 import InspectionCmiTable from './components/tables/InspectionCmiTable';
-import GovernanceValveTable from './components/tables/GovernanceValveTable';
+// import GovernanceValveTable from './components/tables/GovernanceValveTable';
 
 const Records = () => {
   const { isLoading } = useExtinguisher();
@@ -103,7 +103,7 @@ const Records = () => {
           </div>
 
           {formValue === 'Extintores' && <ExtinguisherTable />}
-          {formValue === 'Válvulas de Governo' && <GovernanceValveTable />}
+          {/* {formValue === 'Válvulas de Governo' && <GovernanceValveTable />} */}
           {formValue === 'Teste CMI' && <TestCmiTable />}
           {formValue === 'Inspeção CMI' && <InspectionCmiTable />}
         </div>

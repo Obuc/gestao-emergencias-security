@@ -23,20 +23,18 @@ const EqGovernanceValveModal = () => {
   const pdfContainerRef = useRef(null);
 
   const [showQrCode, setShowQrCode] = useState(false);
-  const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
+  const [governanceValveItem, setGovernanceValveItem] = useState<boolean | null>(null);
 
-  const { eqEqGovernanceValveModal, isLoadingEqEqGovernanceValveModal } = useEqGovernanceValve();
-
-  const qrCodeValue = `Extintor;${eqEqGovernanceValveModal?.site};${eqEqGovernanceValveModal?.cod_qrcode}`;
+  const { eqEqGovernanceValveModal, isLoadingEqEqGovernanceValveModal, qrCodeValue } = useEqGovernanceValve();
 
   useEffect(() => {
     if (params?.id) {
-      setExtinguisherItem(true);
+      setGovernanceValveItem(true);
     }
   }, [params.id]);
 
   const handleOnOpenChange = () => {
-    setExtinguisherItem(null);
+    setGovernanceValveItem(null);
     navigate('/equipments');
   };
 
@@ -67,9 +65,9 @@ const EqGovernanceValveModal = () => {
   return (
     <Modal
       className="w-[65.125rem]"
-      open={extinguisherItem !== null}
+      open={governanceValveItem !== null}
       onOpenChange={handleOnOpenChange}
-      title={`Registro Extintor N°${params.id}`}
+      title={`Equipamento Válvula de Governo N°${params.id}`}
     >
       <>
         <div className="pt-6 px-8">
@@ -133,11 +131,18 @@ const EqGovernanceValveModal = () => {
               id="container"
               className="w-full h-full p-4 flex flex-col justify-center items-center gap-10"
             >
-              <div className="flex flex-col justify-center items-center gap-6 bg-white border-[.1875rem] border-black px-6 py-4">
-                {eqEqGovernanceValveModal?.site === 'BXO' && <BXOLogo width="7.5rem" height="7.5rem" />}
-                {eqEqGovernanceValveModal?.site === 'SPO' && <SPOLogo />}
-                <QRCode value={qrCodeValue} size={160} fgColor="#000" bgColor="#fff" />
-                <span className="font-medium">{`Extintor/${eqEqGovernanceValveModal?.predio}/${eqEqGovernanceValveModal?.pavimento}/${eqEqGovernanceValveModal?.cod_qrcode}/${eqEqGovernanceValveModal?.local}`}</span>
+              <div className="flex flex-col justify-center w-[20rem] items-center gap-6 bg-white border-[.0625rem]">
+                <div className="uppercase text-lg font-semibold py-4 m-auto bg-bg-home w-full text-center text-white">
+                  Gestão de Emergência
+                </div>
+
+                <div className="px-2 py-2 gap-3 flex flex-col justify-center items-center">
+                  <QRCode renderAs="svg" value={qrCodeValue} size={150} fgColor="#000" bgColor="#fff" />
+                  <span className="font-medium text-sm italic">{`Valvula/${eqEqGovernanceValveModal?.site}/${eqEqGovernanceValveModal?.predio}/${eqEqGovernanceValveModal?.pavimento}`}</span>
+
+                  {eqEqGovernanceValveModal?.site === 'BXO' && <BXOLogo height="50" width="45" />}
+                  {eqEqGovernanceValveModal?.site === 'SPO' && <SPOLogo height="50" width="45" />}
+                </div>
               </div>
             </div>
           )}

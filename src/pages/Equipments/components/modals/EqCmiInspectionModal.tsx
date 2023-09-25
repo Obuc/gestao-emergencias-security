@@ -13,8 +13,9 @@ import CardSkeleton from '../ui/CardSkeleton';
 import Modal from '../../../../components/Modal';
 import { Button } from '../../../../components/Button';
 import TextField from '../../../../components/TextField';
+import BXOLogo from '../../../../components/Icons/BXOLogo';
+import SPOLogo from '../../../../components/Icons/SPOLogo';
 import useEqInspectionCmi from '../../hooks/useEqInspectionCmi';
-import BayerLogoBlack from '../../../../components/Icons/BayerLogoBlack';
 
 const EqCmiInspectionModal = () => {
   const params = useParams();
@@ -22,18 +23,18 @@ const EqCmiInspectionModal = () => {
   const pdfContainerRef = useRef(null);
 
   const [showQrCode, setShowQrCode] = useState(false);
-  const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
+  const [inspectionCmi, setInspectionCmi] = useState<boolean | null>(null);
 
   const { eqInspectionCmiModal, isLoadingeEInspectionCmiModal, qrCodeValue } = useEqInspectionCmi();
 
   useEffect(() => {
     if (params?.id) {
-      setExtinguisherItem(true);
+      setInspectionCmi(true);
     }
   }, [params.id]);
 
   const handleOnOpenChange = () => {
-    setExtinguisherItem(null);
+    setInspectionCmi(null);
     navigate('/equipments');
   };
 
@@ -60,9 +61,9 @@ const EqCmiInspectionModal = () => {
   return (
     <Modal
       className="w-[65.125rem]"
-      open={extinguisherItem !== null}
+      open={inspectionCmi !== null}
       onOpenChange={handleOnOpenChange}
-      title={`Registro Extintor N°${params.id}`}
+      title={`Equipamento Inspeção CMI N°${params.id}`}
     >
       <>
         <div className="py-6 px-8">
@@ -131,7 +132,8 @@ const EqCmiInspectionModal = () => {
                   <QRCode renderAs="svg" value={qrCodeValue} size={160} fgColor="#000" bgColor="#fff" />
                   <span className="font-medium text-sm italic">{`Inspeção CMI/${eqInspectionCmiModal?.site}/${eqInspectionCmiModal?.predio}/${eqInspectionCmiModal?.pavimento}`}</span>
 
-                  <BayerLogoBlack />
+                  {eqInspectionCmiModal?.site === 'BXO' && <BXOLogo height="50" width="45" />}
+                  {eqInspectionCmiModal?.site === 'SPO' && <SPOLogo height="50" width="45" />}
                 </div>
               </div>
             </div>

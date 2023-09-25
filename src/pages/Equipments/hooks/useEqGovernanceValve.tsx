@@ -13,27 +13,25 @@ const useEqGovernanceValve = () => {
   const path = `?$Select=Id,cod_qrcode,cod_equipamento,tipo_equipamento/Title,conforme,site/Title,pavimento/Title,local/Title&$expand=site,tipo_equipamento,pavimento,local&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq '${equipments_value}')`;
 
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
-      const response = await crud.getPaged(
-        pageParam ? { nextUrl: pageParam } : { list: 'equipamentos_diversos', path },
-      );
-      const dataWithTransformations = await Promise.all(
-        response?.data?.value?.map(async (item: any) => {
-          return {
-            ...item,
-            local: item.local?.Title,
-            pavimento: item.pavimento?.Title,
-            site: item.site?.Title,
-          };
-        }),
-      );
+    const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'equipamentos_diversos', path });
+    const dataWithTransformations = await Promise.all(
+      response?.data?.value?.map(async (item: any) => {
+        return {
+          ...item,
+          local: item.local?.Title,
+          pavimento: item.pavimento?.Title,
+          site: item.site?.Title,
+        };
+      }),
+    );
 
-      return {
-        ...response,
-        data: {
-          ...response.data,
-          value: dataWithTransformations,
-        },
-      };
+    return {
+      ...response,
+      data: {
+        ...response.data,
+        value: dataWithTransformations,
+      },
+    };
   };
 
   const {
@@ -43,7 +41,10 @@ const useEqGovernanceValve = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['governance_valve_data', user_site],
+    queryKey:
+      equipments_value === 'Válvulas de Governo'
+        ? ['governance_valve_data', user_site, equipments_value]
+        : ['governance_valve_data', user_site],
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -72,7 +73,10 @@ const useEqGovernanceValve = () => {
     data: eqEqGovernanceValveModal,
     isLoading: isLoadingEqEqGovernanceValveModal,
   }: UseQueryResult<EqGovernanceValveModal> = useQuery({
-    queryKey: params.id ? ['eq_governance_valve_modal', params.id] : ['eq_governance_valve_modal'],
+    queryKey:
+      params.id && equipments_value === 'Válvulas de Governo'
+        ? ['eq_governance_valve_modal', params.id, equipments_value]
+        : ['eq_governance_valve_modal'],
     queryFn: async () => {
       if (params.id && equipments_value === 'Válvulas de Governo') {
         const eqGovernanceValveData = await fetchEqGovernanceValveData();
@@ -99,10 +103,11 @@ const useEqGovernanceValve = () => {
   const {
     data: eqGovernanceValve,
     isLoading: isLoadingEqGovernanceValve,
+    isError: isErrorEqGovernanceValve,
   }: UseQueryResult<Array<EquipmentsGovernanceValve>> = useQuery({
     queryKey: ['eq_governance_valve_data'],
     queryFn: async () => {
-      const path = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,cod_equipamento,conforme&$expand=site,predio,pavimento,local,tipo_equipamento&$Filter=((tipo_equipamento/Title eq '${equipments_value}') and (site/Title eq '${user_site}'))`;
+      const path = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,excluido,cod_equipamento,conforme&$expand=site,predio,pavimento,local,tipo_equipamento&$Filter=((tipo_equipamento/Title eq '${equipments_value}') and (site/Title eq '${user_site}') and (excluido eq false))`;
 
       const resp = await crud.getListItems('equipamentos_diversos', path);
 
@@ -134,6 +139,8 @@ const useEqGovernanceValve = () => {
     },
   );
 
+  const qrCodeValue = `Valvula;${eqEqGovernanceValveModal?.site};${eqEqGovernanceValveModal?.cod_qrcode}`;
+
   return {
     governanceValve,
     fetchNextPage,
@@ -149,6 +156,9 @@ const useEqGovernanceValve = () => {
 
     eqGovernanceValve,
     isLoadingEqGovernanceValve,
+    isErrorEqGovernanceValve,
+
+    qrCodeValue,
   };
 };
 

@@ -14,7 +14,8 @@ import Modal from '../../../../components/Modal';
 import useEqTestCmi from '../../hooks/useEqTestCmi';
 import { Button } from '../../../../components/Button';
 import TextField from '../../../../components/TextField';
-import BayerLogoBlack from '../../../../components/Icons/BayerLogoBlack';
+import BXOLogo from '../../../../components/Icons/BXOLogo';
+import SPOLogo from '../../../../components/Icons/SPOLogo';
 
 const EqCmiTestModal = () => {
   const params = useParams();
@@ -22,18 +23,18 @@ const EqCmiTestModal = () => {
   const pdfContainerRef = useRef(null);
 
   const [showQrCode, setShowQrCode] = useState(false);
-  const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
+  const [testCmi, setTestCmi] = useState<boolean | null>(null);
 
   const { eqTestCmiModal, isLoadingEqTestCmiModal, qrCodeValue } = useEqTestCmi();
 
   useEffect(() => {
     if (params?.id) {
-      setExtinguisherItem(true);
+      setTestCmi(true);
     }
   }, [params.id]);
 
   const handleOnOpenChange = () => {
-    setExtinguisherItem(null);
+    setTestCmi(null);
     navigate('/equipments');
   };
 
@@ -60,9 +61,9 @@ const EqCmiTestModal = () => {
   return (
     <Modal
       className="w-[65.125rem]"
-      open={extinguisherItem !== null}
+      open={testCmi !== null}
       onOpenChange={handleOnOpenChange}
-      title={`Registro Extintor N°${params.id}`}
+      title={`Equipamento Teste CMI N°${params.id}`}
     >
       <>
         <div className="py-6 px-8">
@@ -131,7 +132,8 @@ const EqCmiTestModal = () => {
                   <QRCode renderAs="svg" value={qrCodeValue} size={160} fgColor="#000" bgColor="#fff" />
                   <span className="font-medium text-sm italic">{`Teste CMI/${eqTestCmiModal?.site}/${eqTestCmiModal?.predio}/${eqTestCmiModal?.pavimento}`}</span>
 
-                  <BayerLogoBlack />
+                  {eqTestCmiModal?.site === 'BXO' && <BXOLogo height="50" width="45" />}
+                  {eqTestCmiModal?.site === 'SPO' && <SPOLogo height="50" width="45" />}
                 </div>
               </div>
             </div>
