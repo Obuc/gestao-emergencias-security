@@ -45,9 +45,6 @@ const ExtinguisherModal = () => {
       scale: 2,
     }).then((canvas) => {
       const imgData = canvas.toDataURL('image/png');
-
-      console.log(imgData);
-
       const pdf = new jsPDF('p', 'px', [595.28, canvas.height], false);
       const imgProps = pdf.getImageProperties(imgData);
       const pdfWidth = pdf.internal.pageSize.getWidth();

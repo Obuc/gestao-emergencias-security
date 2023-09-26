@@ -8,10 +8,13 @@ import { appContext } from '../../context/appContext';
 import useExtinguisher from './hooks/useExtinguisher';
 import useInspectionCmi from './hooks/useInspectionCmi';
 import TestCmiTable from './components/tables/TestCmiTable';
-import Select, { SelectItem, SelectLabel, SelectSeparator } from '../../components/Select';
+import useGovernanceValve from './hooks/useGovernanceValve';
 import ExtinguisherTable from './components/tables/ExtinguisherTable';
 import InspectionCmiTable from './components/tables/InspectionCmiTable';
 import GovernanceValveTable from './components/tables/GovernanceValveTable';
+import useGeneralChecklist from './hooks/EmergencyVehicles/useGeneralChecklist';
+import Select, { SelectItem, SelectLabel, SelectSeparator } from '../../components/Select';
+import GeneralChecklistTable from './components/tables/EmergencyVehicles/GeneralChecklistTable';
 
 const Records = () => {
   const { isLoading } = useExtinguisher();
@@ -22,6 +25,8 @@ const Records = () => {
   const { handleExportTestCmiToExcel, isLoadingTestCmiExportToExcel } = useTestCMI();
   const { handleExportExtinguisherToExcel, isLoadingExtinguisherExportToExcel } = useExtinguisher();
   const { handleExportInspectionCmiToExcel, isLoadingInspectionCmiExportToExcel } = useInspectionCmi();
+  const { handleExportGovernanceValveToExcel, isLoadingGovernanceValveExportToExcel } = useGovernanceValve();
+  const { handleExportGeneralChecklistToExcel, isLoadingGeneralChecklistExportToExcel } = useGeneralChecklist();
 
   const filteredForms =
     formularios &&
@@ -44,12 +49,20 @@ const Records = () => {
         handleExportExtinguisherToExcel();
         break;
 
+      case 'Válvulas de Governo':
+        handleExportGovernanceValveToExcel();
+        break;
+
       case 'Teste CMI':
         handleExportTestCmiToExcel();
         break;
 
       case 'Inspeção CMI':
         handleExportInspectionCmiToExcel();
+        break;
+
+      case 'Checklist Geral':
+        handleExportGeneralChecklistToExcel();
         break;
     }
   };
@@ -101,14 +114,18 @@ const Records = () => {
                 isLoading ||
                 isLoadingExtinguisherExportToExcel ||
                 isLoadingTestCmiExportToExcel ||
-                isLoadingInspectionCmiExportToExcel
+                isLoadingInspectionCmiExportToExcel ||
+                isLoadingGeneralChecklistExportToExcel ||
+                isLoadingGovernanceValveExportToExcel
               }
               onClick={handleExportToExcel}
             >
               {isLoading ||
               isLoadingExtinguisherExportToExcel ||
               isLoadingTestCmiExportToExcel ||
-              isLoadingInspectionCmiExportToExcel ? (
+              isLoadingInspectionCmiExportToExcel ||
+              isLoadingGeneralChecklistExportToExcel ||
+              isLoadingGovernanceValveExportToExcel ? (
                 <Button.Spinner />
               ) : (
                 <>
@@ -123,6 +140,9 @@ const Records = () => {
           {formValue === 'Válvulas de Governo' && <GovernanceValveTable />}
           {formValue === 'Teste CMI' && <TestCmiTable />}
           {formValue === 'Inspeção CMI' && <InspectionCmiTable />}
+
+          {/* Veiculos de Emergencia */}
+          {formValue === 'Checklist Geral' && <GeneralChecklistTable />}
         </div>
       </div>
     </LayoutBase>

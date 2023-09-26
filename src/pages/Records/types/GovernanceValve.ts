@@ -11,7 +11,7 @@ export interface GovernanceValve {
     predio: string;
     pavimento: string;
     local: string;
-    cod_equipamento: string;
+    cod_equipamento?: string;
     conforme: boolean;
     cod_qrcode: string;
   };

@@ -1,3 +1,5 @@
+import * as XLSX from 'xlsx';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -12,7 +14,9 @@ const useGovernanceValve = () => {
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
 
-  const path = `?$Select=Id,site/Title,valvula_id/Id,bombeiro_id/Title,conforme,observacao,data_legado&$expand=site,valvula_id,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  const [isLoadingGovernanceValveExportToExcel, setIsLoadingGovernanceValveExportToExcel] = useState<boolean>(false);
+
+  const path = `?$Select=Id,Created,site/Title,valvula_id/Id,bombeiro_id/Title,conforme,observacao,data_legado&$expand=site,valvula_id,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
   const fetchGovernaceValve = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(
       pageParam ? { nextUrl: pageParam } : { list: 'registros_valvula_governo', path },
@@ -202,6 +206,75 @@ const useGovernanceValve = () => {
     },
   });
 
+  const fetchGovernanceValveAllRecords = async () => {
+    const path = `?$Select=Id,site/Title,valvula_id/Id,bombeiro_id/Title,conforme,observacao,data_legado&$expand=site,valvula_id,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+    const response = await crud.getListItems('registros_valvula_governo', path);
+
+    const dataWithTransformations = await Promise.all(
+      response.map(async (item: any) => {
+        const valvulaResponse = await crud.getListItemsv2(
+          'equipamentos_diversos',
+          `?$Select=Id,tipo_equipamento/Title,predio/Title,pavimento/Title,local/Title,cod_equipamento,conforme,cod_qrcode,excluido&$expand=predio,pavimento,local,tipo_equipamento&$Filter=((Id eq ${item.valvula_id.Id}) and (tipo_equipamento/Title eq '${equipments_value}'))`,
+        );
+
+        const valvula = valvulaResponse.results[0] || null;
+
+        return {
+          ...item,
+          bombeiro: item.bombeiro_id?.Title,
+          predio: valvula.predio.Title,
+          cod_equipamento: valvula.cod_equipamento,
+          pavimento: valvula.pavimento.Title,
+          local: valvula.local.Title,
+          validade: valvula.validade,
+          valvula_conforme: valvula.conforme,
+        };
+      }),
+    );
+
+    return dataWithTransformations;
+  };
+
+  const handleExportGovernanceValveToExcel = async () => {
+    setIsLoadingGovernanceValveExportToExcel(true);
+
+    const data = await fetchGovernanceValveAllRecords();
+
+    const columns = [
+      'Id',
+      'bombeiro',
+      'predio',
+      'cod_equipamento',
+      'pavimento',
+      'local',
+      'validade',
+      'conforme',
+      'valvula_conforme',
+    ];
+
+    const headerRow = columns.map((column) => column.toString());
+
+    const dataFiltered = data?.map((item) => {
+      const newItem: { [key: string]: any } = {};
+      columns.forEach((column) => {
+        newItem[column] = item[column];
+      });
+      return newItem;
+    });
+
+    if (dataFiltered) {
+      const dataArray = [headerRow, ...dataFiltered.map((item) => columns.map((column) => item[column]))];
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(dataArray);
+
+      XLSX.utils.book_append_sheet(wb, ws, '');
+      XLSX.writeFile(wb, `Registros - Valvula de Governo.xlsx`);
+    }
+
+    setIsLoadingGovernanceValveExportToExcel(false);
+  };
+
   return {
     governaceValve,
     fetchNextPage,
@@ -217,6 +290,9 @@ const useGovernanceValve = () => {
 
     mutateEditGovernanceValve,
     IsLoadingMutateEditGovernanceValve,
+
+    handleExportGovernanceValveToExcel,
+    isLoadingGovernanceValveExportToExcel,
   };
 };
 
