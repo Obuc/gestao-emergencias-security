@@ -21,6 +21,7 @@ const LoadRatioModal = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isEdit = searchParams.get('edit') === 'true' ? true : false;
+  const equipments_value = localStorage.getItem('equipments_value');
   const componentRef = useRef(null);
 
   const { loadRatioDataModal, isLoadingLoadRatioDataModal, mutateEditLoadRatio, isLoadingMutateEditLoadRatio } =
@@ -87,7 +88,7 @@ const LoadRatioModal = () => {
       className="w-[71rem]"
       open={generalChecklistItem !== null}
       onOpenChange={handleOnOpenChange}
-      title={`Registro Veículos de Emergência Checklist Geral N°${params.id}`}
+      title={`Registro ${equipments_value} N°${params.id}`}
     >
       <Formik
         enableReinitialize={true}

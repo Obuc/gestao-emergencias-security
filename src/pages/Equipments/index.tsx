@@ -32,7 +32,10 @@ const Equipments = () => {
   const { handleExportEqInspectionCmiToExcel, isLoadinghandleExportEqInspectionCmiToExcel } = useEqInspectionCmi();
 
   const filteredForms =
-    formularios && formularios.filter((form) => form.todos_sites === true || form.site.Title === localSite);
+    formularios &&
+    formularios.filter(
+      (form) => (form.todos_sites === true || form.site.Title === localSite) && form.Title !== 'Veículos de emergência',
+    );
 
   const filteredSubMenu =
     submenu && submenu.filter((form) => form.todos_sites === true || form.site.Title === localSite);

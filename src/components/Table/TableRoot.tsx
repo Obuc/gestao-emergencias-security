@@ -4,10 +4,10 @@ interface ITableRootProps {
 
 export const TableRoot = ({ children }: ITableRootProps) => {
   return (
-    <table className="w-full h-full block bg-white text-primary border-spacing-y-2 p-px overflow-hidden relative">
-      {children}
-    </table>
+    <div className="sticky top-0 bg-white z-10">
+      <table className="w-full h-full block bg-white text-primary border-spacing-y-2 p-px overflow-hidden relative">
+        {children}
+      </table>
+    </div>
   );
 };
-
-// min-[1100px]:h-[35.6rem] min-[1600px]:h-[41rem] min-[1800px]:h-[32rem]

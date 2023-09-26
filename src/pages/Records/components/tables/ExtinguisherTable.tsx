@@ -38,7 +38,7 @@ const ExtinguisherTable = () => {
 
   return (
     <>
-      <div className="min-[1100px]:max-h-[34rem] relative min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[41rem] w-full overflow-y-auto">
+      <div className="min-[1100px]:max-h-[34rem] relative min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[44rem] w-full overflow-y-auto">
         <InfiniteScroll
           pageStart={0}
           loadMore={() => fetchNextPage()}
