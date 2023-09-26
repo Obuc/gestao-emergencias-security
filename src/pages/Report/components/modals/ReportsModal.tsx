@@ -286,7 +286,7 @@ const ReportsModal = () => {
                         name="tipo_laudo"
                         label="Tipo"
                         value={props.values.tipo_laudoId ? props.values.tipo_laudoId.toString() : ''}
-                        className="w-[60rem]"
+                        className="w-[50.625rem]"
                         isLoading={isLoadingReportModal || isLoadingTipoLaudo}
                         onValueChange={(value) => {
                           props.setFieldValue('tipo_laudoId', value);

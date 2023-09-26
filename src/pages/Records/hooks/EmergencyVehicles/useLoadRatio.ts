@@ -5,21 +5,21 @@ import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../../context/sharepointContext';
-import { IGeneralChecklistModal, IRespostaGeneralChecklist } from '../../types/EmergencyVehicles/GeneralChecklist';
+import { ILoadRatioModal, IRespostaLoadRatio } from '../../types/EmergencyVehicles/LoadRatio';
 
-const useGeneralChecklist = () => {
+const useLoadRatio = () => {
   const { crud } = sharepointContext();
   const params = useParams();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
 
-  const [isLoadingGeneralChecklistExportToExcel, setIsLoadingGeneralChecklistExportToExcel] = useState<boolean>(false);
+  const [isLoadingLoadRatioExportToExcel, setIsLoadingLoadRatioExportToExcel] = useState<boolean>(false);
 
-  const path = `?$Select=*,site/Title,bombeiro/Title&$expand=site,bombeiro&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
-  const fechGeneralChecklist = async ({ pageParam }: { pageParam?: string }) => {
+  const fechLoadRatio = async ({ pageParam }: { pageParam?: string }) => {
+    const path = `?$Select=*,site/Title,bombeiro/Title,tipo_veiculo/Title&$expand=site,bombeiro,tipo_veiculo&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_veiculo/Title eq '${equipments_value}')`;
     const response = await crud.getPaged(
-      pageParam ? { nextUrl: pageParam } : { list: 'registros_veiculos_emergencia', path },
+      pageParam ? { nextUrl: pageParam } : { list: 'registros_relacao_carga', path },
     );
 
     const dataWithTransformations = await Promise.all(
@@ -61,21 +61,21 @@ const useGeneralChecklist = () => {
   };
 
   const {
-    data: general_checklist,
+    data: load_ratio,
     fetchNextPage,
     hasNextPage,
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['general_checklist_data', user_site],
-    queryFn: fechGeneralChecklist,
+    queryKey: ['load_ratio_data', user_site, equipments_value],
+    queryFn: fechLoadRatio,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
   });
 
-  const fetchGeneralChecklistData = async () => {
+  const fetchLoadRatioData = async () => {
     const pathModal = `?$Select=*,site/Title,bombeiro/Title&$expand=bombeiro,site&$filter=Id eq ${params.id}`;
-    const resp = await crud.getListItemsv2('registros_veiculos_emergencia', pathModal);
+    const resp = await crud.getListItemsv2('registros_relacao_carga', pathModal);
     return resp.results[0];
   };
 
@@ -87,13 +87,13 @@ const useGeneralChecklist = () => {
     return vehicleResponse.results[0] || null;
   };
 
-  const fetchResponseGeneralChecklist = async () => {
+  const fetchResponseLoadRatio = async () => {
     const response = await crud.getListItemsv2(
-      'respostas_veiculos_emergencia',
+      'respostas_relacao_carga',
       `?$Select=Id,veiculo_idId,pergunta_idId,registro_idId,resposta,pergunta_id/Title,pergunta_id/categoria&$expand=pergunta_id&$filter=(registro_idId eq ${params.id})`,
     );
 
-    const respostasPorCategoria: Record<string, Array<IRespostaGeneralChecklist>> = {};
+    const respostasPorCategoria: Record<string, Array<IRespostaLoadRatio>> = {};
     response.results.forEach((resposta: any) => {
       const categoria = resposta.pergunta_id.categoria;
       if (!respostasPorCategoria[categoria]) {
@@ -105,33 +105,43 @@ const useGeneralChecklist = () => {
     return respostasPorCategoria;
   };
 
-  const { data: generalChecklistDataModal, isLoading: isLoadingGeneralChecklistDataModal } = useQuery({
-    queryKey: params.id ? ['general_checklist_data_modal', params.id] : ['general_checklist_data_modal'],
+  const { data: loadRatioDataModal, isLoading: isLoadingLoadRatioDataModal } = useQuery({
+    queryKey: params.id ? ['load_ratio_data_modal', params.id, equipments_value] : ['load_ratio_data_modal'],
     queryFn: async () => {
-      if (params.id && equipments_value === 'Checklist Geral') {
-        const generalChecklistData = await fetchGeneralChecklistData();
-        const vehicle = await fetchVehicleData(generalChecklistData.veiculo_idId);
-        const respostas = await fetchResponseGeneralChecklist();
+      if (params.id) {
+        if (
+          equipments_value === 'Scania' ||
+          equipments_value === 'S10' ||
+          equipments_value === 'Mercedes' ||
+          equipments_value === 'Furgão' ||
+          equipments_value === 'Furgão' ||
+          equipments_value === 'Ambulância Iveco' ||
+          equipments_value === 'Ambulância Sprinter'
+        ) {
+          const generalChecklistData = await fetchLoadRatioData();
+          const vehicle = await fetchVehicleData(generalChecklistData.veiculo_idId);
+          const respostas = await fetchResponseLoadRatio();
 
-        const createdIsoDate = parseISO(generalChecklistData.Created);
+          const createdIsoDate = parseISO(generalChecklistData.Created);
 
-        const vehicleValue = vehicle
-          ? {
-              Id: vehicle.Id,
-              placa: vehicle.placa,
-              site: vehicle.site?.Title,
-              tipo_veiculo: vehicle.tipo_veiculo?.Title,
-            }
-          : null;
+          const vehicleValue = vehicle
+            ? {
+                Id: vehicle.Id,
+                placa: vehicle.placa,
+                site: vehicle.site?.Title,
+                tipo_veiculo: vehicle.tipo_veiculo?.Title,
+              }
+            : null;
 
-        return {
-          ...generalChecklistData,
-          Created: new Date(createdIsoDate.getTime() + createdIsoDate.getTimezoneOffset() * 60000),
-          site: generalChecklistData.site?.Title,
-          bombeiro: generalChecklistData.bombeiro?.Title,
-          veiculo: vehicleValue,
-          respostas: respostas,
-        };
+          return {
+            ...generalChecklistData,
+            Created: new Date(createdIsoDate.getTime() + createdIsoDate.getTimezoneOffset() * 60000),
+            site: generalChecklistData.site?.Title,
+            bombeiro: generalChecklistData.bombeiro?.Title,
+            veiculo: vehicleValue,
+            respostas: respostas,
+          };
+        }
       } else {
         return [];
       }
@@ -140,41 +150,41 @@ const useGeneralChecklist = () => {
     refetchOnWindowFocus: false,
   });
 
-  const { mutateAsync: mutateRemoveGeneralChecklist, isLoading: IsLoadingMutateRemoveGeneralChecklist } = useMutation({
+  const { mutateAsync: mutateRemoveLoadRatio, isLoading: isLoadingMutateRemoveLoadRatio } = useMutation({
     mutationFn: async (itemId: number) => {
       if (itemId) {
         const itemResponse = await crud.getListItemsv2(
-          'respostas_veiculos_emergencia',
+          'respostas_relacao_carga',
           `?$Select=Id,registro_id/Id&$expand=registro_id&$Filter=(registro_id/Id eq ${itemId})`,
         );
 
         if (itemResponse.results.length > 0) {
           for (const item of itemResponse.results) {
             const itemIdToDelete = item.Id;
-            await crud.deleteItemList('respostas_veiculos_emergencia', itemIdToDelete);
+            await crud.deleteItemList('respostas_relacao_carga', itemIdToDelete);
           }
         } else {
           console.log('Nenhum item encontrado para excluir.');
         }
       }
-      await crud.deleteItemList('registros_veiculos_emergencia', itemId);
+      await crud.deleteItemList('registros_relacao_carga', itemId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['general_checklist_data', user_site] });
+      queryClient.invalidateQueries({ queryKey: ['load_ratio_data', user_site, equipments_value] });
     },
   });
 
-  const { mutateAsync: mutateEditTGeneralChecklist, isLoading: isLoadingEditTGeneralChecklist } = useMutation({
-    mutationFn: async (values: IGeneralChecklistModal) => {
-      const idRecordGeneralChecklist = values.Id;
+  const { mutateAsync: mutateEditLoadRatio, isLoading: isLoadingMutateEditLoadRatio } = useMutation({
+    mutationFn: async (values: ILoadRatioModal) => {
+      const idRecordLoadRatio = values.Id;
       const idVehicle = values.veiculo.Id && +values.veiculo.Id;
 
       let hasAccording = [];
 
-      if (values.Id && values.respostas && generalChecklistDataModal.respostas) {
+      if (values.Id && values.respostas && loadRatioDataModal.respostas) {
         for (const categoria in values.respostas) {
           const perguntasRespostas = values.respostas[categoria];
-          const perguntasRespostasOriginais = generalChecklistDataModal.respostas[categoria];
+          const perguntasRespostasOriginais = loadRatioDataModal.respostas[categoria];
 
           for (let i = 0; i < perguntasRespostas.length; i++) {
             const item = perguntasRespostas[i];
@@ -187,7 +197,7 @@ const useGeneralChecklist = () => {
                 resposta: item.resposta,
               };
 
-              await crud.updateItemList('respostas_veiculos_emergencia', item.Id, postData);
+              await crud.updateItemList('respostas_relacao_carga', item.Id, postData);
             }
           }
         }
@@ -196,7 +206,7 @@ const useGeneralChecklist = () => {
       const hasFalseAccording = hasAccording.some((item) => item === false);
 
       if (hasFalseAccording) {
-        await crud.updateItemList('registros_veiculos_emergencia', idRecordGeneralChecklist, {
+        await crud.updateItemList('registros_relacao_carga', idRecordLoadRatio, {
           conforme: false,
         });
         if (idVehicle) {
@@ -207,7 +217,7 @@ const useGeneralChecklist = () => {
       }
 
       if (!hasFalseAccording) {
-        await crud.updateItemList('registros_veiculos_emergencia', idRecordGeneralChecklist, {
+        await crud.updateItemList('registros_relacao_carga', idRecordLoadRatio, {
           conforme: true,
         });
         if (idVehicle) {
@@ -218,14 +228,15 @@ const useGeneralChecklist = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['general_checklist_data_modal', params.id] });
-      queryClient.invalidateQueries({ queryKey: ['general_checklist_data', user_site] });
+      queryClient.invalidateQueries({ queryKey: ['load_ratio_data_modal', params.id, equipments_value] });
+      queryClient.invalidateQueries({ queryKey: ['load_ratio_data', user_site, equipments_value] });
     },
   });
 
   const fetchGeneralChecklistAllRecords = async () => {
-    const path = `?$Select=*,site/Title,bombeiro/Title&$expand=site,bombeiro&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
-    const response = await crud.getListItems('registros_veiculos_emergencia', path);
+    const path = `?$Select=*,site/Title,bombeiro/Title,tipo_veiculo/Title&$expand=site,bombeiro,tipo_veiculo&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_veiculo/Title eq '${equipments_value}')`;
+
+    const response = await crud.getListItems('registros_relacao_carga', path);
 
     const dataWithTransformations = await Promise.all(
       response.map(async (item: any) => {
@@ -250,8 +261,8 @@ const useGeneralChecklist = () => {
     return dataWithTransformations;
   };
 
-  const handleExportGeneralChecklistToExcel = async () => {
-    setIsLoadingGeneralChecklistExportToExcel(true);
+  const handleExportLoadRatioToExcel = async () => {
+    setIsLoadingLoadRatioExportToExcel(true);
 
     const data = await fetchGeneralChecklistAllRecords();
 
@@ -274,31 +285,31 @@ const useGeneralChecklist = () => {
       const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
       XLSX.utils.book_append_sheet(wb, ws, '');
-      XLSX.writeFile(wb, `Registros - Veiculos Emergencia Checklist Geral.xlsx`);
+      XLSX.writeFile(wb, `Registros - Veiculos Emergencia ${equipments_value}.xlsx`);
     }
 
-    setIsLoadingGeneralChecklistExportToExcel(false);
+    setIsLoadingLoadRatioExportToExcel(false);
   };
 
   return {
-    general_checklist,
+    load_ratio,
     fetchNextPage,
     hasNextPage,
     isLoading,
     isError,
 
-    generalChecklistDataModal,
-    isLoadingGeneralChecklistDataModal,
+    loadRatioDataModal,
+    isLoadingLoadRatioDataModal,
 
-    mutateRemoveGeneralChecklist,
-    IsLoadingMutateRemoveGeneralChecklist,
+    mutateRemoveLoadRatio,
+    isLoadingMutateRemoveLoadRatio,
 
-    mutateEditTGeneralChecklist,
-    isLoadingEditTGeneralChecklist,
+    mutateEditLoadRatio,
+    isLoadingMutateEditLoadRatio,
 
-    isLoadingGeneralChecklistExportToExcel,
-    handleExportGeneralChecklistToExcel,
+    isLoadingLoadRatioExportToExcel,
+    handleExportLoadRatioToExcel,
   };
 };
 
-export default useGeneralChecklist;
+export default useLoadRatio;

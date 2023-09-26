@@ -7,7 +7,6 @@ import { Button } from '../../components/Button';
 import { appContext } from '../../context/appContext';
 import useEqExtinguisher from './hooks/useEqExtinguisher';
 import useEqInspectionCmi from './hooks/useEqInspectionCmi';
-import Select, { SelectItem } from '../../components/Select';
 import EqCmiTestTable from './components/tables/EqCmiTestTable';
 import EqTestCmiQRCode from './components/tables/QRCode/EqTestCmiQRCode';
 import EqExtinguisherTable from './components/tables/EqExtinguisherTable';
@@ -17,9 +16,10 @@ import EqGenerateQRCodeModal from './components/modals/EqGenerateQRCodeModal';
 import EqExtinguisherQRCode from './components/tables/QRCode/EqExtinguisherQRCode';
 import EqInspectionCmiQRCode from './components/tables/QRCode/EqInspectionCmiQRCode';
 import EqGovernanceValveQRCode from './components/tables/QRCode/EqGovernanceValveQRCode';
+import Select, { SelectItem, SelectLabel, SelectSeparator } from '../../components/Select';
 
 const Equipments = () => {
-  const { formularios, isLoadingFormularios } = appContext();
+  const { formularios, submenu, isLoadingFormularios } = appContext();
 
   const localSite = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
@@ -33,6 +33,9 @@ const Equipments = () => {
 
   const filteredForms =
     formularios && formularios.filter((form) => form.todos_sites === true || form.site.Title === localSite);
+
+  const filteredSubMenu =
+    submenu && submenu.filter((form) => form.todos_sites === true || form.site.Title === localSite);
 
   const handleExportToExcel = () => {
     switch (formValue) {
@@ -65,6 +68,7 @@ const Equipments = () => {
                 name="state_id"
                 value={formValue}
                 className="w-[22.5rem]"
+                mode="gray"
                 isLoading={isLoadingFormularios}
                 onValueChange={(value) => {
                   setFormValue(value);
@@ -76,6 +80,17 @@ const Equipments = () => {
                     {form.Title}
                   </SelectItem>
                 ))}
+
+                <SelectSeparator />
+                <SelectLabel>Veículos de Emergência</SelectLabel>
+
+                {filteredSubMenu?.map((form) => (
+                  <SelectItem key={form.Id * 2} value={form.Title}>
+                    {form.Title}
+                  </SelectItem>
+                ))}
+
+                <SelectSeparator />
               </Select>
             </div>
 

@@ -9,10 +9,12 @@ import useExtinguisher from './hooks/useExtinguisher';
 import useInspectionCmi from './hooks/useInspectionCmi';
 import TestCmiTable from './components/tables/TestCmiTable';
 import useGovernanceValve from './hooks/useGovernanceValve';
+import useLoadRatio from './hooks/EmergencyVehicles/useLoadRatio';
 import ExtinguisherTable from './components/tables/ExtinguisherTable';
 import InspectionCmiTable from './components/tables/InspectionCmiTable';
 import GovernanceValveTable from './components/tables/GovernanceValveTable';
 import useGeneralChecklist from './hooks/EmergencyVehicles/useGeneralChecklist';
+import LoadRatioTable from './components/tables/EmergencyVehicles/LoadRatioTable';
 import Select, { SelectItem, SelectLabel, SelectSeparator } from '../../components/Select';
 import GeneralChecklistTable from './components/tables/EmergencyVehicles/GeneralChecklistTable';
 
@@ -27,6 +29,7 @@ const Records = () => {
   const { handleExportInspectionCmiToExcel, isLoadingInspectionCmiExportToExcel } = useInspectionCmi();
   const { handleExportGovernanceValveToExcel, isLoadingGovernanceValveExportToExcel } = useGovernanceValve();
   const { handleExportGeneralChecklistToExcel, isLoadingGeneralChecklistExportToExcel } = useGeneralChecklist();
+  const { handleExportLoadRatioToExcel, isLoadingLoadRatioExportToExcel } = useLoadRatio();
 
   const filteredForms =
     formularios &&
@@ -63,6 +66,30 @@ const Records = () => {
 
       case 'Checklist Geral':
         handleExportGeneralChecklistToExcel();
+        break;
+
+      case 'Scania':
+        handleExportLoadRatioToExcel();
+        break;
+
+      case 'S10':
+        handleExportLoadRatioToExcel();
+        break;
+
+      case 'Mercedes':
+        handleExportLoadRatioToExcel();
+        break;
+
+      case 'Furgão':
+        handleExportLoadRatioToExcel();
+        break;
+
+      case 'Ambulância Iveco':
+        handleExportLoadRatioToExcel();
+        break;
+
+      case 'Ambulância Sprinter':
+        handleExportLoadRatioToExcel();
         break;
     }
   };
@@ -116,7 +143,8 @@ const Records = () => {
                 isLoadingTestCmiExportToExcel ||
                 isLoadingInspectionCmiExportToExcel ||
                 isLoadingGeneralChecklistExportToExcel ||
-                isLoadingGovernanceValveExportToExcel
+                isLoadingGovernanceValveExportToExcel ||
+                isLoadingLoadRatioExportToExcel
               }
               onClick={handleExportToExcel}
             >
@@ -125,7 +153,8 @@ const Records = () => {
               isLoadingTestCmiExportToExcel ||
               isLoadingInspectionCmiExportToExcel ||
               isLoadingGeneralChecklistExportToExcel ||
-              isLoadingGovernanceValveExportToExcel ? (
+              isLoadingGovernanceValveExportToExcel ||
+              isLoadingLoadRatioExportToExcel ? (
                 <Button.Spinner />
               ) : (
                 <>
@@ -143,6 +172,13 @@ const Records = () => {
 
           {/* Veiculos de Emergencia */}
           {formValue === 'Checklist Geral' && <GeneralChecklistTable />}
+
+          {formValue === 'Scania' && <LoadRatioTable />}
+          {formValue === 'S10' && <LoadRatioTable />}
+          {formValue === 'Mercedes' && <LoadRatioTable />}
+          {formValue === 'Furgão' && <LoadRatioTable />}
+          {formValue === 'Ambulância Iveco' && <LoadRatioTable />}
+          {formValue === 'Ambulância Sprinter' && <LoadRatioTable />}
         </div>
       </div>
     </LayoutBase>

@@ -16,7 +16,7 @@ const useGovernanceValve = () => {
 
   const [isLoadingGovernanceValveExportToExcel, setIsLoadingGovernanceValveExportToExcel] = useState<boolean>(false);
 
-  const path = `?$Select=Id,Created,site/Title,valvula_id/Id,bombeiro_id/Title,conforme,observacao,data_legado&$expand=site,valvula_id,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  const path = `?$Select=Id,Created,site/Title,valvula_id/Id,bombeiro_id/Title,conforme,observacao,data_legado&$expand=site,valvula_id,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
   const fetchGovernaceValve = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(
       pageParam ? { nextUrl: pageParam } : { list: 'registros_valvula_governo', path },
