@@ -14,9 +14,9 @@ import TextField from '../../../../components/TextField';
 import DatePicker from '../../../../components/DatePicker';
 import { appContext } from '../../../../context/appContext';
 import { FileImport } from '../../../../components/FileImport';
+import { RadioGroup } from '../../../../components/RadioGroup';
 import { arraysAreEqual } from '../../../../utils/arraysAreEqual';
 import Select, { SelectItem } from '../../../../components/Select';
-import { RadioGroup } from '../../../../components/RadioGroup';
 
 interface IReportsModal extends Partial<IReports> {
   isRevalidate: string;
@@ -67,11 +67,11 @@ const ReportsModal = () => {
     isRevalidate: yup.string(),
     revalidateValue: yup
       .number()
-      .min(1)
       .test('is-required', 'Este campo é obrigatório quando isRevalidate é verdadeiro', function (value) {
         const isRevalidate = this.parent.isRevalidate;
         if (isRevalidate === 'true') {
-          return value !== undefined;
+          console.log(value);
+          return value !== undefined && value > 0;
         }
         return true;
       }),

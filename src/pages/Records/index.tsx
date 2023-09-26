@@ -8,14 +8,14 @@ import { appContext } from '../../context/appContext';
 import useExtinguisher from './hooks/useExtinguisher';
 import useInspectionCmi from './hooks/useInspectionCmi';
 import TestCmiTable from './components/tables/TestCmiTable';
-import Select, { SelectItem } from '../../components/Select';
+import Select, { SelectItem, SelectLabel, SelectSeparator } from '../../components/Select';
 import ExtinguisherTable from './components/tables/ExtinguisherTable';
 import InspectionCmiTable from './components/tables/InspectionCmiTable';
-// import GovernanceValveTable from './components/tables/GovernanceValveTable';
+import GovernanceValveTable from './components/tables/GovernanceValveTable';
 
 const Records = () => {
   const { isLoading } = useExtinguisher();
-  const { formularios, isLoadingFormularios } = appContext();
+  const { formularios, submenu, isLoadingFormularios } = appContext();
   const localSite = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
 
@@ -24,7 +24,13 @@ const Records = () => {
   const { handleExportInspectionCmiToExcel, isLoadingInspectionCmiExportToExcel } = useInspectionCmi();
 
   const filteredForms =
-    formularios && formularios.filter((form) => form.todos_sites === true || form.site.Title === localSite);
+    formularios &&
+    formularios.filter(
+      (form) => (form.todos_sites === true || form.site.Title === localSite) && form.Title !== 'Veículos de emergência',
+    );
+
+  const filteredSubMenu =
+    submenu && submenu.filter((form) => form.todos_sites === true || form.site.Title === localSite);
 
   const [formValue, setFormValue] = useState<string>(equipments_value ?? 'Extintores');
 
@@ -75,6 +81,17 @@ const Records = () => {
                     {form.Title}
                   </SelectItem>
                 ))}
+
+                <SelectSeparator />
+                <SelectLabel>Veículos de Emergência</SelectLabel>
+
+                {filteredSubMenu?.map((form) => (
+                  <SelectItem key={form.Id * 2} value={form.Title}>
+                    {form.Title}
+                  </SelectItem>
+                ))}
+
+                <SelectSeparator />
               </Select>
             </div>
 
@@ -103,7 +120,7 @@ const Records = () => {
           </div>
 
           {formValue === 'Extintores' && <ExtinguisherTable />}
-          {/* {formValue === 'Válvulas de Governo' && <GovernanceValveTable />} */}
+          {formValue === 'Válvulas de Governo' && <GovernanceValveTable />}
           {formValue === 'Teste CMI' && <TestCmiTable />}
           {formValue === 'Inspeção CMI' && <InspectionCmiTable />}
         </div>

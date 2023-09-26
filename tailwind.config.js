@@ -1,3 +1,5 @@
+const { mauve } = require('@radix-ui/colors');
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -13,7 +15,8 @@ export default {
         'background': '#FDFDFD',
         'blue': '#00BCFF',
         'pink': '#FF3162',
-        'red': '#F82B50'
+        'red': '#F82B50',
+        ...mauve,
       },
       keyframes: {
         overlayShow: {

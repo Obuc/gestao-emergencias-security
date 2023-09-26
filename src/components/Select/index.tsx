@@ -1,6 +1,6 @@
 import { twMerge } from 'tailwind-merge';
-import React, { forwardRef } from 'react';
 import { Skeleton } from '@mui/material';
+import React, { forwardRef } from 'react';
 import * as Label from '@radix-ui/react-label';
 import { VariantProps, tv } from 'tailwind-variants';
 import * as SelectRadix from '@radix-ui/react-select';
@@ -157,5 +157,17 @@ export const SelectItem = forwardRef<HTMLDivElement, ISelectItemProps>(
     );
   },
 );
+
+export const SelectSeparator = () => {
+  return <SelectRadix.Separator className="h-[1px] bg-[#CDCDCD] m-[5px]" />;
+};
+
+interface ISelectLabelProps {
+  children: React.ReactNode;
+}
+
+export const SelectLabel = ({ children }: ISelectLabelProps) => {
+  return <SelectRadix.Label className="text-mauve10 py-3 pl-2">{children}</SelectRadix.Label>;
+};
 
 export default Select;

@@ -1,10 +1,9 @@
-export interface IFormulario {
+export interface ISubMenu {
   Id: number;
   Title: string;
   site: {
     Title?: string;
   };
   todos_sites: boolean;
-  submenu: boolean;
-  menu_equipamento: boolean;
+  menu_idId: number;
 }

@@ -4,10 +4,12 @@ import { createContext, useContext } from 'react';
 import { ISite } from '../types/Site';
 import { sharepointContext } from './sharepointContext';
 import { IFormulario } from '../types/Formularios';
+import { ISubMenu } from '../types/SubMenu';
 
 interface IAppContext {
   sites?: Array<ISite>;
   formularios?: Array<IFormulario>;
+  submenu?: Array<ISubMenu>;
   isLoadingFormularios: boolean;
   isLoadingSites: boolean;
 }
@@ -29,11 +31,24 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   });
 
   const { data: formularios, isLoading: isLoadingFormularios }: UseQueryResult<Array<IFormulario>> = useQuery({
-    queryKey: ['formularios'],
+    queryKey: ['menu'],
     queryFn: async () => {
       const resp = await crud.getListItemsv2(
         'menu',
-        '?$Select=Id,Title,site/Title,todos_sites,menu_equipamento&$expand=site',
+        '?$Select=Id,Title,site/Title,todos_sites,submenu,menu_equipamento&$expand=site',
+      );
+      return resp.results;
+    },
+    staleTime: 5000 * 60, // 5 Minute
+    refetchOnWindowFocus: false,
+  });
+
+  const { data: submenu }: UseQueryResult<Array<ISubMenu>> = useQuery({
+    queryKey: ['submenu'],
+    queryFn: async () => {
+      const resp = await crud.getListItemsv2(
+        'submenu',
+        '?$Select=Id,Title,site/Title,todos_sites,menu_idId&$expand=site',
       );
       return resp.results;
     },
@@ -42,7 +57,7 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   });
 
   return (
-    <AppContext.Provider value={{ sites, formularios, isLoadingFormularios, isLoadingSites }}>
+    <AppContext.Provider value={{ sites, formularios, submenu, isLoadingFormularios, isLoadingSites }}>
       {children}
     </AppContext.Provider>
   );
