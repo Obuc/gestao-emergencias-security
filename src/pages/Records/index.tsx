@@ -148,8 +148,7 @@ const Records = () => {
               }
               onClick={handleExportToExcel}
             >
-              {isLoading ||
-              isLoadingExtinguisherExportToExcel ||
+              {isLoadingExtinguisherExportToExcel ||
               isLoadingTestCmiExportToExcel ||
               isLoadingInspectionCmiExportToExcel ||
               isLoadingGeneralChecklistExportToExcel ||

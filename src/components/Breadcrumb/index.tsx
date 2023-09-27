@@ -42,6 +42,8 @@ const Breadcrumb = () => {
                 ? 'Agenda'
                 : item.label === 'reports'
                 ? 'Laudos'
+                : item.label === 'new'
+                ? 'Novo Laudo'
                 : item.label}
             </a>
           ))}

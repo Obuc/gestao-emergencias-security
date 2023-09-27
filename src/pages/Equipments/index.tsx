@@ -8,14 +8,17 @@ import { appContext } from '../../context/appContext';
 import useEqExtinguisher from './hooks/useEqExtinguisher';
 import useEqInspectionCmi from './hooks/useEqInspectionCmi';
 import EqCmiTestTable from './components/tables/EqCmiTestTable';
+import useEqLoadRatio from './hooks/EmergencyVehicles/useEqLoadRatio';
 import EqTestCmiQRCode from './components/tables/QRCode/EqTestCmiQRCode';
 import EqExtinguisherTable from './components/tables/EqExtinguisherTable';
 import EqEqGovernanceValve from './components/tables/EqEqGovernanceValve';
 import EqCmiInspectionTable from './components/tables/EqCmiInspectionTable';
+import EqLoadRatioQRCode from './components/tables/QRCode/EqLoadRatioQRCode';
 import EqGenerateQRCodeModal from './components/modals/EqGenerateQRCodeModal';
 import EqExtinguisherQRCode from './components/tables/QRCode/EqExtinguisherQRCode';
 import useEqGeneralChecklist from './hooks/EmergencyVehicles/useEqGeneralChecklist';
 import EqInspectionCmiQRCode from './components/tables/QRCode/EqInspectionCmiQRCode';
+import EqLoadRatioTable from './components/tables/EmergencyVehicles/EqLoadRatioTable';
 import EqGovernanceValveQRCode from './components/tables/QRCode/EqGovernanceValveQRCode';
 import EqGeneralChecklistQRCode from './components/tables/QRCode/EqGeneralChecklistQRCode';
 import Select, { SelectItem, SelectLabel, SelectSeparator } from '../../components/Select';
@@ -34,6 +37,7 @@ const Equipments = () => {
   const { handleExportExtinguisherToExcel } = useEqExtinguisher();
   const { handleExportEqInspectionCmiToExcel } = useEqInspectionCmi();
   const { handleExportEqGeneralChecklistToExcel } = useEqGeneralChecklist();
+  const { handleExportEqLoadRatioToExcel } = useEqLoadRatio();
 
   const filteredForms =
     formularios &&
@@ -60,6 +64,30 @@ const Equipments = () => {
 
       case 'Checklist Geral':
         handleExportEqGeneralChecklistToExcel();
+        break;
+
+      case 'Scania':
+        handleExportEqLoadRatioToExcel();
+        break;
+
+      case 'S10':
+        handleExportEqLoadRatioToExcel();
+        break;
+
+      case 'Mercedes':
+        handleExportEqLoadRatioToExcel();
+        break;
+
+      case 'Furgão':
+        handleExportEqLoadRatioToExcel();
+        break;
+
+      case 'Ambulância Iveco':
+        handleExportEqLoadRatioToExcel();
+        break;
+
+      case 'Ambulância Sprinter':
+        handleExportEqLoadRatioToExcel();
         break;
     }
   };
@@ -122,7 +150,14 @@ const Equipments = () => {
           {formValue === 'Válvulas de Governo' && <EqEqGovernanceValve />}
           {formValue === 'Teste CMI' && <EqCmiTestTable />}
           {formValue === 'Inspeção CMI' && <EqCmiInspectionTable />}
+
           {formValue === 'Checklist Geral' && <EqGeneralChecklistTable />}
+          {formValue === 'Scania' && <EqLoadRatioTable />}
+          {formValue === 'S10' && <EqLoadRatioTable />}
+          {formValue === 'Mercedes' && <EqLoadRatioTable />}
+          {formValue === 'Furgão' && <EqLoadRatioTable />}
+          {formValue === 'Ambulância Iveco' && <EqLoadRatioTable />}
+          {formValue === 'Ambulância Sprinter' && <EqLoadRatioTable />}
         </div>
       </div>
 
@@ -132,7 +167,14 @@ const Equipments = () => {
           {formValue === 'Teste CMI' && <EqTestCmiQRCode />}
           {formValue === 'Inspeção CMI' && <EqInspectionCmiQRCode />}
           {formValue === 'Válvulas de Governo' && <EqGovernanceValveQRCode />}
+
           {formValue === 'Checklist Geral' && <EqGeneralChecklistQRCode />}
+          {formValue === 'Scania' && <EqLoadRatioQRCode />}
+          {formValue === 'S10' && <EqLoadRatioQRCode />}
+          {formValue === 'Mercedes' && <EqLoadRatioQRCode />}
+          {formValue === 'Furgão' && <EqLoadRatioQRCode />}
+          {formValue === 'Ambulância Iveco' && <EqLoadRatioQRCode />}
+          {formValue === 'Ambulância Sprinter' && <EqLoadRatioQRCode />}
         </EqGenerateQRCodeModal>
       )}
     </LayoutBase>
