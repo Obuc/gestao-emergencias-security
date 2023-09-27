@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
-import { EqExtinguisherModal, EquipmentsExtinguisher } from '../types/EquipmentsExtinguisher';
+import { IEqExtinguisher, IEqExtinguisherModal } from '../types/EquipmentsExtinguisher';
 
 const useEqExtinguisher = () => {
   const { crud } = sharepointContext();
@@ -12,7 +12,8 @@ const useEqExtinguisher = () => {
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
 
-  const path = `?$Select=Id,cod_qrcode,cod_extintor,excluido,Modified,conforme,site/Title,pavimento/Title,local/Title&$expand=site,pavimento,local&$Orderby=Modified desc&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
+  const path = `?$Select=Id,cod_qrcode,cod_extintor,excluido,Modified,conforme,site/Title,pavimento/Title,local/Title&$expand=site,pavimento,local&$Orderby=Modified desc&$Top=100&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
+
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'extintores', path });
     const dataWithTransformations = await Promise.all(
@@ -70,7 +71,7 @@ const useEqExtinguisher = () => {
     }
   };
 
-  const { data: eqExtinguisherModal, isLoading: isLoadingEqExtinguisherModal }: UseQueryResult<EqExtinguisherModal> =
+  const { data: eqExtinguisherModal, isLoading: isLoadingEqExtinguisherModal }: UseQueryResult<IEqExtinguisherModal> =
     useQuery({
       queryKey:
         params.id && equipments_value === 'Extintores'
@@ -105,7 +106,7 @@ const useEqExtinguisher = () => {
     data: eqExtinguisher,
     isLoading: isLoadingEqExtinguisher,
     isError: isErrorEqExtinguisher,
-  }: UseQueryResult<Array<EquipmentsExtinguisher>> = useQuery({
+  }: UseQueryResult<Array<IEqExtinguisher>> = useQuery({
     queryKey: ['eq_extinguisher_data'],
     queryFn: async () => {
       const path = `?$Select=Id,cod_qrcode,predio/Title,tipo_extintor/Title,pavimento/Title,local/Title,site/Title,cod_extintor,conforme&$expand=tipo_extintor,predio,site,pavimento,local&$Filter(site/Title eq '${user_site}')`;
@@ -142,7 +143,7 @@ const useEqExtinguisher = () => {
   const qrCodeExtinguisherValue = `Extintor;${eqExtinguisherModal?.site};${eqExtinguisherModal?.cod_qrcode};${eqExtinguisherModal?.tipo_extintor}`;
 
   const handleExportExtinguisherToExcel = () => {
-    const columns: (keyof EquipmentsExtinguisher)[] = [
+    const columns: (keyof IEqExtinguisher)[] = [
       'Id',
       'cod_extintor',
       'local',

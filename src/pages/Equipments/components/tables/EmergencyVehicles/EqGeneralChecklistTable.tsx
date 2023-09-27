@@ -5,23 +5,24 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { Table } from '../../../../components/Table';
-import useEqExtinguisher from '../../hooks/useEqExtinguisher';
-import EqExtinguisherModal from '../modals/EqExtinguisherModal';
-import PopoverTables from '../../../../components/PopoverTables';
-import RemoveItem from '../../../../components/AppModals/RemoveItem';
-import { IEqExtinguisher } from '../../types/EquipmentsExtinguisher';
+import { Table } from '../../../../../components/Table';
+import PopoverTables from '../../../../../components/PopoverTables';
+import RemoveItem from '../../../../../components/AppModals/RemoveItem';
+import useEqGeneralChecklist from '../../../hooks/EmergencyVehicles/useEqGeneralChecklist';
+import EqGeneralChecklistModal from '../../modals/EmergencyVehicles/EqGeneralChecklistModal';
+import { IEqGeneralChecklist } from '../../../types/EmergencyVehicles/EquipmentsGeneralChecklist';
 
-const EqExtinguisherTable = () => {
+const EqGeneralChecklistTable = () => {
   const {
-    equipments,
+    eq_general_checklist,
     fetchNextPage,
     hasNextPage,
     isError,
     isLoading,
-    isLoadingMutateRemoveEquipment,
-    mutateRemoveEquipment,
-  } = useEqExtinguisher();
+
+    mutateRemoveEqGeneralChecklist,
+    isLoadingMutateRemoveEqGeneralChecklist,
+  } = useEqGeneralChecklist();
 
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
@@ -30,16 +31,16 @@ const EqExtinguisherTable = () => {
     navigate(`/equipments/${id}`);
   };
 
-  const handleRemove = async () => {
+  const handleRemoveEq = async () => {
     if (removeItem) {
-      await mutateRemoveEquipment(removeItem);
+      await mutateRemoveEqGeneralChecklist(removeItem);
       setRemoveItem(null);
     }
   };
 
   return (
     <>
-      <div className="min-[1100px]:max-h-[38rem] min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[43rem] w-full overflow-y-auto">
+      <div className="min-[1100px]:max-h-[38rem] min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[41rem] w-full overflow-y-auto">
         <InfiniteScroll
           pageStart={0}
           loadMore={() => fetchNextPage()}
@@ -51,26 +52,25 @@ const EqExtinguisherTable = () => {
             <Table.Thead>
               <Table.Tr className="bg-[#FCFCFC]">
                 <Table.Th className="pl-8">Site</Table.Th>
-                <Table.Th>Pavimento</Table.Th>
-                <Table.Th>Local</Table.Th>
-                <Table.Th>N° Extintor</Table.Th>
+                <Table.Th>Tipo Veículo</Table.Th>
+                <Table.Th>Placa</Table.Th>
                 <Table.Th>Conformidade</Table.Th>
                 <Table.Th>{''}</Table.Th>
               </Table.Tr>
             </Table.Thead>
 
             <Table.Tbody className="max-h-[28rem] overflow-y-scroll">
-              {equipments?.pages[0].data.value.length === 0 && (
+              {eq_general_checklist?.pages[0].data.value.length === 0 && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={6} className="text-center text-primary">
-                    Nenhum registro encontrado!
+                  <Table.Td colSpan={5} className="text-center text-primary">
+                    Nenhum veículo encontrado!
                   </Table.Td>
                 </Table.Tr>
               )}
 
               {isError && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={6} className="text-center text-primary">
+                  <Table.Td colSpan={5} className="text-center text-primary">
                     Ops, ocorreu um erro, recarregue a página e tente novamente!
                   </Table.Td>
                 </Table.Tr>
@@ -80,7 +80,7 @@ const EqExtinguisherTable = () => {
                 <>
                   {Array.from({ length: 30 }).map((_, index) => (
                     <Table.Tr key={index}>
-                      <Table.Td className="h-14 px-4" colSpan={6}>
+                      <Table.Td className="h-14 px-4" colSpan={5}>
                         <Skeleton height="3.5rem" animation="wave" />
                       </Table.Td>
                     </Table.Tr>
@@ -88,17 +88,16 @@ const EqExtinguisherTable = () => {
                 </>
               )}
 
-              {equipments &&
+              {eq_general_checklist &&
                 !isLoading &&
                 !isError &&
-                equipments?.pages.map(
+                eq_general_checklist?.pages.map(
                   (item: any) =>
-                    item?.data?.value?.map((item: IEqExtinguisher) => (
+                    item?.data?.value?.map((item: IEqGeneralChecklist) => (
                       <Table.Tr key={item.Id}>
                         <Table.Td className="pl-8">{item?.site}</Table.Td>
-                        <Table.Td>{item?.pavimento}</Table.Td>
-                        <Table.Td>{item?.local}</Table.Td>
-                        <Table.Td>{item.cod_extintor}</Table.Td>
+                        <Table.Td>{item?.tipo_veiculo}</Table.Td>
+                        <Table.Td>{item?.placa}</Table.Td>
                         <Table.Td>
                           {item.conforme ? (
                             <div className="flex justify-center items-center gap-2 px-4 py-1 rounded-full bg-[#EBFFE2] max-w-[8.4375rem]">
@@ -123,12 +122,12 @@ const EqExtinguisherTable = () => {
         </InfiniteScroll>
       </div>
 
-      <EqExtinguisherModal />
+      <EqGeneralChecklistModal />
 
       {removeItem !== null && (
         <RemoveItem
-          handleRemove={handleRemove}
-          isLoading={isLoadingMutateRemoveEquipment}
+          handleRemove={handleRemoveEq}
+          isLoading={isLoadingMutateRemoveEqGeneralChecklist}
           onOpenChange={() => setRemoveItem(null)}
           open={removeItem !== null}
         />
@@ -137,4 +136,4 @@ const EqExtinguisherTable = () => {
   );
 };
 
-export default EqExtinguisherTable;
+export default EqGeneralChecklistTable;

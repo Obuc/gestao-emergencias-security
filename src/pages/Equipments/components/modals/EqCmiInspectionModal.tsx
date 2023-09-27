@@ -47,7 +47,7 @@ const EqCmiInspectionModal = () => {
         .then((canvas) => {
           canvas.toBlob((blob) => {
             if (blob) {
-              saveAs(blob, `Teste CMI - ${eqInspectionCmiModal?.Id} - ${eqInspectionCmiModal?.site}.jpeg`);
+              saveAs(blob, `Inspeção CMI - ${eqInspectionCmiModal?.Id} - ${eqInspectionCmiModal?.site}.jpeg`);
             }
           }, 'image/jpeg');
           setShowQrCode(false);
@@ -129,7 +129,7 @@ const EqCmiInspectionModal = () => {
                 </div>
 
                 <div className="px-2 py-2 gap-3 flex flex-col justify-center items-center">
-                  <QRCode renderAs="svg" value={qrCodeValue} size={160} fgColor="#000" bgColor="#fff" />
+                  <QRCode renderAs="svg" value={qrCodeValue} size={150} fgColor="#000" bgColor="#fff" />
                   <span className="font-medium text-sm italic">{`Inspeção CMI/${eqInspectionCmiModal?.site}/${eqInspectionCmiModal?.predio}/${eqInspectionCmiModal?.pavimento}`}</span>
 
                   {eqInspectionCmiModal?.site === 'BXO' && <BXOLogo height="50" width="45" />}

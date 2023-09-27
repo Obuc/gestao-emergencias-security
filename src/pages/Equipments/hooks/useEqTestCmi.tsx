@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
-import { EqTestCmiModal, EquipmentsTestCmi } from '../types/EquipmentsTestCmi';
+import { IEqTestCmi, IEqTestCmiModal } from '../types/EquipmentsTestCmi';
 
 const useEqTestCmi = () => {
   const { crud } = sharepointContext();
@@ -70,7 +70,7 @@ const useEqTestCmi = () => {
     }
   };
 
-  const { data: eqTestCmiModal, isLoading: isLoadingEqTestCmiModal }: UseQueryResult<EqTestCmiModal> = useQuery({
+  const { data: eqTestCmiModal, isLoading: isLoadingEqTestCmiModal }: UseQueryResult<IEqTestCmiModal> = useQuery({
     queryKey:
       params.id && equipments_value === 'Teste CMI'
         ? ['eq_test_cmi_data_modal', params.id, equipments_value]
@@ -96,7 +96,7 @@ const useEqTestCmi = () => {
     refetchOnWindowFocus: false,
   });
 
-  const { data: eqTestCmi, isLoading: isLoadingEqTestCmi }: UseQueryResult<Array<EquipmentsTestCmi>> = useQuery({
+  const { data: eqTestCmi, isLoading: isLoadingEqTestCmi }: UseQueryResult<Array<IEqTestCmi>> = useQuery({
     queryKey: ['eq_test_cmi_data'],
     queryFn: async () => {
       const path = `?$Select=Id,cod_qrcode,conforme,predio/Title,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,predio,tipo_equipamento&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq '${equipments_value}') and (excluido eq 'false')`;
@@ -140,7 +140,7 @@ const useEqTestCmi = () => {
       : `Bomba;${eqTestCmiModal?.site};${eqTestCmiModal?.cod_qrcode}`;
 
   const handleExportEqTestCmiToExcel = () => {
-    const columns: (keyof EquipmentsTestCmi)[] = ['Id', 'cod_qrcode', 'predio', 'pavimento', 'conforme', 'site'];
+    const columns: (keyof IEqTestCmi)[] = ['Id', 'cod_qrcode', 'predio', 'pavimento', 'conforme', 'site'];
 
     const headerRow = columns.map((column) => column.toString());
 

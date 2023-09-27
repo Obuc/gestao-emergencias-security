@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
-import { EqGovernanceValveModal, EquipmentsGovernanceValve } from '../types/EquipmentsGovernanceValve';
+import { IEqGovernanceValve, IEqGovernanceValveModal } from '../types/EquipmentsGovernanceValve';
 
 const useEqGovernanceValve = () => {
   const { crud } = sharepointContext();
@@ -72,7 +72,7 @@ const useEqGovernanceValve = () => {
   const {
     data: eqEqGovernanceValveModal,
     isLoading: isLoadingEqEqGovernanceValveModal,
-  }: UseQueryResult<EqGovernanceValveModal> = useQuery({
+  }: UseQueryResult<IEqGovernanceValveModal> = useQuery({
     queryKey:
       params.id && equipments_value === 'Válvulas de Governo'
         ? ['eq_governance_valve_modal', params.id, equipments_value]
@@ -104,7 +104,7 @@ const useEqGovernanceValve = () => {
     data: eqGovernanceValve,
     isLoading: isLoadingEqGovernanceValve,
     isError: isErrorEqGovernanceValve,
-  }: UseQueryResult<Array<EquipmentsGovernanceValve>> = useQuery({
+  }: UseQueryResult<Array<IEqGovernanceValve>> = useQuery({
     queryKey: ['eq_governance_valve_data'],
     queryFn: async () => {
       const path = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,excluido,cod_equipamento,conforme&$expand=site,predio,pavimento,local,tipo_equipamento&$Filter=((tipo_equipamento/Title eq '${equipments_value}') and (site/Title eq '${user_site}') and (excluido eq false))`;

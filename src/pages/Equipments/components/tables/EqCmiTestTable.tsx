@@ -3,14 +3,14 @@ import { Skeleton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroller';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import useEqTestCmi from '../../hooks/useEqTestCmi';
 import { Table } from '../../../../components/Table';
 import EqCmiTestModal from '../modals/EqCmiTestModal';
+import { IEqTestCmi } from '../../types/EquipmentsTestCmi';
 import PopoverTables from '../../../../components/PopoverTables';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
-import { EquipmentsExtinguisher } from '../../types/EquipmentsExtinguisher';
 
 const EqCmiTestTable = () => {
   const {
@@ -40,7 +40,7 @@ const EqCmiTestTable = () => {
 
   return (
     <>
-      <div className="min-[1100px]:max-h-[38rem] min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[41rem] w-full overflow-y-auto">
+      <div className="min-[1100px]:max-h-[38rem] min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[43rem] w-full overflow-y-auto">
         <InfiniteScroll
           pageStart={0}
           loadMore={() => fetchNextPage()}
@@ -61,7 +61,7 @@ const EqCmiTestTable = () => {
             <Table.Tbody className="max-h-[28rem] overflow-y-scroll">
               {equipments?.pages[0].data.value.length === 0 && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={9} className="text-center text-primary">
+                  <Table.Td colSpan={4} className="text-center text-primary">
                     Nenhum equipamento encontrado!
                   </Table.Td>
                 </Table.Tr>
@@ -69,7 +69,7 @@ const EqCmiTestTable = () => {
 
               {isError && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={9} className="text-center text-primary">
+                  <Table.Td colSpan={4} className="text-center text-primary">
                     Ops, ocorreu um erro, recarregue a página e tente novamente!
                   </Table.Td>
                 </Table.Tr>
@@ -79,7 +79,7 @@ const EqCmiTestTable = () => {
                 <>
                   {Array.from({ length: 30 }).map((_, index) => (
                     <Table.Tr key={index}>
-                      <Table.Td className="h-14 px-4" colSpan={9}>
+                      <Table.Td className="h-14 px-4" colSpan={4}>
                         <Skeleton height="3.5rem" animation="wave" />
                       </Table.Td>
                     </Table.Tr>
@@ -92,7 +92,7 @@ const EqCmiTestTable = () => {
                 !isError &&
                 equipments?.pages.map(
                   (item: any) =>
-                    item?.data?.value?.map((item: EquipmentsExtinguisher) => (
+                    item?.data?.value?.map((item: IEqTestCmi) => (
                       <Table.Tr key={item.Id}>
                         <Table.Td className="pl-8">{item?.site}</Table.Td>
                         <Table.Td>{item?.pavimento}</Table.Td>

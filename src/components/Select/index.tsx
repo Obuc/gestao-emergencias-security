@@ -13,7 +13,7 @@ const select = tv({
     labelStyle: 'text-primary text-base pb-2',
     trigger: 'min-w-full outline-none py-2 pl-2 flex group justify-between items-center h-10 leading-none',
     triggerIcon: 'ml-2 w-[3.125rem] h-10 flex justify-center items-center duration-150',
-    content: 'overflow-hidden bg-white shadow-xs-primary-app',
+    content: 'overflow-hidden z-10 bg-white shadow-xs-primary-app',
     viewport: 'py-1',
     arrow: 'fill-white',
   },

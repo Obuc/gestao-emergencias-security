@@ -1,4 +1,4 @@
-export interface EquipmentsExtinguisher {
+export interface IEqExtinguisher {
   Id: number;
   cod_qrcode: string;
   site?: string;
@@ -7,20 +7,9 @@ export interface EquipmentsExtinguisher {
   predio?: string;
   cod_extintor: string;
   conforme: boolean;
-
-  // Created: string;
-  // EditorId: number;
-  // GUID: string;
-  // Title: string;
-  // excluido: boolean;
-  // massaId: number;
-  // predioId: number;
-  // tipo_extintorId: number;
-  // ultima_inspecao: string;
-  // validade: string;
 }
 
-export interface EqExtinguisherModal {
+export interface IEqExtinguisherModal {
   cod_extintor: string;
   cod_qrcode: string;
   conforme: boolean;

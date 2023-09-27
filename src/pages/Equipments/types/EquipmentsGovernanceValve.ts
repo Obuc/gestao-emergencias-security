@@ -1,4 +1,4 @@
-export interface EquipmentsGovernanceValve {
+export interface IEqGovernanceValve {
   Id: number;
   cod_qrcode: string;
   cod_equipamento: string;
@@ -10,7 +10,7 @@ export interface EquipmentsGovernanceValve {
   conforme: boolean;
 }
 
-export interface EqGovernanceValveModal {
+export interface IEqGovernanceValveModal {
   cod_equipamento: string;
   cod_qrcode: string;
   conforme: boolean;

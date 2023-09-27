@@ -7,13 +7,13 @@ import Checkbox from '../../../../../components/Checkbox';
 import BXOLogo from '../../../../../components/Icons/BXOLogo';
 import SPOLogo from '../../../../../components/Icons/SPOLogo';
 import useEqInspectionCmi from '../../../hooks/useEqInspectionCmi';
-import { EquipmentsTestCmi } from '../../../types/EquipmentsTestCmi';
+import { IEqInspectionCmi } from '../../../types/EquipmentsInspectionCmi';
 
 const EqInspectionCmiQRCode = () => {
   const { eqInspectionCmi, isLoadingEqInspectionCmi, isErrorEqInspectionCmi, qrCodeValue } = useEqInspectionCmi();
   const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<any[]>([]);
 
-  const toggleSelectItem = (item: EquipmentsTestCmi) => {
+  const toggleSelectItem = (item: IEqInspectionCmi) => {
     setSelectedItemsExtinguisher((prevSelected) => {
       if (prevSelected.some((selectedItem) => selectedItem.Id === item.Id)) {
         return prevSelected.filter((selectedItem) => selectedItem.Id !== item.Id);

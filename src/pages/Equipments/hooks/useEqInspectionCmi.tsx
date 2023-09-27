@@ -3,8 +3,7 @@ import { useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
-import { EqInspectionCmiModal, EquipmentsInspectionCmi } from '../types/EquipmentsInspectionCmi';
-import { useState } from 'react';
+import { IEqInspectionCmi, IEqInspectionCmiModal } from '../types/EquipmentsInspectionCmi';
 
 const useEqInspectionCmi = () => {
   const { crud } = sharepointContext();
@@ -12,9 +11,6 @@ const useEqInspectionCmi = () => {
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
-
-  const [isLoadinghandleExportEqInspectionCmiToExcel, setIsLoadinghandleExportEqInspectionCmiToExcel] =
-    useState<boolean>(false);
 
   const path = `?$Select=Id,cod_qrcode,conforme,excluido,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,tipo_equipamento&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq '${equipments_value}') and (excluido eq 'false')`;
 
@@ -74,34 +70,36 @@ const useEqInspectionCmi = () => {
     }
   };
 
-  const { data: eqInspectionCmiModal, isLoading: isLoadingeEInspectionCmiModal }: UseQueryResult<EqInspectionCmiModal> =
-    useQuery({
-      queryKey:
-        params.id && equipments_value === 'Inspeção CMI'
-          ? ['eq_inspection_cmi_data_modal', params.id, equipments_value]
-          : ['eq_inspection_cmi_data_modal'],
-      queryFn: async () => {
-        if (params.id && equipments_value === 'Inspeção CMI') {
-          const eqInspectionCmiData = await fetchEqCmiData();
-          const recordsTestCmi = eqInspectionCmiData && (await fechRecordsTestCmiData(eqInspectionCmiData.Id));
+  const {
+    data: eqInspectionCmiModal,
+    isLoading: isLoadingeEInspectionCmiModal,
+  }: UseQueryResult<IEqInspectionCmiModal> = useQuery({
+    queryKey:
+      params.id && equipments_value === 'Inspeção CMI'
+        ? ['eq_inspection_cmi_data_modal', params.id, equipments_value]
+        : ['eq_inspection_cmi_data_modal'],
+    queryFn: async () => {
+      if (params.id && equipments_value === 'Inspeção CMI') {
+        const eqInspectionCmiData = await fetchEqCmiData();
+        const recordsTestCmi = eqInspectionCmiData && (await fechRecordsTestCmiData(eqInspectionCmiData.Id));
 
-          return {
-            ...eqInspectionCmiData,
-            pavimento: eqInspectionCmiData.pavimento.Title,
-            predio: eqInspectionCmiData.predio.Title,
-            tipo_equipamento: eqInspectionCmiData.tipo_equipamento.Title,
-            site: eqInspectionCmiData.site.Title,
-            history: recordsTestCmi,
-          };
-        } else {
-          return [];
-        }
-      },
-      staleTime: 5000 * 60, // 5 Minute
-      refetchOnWindowFocus: false,
-    });
+        return {
+          ...eqInspectionCmiData,
+          pavimento: eqInspectionCmiData.pavimento.Title,
+          predio: eqInspectionCmiData.predio.Title,
+          tipo_equipamento: eqInspectionCmiData.tipo_equipamento.Title,
+          site: eqInspectionCmiData.site.Title,
+          history: recordsTestCmi,
+        };
+      } else {
+        return [];
+      }
+    },
+    staleTime: 5000 * 60, // 5 Minute
+    refetchOnWindowFocus: false,
+  });
 
-  const { data: eqInspectionCmi, isLoading: isLoadingEqInspectionCmi }: UseQueryResult<Array<EquipmentsInspectionCmi>> =
+  const { data: eqInspectionCmi, isLoading: isLoadingEqInspectionCmi }: UseQueryResult<Array<IEqInspectionCmi>> =
     useQuery({
       queryKey: ['eq_inspection_cmi_data'],
       queryFn: async () => {
@@ -146,9 +144,7 @@ const useEqInspectionCmi = () => {
       : `Casa;${eqInspectionCmiModal?.site};${eqInspectionCmiModal?.cod_qrcode}`;
 
   const handleExportEqInspectionCmiToExcel = () => {
-    setIsLoadinghandleExportEqInspectionCmiToExcel(true);
-
-    const columns: (keyof EquipmentsInspectionCmi)[] = ['Id', 'cod_qrcode', 'predio', 'pavimento', 'conforme', 'site'];
+    const columns: (keyof IEqInspectionCmi)[] = ['Id', 'cod_qrcode', 'predio', 'pavimento', 'conforme', 'site'];
 
     const headerRow = columns.map((column) => column.toString());
 
@@ -169,8 +165,6 @@ const useEqInspectionCmi = () => {
       XLSX.utils.book_append_sheet(wb, ws, '');
       XLSX.writeFile(wb, `Equipamentos - Inspeção CMI.xlsx`);
     }
-
-    setIsLoadinghandleExportEqInspectionCmiToExcel(false);
   };
 
   return {
@@ -191,7 +185,6 @@ const useEqInspectionCmi = () => {
 
     qrCodeValue,
     handleExportEqInspectionCmiToExcel,
-    isLoadinghandleExportEqInspectionCmiToExcel,
   };
 };
 

@@ -6,17 +6,20 @@ import { Table } from '../../../../../components/Table';
 import Checkbox from '../../../../../components/Checkbox';
 import BXOLogo from '../../../../../components/Icons/BXOLogo';
 import SPOLogo from '../../../../../components/Icons/SPOLogo';
-import useEqExtinguisher from '../../../hooks/useEqExtinguisher';
-import { IEqExtinguisher } from '../../../types/EquipmentsExtinguisher';
+import useEqGeneralChecklist from '../../../hooks/EmergencyVehicles/useEqGeneralChecklist';
+import { IEqGeneralChecklist } from '../../../types/EmergencyVehicles/EquipmentsGeneralChecklist';
 
-const EqExtinguisherQRCode = () => {
-  const { eqExtinguisher, isLoadingEqExtinguisher, isErrorEqExtinguisher, qrCodeExtinguisherValue } =
-    useEqExtinguisher();
+const EqGeneralChecklistQRCode = () => {
+  const {
+    eqVehiclesGeneralChecklist,
+    isLoadingVehiclesGeneralChecklist,
+    isErrorEqVehiclesGeneralChecklist,
+    qrCodeValue,
+  } = useEqGeneralChecklist();
+  const [selectedItemsVehicles, setSelectedItemsVehicle] = useState<any[]>([]);
 
-  const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<any[]>([]);
-
-  const toggleSelectItem = (item: IEqExtinguisher) => {
-    setSelectedItemsExtinguisher((prevSelected) => {
+  const toggleSelectItem = (item: IEqGeneralChecklist) => {
+    setSelectedItemsVehicle((prevSelected) => {
       if (prevSelected.some((selectedItem) => selectedItem.Id === item.Id)) {
         return prevSelected.filter((selectedItem) => selectedItem.Id !== item.Id);
       } else if (prevSelected.length < 10) {
@@ -31,35 +34,34 @@ const EqExtinguisherQRCode = () => {
       <Table.Root>
         <Table.Thead>
           <Table.Tr className="bg-[#FCFCFC]">
-            <Table.Th className="pl-8"> </Table.Th>
-            <Table.Th>Cód. Equipamento</Table.Th>
-            <Table.Th>Predio</Table.Th>
-            <Table.Th>Local</Table.Th>
-            <Table.Th>Pavimento</Table.Th>
+            <Table.Th className="pl-8">{''}</Table.Th>
+            <Table.Th>Cód. Veículo</Table.Th>
+            <Table.Th>Tipo de Veículo</Table.Th>
+            <Table.Th>Placa</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody className="block max-h-[28rem] overflow-y-scroll">
-          {eqExtinguisher?.length === 0 && (
+          {eqVehiclesGeneralChecklist?.length === 0 && (
             <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-              <Table.Td colSpan={5} className="text-center text-primary">
-                Nenhum extintor encontrado!
+              <Table.Td colSpan={4} className="text-center text-primary">
+                Nenhum veículo encontrado!
               </Table.Td>
             </Table.Tr>
           )}
 
-          {isErrorEqExtinguisher && (
+          {isErrorEqVehiclesGeneralChecklist && (
             <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-              <Table.Td colSpan={5} className="text-center text-primary">
+              <Table.Td colSpan={4} className="text-center text-primary">
                 Ops, ocorreu um erro, recarregue a página e tente novamente!
               </Table.Td>
             </Table.Tr>
           )}
 
-          {isLoadingEqExtinguisher && (
+          {isLoadingVehiclesGeneralChecklist && (
             <>
               {Array.from({ length: 15 }).map((_, index) => (
                 <Table.Tr key={index}>
-                  <Table.Td className="h-14 px-4" colSpan={5}>
+                  <Table.Td className="h-14 px-4" colSpan={4}>
                     <Skeleton height="3.5rem" animation="wave" />
                   </Table.Td>
                 </Table.Tr>
@@ -67,39 +69,38 @@ const EqExtinguisherQRCode = () => {
             </>
           )}
 
-          {eqExtinguisher &&
-            eqExtinguisher.map((item) => (
+          {eqVehiclesGeneralChecklist &&
+            eqVehiclesGeneralChecklist.map((item) => (
               <Table.Tr key={item.Id}>
                 <Table.Td className="pl-8">
                   <Checkbox
-                    checked={selectedItemsExtinguisher.some((selectedItem) => selectedItem.Id === item.Id)}
+                    checked={selectedItemsVehicles.some((selectedItem) => selectedItem.Id === item.Id)}
                     onClick={() => toggleSelectItem(item)}
                   />
                 </Table.Td>
-                <Table.Td className="pl-8">{item.cod_qrcode}</Table.Td>
-                <Table.Td>{item.predio}</Table.Td>
-                <Table.Td>{item.local}</Table.Td>
-                <Table.Td>{item.pavimento}</Table.Td>
+                <Table.Td>{item.cod_qrcode}</Table.Td>
+                <Table.Td>{item.tipo_veiculo}</Table.Td>
+                <Table.Td>{item.placa}</Table.Td>
               </Table.Tr>
             ))}
         </Table.Tbody>
       </Table.Root>
 
       <div className="w-full grid grid-cols-2 justify-center gap-4 p-2" id="qrCodeElement">
-        {selectedItemsExtinguisher.map((qrCodeValue: any) => {
+        {selectedItemsVehicles.map((value: any) => {
           return (
-            <div key={qrCodeValue.Id} className="flex justify-center items-center">
+            <div key={value.Id} className="flex justify-center items-center">
               <div className="flex flex-col justify-center w-[20rem] items-center gap-6 bg-white border-[.0625rem] border-black">
-                <div className="uppercase text-lg font-semibold h-[4rem] leading-[4rem] bg-bg-home w-full text-center text-white">
+                <div className="uppercase text-lg font-semibold py-4 m-auto bg-bg-home w-full text-center text-white">
                   Gestão de Emergência
                 </div>
 
                 <div className="px-2 py-2 gap-3 flex flex-col justify-center items-center">
-                  <QRCode renderAs="svg" value={qrCodeExtinguisherValue} size={150} fgColor="#000" bgColor="#fff" />
-                  <span className="font-medium text-sm italic">{`Extintor/${qrCodeValue?.predio}/${qrCodeValue?.pavimento}/${qrCodeValue?.local}/${qrCodeValue.tipo_extintor}`}</span>
+                  <QRCode renderAs="svg" value={qrCodeValue} size={150} fgColor="#000" bgColor="#fff" />
+                  <span className="font-medium text-center text-sm italic">{`Geral/${value?.site}/${value?.placa}/${value?.tipo_veiculo}`}</span>
 
-                  {qrCodeValue?.site === 'BXO' && <BXOLogo height="50" width="45" />}
-                  {qrCodeValue?.site === 'SPO' && <SPOLogo height="50" width="45" />}
+                  {value?.site === 'BXO' && <BXOLogo height="50" width="45" />}
+                  {value?.site === 'SPO' && <SPOLogo height="50" width="45" />}
                 </div>
               </div>
             </div>
@@ -110,4 +111,4 @@ const EqExtinguisherQRCode = () => {
   );
 };
 
-export default EqExtinguisherQRCode;
+export default EqGeneralChecklistQRCode;

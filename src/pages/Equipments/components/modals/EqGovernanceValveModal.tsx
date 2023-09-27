@@ -1,6 +1,6 @@
-import jsPDF from 'jspdf';
 import QRCode from 'qrcode.react';
 import { format } from 'date-fns';
+import { saveAs } from 'file-saver';
 import html2canvas from 'html2canvas';
 import { ptBR } from 'date-fns/locale';
 import { useEffect, useRef, useState } from 'react';
@@ -21,6 +21,7 @@ const EqGovernanceValveModal = () => {
   const params = useParams();
   const navigate = useNavigate();
   const pdfContainerRef = useRef(null);
+  const site_value = localStorage.getItem('user_site');
 
   const [showQrCode, setShowQrCode] = useState(false);
   const [governanceValveItem, setGovernanceValveItem] = useState<boolean | null>(null);
@@ -39,22 +40,19 @@ const EqGovernanceValveModal = () => {
   };
 
   const generateQrCodePdf = () => {
-    if (pdfContainerRef.current) {
-      html2canvas(pdfContainerRef.current, {
-        scrollY: -window.scrollY,
+    const element = document.getElementById('container');
+
+    if (element) {
+      html2canvas(element, {
         useCORS: true,
-        scale: 2,
+        scale: 10,
       })
         .then((canvas) => {
-          const imgData = canvas.toDataURL('image/png');
-
-          const pdf = new jsPDF('p', 'px', [1100, canvas.height], false);
-          const imgProps = pdf.getImageProperties(imgData);
-          const pdfWidth = pdf.internal.pageSize.getWidth();
-          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-          pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-          pdf.save(`teste.pdf`);
-          setShowQrCode(false);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              saveAs(blob, `QRCode - ${eqEqGovernanceValveModal?.cod_equipamento} - ${site_value}.jpeg`);
+            }
+          }, 'image/jpeg');
         })
         .catch((error) => {
           console.error('Erro ao gerar o PDF:', error);

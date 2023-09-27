@@ -7,16 +7,16 @@ import Checkbox from '../../../../../components/Checkbox';
 import BXOLogo from '../../../../../components/Icons/BXOLogo';
 import SPOLogo from '../../../../../components/Icons/SPOLogo';
 import useEqGovernanceValve from '../../../hooks/useEqGovernanceValve';
-import { EquipmentsGovernanceValve } from '../../../types/EquipmentsGovernanceValve';
+import { IEqGovernanceValve } from '../../../types/EquipmentsGovernanceValve';
 
 const EqGovernanceValveQRCode = () => {
   const { eqGovernanceValve, isLoadingEqGovernanceValve, isErrorEqGovernanceValve, qrCodeValue } =
     useEqGovernanceValve();
 
-  const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<any[]>([]);
+  const [selectedItemsGovernanceValve, setSelectedItemsGovernanceValve] = useState<any[]>([]);
 
-  const toggleSelectItem = (item: EquipmentsGovernanceValve) => {
-    setSelectedItemsExtinguisher((prevSelected) => {
+  const toggleSelectItem = (item: IEqGovernanceValve) => {
+    setSelectedItemsGovernanceValve((prevSelected) => {
       if (prevSelected.some((selectedItem) => selectedItem.Id === item.Id)) {
         return prevSelected.filter((selectedItem) => selectedItem.Id !== item.Id);
       } else if (prevSelected.length < 10) {
@@ -41,15 +41,15 @@ const EqGovernanceValveQRCode = () => {
         <Table.Tbody className="block max-h-[28rem] overflow-y-scroll">
           {eqGovernanceValve?.length === 0 && (
             <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-              <Table.Td colSpan={3} className="text-center text-primary">
-                Nenhum equipamento encontrado!
+              <Table.Td colSpan={4} className="text-center text-primary">
+                Nenhuma válvula de governo encontrada!
               </Table.Td>
             </Table.Tr>
           )}
 
           {isErrorEqGovernanceValve && (
             <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-              <Table.Td colSpan={3} className="text-center text-primary">
+              <Table.Td colSpan={4} className="text-center text-primary">
                 Ops, ocorreu um erro, recarregue a página e tente novamente!
               </Table.Td>
             </Table.Tr>
@@ -59,7 +59,7 @@ const EqGovernanceValveQRCode = () => {
             <>
               {Array.from({ length: 15 }).map((_, index) => (
                 <Table.Tr key={index}>
-                  <Table.Td className="h-14 px-4" colSpan={3}>
+                  <Table.Td className="h-14 px-4" colSpan={4}>
                     <Skeleton height="3.5rem" animation="wave" />
                   </Table.Td>
                 </Table.Tr>
@@ -72,7 +72,7 @@ const EqGovernanceValveQRCode = () => {
               <Table.Tr key={item.Id}>
                 <Table.Td className="pl-8">
                   <Checkbox
-                    checked={selectedItemsExtinguisher.some((selectedItem) => selectedItem.Id === item.Id)}
+                    checked={selectedItemsGovernanceValve.some((selectedItem) => selectedItem.Id === item.Id)}
                     onClick={() => toggleSelectItem(item)}
                   />
                 </Table.Td>
@@ -86,7 +86,7 @@ const EqGovernanceValveQRCode = () => {
       </Table.Root>
 
       <div className="w-full grid grid-cols-2 justify-center gap-4 p-2" id="qrCodeElement">
-        {selectedItemsExtinguisher.map((value: any) => {
+        {selectedItemsGovernanceValve.map((value: any) => {
           return (
             <div key={value.Id} className="flex justify-center items-center">
               <div className="flex flex-col justify-center w-[20rem] items-center gap-6 bg-white border-[.0625rem] border-black">

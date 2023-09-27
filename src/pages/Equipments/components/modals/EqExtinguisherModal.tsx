@@ -46,7 +46,7 @@ const EqExtinguisherModal = () => {
         .then((canvas) => {
           canvas.toBlob((blob) => {
             if (blob) {
-              saveAs(blob, 'captured_image.jpeg');
+              saveAs(blob, `Extintor - ${eqExtinguisherModal?.site}.jpeg`);
             }
           }, 'image/jpeg');
           setShowQrCode(false);
@@ -151,7 +151,7 @@ const EqExtinguisherModal = () => {
                 </div>
 
                 <div className="px-2 py-2 gap-3 flex flex-col justify-center items-center">
-                  <QRCode value={qrCodeExtinguisherValue} size={160} fgColor="#000" bgColor="#fff" />
+                  <QRCode value={qrCodeExtinguisherValue} size={150} fgColor="#000" bgColor="#fff" />
                   <span className="font-medium text-sm italic">{`Extintor/${eqExtinguisherModal?.predio}/${eqExtinguisherModal?.pavimento}/${eqExtinguisherModal?.local}`}</span>
 
                   {eqExtinguisherModal?.site === 'BXO' && <BXOLogo height="50" width="45" />}

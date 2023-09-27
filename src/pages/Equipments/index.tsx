@@ -14,9 +14,12 @@ import EqEqGovernanceValve from './components/tables/EqEqGovernanceValve';
 import EqCmiInspectionTable from './components/tables/EqCmiInspectionTable';
 import EqGenerateQRCodeModal from './components/modals/EqGenerateQRCodeModal';
 import EqExtinguisherQRCode from './components/tables/QRCode/EqExtinguisherQRCode';
+import useEqGeneralChecklist from './hooks/EmergencyVehicles/useEqGeneralChecklist';
 import EqInspectionCmiQRCode from './components/tables/QRCode/EqInspectionCmiQRCode';
 import EqGovernanceValveQRCode from './components/tables/QRCode/EqGovernanceValveQRCode';
+import EqGeneralChecklistQRCode from './components/tables/QRCode/EqGeneralChecklistQRCode';
 import Select, { SelectItem, SelectLabel, SelectSeparator } from '../../components/Select';
+import EqGeneralChecklistTable from './components/tables/EmergencyVehicles/EqGeneralChecklistTable';
 
 const Equipments = () => {
   const { formularios, submenu, isLoadingFormularios } = appContext();
@@ -29,7 +32,8 @@ const Equipments = () => {
 
   const { handleExportEqTestCmiToExcel } = useEqTestCmi();
   const { handleExportExtinguisherToExcel } = useEqExtinguisher();
-  const { handleExportEqInspectionCmiToExcel, isLoadinghandleExportEqInspectionCmiToExcel } = useEqInspectionCmi();
+  const { handleExportEqInspectionCmiToExcel } = useEqInspectionCmi();
+  const { handleExportEqGeneralChecklistToExcel } = useEqGeneralChecklist();
 
   const filteredForms =
     formularios &&
@@ -52,6 +56,10 @@ const Equipments = () => {
 
       case 'Inspeção CMI':
         handleExportEqInspectionCmiToExcel();
+        break;
+
+      case 'Checklist Geral':
+        handleExportEqGeneralChecklistToExcel();
         break;
     }
   };
@@ -98,19 +106,9 @@ const Equipments = () => {
             </div>
 
             <div className="flex gap-2">
-              <Button.Root
-                className="min-w-[14.0625rem] h-10"
-                onClick={handleExportToExcel}
-                disabled={isLoadinghandleExportEqInspectionCmiToExcel}
-              >
-                {isLoadinghandleExportEqInspectionCmiToExcel ? (
-                  <Button.Spinner />
-                ) : (
-                  <>
-                    <Button.Label>Exportar Planilha</Button.Label>
-                    <Button.Icon icon={faDownload} />
-                  </>
-                )}
+              <Button.Root className="min-w-[14.0625rem] h-10" onClick={handleExportToExcel}>
+                <Button.Label>Exportar Planilha</Button.Label>
+                <Button.Icon icon={faDownload} />
               </Button.Root>
 
               <Button.Root className="w-[14.0625rem] h-10" fill onClick={() => setOpenModalGenerateQRCode(true)}>
@@ -124,6 +122,7 @@ const Equipments = () => {
           {formValue === 'Válvulas de Governo' && <EqEqGovernanceValve />}
           {formValue === 'Teste CMI' && <EqCmiTestTable />}
           {formValue === 'Inspeção CMI' && <EqCmiInspectionTable />}
+          {formValue === 'Checklist Geral' && <EqGeneralChecklistTable />}
         </div>
       </div>
 
@@ -133,6 +132,7 @@ const Equipments = () => {
           {formValue === 'Teste CMI' && <EqTestCmiQRCode />}
           {formValue === 'Inspeção CMI' && <EqInspectionCmiQRCode />}
           {formValue === 'Válvulas de Governo' && <EqGovernanceValveQRCode />}
+          {formValue === 'Checklist Geral' && <EqGeneralChecklistQRCode />}
         </EqGenerateQRCodeModal>
       )}
     </LayoutBase>

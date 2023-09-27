@@ -1,4 +1,4 @@
-export interface EquipmentsInspectionCmi {
+export interface IEqInspectionCmi {
   Id: number;
   cod_qrcode: string;
   site?: string;
@@ -7,7 +7,7 @@ export interface EquipmentsInspectionCmi {
   predio: string;
 }
 
-export interface EqInspectionCmiModal {
+export interface IEqInspectionCmiModal {
   Id: number;
   Created: string;
   cod_qrcode: string;
