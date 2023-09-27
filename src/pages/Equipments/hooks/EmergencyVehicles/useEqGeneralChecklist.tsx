@@ -15,7 +15,7 @@ const useEqGeneralChecklist = () => {
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
 
-  const path = `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme,excluido_check_geral&$Top=100&$expand=site,tipo_veiculo&$Filter=(site/Title eq '${user_site}') and (excluido_check_geral eq 'false')`;
+  const path = `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme_check_geral,excluido_check_geral&$Top=100&$expand=site,tipo_veiculo&$Filter=(site/Title eq '${user_site}') and (excluido_check_geral eq 'false')`;
 
   const fetchEqGeneralChecklist = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'veiculos_emergencia', path });
@@ -57,7 +57,7 @@ const useEqGeneralChecklist = () => {
 
   const fetchEqGeneralChecklistData = async () => {
     if (params.id && equipments_value === 'Checklist Geral') {
-      const path = `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme,excluido&$expand=site,tipo_veiculo&$Filter=(Id eq ${params.id})`;
+      const path = `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme_check_geral,excluido&$expand=site,tipo_veiculo&$Filter=(Id eq ${params.id})`;
 
       const resp = await crud.getListItemsv2('veiculos_emergencia', path);
       return resp.results[0];
@@ -108,7 +108,7 @@ const useEqGeneralChecklist = () => {
   }: UseQueryResult<Array<IEqGeneralChecklist>> = useQuery({
     queryKey: ['eq_general_checklist'],
     queryFn: async () => {
-      const path = `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme,excluido_check_geral&$expand=site,tipo_veiculo&$Filter=(site/Title eq '${user_site}') and (excluido_check_geral eq 'false')`;
+      const path = `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme_check_geral,excluido_check_geral&$expand=site,tipo_veiculo&$Filter=(site/Title eq '${user_site}') and (excluido_check_geral eq 'false')`;
 
       const resp = await crud.getListItems('veiculos_emergencia', path);
 

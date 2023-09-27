@@ -5,7 +5,7 @@ export interface IEqGeneralChecklist {
   placa: string;
   tipo_veiculo: string;
   ultima_inspecao?: string;
-  conforme: boolean;
+  conforme_check_geral: boolean;
 }
 
 export interface IEqGeneralChecklistModal {
