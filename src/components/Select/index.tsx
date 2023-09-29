@@ -59,7 +59,7 @@ const select = tv({
       outline: {
         trigger: 'font-medium text-primary data-[placeholder:text-primary font-bold]',
         // trigger: 'font-medium text-primary border-b-2 border-b-[#B3C7D3] data-[placeholder:text-primary font-bold]',
-        triggerIcon: 'bg-transparent text-primary invisible group-hover:visible',
+        triggerIcon: 'bg-transparent text-primary', // invisible group-hover:visible
       },
     },
   },

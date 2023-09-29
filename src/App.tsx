@@ -1,9 +1,10 @@
 import { Route, Routes } from 'react-router-dom';
 
 import Home from './pages/Home';
-import Records from './pages/Records';
-import Equipments from './pages/Equipments';
 import Report from './pages/Report';
+import Records from './pages/Records';
+import Schedule from './pages/Schedule';
+import Equipments from './pages/Equipments';
 
 const App = () => {
   return (
@@ -18,6 +19,8 @@ const App = () => {
 
       <Route path="/reports" element={<Report />} />
       <Route path="/reports/:id" element={<Report />} />
+
+      <Route path="/schedule" element={<Schedule />} />
     </Routes>
   );
 };
