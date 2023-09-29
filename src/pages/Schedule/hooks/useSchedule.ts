@@ -3,6 +3,7 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
 import { DataEquipments } from '../types/DataEquipments';
 import { sharepointContext } from '../../../context/sharepointContext';
+import { parseISO } from 'date-fns';
 
 export const useSchedule = () => {
   const { crud } = sharepointContext();
@@ -89,23 +90,6 @@ export const useSchedule = () => {
   ];
 
   // Requests
-  const isEquipmentExpired = (lastInspection: Date, timeToExpiration: number) => {
-    const expirationDate = new Date(lastInspection);
-    expirationDate.setDate(expirationDate.getDate() + timeToExpiration);
-    const currentDate = new Date();
-    return currentDate > expirationDate;
-  };
-
-  const isInspectionDueWithinXDays = (lastInspection: Date, timeToExpiration: number, daysThreshold: number) => {
-    const lastInspectionDate = new Date(lastInspection);
-    const currentDate = new Date();
-    const expirationDate = new Date(lastInspectionDate);
-    expirationDate.setDate(expirationDate.getDate() + timeToExpiration);
-    const timeDifference = expirationDate.getTime() - currentDate.getTime();
-    const daysUntilInspection = Math.ceil(timeDifference / (1000 * 3600 * 24));
-    return daysUntilInspection <= daysThreshold;
-  };
-
   const calculateTimeToExpiration = (type: string) => {
     switch (type) {
       case 'Extintor':
@@ -125,61 +109,28 @@ export const useSchedule = () => {
     }
   };
 
-  // const fetchExtinguisher = async () => {
-  //   // const startDate = new Date(selectedYear, selectedMonth, 1);
-  //   // const endDate = new Date(selectedYear, selectedMonth + 1, 0);
-  //   // const formattedStartDate = `${startDate.toISOString().split('T')[0]}T00:00:00Z`;
-  //   // const formattedEndDate = `${endDate.toISOString().split('T')[0]}T00:00:00Z`;
-  //   // const filterString = `ultima_inspecao ge datetime'${formattedStartDate}' and ultima_inspecao le datetime'${formattedEndDate}'`;
-
-  //   const path = `?$Select=Id,excluido,cod_extintor,cod_qrcode,conforme,local/Title,massa/Title,pavimento/Title,predio/Title,site/Title,tipo_extintor/Title,validade,ultima_inspecao&$expand=local,massa,pavimento,predio,site,tipo_extintor&$Filter=(excluido eq 'false' and ultima_inspecao ne null)`;
-
-  //   const resp = await crud.getListItemsv2('extintores', path);
-  //   return resp.results;
-  // };
-
   const fetchExtinguisher = async () => {
+    // const startDate = new Date(selectedYear, selectedMonth, 1);
+    // const endDate = new Date(selectedYear, selectedMonth + 1, 0);
+    // const formattedStartDate = `${startDate.toISOString().split('T')[0]}T00:00:00Z`;
+    // const formattedEndDate = `${endDate.toISOString().split('T')[0]}T00:00:00Z`;
+    // const filterString = `ultima_inspecao ge datetime'${formattedStartDate}' and ultima_inspecao le datetime'${formattedEndDate}'`;
+
     const path = `?$Select=Id,excluido,cod_extintor,cod_qrcode,conforme,local/Title,massa/Title,pavimento/Title,predio/Title,site/Title,tipo_extintor/Title,validade,ultima_inspecao&$expand=local,massa,pavimento,predio,site,tipo_extintor&$Filter=(excluido eq 'false' and ultima_inspecao ne null)`;
 
     const resp = await crud.getListItemsv2('extintores', path);
-    const extinguiserData = resp.results;
-
-    const formattedExtinguisherData = extinguiserData.map((extinguisher: any) => {
-      const ultimaInspecao = new Date(extinguisher.ultima_inspecao);
-      const timeToExpiration = calculateTimeToExpiration('Extintor'); // Pode variar com base no tipo
-      let proximasInspecoes = [];
-
-      // Adicione datas futuras de inspeção
-      for (let i = 0; i < 12; i++) {
-        // Gere datas para os próximos 12 meses
-        const proximaInspecao = new Date(ultimaInspecao.getTime() + timeToExpiration * 24 * 60 * 60 * 1000); // Adicione o tempo em milissegundos
-        proximasInspecoes.push(proximaInspecao);
-        ultimaInspecao.setTime(proximaInspecao.getTime()); // Atualize a última inspeção para a próxima inspeção
-      }
-
-      return {
-        type: 'Extintor',
-        Id: extinguisher.Id,
-        ultima_inspecao: new Date(extinguisher.ultima_inspecao),
-        proximas_inspecoes: proximasInspecoes,
-        vencido: isEquipmentExpired(extinguisher.ultima_inspecao, timeToExpiration),
-        emAlerta: isInspectionDueWithinXDays(extinguisher.ultima_inspecao, timeToExpiration, 5),
-      };
-    });
-
-    return formattedExtinguisherData;
+    return resp.results;
   };
 
   const fetchMiscellaneousEquipment = async () => {
-    const startDate = new Date(selectedYear, selectedMonth, 1);
-    const endDate = new Date(selectedYear, selectedMonth + 1, 0);
+    // const startDate = new Date(selectedYear, selectedMonth, 1);
+    // const endDate = new Date(selectedYear, selectedMonth + 1, 0);
+    // const formattedStartDate = `${startDate.toISOString().split('T')[0]}T00:00:00Z`;
+    // const formattedEndDate = `${endDate.toISOString().split('T')[0]}T00:00:00Z`;
 
-    const formattedStartDate = `${startDate.toISOString().split('T')[0]}T00:00:00Z`;
-    const formattedEndDate = `${endDate.toISOString().split('T')[0]}T00:00:00Z`;
+    // const filterString = `ultima_inspecao ge datetime'${formattedStartDate}' and ultima_inspecao le datetime'${formattedEndDate}'`;
 
-    const filterString = `ultima_inspecao ge datetime'${formattedStartDate}' and ultima_inspecao le datetime'${formattedEndDate}'`;
-
-    const path = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,cod_equipamento,ultima_inspecao,conforme,excluido&$expand=site,predio,pavimento,local,tipo_equipamento &$Filter=(excluido eq 'false' and ${filterString})`;
+    const path = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,cod_equipamento,ultima_inspecao,conforme,excluido&$expand=site,predio,pavimento,local,tipo_equipamento &$Filter=(excluido eq 'false' and ultima_inspecao ne null)`;
 
     const resp = await crud.getListItemsv2('equipamentos_diversos', path);
     return resp.results;
@@ -191,25 +142,30 @@ export const useSchedule = () => {
       const extinguiserData = await fetchExtinguisher();
       const miscellaneousEquipmentData = await fetchMiscellaneousEquipment();
 
-      // Formate os dados dos extintores
       const formattedExtinguisherData = extinguiserData.map((extinguisher: any) => {
-        const ultimaInspecao = new Date(extinguisher.ultima_inspecao);
-        const timeToExpiration = calculateTimeToExpiration('Extintor'); // Pode variar com base no tipo
-        const proximaInspecao = new Date(ultimaInspecao.getTime() + timeToExpiration * 24 * 60 * 60 * 1000); // Adicione o tempo em milissegundos
+        const ultimaInspecaoIsoDate = parseISO(extinguisher.ultima_inspecao);
+
+        const ultimaInspecao = new Date(
+          ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
+        );
+        const timeToExpiration = calculateTimeToExpiration('Extintor');
+        const proximaInspecao = new Date(ultimaInspecao.getTime() + timeToExpiration * 24 * 60 * 60 * 1000);
 
         return {
           type: 'Extintor',
           Id: extinguisher.Id,
           ultima_inspecao: ultimaInspecao,
           proxima_inspecao: proximaInspecao,
-          vencido: isEquipmentExpired(extinguisher.ultima_inspecao, timeToExpiration),
-          emAlerta: isInspectionDueWithinXDays(extinguisher.ultima_inspecao, timeToExpiration, 5),
         };
       });
 
-      // Formate os dados dos equipamentos diversos
       const formattedMiscellaneousEquipmentData = miscellaneousEquipmentData.map((equipment: any) => {
-        const ultimaInspecao = new Date(equipment.ultima_inspecao);
+        const ultimaInspecaoIsoDate = parseISO(equipment.ultima_inspecao);
+
+        const ultimaInspecao = new Date(
+          ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
+        );
+
         const timeToExpiration = calculateTimeToExpiration(equipment.tipo_equipamento.Title);
         const proximaInspecao = new Date(ultimaInspecao.getTime() + timeToExpiration * 24 * 60 * 60 * 1000);
 
@@ -218,12 +174,9 @@ export const useSchedule = () => {
           Id: equipment.Id,
           ultima_inspecao: ultimaInspecao,
           proxima_inspecao: proximaInspecao,
-          vencido: isEquipmentExpired(ultimaInspecao, timeToExpiration),
-          emAlerta: isInspectionDueWithinXDays(ultimaInspecao, timeToExpiration, 5),
         };
       });
 
-      // Combine os dados formatados
       const combinedData = [...formattedExtinguisherData, ...formattedMiscellaneousEquipmentData];
 
       return combinedData;

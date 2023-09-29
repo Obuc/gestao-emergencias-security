@@ -1,11 +1,11 @@
-import { format, isSameDay, isSameMonth, isToday } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { format, isSameDay, isToday } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 import { useSchedule } from '../hooks/useSchedule';
-import Select, { SelectItem } from '../../../components/Select';
 import { Button } from '../../../components/Button';
-import { ptBR } from 'date-fns/locale';
+import Select, { SelectItem } from '../../../components/Select';
 
 const Calendar = () => {
   const {
@@ -29,7 +29,7 @@ const Calendar = () => {
     setSelectedMonth(parseInt(value, 10));
   };
 
-  console.log(dataEquipments);
+  console.log(dateSelected);
 
   return (
     <div className="flex gap-8 h-full items-center w-full justify-between">
@@ -64,8 +64,11 @@ const Calendar = () => {
                 </tr>
               </thead>
               <tbody>
-                {weeks.map((week, weekIndex) => (
-                  <tr key={weekIndex} className="h-[6.25rem] bg-white border border-[#F3F3F3]">
+                {/* {weeks.map((week, weekIndex) => (
+                  <tr
+                    key={weekIndex}
+                    className="min-[1100px]:h-[5.625rem] relative min-[1600px]:h-[6.25rem] min-[1800px]:h-[6.875rem] bg-white border border-[#F3F3F3]"
+                  >
                     {week.map((day) => (
                       <td
                         key={day?.toISOString()}
@@ -80,9 +83,80 @@ const Calendar = () => {
                         data-[isdayinmonth=false]:cursor-pointer data-[isdayinmonth=true]:cursor-not-allowed"
                       >
                         {day ? day.getDate() : ''}
-                        {/* Renderize seus eventos aqui */}
+
                       </td>
                     ))}
+                  </tr>
+                ))} */}
+                {weeks.map((week, weekIndex) => (
+                  <tr
+                    key={weekIndex}
+                    className="min-[1100px]:h-[5.625rem] relative min-[1600px]:h-[6.25rem] min-[1800px]:h-[6.875rem] bg-white border border-[#F3F3F3]"
+                  >
+                    {week.map((day) => {
+                      const isDayInMonth = day && day.getMonth() === selectedMonth;
+
+                      const isInspectionDone =
+                        dataEquipments &&
+                        dataEquipments.some((equipment) => {
+                          // Verifique se a inspeção foi feita para este dia
+                          return (
+                            isDayInMonth &&
+                            equipment.ultima_inspecao &&
+                            new Date(equipment.ultima_inspecao).getDate() === day.getDate() &&
+                            new Date(equipment.ultima_inspecao).getMonth() === selectedMonth &&
+                            new Date(equipment.ultima_inspecao).getFullYear() === selectedYear
+                          );
+                        });
+
+                      const isOverdue =
+                        dateSelected &&
+                        day &&
+                        dataEquipments &&
+                        dataEquipments.some((equipment) => {
+                          return (
+                            isDayInMonth &&
+                            equipment.ultima_inspecao &&
+                            equipment.ultima_inspecao < day &&
+                            equipment.ultima_inspecao === day
+                          );
+                        });
+
+                      // Verifica se a inspeção deveria ter sido feita, mas não foi
+                      const isMissedInspection =
+                        dateSelected &&
+                        day &&
+                        dataEquipments &&
+                        dataEquipments.some((equipment) => {
+                          return (
+                            isDayInMonth &&
+                            !isInspectionDone &&
+                            equipment.ultima_inspecao &&
+                            equipment.ultima_inspecao < day &&
+                            equipment.ultima_inspecao === day
+                          );
+                        });
+
+                      return (
+                        <td
+                          key={day?.toISOString()}
+                          data-is-inspection-done={isInspectionDone}
+                          data-is-overdue={isOverdue}
+                          data-is-missed-inspection={isMissedInspection}
+                          data-istoday={dateSelected && day ? isSameDay(day, dateSelected) : day && isToday(day)}
+                          data-isdayinmonth={day && day.getMonth() !== selectedMonth}
+                          onClick={() => {
+                            if (day && isDayInMonth) {
+                              setDateSected(day);
+                            }
+                          }}
+                          className="w-[5.625rem] data-[isdayinmonth=false]:border border-[#F3F3F3] data-[isdayinmonth=true]:bg-[#F2F3F7] data-[isdayinmonth=true]:text-[#929292] data-[istoday=true]:bg-[#00617F] data-[istoday=true]:text-[#FBFBFB] data-[isdayinmonth=false]:cursor-pointer data-[isdayinmonth=true]:cursor-not-allowed data-[is-inspection-done=true]:bg-green-400 data-[is-overdue=true]:bg-pink data-[is-missed-inspection=true]:bg-yellow-400"
+                        >
+                          {day ? day.getDate() : ''}
+                          {/* Renderize seus eventos aqui */}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
@@ -145,24 +219,10 @@ const Calendar = () => {
                 <ul className="pt-4 pb-6">
                   {dataEquipments &&
                     dataEquipments
-                      .filter((equipment) => {
-                        // Verifique se alguma das próximas inspeções está dentro do mês atual
-                        return equipment.proximas_inspecoes?.some((proximaInspecao) => {
-                          return isSameMonth(proximaInspecao, date);
-                        });
-                      })
+                      .filter((equipment) => isSameDay(equipment.proxima_inspecao, date))
                       .map((equipment, equipmentIndex) => (
-                        <li
-                          data-isexpired={equipment.vencido}
-                          className={`p-2 mb-2 rounded flex items-center justify-between ${
-                            equipment.vencido ? 'bg-pink/20' : ''
-                          }`}
-                          key={equipmentIndex}
-                        >
+                        <li className="p-2 mb-2 rounded flex items-center justify-between" key={equipmentIndex}>
                           <span className="text-lg text-[#303030]">Inspeção - {equipment.type}</span>
-                          <span data-isexpired={equipment.vencido} className={equipment.vencido ? 'text-pink' : ''}>
-                            {format(equipment.proximas_inspecoes[0], 'dd MMM yyyy', { locale: ptBR })}
-                          </span>
                         </li>
                       ))}
                 </ul>
