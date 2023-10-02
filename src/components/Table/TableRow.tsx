@@ -13,5 +13,3 @@ export const TableRow = ({ children, className, ...props }: ITableRowProps) => {
     </tr>
   );
 };
-
-//className="h-14 shadow-xsm text-left bg-white hover:bg-[#E9F0F3] hover:cursor-pointer duration-200"

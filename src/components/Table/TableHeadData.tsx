@@ -6,5 +6,5 @@ interface ITableHeadDataProps {
 }
 
 export const TableHeadData = ({ children, className }: ITableHeadDataProps) => {
-  return <th className={twMerge('h-14 font-medium w-[3%] text-lg text-start sticky', className)}>{children}</th>;
+  return <th className={twMerge('h-14 font-medium text-lg text-start w-[3%]', className)}>{children}</th>;
 };

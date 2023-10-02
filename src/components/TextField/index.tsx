@@ -23,7 +23,11 @@ const TextField = ({ label, name, placeholder = '', width, errors, touched, isLo
           id={name}
           {...props}
           placeholder={placeholder}
-          className={`${errors && touched && 'border-pink'} bg-white h-10 outline-none border shadow-xs-app px-2`}
+          data-errors={errors && touched}
+          className={twMerge(
+            'data-[errors=true]:border-pink bg-white h-10 outline-none border shadow-xs-app px-2',
+            props.className,
+          )}
         />
       )}
 

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { ptBR } from 'date-fns/locale';
-import { Skeleton } from '@mui/material';
 import { format, parseISO } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { IconButton, Skeleton } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroller';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faFilterCircleXmark, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 import { Table } from '../../../../components/Table';
 import { Extinguisher } from '../../types/Extinguisher';
@@ -27,6 +27,7 @@ const ExtinguisherTable = () => {
 
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
+  const [openFilter, setOpenFilter] = useState<boolean>(false);
 
   const handleView = (id: number) => {
     navigate(`/records/${id}?edit=false`);
@@ -57,7 +58,12 @@ const ExtinguisherTable = () => {
                 <Table.Th>Local</Table.Th>
                 <Table.Th>Pavimento</Table.Th>
                 <Table.Th>Conformidade</Table.Th>
-                <Table.Th>{''}</Table.Th>
+                <Table.Th>
+                  <IconButton onClick={() => setOpenFilter((prev) => !prev)}>
+                    {!openFilter && <FontAwesomeIcon icon={faFilter} className="text-primary" />}
+                    {openFilter && <FontAwesomeIcon icon={faFilterCircleXmark} className="text-pink" />}
+                  </IconButton>
+                </Table.Th>
               </Table.Tr>
             </Table.Thead>
 
@@ -93,10 +99,7 @@ const ExtinguisherTable = () => {
               {extinguisher?.pages.map(
                 (item: any) =>
                   item?.data?.value?.map((item: Extinguisher) => (
-                    <Table.Tr
-                      key={item.Id}
-                      //className="hover:bg-[#E9F0F3] hover:cursor-pointer duration-200"
-                    >
+                    <Table.Tr key={item.Id}>
                       <Table.Td className="pl-8">{item.bombeiro}</Table.Td>
                       <Table.Td>{format(parseISO(item.Created), 'dd MMM yyyy', { locale: ptBR })}</Table.Td>
                       <Table.Td>
