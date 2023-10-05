@@ -16,7 +16,7 @@ import { appContext } from '../../../../context/appContext';
 import { FileImport } from '../../../../components/FileImport';
 import { RadioGroup } from '../../../../components/RadioGroup';
 import { arraysAreEqual } from '../../../../utils/arraysAreEqual';
-import Select, { SelectItem } from '../../../../components/Select';
+import { Select } from '../../../../components/Select';
 
 interface IReportsModal extends Partial<IReports> {
   isRevalidate: string;
@@ -281,7 +281,7 @@ const ReportsModal = () => {
                     )}
 
                     {isEdit && (
-                      <Select
+                      <Select.Component
                         id="tipo_laudo"
                         name="tipo_laudo"
                         label="Tipo"
@@ -294,11 +294,11 @@ const ReportsModal = () => {
                         error={!!props.errors.tipo_laudoId && props.touched.tipo_laudoId}
                       >
                         {tipoLaudo?.map((form) => (
-                          <SelectItem key={form.Id} value={form.Id.toString()}>
+                          <Select.Item key={form.Id} value={form.Id.toString()}>
                             {form.Title}
-                          </SelectItem>
+                          </Select.Item>
                         ))}
-                      </Select>
+                      </Select.Component>
                     )}
                   </div>
 

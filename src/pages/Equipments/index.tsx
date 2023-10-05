@@ -21,8 +21,8 @@ import EqInspectionCmiQRCode from './components/tables/QRCode/EqInspectionCmiQRC
 import EqLoadRatioTable from './components/tables/EmergencyVehicles/EqLoadRatioTable';
 import EqGovernanceValveQRCode from './components/tables/QRCode/EqGovernanceValveQRCode';
 import EqGeneralChecklistQRCode from './components/tables/QRCode/EqGeneralChecklistQRCode';
-import Select, { SelectItem, SelectLabel, SelectSeparator } from '../../components/Select';
 import EqGeneralChecklistTable from './components/tables/EmergencyVehicles/EqGeneralChecklistTable';
+import { Select } from '../../components/Select';
 
 const Equipments = () => {
   const { formularios, submenu, isLoadingFormularios } = appContext();
@@ -102,7 +102,7 @@ const Equipments = () => {
                 Selecionar formulário
               </label>
 
-              <Select
+              <Select.Component
                 id="state_id"
                 name="state_id"
                 value={formValue}
@@ -115,22 +115,22 @@ const Equipments = () => {
                 }}
               >
                 {filteredForms?.map((form) => (
-                  <SelectItem key={form.Id} value={form.Title}>
+                  <Select.Item key={form.Id} value={form.Title}>
                     {form.Title}
-                  </SelectItem>
+                  </Select.Item>
                 ))}
 
-                <SelectSeparator />
-                <SelectLabel>Veículos de Emergência</SelectLabel>
+                <Select.Separator />
+                <Select.Label>Veículos de Emergência</Select.Label>
 
                 {filteredSubMenu?.map((form) => (
-                  <SelectItem key={form.Id * 2} value={form.Title}>
+                  <Select.Item key={form.Id * 2} value={form.Title}>
                     {form.Title}
-                  </SelectItem>
+                  </Select.Item>
                 ))}
 
-                <SelectSeparator />
-              </Select>
+                <Select.Separator />
+              </Select.Component>
             </div>
 
             <div className="flex gap-2">

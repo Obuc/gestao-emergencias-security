@@ -7,7 +7,7 @@ import BayerLogoWhite from '../../components/Icons/BayerLogoWhite';
 import { Button } from '../../components/Button';
 import { appContext } from '../../context/appContext';
 import BgGradient from '../../components/Icons/BgGradient';
-import Select, { SelectItem } from '../../components/Select';
+import { Select } from '../../components/Select';
 
 const Home = () => {
   const { sites, isLoadingSites } = appContext();
@@ -46,7 +46,7 @@ const Home = () => {
               <FontAwesomeIcon icon={faLocationDot} /> Escolha o site
             </span>
 
-            <Select
+            <Select.Component
               id="county_id"
               name="county_id"
               className="w-[22.25rem]"
@@ -56,11 +56,11 @@ const Home = () => {
             >
               {sites?.length &&
                 sites.map((item) => (
-                  <SelectItem key={item.Id} value={item.Title}>
+                  <Select.Item key={item.Id} value={item.Title}>
                     {item.Title}
-                  </SelectItem>
+                  </Select.Item>
                 ))}
-            </Select>
+            </Select.Component>
           </div>
 
           <div className="self-end mt-2 -mr-1">

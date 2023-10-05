@@ -15,8 +15,12 @@ import InspectionCmiTable from './components/tables/InspectionCmiTable';
 import GovernanceValveTable from './components/tables/GovernanceValveTable';
 import useGeneralChecklist from './hooks/EmergencyVehicles/useGeneralChecklist';
 import LoadRatioTable from './components/tables/EmergencyVehicles/LoadRatioTable';
-import Select, { SelectItem, SelectLabel, SelectSeparator } from '../../components/Select';
+// import Select, { SelectItem, SelectLabel, SelectSeparator } from '../../components/Select';
 import GeneralChecklistTable from './components/tables/EmergencyVehicles/GeneralChecklistTable';
+
+import { Select } from '../../components/Select';
+
+// import { Select } from '../../components/Select2';
 
 const Records = () => {
   const { isLoading } = useExtinguisher();
@@ -104,7 +108,7 @@ const Records = () => {
                 Selecionar formulário
               </label>
 
-              <Select
+              <Select.Component
                 id="state_id"
                 name="state_id"
                 value={formValue}
@@ -117,22 +121,22 @@ const Records = () => {
                 }}
               >
                 {filteredForms?.map((form) => (
-                  <SelectItem key={form.Id} value={form.Title}>
+                  <Select.Item key={form.Id} value={form.Title}>
                     {form.Title}
-                  </SelectItem>
+                  </Select.Item>
                 ))}
 
-                <SelectSeparator />
-                <SelectLabel>Veículos de Emergência</SelectLabel>
+                <Select.Separator />
+                <Select.Label>Veículos de Emergência</Select.Label>
 
                 {filteredSubMenu?.map((form) => (
-                  <SelectItem key={form.Id * 2} value={form.Title}>
+                  <Select.Item key={form.Id * 2} value={form.Title}>
                     {form.Title}
-                  </SelectItem>
+                  </Select.Item>
                 ))}
 
-                <SelectSeparator />
-              </Select>
+                <Select.Separator />
+              </Select.Component>
             </div>
 
             <Button.Root

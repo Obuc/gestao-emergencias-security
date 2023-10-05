@@ -5,7 +5,7 @@ import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons
 
 import { useSchedule } from '../hooks/useSchedule';
 import { Button } from '../../../components/Button';
-import Select, { SelectItem } from '../../../components/Select';
+import { Select } from '../../../components/Select';
 
 const Calendar = () => {
   const {
@@ -28,8 +28,6 @@ const Calendar = () => {
   const handleMonthChange = (value: any) => {
     setSelectedMonth(parseInt(value, 10));
   };
-
-  console.log(dateSelected);
 
   return (
     <div className="flex gap-8 h-full items-center w-full justify-between">
@@ -168,7 +166,7 @@ const Calendar = () => {
         <div className="flex flex-col w-full h-full shadow-xs-primary-app">
           <div className="flex items-center justify-between min-h-[4.625rem] bg-[#F2F3F7] px-4">
             <div className="flex gap-6">
-              <Select
+              <Select.Component
                 id="month"
                 name="month"
                 className="w-[11.25rem]"
@@ -177,13 +175,13 @@ const Calendar = () => {
                 onValueChange={handleMonthChange}
               >
                 {monthsList.map((month) => (
-                  <SelectItem key={month.value} value={month.value.toString()}>
+                  <Select.Item key={month.value} value={month.value.toString()}>
                     {month.label}
-                  </SelectItem>
+                  </Select.Item>
                 ))}
-              </Select>
+              </Select.Component>
 
-              <Select
+              <Select.Component
                 id="year"
                 name="year"
                 variant="outline"
@@ -191,9 +189,9 @@ const Calendar = () => {
                 value={selectedYear.toString()}
                 onValueChange={(value) => setSelectedYear(+value)}
               >
-                <SelectItem value="2023">2023</SelectItem>
-                <SelectItem value="2022">2022</SelectItem>
-              </Select>
+                <Select.Item value="2023">2023</Select.Item>
+                <Select.Item value="2022">2022</Select.Item>
+              </Select.Component>
             </div>
             <div>
               <Button.Root

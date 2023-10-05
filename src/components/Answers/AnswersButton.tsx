@@ -10,7 +10,7 @@ export const AnswersButton = ({ answersValue, ...props }: IAnswersButtonProps) =
     return (
       <button
         {...props}
-        className="p-1.5 mt-1 w-[6.25rem] bg-[#F1FEEB] flex justify-center items-center font-medium border border-[#86EF54] rounded-sm"
+        className="p-1.5 mt-1 w-[6.25rem] h-10 bg-[#F1FEEB] flex justify-center items-center font-medium border border-[#86EF54] rounded-sm"
       >
         Sim
       </button>

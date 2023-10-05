@@ -141,6 +141,8 @@ const useLoadRatio = () => {
             veiculo: vehicleValue,
             respostas: respostas,
           };
+        } else {
+          return [];
         }
       } else {
         return [];
