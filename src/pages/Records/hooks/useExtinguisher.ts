@@ -67,8 +67,6 @@ const useExtinguisher = () => {
     };
   };
 
-  console.log(equipments_value === 'Extintores');
-
   const {
     data: extinguisher,
     fetchNextPage,
@@ -314,6 +312,7 @@ const useExtinguisher = () => {
     handleExportExtinguisherToExcel,
     isLoadingExtinguisherExportToExcel,
 
+    extinguisherFilters,
     setExtinguisherFilters,
   };
 };

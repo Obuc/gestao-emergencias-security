@@ -4,7 +4,8 @@ export const selectVariants = tv({
   slots: {
     base: 'flex w-full h-full flex-col',
     labelStyle: 'text-primary text-base pb-2',
-    trigger: 'min-w-full outline-none py-2 pl-2 flex group justify-between items-center h-10 leading-none',
+    trigger:
+      'min-w-full outline-none py-2 pl-2 flex group justify-between items-center h-10 leading-none whitespace-nowrap',
     triggerIcon: 'ml-2 w-[3.125rem] h-10 flex justify-center items-center duration-150',
     content: 'overflow-hidden z-10 bg-white shadow-xs-primary-app',
     viewport: 'py-1',
@@ -26,7 +27,7 @@ export const selectVariants = tv({
       },
       light: {
         base: 'bg-white',
-        trigger: ' text-primary data-[placeholder:text-gray-400]',
+        trigger: 'text-primary data-[placeholder:text-gray-400]',
         triggerIcon: 'bg-primary',
       },
       gray: {
@@ -50,7 +51,7 @@ export const selectVariants = tv({
         triggerIcon: 'group-data-[state="open"]:bg-primary polygon-select text-white',
       },
       outline: {
-        trigger: 'font-medium text-primary data-[placeholder:text-primary font-bold]',
+        trigger: 'font-medium text-primary data-[placeholder:text-primary font-bold] shadow-sm-primary-app',
         // trigger: 'font-medium text-primary border-b-2 border-b-[#B3C7D3] data-[placeholder:text-primary font-bold]',
         triggerIcon: 'bg-transparent text-primary', // invisible group-hover:visible
       },

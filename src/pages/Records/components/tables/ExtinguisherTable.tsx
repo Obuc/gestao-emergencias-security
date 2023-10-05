@@ -11,10 +11,10 @@ import { Extinguisher } from '../../types/Extinguisher';
 import { Select } from '../../../../components/Select';
 import useExtinguisher from '../../hooks/useExtinguisher';
 import ExtinguisherModal from '../modals/ExtinguisherModal';
+import { appContext } from '../../../../context/appContext';
 import PopoverTables from '../../../../components/PopoverTables';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
-import { appContext } from '../../../../context/appContext';
 
 const ExtinguisherTable = () => {
   const { local } = appContext();
@@ -27,11 +27,21 @@ const ExtinguisherTable = () => {
     isError,
     mutateRemoveExtinguisher,
     IsLoadingMutateRemoveExtinguisher,
+
+    extinguisherFilters,
+    setExtinguisherFilters,
   } = useExtinguisher();
 
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
   const [openFilter, setOpenFilter] = useState<boolean>(false);
+
+  const handleSelectedValuesChange = (newSelectedValues: string[]) => {
+    setExtinguisherFilters({
+      ...extinguisherFilters,
+      place: newSelectedValues,
+    });
+  };
 
   const handleView = (id: number) => {
     navigate(`/records/${id}?edit=false`);
@@ -41,14 +51,25 @@ const ExtinguisherTable = () => {
     navigate(`/records/${id}?edit=true`);
   };
 
-  console.log(local);
-
   return (
     <>
       <Table.Filter>
-        {/* <Select.Component>
-        <Select.Item />
-      </Select.Component> */}
+        {/* Local */}
+        <Select.Component
+          multi
+          id="place"
+          name="place"
+          variant="outline"
+          className="w-[22.5rem] max-h-[28.125rem]"
+          selectedValues={extinguisherFilters.place}
+          onSelectedValuesChange={handleSelectedValuesChange}
+        >
+          {local?.map((local) => (
+            <Select.Item key={local.Id} value={local.Title}>
+              {local.Title}
+            </Select.Item>
+          ))}
+        </Select.Component>
       </Table.Filter>
 
       <div className="min-[1100px]:max-h-[38rem] relative min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[44rem] w-full overflow-y-auto">

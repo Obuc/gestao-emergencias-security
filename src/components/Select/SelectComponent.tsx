@@ -243,11 +243,33 @@ const SelectComponent = ({
 
         {!isLoading && (
           <SelectRadix.Root {...props}>
-            <SelectRadix.Trigger id={id} aria-invalid="true" disabled={isLoading || disabled} className={trigger()}>
-              <SelectRadix.Value placeholder={placeholder} />
-              <SelectRadix.Icon className={triggerIcon()}>
-                <FontAwesomeIcon icon={faChevronDown} />
-              </SelectRadix.Icon>
+            <SelectRadix.Trigger
+              id={id}
+              aria-invalid="true"
+              disabled={isLoading || disabled}
+              className={twMerge(trigger())}
+            >
+              {!multi && <SelectRadix.Value placeholder={placeholder} />}
+
+              {multi && (
+                <div className="flex items-center overflow-hidden whitespace-nowrap overflow-ellipsis max-w-full mr-3">
+                  <span className="max-w-full block text-ellipsis overflow-hidden">
+                    {internalSelectedValues.flat().join(', ')}
+                  </span>
+                </div>
+              )}
+
+              <div className="flex items-center ">
+                {multi && internalSelectedValues.length > 0 && (
+                  <span className="flex justify-center items-center w-[1.25rem] h-[1.25rem] rounded-full bg-pink text-white p-3">
+                    {internalSelectedValues.length}
+                  </span>
+                )}
+
+                <SelectRadix.Icon className={triggerIcon()}>
+                  <FontAwesomeIcon icon={faChevronDown} />
+                </SelectRadix.Icon>
+              </div>
             </SelectRadix.Trigger>
 
             <SelectRadix.Portal>
