@@ -10,12 +10,8 @@ import useEqGeneralChecklist from '../../../hooks/EmergencyVehicles/useEqGeneral
 import { IEqGeneralChecklist } from '../../../types/EmergencyVehicles/EquipmentsGeneralChecklist';
 
 const EqGeneralChecklistQRCode = () => {
-  const {
-    eqVehiclesGeneralChecklist,
-    isLoadingVehiclesGeneralChecklist,
-    isErrorEqVehiclesGeneralChecklist,
-    qrCodeValue,
-  } = useEqGeneralChecklist();
+  const { eqVehiclesGeneralChecklist, isLoadingVehiclesGeneralChecklist, isErrorEqVehiclesGeneralChecklist } =
+    useEqGeneralChecklist();
   const [selectedItemsVehicles, setSelectedItemsVehicle] = useState<any[]>([]);
 
   const toggleSelectItem = (item: IEqGeneralChecklist) => {
@@ -88,6 +84,8 @@ const EqGeneralChecklistQRCode = () => {
 
       <div className="w-full grid grid-cols-2 justify-center gap-4 p-2" id="qrCodeElement">
         {selectedItemsVehicles.map((value: any) => {
+          const qrCodeValue = `VeiculosCheckGeral;${value?.site};${value?.cod_qrcode}`;
+
           return (
             <div key={value.Id} className="flex justify-center items-center">
               <div className="flex flex-col justify-center w-[20rem] items-center gap-6 bg-white border-[.0625rem] border-black">

@@ -10,7 +10,7 @@ import SPOLogo from '../../../../../components/Icons/SPOLogo';
 import { IEqTestCmi } from '../../../types/EquipmentsTestCmi';
 
 const EqTestCmiQRCode = () => {
-  const { eqTestCmi, isLoadingEqTestCmi, isErrorEqTestCmi, qrCodeValue } = useEqTestCmi();
+  const { eqTestCmi, isLoadingEqTestCmi, isErrorEqTestCmi } = useEqTestCmi();
   const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<any[]>([]);
 
   const toggleSelectItem = (item: IEqTestCmi) => {
@@ -81,6 +81,11 @@ const EqTestCmiQRCode = () => {
 
       <div className="w-full grid grid-cols-2 justify-center gap-4 p-2" id="qrCodeElement">
         {selectedItemsExtinguisher.map((value: any) => {
+          const qrCodeValue =
+            value?.site === 'BXO'
+              ? `TesteCMIBXO;${value?.site};${value?.cod_qrcode}`
+              : `Bomba;${value?.site};${value?.cod_qrcode}`;
+
           return (
             <div key={value.Id} className="flex justify-center items-center">
               <div className="flex flex-col justify-center w-[20rem] items-center gap-6 bg-white border-[.0625rem] border-black">

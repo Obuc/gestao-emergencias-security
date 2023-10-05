@@ -10,8 +10,7 @@ import useEqExtinguisher from '../../../hooks/useEqExtinguisher';
 import { IEqExtinguisher } from '../../../types/EquipmentsExtinguisher';
 
 const EqExtinguisherQRCode = () => {
-  const { eqExtinguisher, isLoadingEqExtinguisher, isErrorEqExtinguisher, qrCodeExtinguisherValue } =
-    useEqExtinguisher();
+  const { eqExtinguisher, isLoadingEqExtinguisher, isErrorEqExtinguisher } = useEqExtinguisher();
 
   const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<any[]>([]);
 
@@ -87,6 +86,8 @@ const EqExtinguisherQRCode = () => {
 
       <div className="w-full grid grid-cols-2 justify-center gap-4 p-2" id="qrCodeElement">
         {selectedItemsExtinguisher.map((qrCodeValue: any) => {
+          const qrCodeExtinguisherValue = `Extintor;${qrCodeValue?.site};${qrCodeValue?.cod_qrcode};${qrCodeValue?.tipo_extintor}`;
+
           return (
             <div key={qrCodeValue.Id} className="flex justify-center items-center">
               <div className="flex flex-col justify-center w-[20rem] items-center gap-6 bg-white border-[.0625rem] border-black">

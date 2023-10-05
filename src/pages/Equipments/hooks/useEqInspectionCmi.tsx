@@ -101,7 +101,7 @@ const useEqInspectionCmi = () => {
 
   const { data: eqInspectionCmi, isLoading: isLoadingEqInspectionCmi }: UseQueryResult<Array<IEqInspectionCmi>> =
     useQuery({
-      queryKey: ['eq_inspection_cmi_data'],
+      queryKey: ['eq_inspection_cmi_data', equipments_value],
       queryFn: async () => {
         const path = `?$Select=Id,cod_qrcode,conforme,predio/Title,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,predio,tipo_equipamento&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq '${equipments_value}') and (excluido eq 'false')`;
 

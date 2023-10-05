@@ -10,8 +10,7 @@ import useEqGovernanceValve from '../../../hooks/useEqGovernanceValve';
 import { IEqGovernanceValve } from '../../../types/EquipmentsGovernanceValve';
 
 const EqGovernanceValveQRCode = () => {
-  const { eqGovernanceValve, isLoadingEqGovernanceValve, isErrorEqGovernanceValve, qrCodeValue } =
-    useEqGovernanceValve();
+  const { eqGovernanceValve, isLoadingEqGovernanceValve, isErrorEqGovernanceValve } = useEqGovernanceValve();
 
   const [selectedItemsGovernanceValve, setSelectedItemsGovernanceValve] = useState<any[]>([]);
 
@@ -87,6 +86,8 @@ const EqGovernanceValveQRCode = () => {
 
       <div className="w-full grid grid-cols-2 justify-center gap-4 p-2" id="qrCodeElement">
         {selectedItemsGovernanceValve.map((value: any) => {
+          const qrCodeValue = `Valvula;${value?.site};${value?.cod_qrcode}`;
+
           return (
             <div key={value.Id} className="flex justify-center items-center">
               <div className="flex flex-col justify-center w-[20rem] items-center gap-6 bg-white border-[.0625rem] border-black">

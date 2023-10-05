@@ -101,7 +101,7 @@ const useEqLoadRatio = () => {
     isLoading: isLoadingVehiclesLoadRatio,
     isError: isErrorEqVehiclesLoadRatio,
   }: UseQueryResult<Array<IEqLoadRatio>> = useQuery({
-    queryKey: ['eq_general_checklist'],
+    queryKey: ['eq_general_checklist', equipments_value],
     queryFn: async () => {
       const path = `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme,excluido&$expand=site,tipo_veiculo&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false') and (tipo_veiculo/Title eq '${equipments_value}')`;
 

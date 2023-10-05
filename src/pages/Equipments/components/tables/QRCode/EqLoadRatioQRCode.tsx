@@ -10,7 +10,7 @@ import useEqLoadRatio from '../../../hooks/EmergencyVehicles/useEqLoadRatio';
 import { IEqLoadRatio } from '../../../types/EmergencyVehicles/EquipmentsLoadRatio';
 
 const EqLoadRatioQRCode = () => {
-  const { eqVehiclesLoadRatio, isLoadingVehiclesLoadRatio, isErrorEqVehiclesLoadRatio, qrCodeValue } = useEqLoadRatio();
+  const { eqVehiclesLoadRatio, isLoadingVehiclesLoadRatio, isErrorEqVehiclesLoadRatio } = useEqLoadRatio();
   const [selectedItemsVehicles, setSelectedItemsVehicle] = useState<any[]>([]);
 
   const toggleSelectItem = (item: IEqLoadRatio) => {
@@ -83,6 +83,8 @@ const EqLoadRatioQRCode = () => {
 
       <div className="w-full grid grid-cols-2 justify-center gap-4 p-2" id="qrCodeElement">
         {selectedItemsVehicles.map((value: any) => {
+          const qrCodeValue = `RelacaoCarga;${value?.site};${value?.cod_qrcode};${value?.tipo_veiculo}`;
+
           return (
             <div key={value.Id} className="flex justify-center items-center">
               <div className="flex flex-col justify-center w-[20rem] items-center gap-6 bg-white border-[.0625rem] border-black">

@@ -10,7 +10,7 @@ import useEqInspectionCmi from '../../../hooks/useEqInspectionCmi';
 import { IEqInspectionCmi } from '../../../types/EquipmentsInspectionCmi';
 
 const EqInspectionCmiQRCode = () => {
-  const { eqInspectionCmi, isLoadingEqInspectionCmi, isErrorEqInspectionCmi, qrCodeValue } = useEqInspectionCmi();
+  const { eqInspectionCmi, isLoadingEqInspectionCmi, isErrorEqInspectionCmi } = useEqInspectionCmi();
   const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<any[]>([]);
 
   const toggleSelectItem = (item: IEqInspectionCmi) => {
@@ -81,6 +81,11 @@ const EqInspectionCmiQRCode = () => {
 
       <div className="w-full grid grid-cols-2 justify-center gap-4 p-2" id="qrCodeElement">
         {selectedItemsExtinguisher.map((value: any) => {
+          const qrCodeValue =
+            value?.site === 'BXO'
+              ? `InspecaoCMIBXO;${value?.site};${value?.cod_qrcode}`
+              : `Casa;${value?.site};${value?.cod_qrcode}`;
+
           return (
             <div key={value.Id} className="flex justify-center items-center">
               <div className="flex flex-col justify-center w-[20rem] items-center gap-6 bg-white border-[.0625rem] border-black">
