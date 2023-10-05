@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
@@ -8,6 +8,7 @@ import { IEqTestCmi, IEqTestCmiModal } from '../types/EquipmentsTestCmi';
 const useEqTestCmi = () => {
   const { crud } = sharepointContext();
   const params = useParams();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
@@ -49,6 +50,7 @@ const useEqTestCmi = () => {
     queryFn: fetchEqTestCmi,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
+    enabled: equipments_value === 'Teste CMI' && location.pathname === '/equipments',
   });
 
   const fetchEqCmiData = async () => {
@@ -94,6 +96,7 @@ const useEqTestCmi = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: params.id !== undefined && equipments_value === 'Teste CMI' && location.pathname === '/equipments',
   });
 
   const { data: eqTestCmi, isLoading: isLoadingEqTestCmi }: UseQueryResult<Array<IEqTestCmi>> = useQuery({
@@ -119,6 +122,7 @@ const useEqTestCmi = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: equipments_value === 'Teste CMI' && location.pathname === '/equipments',
   });
 
   const {

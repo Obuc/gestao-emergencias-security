@@ -254,18 +254,21 @@ const SelectComponent = ({
               <SelectRadix.Content position="popper" className={twMerge(content(), className)}>
                 <SelectRadix.Viewport className={arrow()}>
                   <SelectRadix.Group>
-                    {React.Children.map(children, (child) => {
-                      if (React.isValidElement(child)) {
-                        const optionValue = child.props.value;
-                        const isSelected = internalSelectedValues.includes(optionValue);
+                    {multi &&
+                      React.Children.map(children, (child) => {
+                        if (React.isValidElement(child)) {
+                          const optionValue = child.props.value;
+                          const isSelected = internalSelectedValues.includes(optionValue);
 
-                        return React.cloneElement(child as React.ReactElement<ISelectItemProps>, {
-                          isSelected,
-                          onMouseDown: () => handleOptionClick(optionValue),
-                        });
-                      }
-                      return null;
-                    })}
+                          return React.cloneElement(child as React.ReactElement<ISelectItemProps>, {
+                            isSelected,
+                            onMouseDown: () => handleOptionClick(optionValue),
+                          });
+                        }
+                        return null;
+                      })}
+
+                    {!multi && children}
                   </SelectRadix.Group>
                 </SelectRadix.Viewport>
                 <SelectRadix.Arrow className={viewport()} />

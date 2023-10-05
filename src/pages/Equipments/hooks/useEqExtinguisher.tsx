@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
@@ -8,6 +8,7 @@ import { IEqExtinguisher, IEqExtinguisherModal } from '../types/EquipmentsExting
 const useEqExtinguisher = () => {
   const { crud } = sharepointContext();
   const params = useParams();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
@@ -51,6 +52,7 @@ const useEqExtinguisher = () => {
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
+    enabled: equipments_value === 'Extintores' && location.pathname === '/equipments',
   });
 
   const fetchEqExtinguisherData = async () => {
@@ -100,6 +102,7 @@ const useEqExtinguisher = () => {
       },
       staleTime: 5000 * 60, // 5 Minute
       refetchOnWindowFocus: false,
+      enabled: params.id !== undefined && equipments_value === 'Extintores' && location.pathname === '/equipments',
     });
 
   const {
@@ -129,6 +132,7 @@ const useEqExtinguisher = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: equipments_value === 'Extintores' && location.pathname === '/equipments',
   });
 
   const { mutateAsync: mutateRemoveEquipment, isLoading: isLoadingMutateRemoveEquipment } = useMutation({

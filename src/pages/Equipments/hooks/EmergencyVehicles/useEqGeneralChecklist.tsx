@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -11,6 +11,7 @@ import { sharepointContext } from '../../../../context/sharepointContext';
 const useEqGeneralChecklist = () => {
   const { crud } = sharepointContext();
   const params = useParams();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
@@ -50,9 +51,11 @@ const useEqGeneralChecklist = () => {
       equipments_value === 'Checklist Geral'
         ? ['eq_general_checklist_data', user_site, equipments_value]
         : ['eq_general_checklist_data', user_site],
+
     queryFn: fetchEqGeneralChecklist,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
+    enabled: equipments_value === 'Checklist Geral' && location.pathname === '/equipments',
   });
 
   const fetchEqGeneralChecklistData = async () => {
@@ -99,6 +102,7 @@ const useEqGeneralChecklist = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: params.id !== undefined && equipments_value === 'Checklist Geral' && location.pathname === '/equipments',
   });
 
   const {
@@ -126,6 +130,7 @@ const useEqGeneralChecklist = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: equipments_value === 'Checklist Geral' && location.pathname === '/equipments',
   });
 
   const {

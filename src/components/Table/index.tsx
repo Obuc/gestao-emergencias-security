@@ -11,6 +11,7 @@ import { TableRow } from './TableRow';
 import { TableData } from './TableData';
 import { TableBody } from './TableBody';
 import { TableHeadData } from './TableHeadData';
+import TableFilter from './TableFilter';
 
 // import { ILosses } from '../../types/Losses';
 // import LossesModal from '../modal/LossesModal';
@@ -202,4 +203,5 @@ export const Table = {
   Tr: TableRow,
   Tbody: TableBody,
   Td: TableData,
+  Filter: TableFilter,
 };

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import useTestCMI from './hooks/useTestCMI';
+import { Select } from '../../components/Select';
 import { Button } from '../../components/Button';
 import LayoutBase from '../../layout/LayoutBase';
 import { appContext } from '../../context/appContext';
@@ -15,15 +16,9 @@ import InspectionCmiTable from './components/tables/InspectionCmiTable';
 import GovernanceValveTable from './components/tables/GovernanceValveTable';
 import useGeneralChecklist from './hooks/EmergencyVehicles/useGeneralChecklist';
 import LoadRatioTable from './components/tables/EmergencyVehicles/LoadRatioTable';
-// import Select, { SelectItem, SelectLabel, SelectSeparator } from '../../components/Select';
 import GeneralChecklistTable from './components/tables/EmergencyVehicles/GeneralChecklistTable';
 
-import { Select } from '../../components/Select';
-
-// import { Select } from '../../components/Select2';
-
 const Records = () => {
-  const { isLoading } = useExtinguisher();
   const { formularios, submenu, isLoadingFormularios } = appContext();
   const localSite = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
@@ -142,7 +137,6 @@ const Records = () => {
             <Button.Root
               className="min-w-[14.0625rem] h-10"
               disabled={
-                isLoading ||
                 isLoadingExtinguisherExportToExcel ||
                 isLoadingTestCmiExportToExcel ||
                 isLoadingInspectionCmiExportToExcel ||

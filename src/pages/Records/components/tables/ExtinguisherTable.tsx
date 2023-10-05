@@ -8,13 +8,17 @@ import { faFilter, faFilterCircleXmark, faXmark } from '@fortawesome/free-solid-
 
 import { Table } from '../../../../components/Table';
 import { Extinguisher } from '../../types/Extinguisher';
+import { Select } from '../../../../components/Select';
 import useExtinguisher from '../../hooks/useExtinguisher';
 import ExtinguisherModal from '../modals/ExtinguisherModal';
 import PopoverTables from '../../../../components/PopoverTables';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
+import { appContext } from '../../../../context/appContext';
 
 const ExtinguisherTable = () => {
+  const { local } = appContext();
+
   const {
     extinguisher,
     fetchNextPage,
@@ -37,8 +41,16 @@ const ExtinguisherTable = () => {
     navigate(`/records/${id}?edit=true`);
   };
 
+  console.log(local);
+
   return (
     <>
+      <Table.Filter>
+        {/* <Select.Component>
+        <Select.Item />
+      </Select.Component> */}
+      </Table.Filter>
+
       <div className="min-[1100px]:max-h-[38rem] relative min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[44rem] w-full overflow-y-auto">
         <InfiniteScroll
           pageStart={0}

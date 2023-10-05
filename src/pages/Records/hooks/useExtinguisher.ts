@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
-import { ExtinguisherDataModal, RespostaExtintor } from '../types/Extinguisher';
+import { ExtinguisherDataModal, IExtinguisherFiltersProps, RespostaExtintor } from '../types/Extinguisher';
 
 const useExtinguisher = () => {
   const { crud } = sharepointContext();
@@ -14,6 +14,16 @@ const useExtinguisher = () => {
   const equipments_value = localStorage.getItem('equipments_value');
 
   const [isLoadingExtinguisherExportToExcel, setIsLoadingExtinguisherExportToExcel] = useState<boolean>(false);
+
+  const [extinguisherFilters, setExtinguisherFilters] = useState<IExtinguisherFiltersProps>({
+    searchBox: '',
+    startDate: null,
+    endDate: null,
+    expiration: null,
+    place: [],
+    pavement: [],
+    conformity: [],
+  });
 
   const path = `?$Select=*,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
   const fetchExtinguisher = async ({ pageParam }: { pageParam?: string }) => {
@@ -57,6 +67,8 @@ const useExtinguisher = () => {
     };
   };
 
+  console.log(equipments_value === 'Extintores');
+
   const {
     data: extinguisher,
     fetchNextPage,
@@ -68,6 +80,7 @@ const useExtinguisher = () => {
     queryFn: fetchExtinguisher,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
+    enabled: equipments_value === 'Extintores',
   });
 
   const fetchExtinguisherData = async () => {
@@ -146,6 +159,7 @@ const useExtinguisher = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: params.id !== undefined && equipments_value === 'Extintores',
   });
 
   const { mutateAsync: mutateRemoveExtinguisher, isLoading: IsLoadingMutateRemoveExtinguisher } = useMutation({
@@ -299,6 +313,8 @@ const useExtinguisher = () => {
 
     handleExportExtinguisherToExcel,
     isLoadingExtinguisherExportToExcel,
+
+    setExtinguisherFilters,
   };
 };
 

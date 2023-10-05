@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../../context/sharepointContext';
@@ -8,6 +8,7 @@ import { IEqLoadRatio, IEqLoadRatioModal } from '../../types/EmergencyVehicles/E
 const useEqLoadRatio = () => {
   const { crud } = sharepointContext();
   const params = useParams();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
@@ -55,6 +56,7 @@ const useEqLoadRatio = () => {
     queryFn: fetchEqLoadRatio,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
+    enabled: isVehicleValue && location.pathname === '/equipments',
   });
 
   const fetchEqLoadRatioData = async () => {
@@ -94,6 +96,7 @@ const useEqLoadRatio = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: params.id !== undefined && isVehicleValue && location.pathname === '/equipments',
   });
 
   const {
@@ -121,6 +124,7 @@ const useEqLoadRatio = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: isVehicleValue && location.pathname === '/equipments',
   });
 
   const { mutateAsync: mutateRemoveEqLoadRatio, isLoading: isLoadingMutateRemoveEqLoadRatio } = useMutation({

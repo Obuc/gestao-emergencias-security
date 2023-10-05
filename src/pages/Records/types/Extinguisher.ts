@@ -67,3 +67,13 @@ export interface PerguntaExtintor {
   categoria: string;
   Id: number;
 }
+
+export interface IExtinguisherFiltersProps {
+  searchBox: '';
+  startDate: string | null;
+  endDate: string | null;
+  expiration: string | null;
+  place: Array<string> | [];
+  pavement: Array<string> | [];
+  conformity: Array<string> | [];
+}

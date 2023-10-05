@@ -7,11 +7,6 @@
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
-import SelectItem from './SelectItem';
-import SelectLabel from './SelectLabel';
-import SelectComponent from './SelectComponent';
-import SelectSeparator from './SelectSeparator';
-
 // const select = tv({
 //   slots: {
 //     base: 'flex w-full h-full flex-col',
@@ -283,6 +278,11 @@ import SelectSeparator from './SelectSeparator';
 // };
 
 // export default Select;
+
+import SelectItem from './SelectItem';
+import SelectLabel from './SelectLabel';
+import SelectComponent from './SelectComponent';
+import SelectSeparator from './SelectSeparator';
 
 export const Select = {
   Component: SelectComponent,

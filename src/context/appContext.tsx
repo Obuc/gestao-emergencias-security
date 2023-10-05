@@ -1,15 +1,16 @@
-import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
 import { ISite } from '../types/Site';
-import { sharepointContext } from './sharepointContext';
-import { IFormulario } from '../types/Formularios';
 import { ISubMenu } from '../types/SubMenu';
+import { IFormulario } from '../types/Formularios';
+import { sharepointContext } from './sharepointContext';
 
 interface IAppContext {
   sites?: Array<ISite>;
   formularios?: Array<IFormulario>;
   submenu?: Array<ISubMenu>;
+  local?: Array<ILocal>;
   isLoadingFormularios: boolean;
   isLoadingSites: boolean;
 }
@@ -19,6 +20,7 @@ export const useSharepointContext = () => useContext(AppContext);
 
 export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { crud } = sharepointContext();
+  const localSite = localStorage.getItem('user_site');
 
   const { data: sites, isLoading: isLoadingSites }: UseQueryResult<Array<ISite>> = useQuery({
     queryKey: ['sites'],
@@ -56,8 +58,26 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     refetchOnWindowFocus: false,
   });
 
+  const { data: local }: UseQueryResult<Array<ILocal>> = useQuery({
+    queryKey: localSite ? ['local', localSite] : ['local'],
+    queryFn: async () => {
+      if (localSite) {
+        const resp = await crud.getListItems(
+          'local',
+          `?$Select=Id,Title,site/Title&$expand=site&$Filter=( site/Title eq '${localSite}')`,
+        );
+        return resp;
+      } else {
+        return [];
+      }
+    },
+    staleTime: 5000 * 60, // 5 Minute
+    refetchOnWindowFocus: false,
+    enabled: !!localSite,
+  });
+
   return (
-    <AppContext.Provider value={{ sites, formularios, submenu, isLoadingFormularios, isLoadingSites }}>
+    <AppContext.Provider value={{ sites, formularios, submenu, local, isLoadingFormularios, isLoadingSites }}>
       {children}
     </AppContext.Provider>
   );

@@ -1,7 +1,8 @@
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ISelectItemProps } from './Select';
 import * as SelectRadix from '@radix-ui/react-select';
+
+import { ISelectItemProps } from './Select';
 
 const SelectItem = forwardRef<HTMLDivElement, ISelectItemProps>(
   ({ children, className, isSelected, ...props }, forwardedRef) => {

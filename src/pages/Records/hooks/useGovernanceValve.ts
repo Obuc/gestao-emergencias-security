@@ -70,6 +70,7 @@ const useGovernanceValve = () => {
     queryFn: fetchGovernaceValve,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
+    enabled: equipments_value === 'Válvulas de Governo',
   });
 
   const fetchGovernaceValveModalData = async () => {
@@ -138,12 +139,13 @@ const useGovernanceValve = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: params.id !== undefined && equipments_value === 'Válvulas de Governo',
   });
 
   const { mutateAsync: mutateRemoveExtinguisher, isLoading: IsLoadingMutateRemoveExtinguisher } = useMutation({
     mutationFn: async (itemId: number) => {
       if (itemId) {
-        await crud.deleteItemList('Extintores', itemId);
+        // await crud.deleteItemList('Extintores', itemId);
       }
     },
     onSuccess: () => {

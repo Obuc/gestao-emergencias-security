@@ -71,6 +71,7 @@ const useGeneralChecklist = () => {
     queryFn: fechGeneralChecklist,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
+    enabled: equipments_value === 'Checklist Geral',
   });
 
   const fetchGeneralChecklistData = async () => {
@@ -138,6 +139,7 @@ const useGeneralChecklist = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: params.id !== undefined && equipments_value === 'Checklist Geral',
   });
 
   const { mutateAsync: mutateRemoveGeneralChecklist, isLoading: IsLoadingMutateRemoveGeneralChecklist } = useMutation({

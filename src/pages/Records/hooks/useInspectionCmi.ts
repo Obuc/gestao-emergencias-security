@@ -63,6 +63,7 @@ const useInspectionCmi = () => {
     queryFn: fetchTestCMI,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
+    enabled: equipments_value === 'Inspeção CMI',
   });
 
   const fetchCmiData = async () => {
@@ -128,6 +129,7 @@ const useInspectionCmi = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: params.id !== undefined && equipments_value === 'Inspeção CMI',
   });
 
   const { mutateAsync: mutateRemoveInspectionCmi, isLoading: IsLoadingMutateRemoveInspectionCmi } = useMutation({

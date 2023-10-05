@@ -14,6 +14,14 @@ const useLoadRatio = () => {
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
 
+  const isVehicleValue =
+    equipments_value === 'Scania' ||
+    equipments_value === 'S10' ||
+    equipments_value === 'Mercedes' ||
+    equipments_value === 'Furgão' ||
+    equipments_value === 'Ambulância Iveco' ||
+    equipments_value === 'Ambulância Sprinter';
+
   const [isLoadingLoadRatioExportToExcel, setIsLoadingLoadRatioExportToExcel] = useState<boolean>(false);
 
   const fechLoadRatio = async ({ pageParam }: { pageParam?: string }) => {
@@ -71,6 +79,7 @@ const useLoadRatio = () => {
     queryFn: fechLoadRatio,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
+    enabled: isVehicleValue,
   });
 
   const fetchLoadRatioData = async () => {
@@ -108,48 +117,37 @@ const useLoadRatio = () => {
   const { data: loadRatioDataModal, isLoading: isLoadingLoadRatioDataModal } = useQuery({
     queryKey: params.id ? ['load_ratio_data_modal', params.id, equipments_value] : ['load_ratio_data_modal'],
     queryFn: async () => {
-      if (params.id) {
-        if (
-          equipments_value === 'Scania' ||
-          equipments_value === 'S10' ||
-          equipments_value === 'Mercedes' ||
-          equipments_value === 'Furgão' ||
-          equipments_value === 'Furgão' ||
-          equipments_value === 'Ambulância Iveco' ||
-          equipments_value === 'Ambulância Sprinter'
-        ) {
-          const generalChecklistData = await fetchLoadRatioData();
-          const vehicle = await fetchVehicleData(generalChecklistData.veiculo_idId);
-          const respostas = await fetchResponseLoadRatio();
+      if (params.id && isVehicleValue) {
+        const generalChecklistData = await fetchLoadRatioData();
+        const vehicle = await fetchVehicleData(generalChecklistData.veiculo_idId);
+        const respostas = await fetchResponseLoadRatio();
 
-          const createdIsoDate = parseISO(generalChecklistData.Created);
+        const createdIsoDate = parseISO(generalChecklistData.Created);
 
-          const vehicleValue = vehicle
-            ? {
-                Id: vehicle.Id,
-                placa: vehicle.placa,
-                site: vehicle.site?.Title,
-                tipo_veiculo: vehicle.tipo_veiculo?.Title,
-              }
-            : null;
+        const vehicleValue = vehicle
+          ? {
+              Id: vehicle.Id,
+              placa: vehicle.placa,
+              site: vehicle.site?.Title,
+              tipo_veiculo: vehicle.tipo_veiculo?.Title,
+            }
+          : null;
 
-          return {
-            ...generalChecklistData,
-            Created: new Date(createdIsoDate.getTime() + createdIsoDate.getTimezoneOffset() * 60000),
-            site: generalChecklistData.site?.Title,
-            bombeiro: generalChecklistData.bombeiro?.Title,
-            veiculo: vehicleValue,
-            respostas: respostas,
-          };
-        } else {
-          return [];
-        }
+        return {
+          ...generalChecklistData,
+          Created: new Date(createdIsoDate.getTime() + createdIsoDate.getTimezoneOffset() * 60000),
+          site: generalChecklistData.site?.Title,
+          bombeiro: generalChecklistData.bombeiro?.Title,
+          veiculo: vehicleValue,
+          respostas: respostas,
+        };
       } else {
         return [];
       }
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: params.id !== undefined && isVehicleValue,
   });
 
   const { mutateAsync: mutateRemoveLoadRatio, isLoading: isLoadingMutateRemoveLoadRatio } = useMutation({

@@ -63,6 +63,7 @@ const useTestCMI = () => {
     queryFn: fetchTestCMI,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
+    enabled: equipments_value === 'Teste CMI',
   });
 
   //
@@ -130,6 +131,7 @@ const useTestCMI = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: params.id !== undefined && equipments_value === 'Teste CMI',
   });
 
   const { mutateAsync: mutateRemoveTestCmi, isLoading: IsLoadingMutateRemoveTestCmi } = useMutation({

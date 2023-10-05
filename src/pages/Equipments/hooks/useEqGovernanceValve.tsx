@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
@@ -7,6 +7,7 @@ import { IEqGovernanceValve, IEqGovernanceValveModal } from '../types/Equipments
 const useEqGovernanceValve = () => {
   const { crud } = sharepointContext();
   const params = useParams();
+  const location = useLocation();
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
 
@@ -48,6 +49,7 @@ const useEqGovernanceValve = () => {
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
+    enabled: equipments_value === 'Válvulas de Governo' && location.pathname === '/equipments',
   });
 
   const fetchEqGovernanceValveData = async () => {
@@ -98,6 +100,8 @@ const useEqGovernanceValve = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled:
+      params.id !== undefined && equipments_value === 'Válvulas de Governo' && location.pathname === '/equipments',
   });
 
   const {
@@ -127,6 +131,7 @@ const useEqGovernanceValve = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: equipments_value === 'Válvulas de Governo' && location.pathname === '/equipments',
   });
 
   const { mutateAsync: mutateRemoveEqGovernanceValve, isLoading: isLoadingMutateRemoveEqGovernanceValve } = useMutation(
