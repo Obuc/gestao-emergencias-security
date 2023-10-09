@@ -95,8 +95,8 @@ const Records = () => {
 
   return (
     <LayoutBase showMenu>
-      <div className="flex flex-col w-full justify-between bg-[#F1F1F1]">
-        <div className="flex flex-col p-8">
+      <div className="flex flex-col h-full w-full justify-between bg-[#F1F1F1]">
+        <div className="flex h-full flex-col p-8">
           <div className="flex pb-8 items-center w-full justify-between">
             <div className="flex gap-2 flex-col">
               <label htmlFor="state_id" className="text-lg text-primary font-medium">
@@ -110,7 +110,7 @@ const Records = () => {
                 className="w-[22.5rem]"
                 mode="gray"
                 isLoading={isLoadingFormularios}
-                onValueChange={(value) => {
+                onValueChange={(value: any) => {
                   setFormValue(value);
                   localStorage.setItem('equipments_value', value);
                 }}

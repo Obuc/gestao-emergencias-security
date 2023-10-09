@@ -1,23 +1,35 @@
 import { useState } from 'react';
+import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { format, parseISO } from 'date-fns';
+import { Skeleton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { IconButton, Skeleton } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroller';
-import { faFilter, faFilterCircleXmark, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 import { Table } from '../../../../components/Table';
-import { Extinguisher } from '../../types/Extinguisher';
 import { Select } from '../../../../components/Select';
+import TextField from '../../../../components/TextField';
 import useExtinguisher from '../../hooks/useExtinguisher';
+import DatePicker from '../../../../components/DatePicker';
 import ExtinguisherModal from '../modals/ExtinguisherModal';
 import { appContext } from '../../../../context/appContext';
 import PopoverTables from '../../../../components/PopoverTables';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
+import { Extinguisher, IExtinguisherFiltersProps } from '../../types/Extinguisher';
 
 const ExtinguisherTable = () => {
-  const { local } = appContext();
+  const { local, pavimento } = appContext();
+
+  const [extinguisherFilters, setExtinguisherFilters] = useState<IExtinguisherFiltersProps>({
+    responsible: '',
+    startDate: null,
+    endDate: null,
+    expiration: null,
+    place: [],
+    pavement: [],
+    conformity: null,
+  });
 
   const {
     extinguisher,
@@ -27,21 +39,10 @@ const ExtinguisherTable = () => {
     isError,
     mutateRemoveExtinguisher,
     IsLoadingMutateRemoveExtinguisher,
-
-    extinguisherFilters,
-    setExtinguisherFilters,
-  } = useExtinguisher();
+  } = useExtinguisher(extinguisherFilters);
 
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
-  const [openFilter, setOpenFilter] = useState<boolean>(false);
-
-  const handleSelectedValuesChange = (newSelectedValues: string[]) => {
-    setExtinguisherFilters({
-      ...extinguisherFilters,
-      place: newSelectedValues,
-    });
-  };
 
   const handleView = (id: number) => {
     navigate(`/records/${id}?edit=false`);
@@ -51,28 +52,129 @@ const ExtinguisherTable = () => {
     navigate(`/records/${id}?edit=true`);
   };
 
+  const handleRemoveAllFilters = () => {
+    setExtinguisherFilters({
+      responsible: '',
+      startDate: null,
+      endDate: null,
+      expiration: null,
+      place: [],
+      pavement: [],
+      conformity: null,
+    });
+  };
+
   return (
-    <>
+    <div className="h-full">
       <Table.Filter>
-        {/* Local */}
-        <Select.Component
-          multi
-          id="place"
-          name="place"
-          variant="outline"
-          className="w-[22.5rem] max-h-[28.125rem]"
-          selectedValues={extinguisherFilters.place}
-          onSelectedValuesChange={handleSelectedValuesChange}
-        >
-          {local?.map((local) => (
-            <Select.Item key={local.Id} value={local.Title}>
-              {local.Title}
-            </Select.Item>
-          ))}
-        </Select.Component>
+        <div className="flex gap-4">
+          {/* Responsável */}
+          <TextField
+            id="responsible"
+            name="responsible"
+            placeholder="Responsável"
+            width="w-[16.25rem]"
+            value={extinguisherFilters.responsible || ''}
+            onChange={(event) => {
+              if (event.target.value) {
+                setExtinguisherFilters((prev) => ({ ...prev, responsible: event.target.value }));
+              }
+            }}
+          />
+
+          {/* Data Inicial  */}
+          <DatePicker
+            name="startDate"
+            placeholder="Data Inicial"
+            width="w-[11.25rem]"
+            value={extinguisherFilters.startDate ? new Date(extinguisherFilters.startDate) : null}
+            onChange={(date: any) => setExtinguisherFilters((prev) => ({ ...prev, startDate: date }))}
+          />
+
+          {/* Data Final  */}
+          {extinguisherFilters.startDate && (
+            <DatePicker
+              name="endDate"
+              placeholder="Data Final"
+              width="w-[11.25rem]"
+              value={extinguisherFilters.endDate ? new Date(extinguisherFilters.endDate) : null}
+              onChange={(date: any) => setExtinguisherFilters((prev) => ({ ...prev, endDate: date }))}
+            />
+          )}
+
+          {/* Validade  */}
+          <DatePicker
+            name="expiration"
+            placeholder="Validade"
+            width="w-[11.25rem]"
+            value={extinguisherFilters.expiration ? new Date(extinguisherFilters.expiration) : null}
+            onChange={(date: any) => setExtinguisherFilters((prev) => ({ ...prev, expiration: date }))}
+          />
+
+          {/* Local */}
+          <Select.Component
+            multi
+            id="place"
+            name="place"
+            variant="outline"
+            placeholder="Local"
+            className="w-[11.25rem] max-h-[28.125rem]"
+            selectedValues={extinguisherFilters.place}
+            onSelectedValuesChange={(newSelectedValues) => {
+              setExtinguisherFilters((prev) => ({ ...prev, place: newSelectedValues }));
+            }}
+          >
+            {local?.map((local) => (
+              <Select.Item key={local.Id} value={local.Title}>
+                {local.Title}
+              </Select.Item>
+            ))}
+          </Select.Component>
+
+          {/* Pavimento */}
+          <Select.Component
+            multi
+            id="pavement"
+            name="pavement"
+            variant="outline"
+            placeholder="Pavimento"
+            className="w-[11.25rem] max-h-[28.125rem]"
+            selectedValues={extinguisherFilters.pavement}
+            onSelectedValuesChange={(newSelectedValues) => {
+              setExtinguisherFilters((prev) => ({ ...prev, pavement: newSelectedValues }));
+            }}
+          >
+            {pavimento?.map((pavimento) => (
+              <Select.Item key={pavimento.Id} value={pavimento.Title}>
+                {pavimento.Title}
+              </Select.Item>
+            ))}
+          </Select.Component>
+
+          {/* Conformidade */}
+          <Select.Component
+            id="conformity"
+            name="conformity"
+            variant="outline"
+            placeholder="Conformidade"
+            className="w-[11.25rem] max-h-[28.125rem]"
+            value={extinguisherFilters.conformity ?? ''}
+            onValueChange={(newSelectedValues: any) => {
+              setExtinguisherFilters((prev) => ({ ...prev, conformity: newSelectedValues }));
+            }}
+          >
+            <Select.Item value="Conforme">Conforme</Select.Item>
+            <Select.Item value="Não Conforme">Não Conforme</Select.Item>
+          </Select.Component>
+        </div>
+
+        <button className="flex justify-center items-center gap-2 group" onClick={handleRemoveAllFilters}>
+          <span className="text-primary font-semibold">LIMPAR FILTROS</span>
+          <FontAwesomeIcon icon={faXmark} className="text-pink group-hover:text-pink/80 duration-200" />
+        </button>
       </Table.Filter>
 
-      <div className="min-[1100px]:max-h-[38rem] relative min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[44rem] w-full overflow-y-auto">
+      <div className="min-[1100px]:max-h-[33.125rem] relative min-[1600px]:max-h-[39.6875rem] min-[1800px]:max-h-[39.6875rem] w-full overflow-y-auto">
         <InfiniteScroll
           pageStart={0}
           loadMore={() => fetchNextPage()}
@@ -91,12 +193,7 @@ const ExtinguisherTable = () => {
                 <Table.Th>Local</Table.Th>
                 <Table.Th>Pavimento</Table.Th>
                 <Table.Th>Conformidade</Table.Th>
-                <Table.Th>
-                  <IconButton onClick={() => setOpenFilter((prev) => !prev)}>
-                    {!openFilter && <FontAwesomeIcon icon={faFilter} className="text-primary" />}
-                    {openFilter && <FontAwesomeIcon icon={faFilterCircleXmark} className="text-pink" />}
-                  </IconButton>
-                </Table.Th>
+                <Table.Th>{``}</Table.Th>
               </Table.Tr>
             </Table.Thead>
 
@@ -134,16 +231,14 @@ const ExtinguisherTable = () => {
                   item?.data?.value?.map((item: Extinguisher) => (
                     <Table.Tr key={item.Id}>
                       <Table.Td className="pl-8">{item.bombeiro}</Table.Td>
-                      <Table.Td>{format(parseISO(item.Created), 'dd MMM yyyy', { locale: ptBR })}</Table.Td>
+                      <Table.Td>{format(item.Created, 'dd MMM yyyy', { locale: ptBR })}</Table.Td>
                       <Table.Td>
                         {item.extintor.validade
-                          ? format(parseISO(item.extintor.validade), 'dd MMM yyyy', { locale: ptBR })
+                          ? format(item.extintor.validade, 'dd MMM yyyy', { locale: ptBR })
                           : 'N/A'}
                       </Table.Td>
                       <Table.Td>
-                        {item.data_pesagem
-                          ? format(parseISO(item.data_pesagem), 'dd MMM yyyy', { locale: ptBR })
-                          : 'N/A'}
+                        {item.data_pesagem ? format(item.data_pesagem, 'dd MMM yyyy', { locale: ptBR }) : 'N/A'}
                       </Table.Td>
                       <Table.Td>{item.extintor.cod_extintor}</Table.Td>
                       <Table.Td>{item.extintor.local}</Table.Td>
@@ -186,7 +281,7 @@ const ExtinguisherTable = () => {
           open={removeItem !== null}
         />
       )}
-    </>
+    </div>
   );
 };
 

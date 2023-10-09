@@ -27,14 +27,14 @@ export interface ExtinguisherDataModal {
 export interface Extinguisher {
   Attachments: boolean;
   AuthorId: number;
-  Created: string;
+  Created: Date;
   Id: number;
   Modified: string;
   Title: null;
   bombeiro_idId: number;
   bombeiro: string;
   conforme: boolean;
-  data_pesagem: string;
+  data_pesagem: Date;
   extintor_idId: number;
   extintor: {
     site: string;
@@ -42,7 +42,7 @@ export interface Extinguisher {
     pavimento: string;
     local: string;
     cod_extintor: string;
-    validade: string;
+    validade: Date;
     conforme: boolean;
     massa: string;
     cod_qrcode: string;
@@ -69,11 +69,11 @@ export interface PerguntaExtintor {
 }
 
 export interface IExtinguisherFiltersProps {
-  searchBox: '';
-  startDate: string | null;
-  endDate: string | null;
-  expiration: string | null;
+  responsible: string | null;
+  startDate: Date | null;
+  endDate: Date | null;
+  expiration: Date | null;
   place: Array<string> | [];
   pavement: Array<string> | [];
-  conformity: Array<string> | [];
+  conformity: string | null;
 }

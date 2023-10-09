@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Skeleton } from '@mui/material';
 import { twMerge } from 'tailwind-merge';
+
+import { useDebounce } from '../../hooks/useDebounce';
 
 interface ITextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -12,20 +15,47 @@ interface ITextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const TextField = ({ label, name, placeholder = '', width, errors, touched, isLoading, ...props }: ITextFieldProps) => {
+  const [displayValue, setDisplayValue] = useState(props.value ? props.value : '');
+
+  useEffect(() => {
+    setDisplayValue(props.value || '');
+  }, [props.value]);
+
+  const debouncedChange = useDebounce((value: string) => {
+    const event = {
+      target: {
+        name: name,
+        value: value,
+      },
+    } as React.ChangeEvent<HTMLInputElement>;
+
+    props.onChange?.(event);
+  }, 500);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setDisplayValue(newValue);
+    debouncedChange(newValue);
+  };
+
   return (
     <div className={`flex flex-col relative text-primary ${width ? width : 'w-full'}`}>
-      <label htmlFor={name} className="pb-2">
-        {label ? label : ''}
-      </label>
+      {label && (
+        <label htmlFor={name} className="pb-2">
+          {label}
+        </label>
+      )}
 
       {!isLoading && (
         <input
           id={name}
           {...props}
+          value={displayValue}
+          onChange={handleChange}
           placeholder={placeholder}
           data-errors={errors && touched}
           className={twMerge(
-            'data-[errors=true]:border-pink bg-white h-10 outline-none border shadow-xs-app px-2',
+            'data-[errors=true]:border-pink bg-white h-10 outline-none border shadow-xs-app px-2 placeholder:text-[#6D6D6D]',
             props.className,
           )}
         />

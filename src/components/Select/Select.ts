@@ -6,6 +6,7 @@ export interface ISelectItemProps extends SelectRadix.SelectItemProps {
   children: React.ReactNode;
   className?: string;
   isSelected?: boolean;
+  multi?: boolean;
 }
 
 export type SelectProps = SelectRadix.SelectProps &

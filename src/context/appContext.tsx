@@ -5,12 +5,14 @@ import { ISite } from '../types/Site';
 import { ISubMenu } from '../types/SubMenu';
 import { IFormulario } from '../types/Formularios';
 import { sharepointContext } from './sharepointContext';
+import { IPavimento } from '../types/Pavimento';
 
 interface IAppContext {
   sites?: Array<ISite>;
   formularios?: Array<IFormulario>;
   submenu?: Array<ISubMenu>;
   local?: Array<ILocal>;
+  pavimento?: Array<IPavimento>;
   isLoadingFormularios: boolean;
   isLoadingSites: boolean;
 }
@@ -64,7 +66,7 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       if (localSite) {
         const resp = await crud.getListItems(
           'local',
-          `?$Select=Id,Title,site/Title&$expand=site&$Filter=( site/Title eq '${localSite}')`,
+          `?$Select=Id,Title,site/Title&$expand=site&$orderby=Title asc&$Filter=( site/Title eq '${localSite}')`,
         );
         return resp;
       } else {
@@ -76,8 +78,24 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     enabled: !!localSite,
   });
 
+  const { data: pavimento }: UseQueryResult<Array<IPavimento>> = useQuery({
+    queryKey: ['pavimento'],
+    queryFn: async () => {
+      if (localSite) {
+        const resp = await crud.getListItems('pavimento', `?$Select=Id,Title&$orderby=Title asc`);
+        return resp;
+      } else {
+        return [];
+      }
+    },
+    staleTime: 5000 * 60, // 5 Minute
+    refetchOnWindowFocus: false,
+  });
+
   return (
-    <AppContext.Provider value={{ sites, formularios, submenu, local, isLoadingFormularios, isLoadingSites }}>
+    <AppContext.Provider
+      value={{ sites, formularios, submenu, local, pavimento, isLoadingFormularios, isLoadingSites }}
+    >
       {children}
     </AppContext.Provider>
   );

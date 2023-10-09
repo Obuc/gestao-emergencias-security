@@ -1,12 +1,13 @@
 import * as XLSX from 'xlsx';
 import { useState } from 'react';
+import { parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
 import { ExtinguisherDataModal, IExtinguisherFiltersProps, RespostaExtintor } from '../types/Extinguisher';
 
-const useExtinguisher = () => {
+const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
   const { crud } = sharepointContext();
   const params = useParams();
   const queryClient = useQueryClient();
@@ -15,28 +16,83 @@ const useExtinguisher = () => {
 
   const [isLoadingExtinguisherExportToExcel, setIsLoadingExtinguisherExportToExcel] = useState<boolean>(false);
 
-  const [extinguisherFilters, setExtinguisherFilters] = useState<IExtinguisherFiltersProps>({
-    searchBox: '',
-    startDate: null,
-    endDate: null,
-    expiration: null,
-    place: [],
-    pavement: [],
-    conformity: [],
-  });
+  let path = `?$Select=*,Created,conforme,local,extintor_id/validade,pavimento,site/Title,bombeiro_id/Title&$expand=extintor_id,site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
 
-  const path = `?$Select=*,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  if (extinguisherFilters?.place) {
+    for (let i = 0; i < extinguisherFilters.place.length; i++) {
+      path += `${i === 0 ? ' and' : ' or'} (local eq '${extinguisherFilters.place[i]}')`;
+    }
+  }
+
+  if (extinguisherFilters?.pavement) {
+    for (let i = 0; i < extinguisherFilters.pavement.length; i++) {
+      path += `${i === 0 ? ' and' : ' or'} (pavimento eq '${extinguisherFilters.pavement[i]}')`;
+    }
+  }
+
+  if (extinguisherFilters?.conformity && extinguisherFilters?.conformity === 'Conforme') {
+    path += ` and (conforme ne 'false')`;
+  }
+
+  if (extinguisherFilters?.conformity && extinguisherFilters?.conformity !== 'Conforme') {
+    path += ` and (conforme eq 'false')`;
+  }
+
+  if (extinguisherFilters?.expiration) {
+    const expirationDate = extinguisherFilters.expiration;
+    const startDate = new Date(expirationDate);
+    startDate.setUTCHours(0, 0, 0, 0);
+
+    const endDate = new Date(expirationDate);
+    endDate.setUTCHours(23, 59, 59, 999);
+
+    path += ` and (extintor_id/validade ge datetime'${startDate.toISOString()}') and (extintor_id/validade le datetime'${endDate.toISOString()}')`;
+  }
+
+  if (extinguisherFilters?.startDate || extinguisherFilters?.endDate) {
+    const startDate = extinguisherFilters.startDate && new Date(extinguisherFilters.startDate);
+    startDate && startDate.setUTCHours(0, 0, 0, 0);
+
+    const endDate = extinguisherFilters.endDate && new Date(extinguisherFilters.endDate);
+    endDate && endDate.setUTCHours(23, 59, 59, 999);
+
+    if (startDate) {
+      path += ` and (Created ge datetime'${startDate.toISOString()}')`;
+    }
+
+    if (endDate) {
+      path += ` and (Created le datetime'${endDate.toISOString()}')`;
+    }
+  }
+
+  if (extinguisherFilters?.responsible) {
+    path += ` and ( substringof('${extinguisherFilters.responsible}', bombeiro_id/Title ))`;
+  }
+
   const fetchExtinguisher = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'registros_extintor', path });
 
     const dataWithTransformations = await Promise.all(
-      response.data.value.map(async (item: any) => {
+      response?.data?.value?.map(async (item: any) => {
         const extintorResponse = await crud.getListItemsv2(
           'extintores',
           `?$Select=*,Id,predio/Title,pavimento/Title,local/Title,cod_extintor,validade,conforme,cod_qrcode&$expand=predio,pavimento,local&$Filter=(Id eq ${item.extintor_idId})`,
         );
 
         const extintor = extintorResponse.results[0] || null;
+        const extintorValidadeIsoDate = extintor.validade && parseISO(extintor.validade);
+        const dataCriadoIsoDate = item.Created && parseISO(item.Created);
+        const dataPesagemIsoDate = item.data_pesagem && parseISO(item.data_pesagem);
+
+        const extintorValidade =
+          extintorValidadeIsoDate &&
+          new Date(extintorValidadeIsoDate.getTime() + extintorValidadeIsoDate.getTimezoneOffset() * 60000);
+
+        const dataCriado =
+          dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
+
+        const dataPesagem =
+          dataPesagemIsoDate && new Date(dataPesagemIsoDate.getTime() + dataPesagemIsoDate.getTimezoneOffset() * 60000);
 
         const extintorValues = extintor
           ? {
@@ -45,13 +101,15 @@ const useExtinguisher = () => {
               pavimento: extintor.pavimento.Title,
               local: extintor.local.Title,
               cod_extintor: extintor.cod_extintor,
-              validade: extintor.validade,
+              validade: extintorValidade,
               conforme: extintor.conforme,
             }
           : null;
 
         return {
           ...item,
+          Created: dataCriado,
+          data_pesagem: dataPesagem,
           bombeiro: item.bombeiro_id?.Title,
           extintor: extintorValues,
         };
@@ -74,7 +132,17 @@ const useExtinguisher = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['extinguisher_data', user_site],
+    queryKey: [
+      'extinguisher_data',
+      user_site,
+      extinguisherFilters?.place,
+      extinguisherFilters?.pavement,
+      extinguisherFilters?.conformity,
+      extinguisherFilters?.expiration,
+      extinguisherFilters?.startDate,
+      extinguisherFilters?.endDate,
+      extinguisherFilters?.responsible,
+    ],
     queryFn: fetchExtinguisher,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -167,7 +235,19 @@ const useExtinguisher = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['extinguisher_data', user_site] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'extinguisher_data',
+          user_site,
+          extinguisherFilters?.place,
+          extinguisherFilters?.pavement,
+          extinguisherFilters?.conformity,
+          extinguisherFilters?.expiration,
+          extinguisherFilters?.startDate,
+          extinguisherFilters?.endDate,
+          extinguisherFilters?.responsible,
+        ],
+      });
     },
   });
 
@@ -222,7 +302,19 @@ const useExtinguisher = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['extinguisher_data_modal', params.id] });
-      queryClient.invalidateQueries({ queryKey: ['extinguisher_data', user_site] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'extinguisher_data',
+          user_site,
+          extinguisherFilters?.place,
+          extinguisherFilters?.pavement,
+          extinguisherFilters?.conformity,
+          extinguisherFilters?.expiration,
+          extinguisherFilters?.startDate,
+          extinguisherFilters?.endDate,
+          extinguisherFilters?.responsible,
+        ],
+      });
     },
   });
 
@@ -296,6 +388,20 @@ const useExtinguisher = () => {
     setIsLoadingExtinguisherExportToExcel(false);
   };
 
+  // const { data: extintoresLocal } = useQuery({
+  //   queryKey: equipments_value ? ['extinguisher_place', equipments_value] : ['extinguisher_place'],
+  //   queryFn: async () => {
+  //     const resp = await crud.getListItems(
+  //       'local',
+  //       `?$Select=Id,Title,site/Title&$expand=site&$Filter=( site/Title eq '${localSite}')`,
+  //     );
+  //     return resp;
+  //   },
+  //   staleTime: 5000 * 60, // 5 Minute
+  //   refetchOnWindowFocus: false,
+  //   enabled: equipments_value === 'Extintores',
+  // });
+
   return {
     extinguisher,
     fetchNextPage,
@@ -311,9 +417,6 @@ const useExtinguisher = () => {
 
     handleExportExtinguisherToExcel,
     isLoadingExtinguisherExportToExcel,
-
-    extinguisherFilters,
-    setExtinguisherFilters,
   };
 };
 
