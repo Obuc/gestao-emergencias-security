@@ -1,30 +1,45 @@
 import { useState } from 'react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { Skeleton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroller';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 import { Table } from '../../../../components/Table';
-import { GovernanceValve } from '../../types/GovernanceValve';
+import { Select } from '../../../../components/Select';
+import TextField from '../../../../components/TextField';
+import DatePicker from '../../../../components/DatePicker';
+import { appContext } from '../../../../context/appContext';
 import useGovernanceValve from '../../hooks/useGovernanceValve';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PopoverTables from '../../../../components/PopoverTables';
-import RemoveItem from '../../../../components/AppModals/RemoveItem';
 import GovernanceValveModal from '../modals/GovernanceValveModal';
-import { format, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import RemoveItem from '../../../../components/AppModals/RemoveItem';
+import { GovernanceValve, IGovernanceValveFiltersProps } from '../../types/GovernanceValve';
 
 const GovernanceValveTable = () => {
+  const { predio } = appContext();
+
+  const [governanceValveFilters, setGovernanceValveFilters] = useState<IGovernanceValveFiltersProps>({
+    responsible: '',
+    id: null,
+    valveNumber: null,
+    property: [],
+    startDate: null,
+    endDate: null,
+    conformity: null,
+  });
+
   const {
     governaceValve,
     fetchNextPage,
     hasNextPage,
     isLoading,
     isError,
-
     mutateRemoveExtinguisher,
     IsLoadingMutateRemoveExtinguisher,
-  } = useGovernanceValve();
+  } = useGovernanceValve(governanceValveFilters);
 
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
@@ -37,9 +52,122 @@ const GovernanceValveTable = () => {
     navigate(`/records/${id}?edit=true`);
   };
 
+  const handleRemoveAllFilters = () => {
+    setGovernanceValveFilters({
+      responsible: '',
+      id: null,
+      valveNumber: null,
+      startDate: null,
+      endDate: null,
+      property: [],
+      conformity: null,
+    });
+  };
+
   return (
-    <>
-      <div className="min-[1100px]:max-h-[38rem] relative min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[44rem] w-full overflow-y-auto">
+    <div className="h-full">
+      <Table.Filter>
+        <div className="flex gap-4">
+          {/* Responsável */}
+          <TextField
+            id="responsible"
+            name="responsible"
+            placeholder="Responsável"
+            width="w-[16.25rem]"
+            value={governanceValveFilters.responsible || ''}
+            onChange={(event) => {
+              setGovernanceValveFilters((prev) => ({ ...prev, responsible: event.target.value }));
+            }}
+          />
+
+          {/* 	N° Registro */}
+          <TextField
+            id="id"
+            name="id"
+            placeholder="N° Registro"
+            width="w-[11.25rem]"
+            value={governanceValveFilters.id || ''}
+            onChange={(event) => {
+              setGovernanceValveFilters((prev) => ({ ...prev, id: event.target.value }));
+            }}
+          />
+
+          {/* 	N° Válvula */}
+          <TextField
+            id="valveNumber"
+            name="valveNumber"
+            placeholder="N° Válvula"
+            width="w-[11.25rem]"
+            value={governanceValveFilters.valveNumber || ''}
+            onChange={(event) => {
+              setGovernanceValveFilters((prev) => ({ ...prev, valveNumber: event.target.value }));
+            }}
+          />
+
+          {/* Data Inicial  */}
+          <DatePicker
+            name="startDate"
+            placeholder="Data Inicial"
+            width="w-[11.25rem]"
+            value={governanceValveFilters.startDate ? new Date(governanceValveFilters.startDate) : null}
+            onChange={(date: any) => setGovernanceValveFilters((prev) => ({ ...prev, startDate: date }))}
+          />
+
+          {/* Data Final  */}
+          {governanceValveFilters.startDate && (
+            <DatePicker
+              name="endDate"
+              placeholder="Data Final"
+              width="w-[11.25rem]"
+              value={governanceValveFilters.endDate ? new Date(governanceValveFilters.endDate) : null}
+              onChange={(date: any) => setGovernanceValveFilters((prev) => ({ ...prev, endDate: date }))}
+            />
+          )}
+
+          {/* Prédio  */}
+          <Select.Component
+            multi
+            id="property"
+            name="property"
+            variant="outline"
+            placeholder="Prédio"
+            className="w-[11.25rem] max-h-[28.125rem]"
+            selectedValues={governanceValveFilters.property}
+            onSelectedValuesChange={(newSelectedValues) => {
+              setGovernanceValveFilters((prev) => ({ ...prev, property: newSelectedValues }));
+            }}
+          >
+            {predio?.map((local) => (
+              <Select.Item key={local.Id} value={local.Title}>
+                {local.Title}
+              </Select.Item>
+            ))}
+          </Select.Component>
+
+          {/* Conformidade */}
+          <Select.Component
+            id="conformity"
+            name="conformity"
+            variant="outline"
+            placeholder="Conformidade"
+            className="w-[11.25rem] max-h-[28.125rem]"
+            value={governanceValveFilters.conformity ?? ''}
+            onValueChange={(newSelectedValues: any) => {
+              setGovernanceValveFilters((prev) => ({ ...prev, conformity: newSelectedValues }));
+            }}
+          >
+            <Select.Item value="Conforme">Conforme</Select.Item>
+            <Select.Item value="Não Conforme">Não Conforme</Select.Item>
+          </Select.Component>
+        </div>
+
+        <button className="flex justify-center items-center gap-2 group" onClick={handleRemoveAllFilters}>
+          <span className="text-primary font-semibold">LIMPAR FILTROS</span>
+          <FontAwesomeIcon icon={faXmark} className="text-pink group-hover:text-pink/80 duration-200" />
+        </button>
+      </Table.Filter>
+
+      <div className="min-[1100px]:max-h-[33.125rem] relative min-[1600px]:max-h-[39.6875rem] min-[1800px]:max-h-[39.6875rem] w-full overflow-y-auto">
         <InfiniteScroll
           pageStart={0}
           loadMore={() => fetchNextPage()}
@@ -101,7 +229,7 @@ const GovernanceValveTable = () => {
                         {/* {item.data_legado
                           ? format(parseISO(item.data_legado), 'dd MMM yyyy', { locale: ptBR })
                           : format(parseISO(item.Created), 'dd MMM yyyy', { locale: ptBR })} */}
-                        {format(parseISO(item.Created), 'dd MMM yyyy', { locale: ptBR })}
+                        {format(item.Created, 'dd MMM yyyy', { locale: ptBR })}
                       </Table.Td>
                       <Table.Td>
                         {item.conforme ? (
@@ -141,7 +269,7 @@ const GovernanceValveTable = () => {
           open={removeItem !== null}
         />
       )}
-    </>
+    </div>
   );
 };
 

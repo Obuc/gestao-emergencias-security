@@ -4,10 +4,11 @@ import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { RespostaExtintor } from '../types/Extinguisher';
-import { GovernanceValve } from '../types/GovernanceValve';
 import { sharepointContext } from '../../../context/sharepointContext';
+import { GovernanceValve, IGovernanceValveFiltersProps } from '../types/GovernanceValve';
+import { parseISO } from 'date-fns';
 
-const useGovernanceValve = () => {
+const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProps) => {
   const { crud } = sharepointContext();
   const params = useParams();
   const queryClient = useQueryClient();
@@ -16,7 +17,50 @@ const useGovernanceValve = () => {
 
   const [isLoadingGovernanceValveExportToExcel, setIsLoadingGovernanceValveExportToExcel] = useState<boolean>(false);
 
-  const path = `?$Select=Id,Created,site/Title,valvula_id/Id,bombeiro_id/Title,conforme,observacao,data_legado&$expand=site,valvula_id,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  let path = `?$Select=Id,predio,Created,site/Title,valvula_id/cod_equipamento,valvula_id/Id,bombeiro_id/Title,conforme,observacao,data_legado&$expand=site,valvula_id,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+
+  if (governanceValveFilters?.responsible) {
+    path += ` and ( substringof('${governanceValveFilters.responsible}', bombeiro_id/Title ))`;
+  }
+
+  if (governanceValveFilters?.id) {
+    path += ` and (Id eq '${governanceValveFilters.id}')`;
+  }
+
+  if (governanceValveFilters?.valveNumber) {
+    path += ` and ( valvula_id/cod_equipamento eq '${governanceValveFilters.valveNumber}')`;
+  }
+
+  if (governanceValveFilters?.startDate || governanceValveFilters?.endDate) {
+    const startDate = governanceValveFilters.startDate && new Date(governanceValveFilters.startDate);
+    startDate && startDate.setUTCHours(0, 0, 0, 0);
+
+    const endDate = governanceValveFilters.endDate && new Date(governanceValveFilters.endDate);
+    endDate && endDate.setUTCHours(23, 59, 59, 999);
+
+    if (startDate) {
+      path += ` and (Created ge datetime'${startDate.toISOString()}')`;
+    }
+
+    if (endDate) {
+      path += ` and (Created le datetime'${endDate.toISOString()}')`;
+    }
+  }
+
+  if (governanceValveFilters?.property) {
+    for (let i = 0; i < governanceValveFilters.property.length; i++) {
+      path += `${i === 0 ? ' and' : ' or'} (predio eq '${governanceValveFilters.property[i]}')`;
+    }
+  }
+
+  if (governanceValveFilters?.conformity && governanceValveFilters?.conformity === 'Conforme') {
+    path += ` and (conforme ne 'false')`;
+  }
+
+  if (governanceValveFilters?.conformity && governanceValveFilters?.conformity !== 'Conforme') {
+    path += ` and (conforme eq 'false')`;
+  }
+
   const fetchGovernaceValve = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(
       pageParam ? { nextUrl: pageParam } : { list: 'registros_valvula_governo', path },
@@ -30,6 +74,10 @@ const useGovernanceValve = () => {
         );
 
         const valvula = valvulaResponse.results[0] || null;
+        const dataCriadoIsoDate = item.Created && parseISO(item.Created);
+
+        const dataCriado =
+          dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
 
         const valvulaValues = valvula
           ? {
@@ -44,6 +92,7 @@ const useGovernanceValve = () => {
 
         return {
           ...item,
+          Created: dataCriado,
           bombeiro: item.bombeiro_id.Title,
           valvula: valvulaValues,
         };
@@ -66,7 +115,17 @@ const useGovernanceValve = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['governace_valve_data', user_site],
+    queryKey: [
+      'governace_valve_data',
+      user_site,
+      governanceValveFilters?.responsible,
+      governanceValveFilters?.id,
+      governanceValveFilters?.valveNumber,
+      governanceValveFilters?.startDate,
+      governanceValveFilters?.endDate,
+      governanceValveFilters?.property,
+      governanceValveFilters?.conformity,
+    ],
     queryFn: fetchGovernaceValve,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -149,7 +208,19 @@ const useGovernanceValve = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['governace_valve_data', user_site] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'governace_valve_data',
+          user_site,
+          governanceValveFilters?.responsible,
+          governanceValveFilters?.id,
+          governanceValveFilters?.valveNumber,
+          governanceValveFilters?.startDate,
+          governanceValveFilters?.endDate,
+          governanceValveFilters?.property,
+          governanceValveFilters?.conformity,
+        ],
+      });
     },
   });
 
@@ -204,7 +275,19 @@ const useGovernanceValve = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['governace_valve_modal', params.id] });
-      queryClient.invalidateQueries({ queryKey: ['governace_valve_data', user_site] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'governace_valve_data',
+          user_site,
+          governanceValveFilters?.responsible,
+          governanceValveFilters?.id,
+          governanceValveFilters?.valveNumber,
+          governanceValveFilters?.startDate,
+          governanceValveFilters?.endDate,
+          governanceValveFilters?.property,
+          governanceValveFilters?.conformity,
+        ],
+      });
     },
   });
 

@@ -13,6 +13,7 @@ interface IAppContext {
   submenu?: Array<ISubMenu>;
   local?: Array<ILocal>;
   pavimento?: Array<IPavimento>;
+  predio?: Array<IPredio>;
   isLoadingFormularios: boolean;
   isLoadingSites: boolean;
 }
@@ -81,8 +82,21 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const { data: pavimento }: UseQueryResult<Array<IPavimento>> = useQuery({
     queryKey: ['pavimento'],
     queryFn: async () => {
+      const resp = await crud.getListItems('pavimento', `?$Select=Id,Title&$orderby=Title asc`);
+      return resp;
+    },
+    staleTime: 5000 * 60, // 5 Minute
+    refetchOnWindowFocus: false,
+  });
+
+  const { data: predio }: UseQueryResult<Array<IPredio>> = useQuery({
+    queryKey: ['predio'],
+    queryFn: async () => {
       if (localSite) {
-        const resp = await crud.getListItems('pavimento', `?$Select=Id,Title&$orderby=Title asc`);
+        const resp = await crud.getListItems(
+          'predio',
+          `?$Select=Id,Title,site/Title&$expand=site&$orderby=Title asc&$Filter=(site/Title eq '${localSite}')`,
+        );
         return resp;
       } else {
         return [];
@@ -94,7 +108,7 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   return (
     <AppContext.Provider
-      value={{ sites, formularios, submenu, local, pavimento, isLoadingFormularios, isLoadingSites }}
+      value={{ sites, formularios, submenu, local, pavimento, predio, isLoadingFormularios, isLoadingSites }}
     >
       {children}
     </AppContext.Provider>

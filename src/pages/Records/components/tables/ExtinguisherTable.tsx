@@ -76,9 +76,7 @@ const ExtinguisherTable = () => {
             width="w-[16.25rem]"
             value={extinguisherFilters.responsible || ''}
             onChange={(event) => {
-              if (event.target.value) {
-                setExtinguisherFilters((prev) => ({ ...prev, responsible: event.target.value }));
-              }
+              setExtinguisherFilters((prev) => ({ ...prev, responsible: event.target.value }));
             }}
           />
 

@@ -1,5 +1,5 @@
 export interface GovernanceValve {
-  Created: string;
+  Created: Date;
   data_legado?: string;
   Id: number;
   Title: null;
@@ -31,4 +31,14 @@ export interface PerguntaExtintor {
   Title: string;
   categoria: string;
   Id: number;
+}
+
+export interface IGovernanceValveFiltersProps {
+  responsible: string | null;
+  id: string | null;
+  valveNumber: string | null;
+  property: Array<string> | [];
+  startDate: Date | null;
+  endDate: Date | null;
+  conformity: string | null;
 }

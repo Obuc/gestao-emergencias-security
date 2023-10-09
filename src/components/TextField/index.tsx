@@ -34,6 +34,7 @@ const TextField = ({ label, name, placeholder = '', width, errors, touched, isLo
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
+
     setDisplayValue(newValue);
     debouncedChange(newValue);
   };
