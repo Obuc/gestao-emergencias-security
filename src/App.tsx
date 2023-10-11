@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import Home from './pages/Home';
 import Report from './pages/Report';
@@ -7,6 +7,8 @@ import Schedule from './pages/Schedule';
 import Equipments from './pages/Equipments';
 
 const App = () => {
+  const equipments_value = localStorage.getItem('equipments_value');
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -21,6 +23,8 @@ const App = () => {
       <Route path="/reports/:id" element={<Report />} />
 
       <Route path="/schedule" element={<Schedule />} />
+
+      <Route path="/records" element={<Navigate to={`/records/${equipments_value}`} />} />
     </Routes>
   );
 };

@@ -50,3 +50,11 @@ export interface PerguntaExtintor {
   categoria: string;
   Id: number;
 }
+
+export interface IInspectionCMIFiltersProps {
+  responsible: string | null;
+  startDate: Date | null;
+  endDate: Date | null;
+  conformity: string | null;
+  recordId: string | null;
+}

@@ -4,10 +4,14 @@ import { parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import {
+  IGeneralChecklistFiltersProps,
+  IGeneralChecklistModal,
+  IRespostaGeneralChecklist,
+} from '../../types/EmergencyVehicles/GeneralChecklist';
 import { sharepointContext } from '../../../../context/sharepointContext';
-import { IGeneralChecklistModal, IRespostaGeneralChecklist } from '../../types/EmergencyVehicles/GeneralChecklist';
 
-const useGeneralChecklist = () => {
+const useGeneralChecklist = (generalChecklistFilters?: IGeneralChecklistFiltersProps) => {
   const { crud } = sharepointContext();
   const params = useParams();
   const queryClient = useQueryClient();
@@ -15,14 +19,57 @@ const useGeneralChecklist = () => {
 
   const [isLoadingGeneralChecklistExportToExcel, setIsLoadingGeneralChecklistExportToExcel] = useState<boolean>(false);
 
-  const path = `?$Select=Id,veiculo_idId,site/Title,bombeiro/Title&$expand=site,bombeiro&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  let path = `?$Select=Id,veiculo_idId,veiculo_id/placa,tipo_veiculo,site/Title,bombeiro/Title,Created,conforme&$expand=site,bombeiro,veiculo_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+
+  if (generalChecklistFilters?.conformity && generalChecklistFilters?.conformity === 'Conforme') {
+    path += ` and (conforme ne 'false')`;
+  }
+
+  if (generalChecklistFilters?.conformity && generalChecklistFilters?.conformity !== 'Conforme') {
+    path += ` and (conforme eq 'false')`;
+  }
+
+  if (generalChecklistFilters?.startDate || generalChecklistFilters?.endDate) {
+    const startDate = generalChecklistFilters.startDate && new Date(generalChecklistFilters.startDate);
+    startDate && startDate.setUTCHours(0, 0, 0, 0);
+
+    const endDate = generalChecklistFilters.endDate && new Date(generalChecklistFilters.endDate);
+    endDate && endDate.setUTCHours(23, 59, 59, 999);
+
+    if (startDate) {
+      path += ` and (Created ge datetime'${startDate.toISOString()}')`;
+    }
+
+    if (endDate) {
+      path += ` and (Created le datetime'${endDate.toISOString()}')`;
+    }
+  }
+
+  if (generalChecklistFilters?.responsible) {
+    path += ` and ( substringof('${generalChecklistFilters.responsible}', bombeiro/Title ))`;
+  }
+
+  if (generalChecklistFilters?.recordId) {
+    path += ` and ( Id eq '${generalChecklistFilters.recordId}')`;
+  }
+
+  if (generalChecklistFilters?.plate) {
+    path += ` and ( substringof('${generalChecklistFilters.plate}', veiculo_id/placa ))`;
+  }
+
+  if (generalChecklistFilters?.vehicle_type) {
+    for (let i = 0; i < generalChecklistFilters?.vehicle_type.length; i++) {
+      path += `${i === 0 ? ' and' : ' or'} (tipo_veiculo eq '${generalChecklistFilters?.vehicle_type[i]}')`;
+    }
+  }
+
   const fechGeneralChecklist = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(
       pageParam ? { nextUrl: pageParam } : { list: 'registros_veiculos_emergencia', path },
     );
 
     const dataWithTransformations = await Promise.all(
-      response.data.value.map(async (item: any) => {
+      response?.data?.value?.map(async (item: any) => {
         const vehicleResponse = await crud.getListItemsv2(
           'veiculos_emergencia',
           `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,conforme,excluido&$expand=site,tipo_veiculo&$Filter=(Id eq ${item.veiculo_idId})`,
@@ -68,7 +115,17 @@ const useGeneralChecklist = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['general_checklist_data', user_site],
+    queryKey: [
+      'general_checklist_data',
+      user_site,
+      generalChecklistFilters?.responsible,
+      generalChecklistFilters?.recordId,
+      generalChecklistFilters?.startDate,
+      generalChecklistFilters?.endDate,
+      generalChecklistFilters?.plate,
+      generalChecklistFilters?.conformity,
+      generalChecklistFilters?.vehicle_type,
+    ],
     queryFn: fechGeneralChecklist,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -163,7 +220,19 @@ const useGeneralChecklist = () => {
       await crud.deleteItemList('registros_veiculos_emergencia', itemId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['general_checklist_data', user_site] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'general_checklist_data',
+          user_site,
+          generalChecklistFilters?.responsible,
+          generalChecklistFilters?.recordId,
+          generalChecklistFilters?.startDate,
+          generalChecklistFilters?.endDate,
+          generalChecklistFilters?.plate,
+          generalChecklistFilters?.conformity,
+          generalChecklistFilters?.vehicle_type,
+        ],
+      });
     },
   });
 
@@ -222,7 +291,19 @@ const useGeneralChecklist = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['general_checklist_data_modal', params.id] });
-      queryClient.invalidateQueries({ queryKey: ['general_checklist_data', user_site] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'general_checklist_data',
+          user_site,
+          generalChecklistFilters?.responsible,
+          generalChecklistFilters?.recordId,
+          generalChecklistFilters?.startDate,
+          generalChecklistFilters?.endDate,
+          generalChecklistFilters?.plate,
+          generalChecklistFilters?.conformity,
+          generalChecklistFilters?.vehicle_type,
+        ],
+      });
     },
   });
 

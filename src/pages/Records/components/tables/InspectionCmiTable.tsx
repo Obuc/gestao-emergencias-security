@@ -8,13 +8,24 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { Table } from '../../../../components/Table';
-import { InspectionCMI } from '../../types/InspectionCMI';
+import { Select } from '../../../../components/Select';
+import TextField from '../../../../components/TextField';
+import DatePicker from '../../../../components/DatePicker';
 import useInspectionCmi from '../../hooks/useInspectionCmi';
 import InspectionCmiModal from '../modals/InspectionCmiModal';
 import PopoverTables from '../../../../components/PopoverTables';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
+import { IInspectionCMIFiltersProps, InspectionCMI } from '../../types/InspectionCMI';
 
 const InspectionCmiTable = () => {
+  const [inspectionCMIFilters, setInspectionCMIFilters] = useState<IInspectionCMIFiltersProps>({
+    responsible: '',
+    recordId: null,
+    startDate: null,
+    endDate: null,
+    conformity: null,
+  });
+
   const {
     inspection_cmi,
     fetchNextPage,
@@ -23,7 +34,7 @@ const InspectionCmiTable = () => {
     isError,
     mutateRemoveInspectionCmi,
     isLoadingMutateRemoveInspectionCmi,
-  } = useInspectionCmi();
+  } = useInspectionCmi(inspectionCMIFilters);
 
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
@@ -43,9 +54,83 @@ const InspectionCmiTable = () => {
     }
   };
 
+  const handleRemoveAllFilters = () => {
+    setInspectionCMIFilters({
+      responsible: '',
+      recordId: null,
+      startDate: null,
+      endDate: null,
+      conformity: null,
+    });
+  };
+
   return (
-    <>
-      <div className="min-[1100px]:max-h-[38rem] relative min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[44rem] w-full overflow-y-auto">
+    <div className="h-full">
+      <Table.Filter>
+        <div className="flex gap-4">
+          <TextField
+            id="responsible"
+            name="responsible"
+            placeholder="Responsável"
+            width="w-[16.25rem]"
+            value={inspectionCMIFilters.responsible || ''}
+            onChange={(event) => {
+              setInspectionCMIFilters((prev) => ({ ...prev, responsible: event.target.value }));
+            }}
+          />
+
+          <TextField
+            id="recordId"
+            name="recordId"
+            placeholder="Registro"
+            width="w-[9.375rem]"
+            value={inspectionCMIFilters.recordId || ''}
+            onChange={(event) => {
+              setInspectionCMIFilters((prev) => ({ ...prev, recordId: event.target.value }));
+            }}
+          />
+
+          <DatePicker
+            name="startDate"
+            placeholder="Data Inicial"
+            width="w-[11.25rem]"
+            value={inspectionCMIFilters.startDate ? new Date(inspectionCMIFilters.startDate) : null}
+            onChange={(date: any) => setInspectionCMIFilters((prev) => ({ ...prev, startDate: date }))}
+          />
+
+          {inspectionCMIFilters.startDate && (
+            <DatePicker
+              name="endDate"
+              placeholder="Data Final"
+              width="w-[11.25rem]"
+              value={inspectionCMIFilters.endDate ? new Date(inspectionCMIFilters.endDate) : null}
+              onChange={(date: any) => setInspectionCMIFilters((prev) => ({ ...prev, endDate: date }))}
+            />
+          )}
+
+          <Select.Component
+            id="conformity"
+            name="conformity"
+            variant="outline"
+            placeholder="Conformidade"
+            className="w-[11.25rem] max-h-[28.125rem]"
+            value={inspectionCMIFilters.conformity ?? ''}
+            onValueChange={(newSelectedValues: any) => {
+              setInspectionCMIFilters((prev) => ({ ...prev, conformity: newSelectedValues }));
+            }}
+          >
+            <Select.Item value="Conforme">Conforme</Select.Item>
+            <Select.Item value="Não Conforme">Não Conforme</Select.Item>
+          </Select.Component>
+        </div>
+
+        <button className="flex justify-center items-center gap-2 group" onClick={handleRemoveAllFilters}>
+          <span className="text-primary font-semibold">LIMPAR FILTROS</span>
+          <FontAwesomeIcon icon={faXmark} className="text-pink group-hover:text-pink/80 duration-200" />
+        </button>
+      </Table.Filter>
+
+      <div className="min-[1100px]:max-h-[33.125rem] relative min-[1600px]:max-h-[39.6875rem] min-[1800px]:max-h-[39.6875rem] w-full overflow-y-auto">
         <InfiniteScroll
           pageStart={0}
           loadMore={() => fetchNextPage()}
@@ -56,7 +141,8 @@ const InspectionCmiTable = () => {
           <Table.Root>
             <Table.Thead>
               <Table.Tr className="bg-[#FCFCFC]">
-                <Table.Th className="pl-8">Responsável</Table.Th>
+                <Table.Th className="pl-8">Registro</Table.Th>
+                <Table.Th>Responsável</Table.Th>
                 <Table.Th>Prédio</Table.Th>
                 <Table.Th>Data Registro</Table.Th>
                 <Table.Th>Conformidade</Table.Th>
@@ -67,7 +153,7 @@ const InspectionCmiTable = () => {
             <Table.Tbody>
               {inspection_cmi?.pages[0].data.value.length === 0 && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={5} className="text-center text-primary">
+                  <Table.Td colSpan={6} className="text-center text-primary">
                     Nenhum registro encontrado!
                   </Table.Td>
                 </Table.Tr>
@@ -75,7 +161,7 @@ const InspectionCmiTable = () => {
 
               {isError && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={5} className="text-center text-primary">
+                  <Table.Td colSpan={6} className="text-center text-primary">
                     Ops, ocorreu um erro, recarregue a página e tente novamente!
                   </Table.Td>
                 </Table.Tr>
@@ -85,7 +171,7 @@ const InspectionCmiTable = () => {
                 <>
                   {Array.from({ length: 30 }).map((_, index) => (
                     <Table.Tr key={index}>
-                      <Table.Td className="h-14 px-4" colSpan={5}>
+                      <Table.Td className="h-14 px-4" colSpan={6}>
                         <Skeleton height="3.5rem" animation="wave" />
                       </Table.Td>
                     </Table.Tr>
@@ -97,9 +183,10 @@ const InspectionCmiTable = () => {
                 (item: any) =>
                   item?.data?.value?.map((item: InspectionCMI) => (
                     <Table.Tr key={item.Id}>
-                      <Table.Td className="pl-8">{item.bombeiro_id.Title}</Table.Td>
-                      <Table.Td>{item.cmi.predio}</Table.Td>
-                      <Table.Td>{item.Created ? format(item.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}</Table.Td>
+                      <Table.Td className="pl-8">{item?.Id}</Table.Td>
+                      <Table.Td>{item?.bombeiro_id?.Title}</Table.Td>
+                      <Table.Td>{item?.cmi.predio}</Table.Td>
+                      <Table.Td>{item?.Created ? format(item.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}</Table.Td>
                       <Table.Td>
                         {item?.conforme ? (
                           <div className="flex justify-center items-center gap-2 px-4 py-1 rounded-full bg-[#EBFFE2] max-w-[8.4375rem]">
@@ -138,7 +225,7 @@ const InspectionCmiTable = () => {
           open={removeItem !== null}
         />
       )}
-    </>
+    </div>
   );
 };
 

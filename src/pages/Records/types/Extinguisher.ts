@@ -68,4 +68,5 @@ export interface IExtinguisherFiltersProps {
   place: Array<string> | [];
   pavement: Array<string> | [];
   conformity: string | null;
+  extinguisherId: string | null;
 }

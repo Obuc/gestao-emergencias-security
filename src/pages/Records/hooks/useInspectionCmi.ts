@@ -1,13 +1,13 @@
 import * as XLSX from 'xlsx';
 import { useState } from 'react';
+import { parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
-import { InspectionCmiDataModal, ResponstaInspectionCMI } from '../types/InspectionCMI';
-import { parseISO } from 'date-fns';
+import { IInspectionCMIFiltersProps, InspectionCmiDataModal, ResponstaInspectionCMI } from '../types/InspectionCMI';
 
-const useInspectionCmi = () => {
+const useInspectionCmi = (inspectionCMIFilters?: IInspectionCMIFiltersProps) => {
   const { crud } = sharepointContext();
   const params = useParams();
   const queryClient = useQueryClient();
@@ -15,13 +15,45 @@ const useInspectionCmi = () => {
 
   const [isLoadingInspectionCmiExportToExcel, setIsLoadingInspectionCmiExportToExcel] = useState<boolean>(false);
 
-  const path = `?$Select=Id,Created,conforme,cmi_idId,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  let path = `?$Select=Id,Created,conforme,cmi_idId,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+
+  if (inspectionCMIFilters?.startDate || inspectionCMIFilters?.endDate) {
+    const startDate = inspectionCMIFilters.startDate && new Date(inspectionCMIFilters.startDate);
+    startDate && startDate.setUTCHours(0, 0, 0, 0);
+
+    const endDate = inspectionCMIFilters.endDate && new Date(inspectionCMIFilters.endDate);
+    endDate && endDate.setUTCHours(23, 59, 59, 999);
+
+    if (startDate) {
+      path += ` and (Created ge datetime'${startDate.toISOString()}')`;
+    }
+
+    if (endDate) {
+      path += ` and (Created le datetime'${endDate.toISOString()}')`;
+    }
+  }
+
+  if (inspectionCMIFilters?.conformity && inspectionCMIFilters?.conformity === 'Conforme') {
+    path += ` and (conforme ne 'false')`;
+  }
+
+  if (inspectionCMIFilters?.conformity && inspectionCMIFilters?.conformity !== 'Conforme') {
+    path += ` and (conforme eq 'false')`;
+  }
+
+  if (inspectionCMIFilters?.responsible) {
+    path += ` and ( substringof('${inspectionCMIFilters.responsible}', bombeiro_id/Title ))`;
+  }
+
+  if (inspectionCMIFilters?.recordId) {
+    path += ` and ( Id eq '${inspectionCMIFilters.recordId}')`;
+  }
 
   const fetchTestCMI = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'registros_inspecao_cmi', path });
 
     const dataWithTransformations = await Promise.all(
-      response.data.value.map(async (item: any) => {
+      response?.data?.value?.map(async (item: any) => {
         const cmiResponse = await crud.getListItemsv2(
           'equipamentos_diversos',
           `?$Select=Id,predio/Title&$expand=predio&$Filter=(Id eq ${item.cmi_idId})`,
@@ -66,7 +98,15 @@ const useInspectionCmi = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['inspection_cmi_data', user_site],
+    queryKey: [
+      'inspection_cmi_data',
+      user_site,
+      inspectionCMIFilters?.responsible,
+      inspectionCMIFilters?.recordId,
+      inspectionCMIFilters?.startDate,
+      inspectionCMIFilters?.endDate,
+      inspectionCMIFilters?.conformity,
+    ],
     queryFn: fetchTestCMI,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -167,7 +207,17 @@ const useInspectionCmi = () => {
       await crud.deleteItemList('registros_inspecao_cmi', itemId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['inspection_cmi_data', user_site] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'inspection_cmi_data',
+          user_site,
+          inspectionCMIFilters?.responsible,
+          inspectionCMIFilters?.recordId,
+          inspectionCMIFilters?.startDate,
+          inspectionCMIFilters?.endDate,
+          inspectionCMIFilters?.conformity,
+        ],
+      });
     },
   });
 
@@ -222,7 +272,17 @@ const useInspectionCmi = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inspection_cmi_data_modal', params.id] });
-      queryClient.invalidateQueries({ queryKey: ['inspection_cmi_data', user_site] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'inspection_cmi_data',
+          user_site,
+          inspectionCMIFilters?.responsible,
+          inspectionCMIFilters?.recordId,
+          inspectionCMIFilters?.startDate,
+          inspectionCMIFilters?.endDate,
+          inspectionCMIFilters?.conformity,
+        ],
+      });
     },
   });
 

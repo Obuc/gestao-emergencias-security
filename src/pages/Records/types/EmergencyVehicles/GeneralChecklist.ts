@@ -50,3 +50,13 @@ export interface IPergunta {
   categoria: string;
   Id: number;
 }
+
+export interface IGeneralChecklistFiltersProps {
+  recordId: string | null;
+  vehicle_type: Array<string> | [];
+  plate: string | null;
+  responsible: string | null;
+  startDate: Date | null;
+  endDate: Date | null;
+  conformity: string | null;
+}

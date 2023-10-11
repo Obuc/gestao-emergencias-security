@@ -4,10 +4,10 @@ import { parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { ResponstaTestCmi, TestCmiDataModal } from '../types/TestCMI';
 import { sharepointContext } from '../../../context/sharepointContext';
+import { ITestCMIFiltersProps, ResponstaTestCmi, TestCmiDataModal } from '../types/TestCMI';
 
-const useTestCMI = () => {
+const useTestCMI = (testCMIFilters?: ITestCMIFiltersProps) => {
   const { crud } = sharepointContext();
   const params = useParams();
   const queryClient = useQueryClient();
@@ -15,13 +15,45 @@ const useTestCMI = () => {
 
   const [isLoadingTestCmiExportToExcel, setIsLoadingTestCmiExportToExcel] = useState<boolean>(false);
 
-  const path = `?$Select=Id,cmi_idId,site/Title,bombeiro_id/Title,Created,conforme&$expand=site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  let path = `?$Select=Id,cmi_idId,site/Title,bombeiro_id/Title,Created,conforme&$expand=site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+
+  if (testCMIFilters?.startDate || testCMIFilters?.endDate) {
+    const startDate = testCMIFilters.startDate && new Date(testCMIFilters.startDate);
+    startDate && startDate.setUTCHours(0, 0, 0, 0);
+
+    const endDate = testCMIFilters.endDate && new Date(testCMIFilters.endDate);
+    endDate && endDate.setUTCHours(23, 59, 59, 999);
+
+    if (startDate) {
+      path += ` and (Created ge datetime'${startDate.toISOString()}')`;
+    }
+
+    if (endDate) {
+      path += ` and (Created le datetime'${endDate.toISOString()}')`;
+    }
+  }
+
+  if (testCMIFilters?.conformity && testCMIFilters?.conformity === 'Conforme') {
+    path += ` and (conforme ne 'false')`;
+  }
+
+  if (testCMIFilters?.conformity && testCMIFilters?.conformity !== 'Conforme') {
+    path += ` and (conforme eq 'false')`;
+  }
+
+  if (testCMIFilters?.responsible) {
+    path += ` and ( substringof('${testCMIFilters.responsible}', bombeiro_id/Title ))`;
+  }
+
+  if (testCMIFilters?.responsible) {
+    path += ` and ( Id eq '${testCMIFilters?.recordId}')`;
+  }
 
   const fetchTestCMI = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'registros_teste_cmi', path });
 
     const dataWithTransformations = await Promise.all(
-      response.data.value.map(async (item: any) => {
+      response?.data?.value?.map(async (item: any) => {
         const cmiResponse = await crud.getListItemsv2(
           'equipamentos_diversos',
           `?$Select=Id,predio/Title&$expand=predio&$Filter=(Id eq ${item.cmi_idId})`,
@@ -65,7 +97,15 @@ const useTestCMI = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['test_cmi_data', user_site],
+    queryKey: [
+      'test_cmi_data',
+      user_site,
+      testCMIFilters?.startDate,
+      testCMIFilters?.endDate,
+      testCMIFilters?.conformity,
+      testCMIFilters?.responsible,
+      testCMIFilters?.recordId,
+    ],
     queryFn: fetchTestCMI,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -163,7 +203,17 @@ const useTestCMI = () => {
       await crud.deleteItemList('registros_teste_cmi', itemId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['test_cmi_data', user_site] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'test_cmi_data',
+          user_site,
+          testCMIFilters?.startDate,
+          testCMIFilters?.endDate,
+          testCMIFilters?.conformity,
+          testCMIFilters?.responsible,
+          testCMIFilters?.recordId,
+        ],
+      });
     },
   });
 
@@ -219,7 +269,17 @@ const useTestCMI = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['teste_cmi_data_modal', params.id] });
-      queryClient.invalidateQueries({ queryKey: ['test_cmi_data', user_site] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'test_cmi_data',
+          user_site,
+          testCMIFilters?.startDate,
+          testCMIFilters?.endDate,
+          testCMIFilters?.conformity,
+          testCMIFilters?.responsible,
+          testCMIFilters?.recordId,
+        ],
+      });
     },
   });
 

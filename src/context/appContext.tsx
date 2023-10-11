@@ -3,9 +3,10 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
 import { ISite } from '../types/Site';
 import { ISubMenu } from '../types/SubMenu';
-import { IFormulario } from '../types/Formularios';
-import { sharepointContext } from './sharepointContext';
 import { IPavimento } from '../types/Pavimento';
+import { IFormulario } from '../types/Formularios';
+import { ITipoVeiculo } from '../types/TipoVeiculo';
+import { sharepointContext } from './sharepointContext';
 
 interface IAppContext {
   sites?: Array<ISite>;
@@ -13,6 +14,7 @@ interface IAppContext {
   submenu?: Array<ISubMenu>;
   local?: Array<ILocal>;
   pavimento?: Array<IPavimento>;
+  tipo_veiculo?: Array<ITipoVeiculo>;
   predio?: Array<IPredio>;
   isLoadingFormularios: boolean;
   isLoadingSites: boolean;
@@ -104,11 +106,40 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
+    enabled: !!localSite,
+  });
+
+  const { data: tipo_veiculo }: UseQueryResult<Array<ITipoVeiculo>> = useQuery({
+    queryKey: ['tipo_veiculo'],
+    queryFn: async () => {
+      if (localSite) {
+        const resp = await crud.getListItems(
+          'tipo_veiculo',
+          `?$Select=Id,Title,site/Title&$expand=site&$orderby=Title asc&$Filter=(site/Title eq '${localSite}')`,
+        );
+        return resp;
+      } else {
+        return [];
+      }
+    },
+    staleTime: 5000 * 60, // 5 Minute
+    refetchOnWindowFocus: false,
+    enabled: !!localSite,
   });
 
   return (
     <AppContext.Provider
-      value={{ sites, formularios, submenu, local, pavimento, predio, isLoadingFormularios, isLoadingSites }}
+      value={{
+        sites,
+        formularios,
+        submenu,
+        local,
+        pavimento,
+        predio,
+        tipo_veiculo,
+        isLoadingFormularios,
+        isLoadingSites,
+      }}
     >
       {children}
     </AppContext.Provider>

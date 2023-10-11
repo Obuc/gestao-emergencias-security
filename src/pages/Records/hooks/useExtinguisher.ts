@@ -15,7 +15,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
 
   const [isLoadingExtinguisherExportToExcel, setIsLoadingExtinguisherExportToExcel] = useState<boolean>(false);
 
-  let path = `?$Select=*,Created,conforme,local,extintor_id/validade,pavimento,site/Title,bombeiro_id/Title&$expand=extintor_id,site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  let path = `?$Select=*,Created,conforme,local,extintor_id/validade,extintor_id/cod_extintor,pavimento,site/Title,bombeiro_id/Title&$expand=extintor_id,site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
 
   if (extinguisherFilters?.place) {
     for (let i = 0; i < extinguisherFilters.place.length; i++) {
@@ -66,6 +66,10 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
 
   if (extinguisherFilters?.responsible) {
     path += ` and ( substringof('${extinguisherFilters.responsible}', bombeiro_id/Title ))`;
+  }
+
+  if (extinguisherFilters?.extinguisherId) {
+    path += ` and ( substringof('${extinguisherFilters.responsible}', extintor_id/cod_extintor ))`;
   }
 
   const fetchExtinguisher = async ({ pageParam }: { pageParam?: string }) => {
@@ -141,6 +145,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
       extinguisherFilters?.startDate,
       extinguisherFilters?.endDate,
       extinguisherFilters?.responsible,
+      extinguisherFilters?.extinguisherId,
     ],
     queryFn: fetchExtinguisher,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
@@ -270,6 +275,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
           extinguisherFilters?.startDate,
           extinguisherFilters?.endDate,
           extinguisherFilters?.responsible,
+          extinguisherFilters?.extinguisherId,
         ],
       });
     },
@@ -337,6 +343,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
           extinguisherFilters?.startDate,
           extinguisherFilters?.endDate,
           extinguisherFilters?.responsible,
+          extinguisherFilters?.extinguisherId,
         ],
       });
     },

@@ -75,7 +75,6 @@ const GovernanceValveTable = () => {
     <div className="h-full">
       <Table.Filter>
         <div className="flex gap-4">
-          {/* Responsável */}
           <TextField
             id="responsible"
             name="responsible"
@@ -87,7 +86,6 @@ const GovernanceValveTable = () => {
             }}
           />
 
-          {/* 	N° Registro */}
           <TextField
             id="id"
             name="id"
@@ -99,7 +97,6 @@ const GovernanceValveTable = () => {
             }}
           />
 
-          {/* 	N° Válvula */}
           <TextField
             id="valveNumber"
             name="valveNumber"
@@ -111,7 +108,6 @@ const GovernanceValveTable = () => {
             }}
           />
 
-          {/* Data Inicial  */}
           <DatePicker
             name="startDate"
             placeholder="Data Inicial"
@@ -120,7 +116,6 @@ const GovernanceValveTable = () => {
             onChange={(date: any) => setGovernanceValveFilters((prev) => ({ ...prev, startDate: date }))}
           />
 
-          {/* Data Final  */}
           {governanceValveFilters.startDate && (
             <DatePicker
               name="endDate"
@@ -131,7 +126,6 @@ const GovernanceValveTable = () => {
             />
           )}
 
-          {/* Prédio  */}
           <Select.Component
             multi
             id="property"
@@ -151,7 +145,6 @@ const GovernanceValveTable = () => {
             ))}
           </Select.Component>
 
-          {/* Conformidade */}
           <Select.Component
             id="conformity"
             name="conformity"
@@ -185,7 +178,8 @@ const GovernanceValveTable = () => {
           <Table.Root>
             <Table.Thead>
               <Table.Tr className="bg-[#FCFCFC]">
-                <Table.Th className="pl-8">Responsável</Table.Th>
+                <Table.Th className="pl-8">Registro</Table.Th>
+                <Table.Th>Responsável</Table.Th>
                 <Table.Th>N° Registro</Table.Th>
                 <Table.Th>N° Válvula</Table.Th>
                 <Table.Th>Prédio</Table.Th>
@@ -198,7 +192,7 @@ const GovernanceValveTable = () => {
             <Table.Tbody>
               {governaceValve?.pages[0].data.value.length === 0 && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={9} className="text-center text-primary">
+                  <Table.Td colSpan={8} className="text-center text-primary">
                     Nenhum registro encontrado!
                   </Table.Td>
                 </Table.Tr>
@@ -206,7 +200,7 @@ const GovernanceValveTable = () => {
 
               {isError && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={9} className="text-center text-primary">
+                  <Table.Td colSpan={8} className="text-center text-primary">
                     Ops, ocorreu um erro, recarregue a página e tente novamente!
                   </Table.Td>
                 </Table.Tr>
@@ -216,7 +210,7 @@ const GovernanceValveTable = () => {
                 <>
                   {Array.from({ length: 30 }).map((_, index) => (
                     <Table.Tr key={index}>
-                      <Table.Td className="h-14 px-4" colSpan={9}>
+                      <Table.Td className="h-14 px-4" colSpan={8}>
                         <Skeleton height="3.5rem" animation="wave" />
                       </Table.Td>
                     </Table.Tr>
@@ -228,18 +222,14 @@ const GovernanceValveTable = () => {
                 (item: any) =>
                   item?.data?.value?.map((item: GovernanceValve) => (
                     <Table.Tr key={item.Id}>
-                      <Table.Td className="pl-8">{item?.bombeiro}</Table.Td>
-                      <Table.Td>{item.Id}</Table.Td>
-                      <Table.Td>{item.valvula?.cod_equipamento}</Table.Td>
-                      <Table.Td>{item.valvula?.predio}</Table.Td>
+                      <Table.Td className="pl-8">{item?.Id}</Table.Td>
+                      <Table.Td>{item?.bombeiro}</Table.Td>
+                      <Table.Td>{item?.Id}</Table.Td>
+                      <Table.Td>{item?.valvula?.cod_equipamento}</Table.Td>
+                      <Table.Td>{item?.valvula?.predio}</Table.Td>
+                      <Table.Td>{item?.Created ? format(item.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}</Table.Td>
                       <Table.Td>
-                        {/* {item.data_legado
-                          ? format(parseISO(item.data_legado), 'dd MMM yyyy', { locale: ptBR })
-                          : format(parseISO(item.Created), 'dd MMM yyyy', { locale: ptBR })} */}
-                        {format(item.Created, 'dd MMM yyyy', { locale: ptBR })}
-                      </Table.Td>
-                      <Table.Td>
-                        {item.conforme ? (
+                        {item?.conforme ? (
                           <div className="flex justify-center items-center gap-2 px-4 py-1 rounded-full bg-[#EBFFE2] max-w-[8.4375rem]">
                             <div className="w-3 h-3 rounded-full bg-[#70EC36]" />
                             <span>Conforme</span>

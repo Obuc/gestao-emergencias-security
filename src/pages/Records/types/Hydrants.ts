@@ -52,8 +52,9 @@ export interface IHydrantsFiltersProps {
   responsible: string | null;
   startDate: Date | null;
   endDate: Date | null;
-  expiration: Date | null;
+  codHydrant: string | null;
   place: Array<string> | [];
   pavement: Array<string> | [];
   conformity: string | null;
+  recordId: string | null;
 }

@@ -29,6 +29,7 @@ const ExtinguisherTable = () => {
     place: [],
     pavement: [],
     conformity: null,
+    extinguisherId: null,
   });
 
   const {
@@ -68,6 +69,7 @@ const ExtinguisherTable = () => {
       place: [],
       pavement: [],
       conformity: null,
+      extinguisherId: null,
     });
   };
 
@@ -75,7 +77,6 @@ const ExtinguisherTable = () => {
     <div className="h-full">
       <Table.Filter>
         <div className="flex gap-4">
-          {/* Responsável */}
           <TextField
             id="responsible"
             name="responsible"
@@ -87,7 +88,6 @@ const ExtinguisherTable = () => {
             }}
           />
 
-          {/* Data Inicial  */}
           <DatePicker
             name="startDate"
             placeholder="Data Inicial"
@@ -96,7 +96,6 @@ const ExtinguisherTable = () => {
             onChange={(date: any) => setExtinguisherFilters((prev) => ({ ...prev, startDate: date }))}
           />
 
-          {/* Data Final  */}
           {extinguisherFilters.startDate && (
             <DatePicker
               name="endDate"
@@ -107,7 +106,6 @@ const ExtinguisherTable = () => {
             />
           )}
 
-          {/* Validade  */}
           <DatePicker
             name="expiration"
             placeholder="Validade"
@@ -116,7 +114,17 @@ const ExtinguisherTable = () => {
             onChange={(date: any) => setExtinguisherFilters((prev) => ({ ...prev, expiration: date }))}
           />
 
-          {/* Local */}
+          <TextField
+            id="extinguisherId"
+            name="extinguisherId"
+            placeholder="Cód. Extintor"
+            width="w-[9.375rem]"
+            value={extinguisherFilters.extinguisherId || ''}
+            onChange={(event) => {
+              setExtinguisherFilters((prev) => ({ ...prev, extinguisherId: event.target.value }));
+            }}
+          />
+
           <Select.Component
             multi
             id="place"
@@ -136,7 +144,6 @@ const ExtinguisherTable = () => {
             ))}
           </Select.Component>
 
-          {/* Pavimento */}
           <Select.Component
             multi
             id="pavement"
@@ -156,7 +163,6 @@ const ExtinguisherTable = () => {
             ))}
           </Select.Component>
 
-          {/* Conformidade */}
           <Select.Component
             id="conformity"
             name="conformity"
@@ -190,7 +196,8 @@ const ExtinguisherTable = () => {
           <Table.Root>
             <Table.Thead>
               <Table.Tr className="bg-[#FCFCFC]">
-                <Table.Th className="pl-8">Responsável</Table.Th>
+                <Table.Th className="pl-8">Registro</Table.Th>
+                <Table.Th>Responsável</Table.Th>
                 <Table.Th>Data</Table.Th>
                 <Table.Th>Validade</Table.Th>
                 <Table.Th>Data Pesagem</Table.Th>
@@ -205,7 +212,7 @@ const ExtinguisherTable = () => {
             <Table.Tbody>
               {extinguisher?.pages[0].data.value.length === 0 && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={9} className="text-center text-primary">
+                  <Table.Td colSpan={10} className="text-center text-primary">
                     Nenhum registro encontrado!
                   </Table.Td>
                 </Table.Tr>
@@ -213,7 +220,7 @@ const ExtinguisherTable = () => {
 
               {isError && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={9} className="text-center text-primary">
+                  <Table.Td colSpan={10} className="text-center text-primary">
                     Ops, ocorreu um erro, recarregue a página e tente novamente!
                   </Table.Td>
                 </Table.Tr>
@@ -223,7 +230,7 @@ const ExtinguisherTable = () => {
                 <>
                   {Array.from({ length: 30 }).map((_, index) => (
                     <Table.Tr key={index}>
-                      <Table.Td className="h-14 px-4" colSpan={9}>
+                      <Table.Td className="h-14 px-4" colSpan={10}>
                         <Skeleton height="3.5rem" animation="wave" />
                       </Table.Td>
                     </Table.Tr>
@@ -235,19 +242,20 @@ const ExtinguisherTable = () => {
                 (item: any) =>
                   item?.data?.value?.map((item: Extinguisher) => (
                     <Table.Tr key={item.Id}>
-                      <Table.Td className="pl-8">{item.bombeiro}</Table.Td>
-                      <Table.Td>{format(item.Created, 'dd MMM yyyy', { locale: ptBR })}</Table.Td>
+                      <Table.Td className="pl-8">{item?.Id}</Table.Td>
+                      <Table.Td>{item?.bombeiro}</Table.Td>
+                      <Table.Td>{item?.Created ? format(item.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}</Table.Td>
                       <Table.Td>
-                        {item.extintor.validade
+                        {item?.extintor?.validade
                           ? format(item.extintor.validade, 'dd MMM yyyy', { locale: ptBR })
                           : 'N/A'}
                       </Table.Td>
                       <Table.Td>
-                        {item.data_pesagem ? format(item.data_pesagem, 'dd MMM yyyy', { locale: ptBR }) : 'N/A'}
+                        {item?.data_pesagem ? format(item.data_pesagem, 'dd MMM yyyy', { locale: ptBR }) : 'N/A'}
                       </Table.Td>
-                      <Table.Td>{item.extintor.cod_extintor}</Table.Td>
-                      <Table.Td>{item.extintor.local}</Table.Td>
-                      <Table.Td>{item.extintor.pavimento}</Table.Td>
+                      <Table.Td>{item?.extintor?.cod_extintor}</Table.Td>
+                      <Table.Td>{item?.extintor?.local}</Table.Td>
+                      <Table.Td>{item?.extintor?.pavimento}</Table.Td>
                       <Table.Td>
                         {item?.conforme ? (
                           <div className="flex justify-center items-center gap-2 px-4 py-1 rounded-full bg-[#EBFFE2] max-w-[8.4375rem]">

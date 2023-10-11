@@ -5,9 +5,9 @@ import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
-import { HydrantsDataModal, RespostaHydrants } from './../types/Hydrants';
+import { HydrantsDataModal, IHydrantsFiltersProps, RespostaHydrants } from './../types/Hydrants';
 
-const useHydrants = () => {
+const useHydrants = (hydrantsFilters?: IHydrantsFiltersProps) => {
   const { crud } = sharepointContext();
   const params = useParams();
   const queryClient = useQueryClient();
@@ -15,58 +15,55 @@ const useHydrants = () => {
 
   const [isLoadingHydrantsExportToExcel, setIsLoadingHydrantsExportToExcel] = useState<boolean>(false);
 
-  let path = `?$Select=Id,site/Title,hidrante_id/Id,bombeiro/Title,conforme,observacao,Created&$expand=site,hidrante_id,bombeiro&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  let path = `?$Select=Id,local,pavimento,site/Title,hidrante_id/Id,hidrante_id/cod_hidrante,bombeiro/Title,conforme,observacao,Created&$expand=site,hidrante_id,bombeiro&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
 
-  // if (extinguisherFilters?.place) {
-  //   for (let i = 0; i < extinguisherFilters.place.length; i++) {
-  //     path += `${i === 0 ? ' and' : ' or'} (local eq '${extinguisherFilters.place[i]}')`;
-  //   }
-  // }
+  if (hydrantsFilters?.place) {
+    for (let i = 0; i < hydrantsFilters.place.length; i++) {
+      path += `${i === 0 ? ' and' : ' or'} (local eq '${hydrantsFilters.place[i]}')`;
+    }
+  }
 
-  // if (extinguisherFilters?.pavement) {
-  //   for (let i = 0; i < extinguisherFilters.pavement.length; i++) {
-  //     path += `${i === 0 ? ' and' : ' or'} (pavimento eq '${extinguisherFilters.pavement[i]}')`;
-  //   }
-  // }
+  if (hydrantsFilters?.pavement) {
+    for (let i = 0; i < hydrantsFilters.pavement.length; i++) {
+      path += `${i === 0 ? ' and' : ' or'} (pavimento eq '${hydrantsFilters.pavement[i]}')`;
+    }
+  }
 
-  // if (extinguisherFilters?.conformity && extinguisherFilters?.conformity === 'Conforme') {
-  //   path += ` and (conforme ne 'false')`;
-  // }
+  if (hydrantsFilters?.conformity && hydrantsFilters?.conformity === 'Conforme') {
+    path += ` and (conforme ne 'false')`;
+  }
 
-  // if (extinguisherFilters?.conformity && extinguisherFilters?.conformity !== 'Conforme') {
-  //   path += ` and (conforme eq 'false')`;
-  // }
+  if (hydrantsFilters?.conformity && hydrantsFilters?.conformity !== 'Conforme') {
+    path += ` and (conforme eq 'false')`;
+  }
 
-  // if (extinguisherFilters?.expiration) {
-  //   const expirationDate = extinguisherFilters.expiration;
-  //   const startDate = new Date(expirationDate);
-  //   startDate.setUTCHours(0, 0, 0, 0);
+  if (hydrantsFilters?.codHydrant) {
+    path += ` and (hidrante_id/cod_hidrante eq '${hydrantsFilters.codHydrant}')`;
+  }
 
-  //   const endDate = new Date(expirationDate);
-  //   endDate.setUTCHours(23, 59, 59, 999);
+  if (hydrantsFilters?.startDate || hydrantsFilters?.endDate) {
+    const startDate = hydrantsFilters.startDate && new Date(hydrantsFilters.startDate);
+    startDate && startDate.setUTCHours(0, 0, 0, 0);
 
-  //   path += ` and (extintor_id/validade ge datetime'${startDate.toISOString()}') and (extintor_id/validade le datetime'${endDate.toISOString()}')`;
-  // }
+    const endDate = hydrantsFilters.endDate && new Date(hydrantsFilters.endDate);
+    endDate && endDate.setUTCHours(23, 59, 59, 999);
 
-  // if (extinguisherFilters?.startDate || extinguisherFilters?.endDate) {
-  //   const startDate = extinguisherFilters.startDate && new Date(extinguisherFilters.startDate);
-  //   startDate && startDate.setUTCHours(0, 0, 0, 0);
+    if (startDate) {
+      path += ` and (Created ge datetime'${startDate.toISOString()}')`;
+    }
 
-  //   const endDate = extinguisherFilters.endDate && new Date(extinguisherFilters.endDate);
-  //   endDate && endDate.setUTCHours(23, 59, 59, 999);
+    if (endDate) {
+      path += ` and (Created le datetime'${endDate.toISOString()}')`;
+    }
+  }
 
-  //   if (startDate) {
-  //     path += ` and (Created ge datetime'${startDate.toISOString()}')`;
-  //   }
+  if (hydrantsFilters?.responsible) {
+    path += ` and ( substringof('${hydrantsFilters.responsible}', bombeiro/Title ))`;
+  }
 
-  //   if (endDate) {
-  //     path += ` and (Created le datetime'${endDate.toISOString()}')`;
-  //   }
-  // }
-
-  // if (extinguisherFilters?.responsible) {
-  //   path += ` and ( substringof('${extinguisherFilters.responsible}', bombeiro_id/Title ))`;
-  // }
+  if (hydrantsFilters?.recordId) {
+    path += ` and ( Id eq '${hydrantsFilters.recordId}')`;
+  }
 
   const fetchHydrants = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'registros_hidrantes', path });
@@ -119,7 +116,18 @@ const useHydrants = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['hydrants_data', user_site],
+    queryKey: [
+      'hydrants_data',
+      user_site,
+      hydrantsFilters?.responsible,
+      hydrantsFilters?.startDate,
+      hydrantsFilters?.endDate,
+      hydrantsFilters?.codHydrant,
+      hydrantsFilters?.place,
+      hydrantsFilters?.pavement,
+      hydrantsFilters?.conformity,
+      hydrantsFilters?.recordId,
+    ],
     queryFn: fetchHydrants,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -223,7 +231,18 @@ const useHydrants = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['hydrants_data', user_site],
+        queryKey: [
+          'hydrants_data',
+          user_site,
+          hydrantsFilters?.responsible,
+          hydrantsFilters?.startDate,
+          hydrantsFilters?.endDate,
+          hydrantsFilters?.codHydrant,
+          hydrantsFilters?.place,
+          hydrantsFilters?.pavement,
+          hydrantsFilters?.conformity,
+          hydrantsFilters?.recordId,
+        ],
       });
     },
   });
@@ -280,7 +299,18 @@ const useHydrants = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['hydrants_data_modal', params.id] });
       queryClient.invalidateQueries({
-        queryKey: ['hydrants_data', user_site],
+        queryKey: [
+          'hydrants_data',
+          user_site,
+          hydrantsFilters?.responsible,
+          hydrantsFilters?.startDate,
+          hydrantsFilters?.endDate,
+          hydrantsFilters?.codHydrant,
+          hydrantsFilters?.place,
+          hydrantsFilters?.pavement,
+          hydrantsFilters?.conformity,
+          hydrantsFilters?.recordId,
+        ],
       });
     },
   });

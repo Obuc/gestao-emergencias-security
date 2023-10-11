@@ -66,7 +66,7 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
     );
 
     const dataWithTransformations = await Promise.all(
-      response.data.value.map(async (item: any) => {
+      response?.data?.value?.map(async (item: any) => {
         const valvulaResponse = await crud.getListItemsv2(
           'equipamentos_diversos',
           `?$Select=Id,tipo_equipamento/Title,predio/Title,pavimento/Title,local/Title,cod_equipamento,conforme,cod_qrcode,excluido&$expand=predio,pavimento,local,tipo_equipamento&$Filter=((Id eq ${item.valvula_id.Id}) and (tipo_equipamento/Title eq 'Válvulas de Governo'))`,
