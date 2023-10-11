@@ -47,34 +47,27 @@ const useEqGeneralChecklist = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey:
-      equipments_value === 'Checklist Geral'
-        ? ['eq_general_checklist_data', user_site, equipments_value]
-        : ['eq_general_checklist_data', user_site],
+    queryKey: ['eq_general_checklist_data', user_site, params.form],
 
     queryFn: fetchEqGeneralChecklist,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: equipments_value === 'Checklist Geral' && location.pathname === '/equipments',
+    enabled: params.form === 'general_checklist' && location.pathname === '/equipments/general_checklist',
   });
 
   const fetchEqGeneralChecklistData = async () => {
-    if (params.id && equipments_value === 'Checklist Geral') {
-      const path = `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme_check_geral,excluido&$expand=site,tipo_veiculo&$Filter=(Id eq ${params.id})`;
+    const path = `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme_check_geral,excluido&$expand=site,tipo_veiculo&$Filter=(Id eq ${params.id})`;
 
-      const resp = await crud.getListItemsv2('veiculos_emergencia', path);
-      return resp.results[0];
-    }
+    const resp = await crud.getListItemsv2('veiculos_emergencia', path);
+    return resp.results[0];
   };
 
   const fechRecordsGeneralChecklistData = async (vehicleId: number) => {
-    if (params.id && equipments_value === 'Checklist Geral') {
-      const resp = await crud.getListItemsv2(
-        'registros_veiculos_emergencia',
-        `?$Select=Id,veiculo_idId,Created,site/Title,veiculo_id/Id,bombeiro/Title,conforme,observacao&$expand=site,veiculo_id,bombeiro&$Filter=(veiculo_id/Id eq '${vehicleId}')`,
-      );
-      return resp.results || null;
-    }
+    const resp = await crud.getListItemsv2(
+      'registros_veiculos_emergencia',
+      `?$Select=Id,veiculo_idId,Created,site/Title,veiculo_id/Id,bombeiro/Title,conforme,observacao&$expand=site,veiculo_id,bombeiro&$Filter=(veiculo_id/Id eq '${vehicleId}')`,
+    );
+    return resp.results || null;
   };
 
   const {
@@ -82,11 +75,11 @@ const useEqGeneralChecklist = () => {
     isLoading: isLoadingEqGeneralChecklistModal,
   }: UseQueryResult<IEqGeneralChecklistModal> = useQuery({
     queryKey:
-      params.id && equipments_value === 'Checklist Geral'
+      params.id && params.form === 'general_checklist'
         ? ['eq_general_checklist_data_modal', params.id, equipments_value]
         : ['eq_general_checklist_data_modal'],
     queryFn: async () => {
-      if (params.id && equipments_value === 'Checklist Geral') {
+      if (params.id && params.form === 'general_checklist') {
         const eqVehicle = await fetchEqGeneralChecklistData();
         const records = eqVehicle && (await fechRecordsGeneralChecklistData(eqVehicle.Id));
 
@@ -102,7 +95,7 @@ const useEqGeneralChecklist = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && equipments_value === 'Checklist Geral' && location.pathname === '/equipments',
+    enabled: params.id !== undefined && params.form === 'general_checklist',
   });
 
   const {
@@ -130,7 +123,7 @@ const useEqGeneralChecklist = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: equipments_value === 'Checklist Geral' && location.pathname === '/equipments',
+    enabled: params.form === 'general_checklist' && location.pathname === '/equipments/general_checklist',
   });
 
   const {
@@ -142,7 +135,7 @@ const useEqGeneralChecklist = () => {
       await crud.updateItemList('veiculos_emergencia', itemId, { excluido_check_geral: true });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['eq_general_checklist_data', user_site, equipments_value] });
+      queryClient.invalidateQueries({ queryKey: ['eq_general_checklist_data', user_site, params.form] });
     },
   });
 

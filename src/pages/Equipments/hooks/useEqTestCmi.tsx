@@ -13,7 +13,7 @@ const useEqTestCmi = () => {
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
 
-  const path = `?$Select=Id,cod_qrcode,conforme,excluido,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,tipo_equipamento&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq '${equipments_value}') and (excluido eq 'false')`;
+  const path = `?$Select=Id,cod_qrcode,conforme,excluido,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,tipo_equipamento&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Teste CMI') and (excluido eq 'false')`;
 
   const fetchEqTestCmi = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'equipamentos_diversos', path });
@@ -43,42 +43,35 @@ const useEqTestCmi = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey:
-      equipments_value === 'Teste CMI'
-        ? ['equipments_data_test_cmi', user_site, equipments_value]
-        : ['equipments_data_test_cmi', user_site],
+    queryKey: ['equipments_data_test_cmi', user_site, params.form],
     queryFn: fetchEqTestCmi,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: equipments_value === 'Teste CMI' && location.pathname === '/equipments',
+    enabled: params.form === 'cmi_test' && location.pathname === '/equipments/cmi_test',
   });
 
   const fetchEqCmiData = async () => {
-    if (params.id && equipments_value === 'Teste CMI') {
-      const path = `?$Select=Id,cod_qrcode,conforme,predio/Title,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,predio,tipo_equipamento&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq '${equipments_value}') and (excluido eq 'false')`;
+    const path = `?$Select=Id,cod_qrcode,conforme,predio/Title,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,predio,tipo_equipamento&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Teste CMI') and (excluido eq 'false')`;
 
-      const resp = await crud.getListItemsv2('equipamentos_diversos', path);
-      return resp.results[0];
-    }
+    const resp = await crud.getListItemsv2('equipamentos_diversos', path);
+    return resp.results[0];
   };
 
   const fechRecordsTestCmiData = async (cmiId: number) => {
-    if (params.id && equipments_value === 'Teste CMI') {
-      const resp = await crud.getListItemsv2(
-        'registros_teste_cmi',
-        `?$Select=Id,cmi_idId,cmi_id/Id,bombeiro_id/Title,observacao,conforme,Created&$expand=bombeiro_id,cmi_id&$Filter=(cmi_id/Id eq '${cmiId}')`,
-      );
-      return resp.results || null;
-    }
+    const resp = await crud.getListItemsv2(
+      'registros_teste_cmi',
+      `?$Select=Id,cmi_idId,cmi_id/Id,bombeiro_id/Title,observacao,conforme,Created&$expand=bombeiro_id,cmi_id&$Filter=(cmi_id/Id eq '${cmiId}')`,
+    );
+    return resp.results || null;
   };
 
   const { data: eqTestCmiModal, isLoading: isLoadingEqTestCmiModal }: UseQueryResult<IEqTestCmiModal> = useQuery({
     queryKey:
-      params.id && equipments_value === 'Teste CMI'
-        ? ['eq_test_cmi_data_modal', params.id, equipments_value]
+      params.id && params.form === 'cmi_test'
+        ? ['eq_test_cmi_data_modal', params.id, params.form]
         : ['eq_test_cmi_data_modal'],
     queryFn: async () => {
-      if (params.id && equipments_value === 'Teste CMI') {
+      if (params.id && params.form === 'cmi_test') {
         const eqTestCmiData = await fetchEqCmiData();
         const recordsTestCmi = eqTestCmiData && (await fechRecordsTestCmiData(eqTestCmiData.Id));
 
@@ -96,13 +89,13 @@ const useEqTestCmi = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && equipments_value === 'Teste CMI' && location.pathname === '/equipments',
+    enabled: params.id !== undefined && params.form === 'cmi_test',
   });
 
   const { data: eqTestCmi, isLoading: isLoadingEqTestCmi }: UseQueryResult<Array<IEqTestCmi>> = useQuery({
     queryKey: ['eq_test_cmi_data', equipments_value],
     queryFn: async () => {
-      const path = `?$Select=Id,cod_qrcode,conforme,predio/Title,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,predio,tipo_equipamento&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq '${equipments_value}') and (excluido eq 'false')`;
+      const path = `?$Select=Id,cod_qrcode,conforme,predio/Title,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,predio,tipo_equipamento&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Teste CMI') and (excluido eq 'false')`;
 
       const resp = await crud.getListItems('equipamentos_diversos', path);
 
@@ -122,7 +115,7 @@ const useEqTestCmi = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: equipments_value === 'Teste CMI' && location.pathname === '/equipments',
+    enabled: params.form === 'cmi_test' && location.pathname === '/equipments/cmi_test',
   });
 
   const {
@@ -134,7 +127,7 @@ const useEqTestCmi = () => {
       await crud.updateItemList('equipamentos_diversos', itemId, { excluido: true });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['equipments_data_test_cmi', user_site] });
+      queryClient.invalidateQueries({ queryKey: ['equipments_data_test_cmi', user_site, params.form] });
     },
   });
 

@@ -35,7 +35,7 @@ const EqCmiTestModal = () => {
 
   const handleOnOpenChange = () => {
     setTestCmi(null);
-    navigate('/equipments');
+    navigate('/equipments/cmi_test');
   };
 
   const generateQrCodePdf = () => {
@@ -168,7 +168,7 @@ const EqCmiTestModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/${item.Id}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/records/cmi_test/${item.Id}`} />
                   <EquipmentCard.Content
                     date={cardDate}
                     responsible={item.bombeiro_id.Title}

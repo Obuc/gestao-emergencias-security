@@ -16,8 +16,8 @@ const App = () => {
       <Route path="/records/:form" element={<Records />} />
       <Route path="/records/:form/:id" element={<Records />} />
 
-      <Route path="/equipments" element={<Equipments />} />
-      <Route path="/equipments/:id" element={<Equipments />} />
+      <Route path="/equipments/:form" element={<Equipments />} />
+      <Route path="/equipments/:form/:id" element={<Equipments />} />
 
       <Route path="/reports" element={<Report />} />
       <Route path="/reports/:id" element={<Report />} />
@@ -25,6 +25,7 @@ const App = () => {
       <Route path="/schedule" element={<Schedule />} />
 
       <Route path="/records" element={<Navigate to={`/records/${equipments_value}`} />} />
+      <Route path="/equipments" element={<Navigate to={`/equipments/${equipments_value}`} />} />
     </Routes>
   );
 };

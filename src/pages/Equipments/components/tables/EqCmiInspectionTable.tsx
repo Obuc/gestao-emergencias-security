@@ -27,7 +27,7 @@ const EqCmiInspectionTable = () => {
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/${id}`);
+    navigate(`/equipments/cmi_inspection/${id}`);
   };
 
   const handleRemoveEq = async () => {
@@ -50,7 +50,8 @@ const EqCmiInspectionTable = () => {
           <Table.Root>
             <Table.Thead>
               <Table.Tr className="bg-[#FCFCFC]">
-                <Table.Th className="pl-8">Site</Table.Th>
+                <Table.Th className="pl-8">ID</Table.Th>
+                <Table.Th>Site</Table.Th>
                 <Table.Th>Pavimento</Table.Th>
                 <Table.Th>Conformidade</Table.Th>
                 <Table.Th>{''}</Table.Th>
@@ -60,7 +61,7 @@ const EqCmiInspectionTable = () => {
             <Table.Tbody className="max-h-[28rem] overflow-y-scroll">
               {equipments?.pages[0].data.value.length === 0 && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={4} className="text-center text-primary">
+                  <Table.Td colSpan={5} className="text-center text-primary">
                     Nenhum equipamento encontrado!
                   </Table.Td>
                 </Table.Tr>
@@ -68,7 +69,7 @@ const EqCmiInspectionTable = () => {
 
               {isError && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={4} className="text-center text-primary">
+                  <Table.Td colSpan={5} className="text-center text-primary">
                     Ops, ocorreu um erro, recarregue a página e tente novamente!
                   </Table.Td>
                 </Table.Tr>
@@ -78,7 +79,7 @@ const EqCmiInspectionTable = () => {
                 <>
                   {Array.from({ length: 15 }).map((_, index) => (
                     <Table.Tr key={index}>
-                      <Table.Td className="h-14 px-4" colSpan={4}>
+                      <Table.Td className="h-14 px-4" colSpan={5}>
                         <Skeleton height="3.5rem" animation="wave" />
                       </Table.Td>
                     </Table.Tr>
@@ -93,10 +94,11 @@ const EqCmiInspectionTable = () => {
                   (item: any) =>
                     item?.data?.value?.map((item: IEqInspectionCmi) => (
                       <Table.Tr key={item.Id}>
-                        <Table.Td className="pl-8">{item?.site}</Table.Td>
+                        <Table.Td className="pl-8">{item?.Id}</Table.Td>
+                        <Table.Td>{item?.site}</Table.Td>
                         <Table.Td>{item?.pavimento}</Table.Td>
                         <Table.Td>
-                          {item.conforme ? (
+                          {item?.conforme ? (
                             <div className="flex justify-center items-center gap-2 px-4 py-1 rounded-full bg-[#EBFFE2] max-w-[8.4375rem]">
                               <div className="w-3 h-3 rounded-full bg-[#70EC36]" />
                               <span>Conforme</span>

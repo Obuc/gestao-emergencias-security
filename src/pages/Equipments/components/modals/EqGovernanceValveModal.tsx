@@ -36,7 +36,7 @@ const EqGovernanceValveModal = () => {
 
   const handleOnOpenChange = () => {
     setGovernanceValveItem(null);
-    navigate('/equipments');
+    navigate('/equipments/valves');
   };
 
   const generateQrCodePdf = () => {
@@ -173,7 +173,7 @@ const EqGovernanceValveModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/${item.Id}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/records/valves/${item.Id}`} />
                   <EquipmentCard.Content
                     date={cardDate}
                     responsible={item.bombeiro_id.Title}

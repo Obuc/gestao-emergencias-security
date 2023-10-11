@@ -34,7 +34,7 @@ const EqExtinguisherModal = () => {
 
   const handleOnOpenChange = () => {
     setExtinguisherItem(null);
-    navigate('/equipments');
+    navigate('/equipments/extinguisher');
   };
 
   const generateQrCodePdf = () => {
@@ -197,7 +197,7 @@ const EqExtinguisherModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/${item.Id}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/records/extinguisher/${item.Id}`} />
                   <EquipmentCard.Content
                     date={cardDate}
                     responsible={item.bombeiro_id.Title}

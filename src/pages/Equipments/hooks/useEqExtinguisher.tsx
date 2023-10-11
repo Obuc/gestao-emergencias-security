@@ -11,7 +11,6 @@ const useEqExtinguisher = () => {
   const location = useLocation();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
-  const equipments_value = localStorage.getItem('equipments_value');
 
   const path = `?$Select=Id,cod_qrcode,cod_extintor,excluido,Modified,conforme,site/Title,pavimento/Title,local/Title&$expand=site,pavimento,local&$Orderby=Modified desc&$Top=100&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
 
@@ -44,19 +43,16 @@ const useEqExtinguisher = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey:
-      equipments_value === 'Extintores'
-        ? ['equipments_data', user_site]
-        : ['equipments_data', user_site, equipments_value],
+    queryKey: ['equipments_data', user_site, params.form],
 
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: equipments_value === 'Extintores' && location.pathname === '/equipments',
+    enabled: params.form === 'extinguisher' && location.pathname === '/equipments/extinguisher',
   });
 
   const fetchEqExtinguisherData = async () => {
-    if (params.id && equipments_value === 'Extintores') {
+    if (params.id && params.form === 'extinguisher') {
       const pathModal = `?$Select=Id,cod_extintor,cod_qrcode,conforme,local/Title,massa/Title,pavimento/Title,predio/Title,site/Title,tipo_extintor/Title,validade,ultima_inspecao&$expand=local,massa,pavimento,predio,site,tipo_extintor&$filter=Id eq ${params.id}`;
       const resp = await crud.getListItemsv2('extintores', pathModal);
       return resp.results[0];
@@ -64,7 +60,7 @@ const useEqExtinguisher = () => {
   };
 
   const fechRecordsExtinguisherData = async (extinguisherId: number) => {
-    if (params.id && equipments_value === 'Extintores') {
+    if (params.id && params.form === 'extinguisher') {
       const resp = await crud.getListItemsv2(
         'registros_extintor',
         `?$Select=Id,extintor_id/Id,bombeiro_id/Title,cod_extintor,data_pesagem,novo,observacao,status,conforme,Created&$expand=bombeiro_id,extintor_id&$Filter=(extintor_id/Id eq '${extinguisherId}')`,
@@ -76,11 +72,11 @@ const useEqExtinguisher = () => {
   const { data: eqExtinguisherModal, isLoading: isLoadingEqExtinguisherModal }: UseQueryResult<IEqExtinguisherModal> =
     useQuery({
       queryKey:
-        params.id && equipments_value === 'Extintores'
-          ? ['eq_extinguisher_data_modal', params.id, equipments_value]
+        params.id && params.form === 'extinguisher'
+          ? ['eq_extinguisher_data_modal', params.id, params.form]
           : ['eq_extinguisher_data_modal'],
       queryFn: async () => {
-        if (params.id && equipments_value === 'Extintores') {
+        if (params.id) {
           const eqExtinguisherData = await fetchEqExtinguisherData();
 
           const recordsExtinguisherData =
@@ -102,7 +98,7 @@ const useEqExtinguisher = () => {
       },
       staleTime: 5000 * 60, // 5 Minute
       refetchOnWindowFocus: false,
-      enabled: params.id !== undefined && equipments_value === 'Extintores' && location.pathname === '/equipments',
+      enabled: params.id !== undefined && params.form === 'extinguisher',
     });
 
   const {
@@ -132,7 +128,7 @@ const useEqExtinguisher = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: equipments_value === 'Extintores' && location.pathname === '/equipments',
+    enabled: location.pathname === '/equipments/extinguisher',
   });
 
   const { mutateAsync: mutateRemoveEquipment, isLoading: isLoadingMutateRemoveEquipment } = useMutation({
@@ -140,7 +136,7 @@ const useEqExtinguisher = () => {
       await crud.updateItemList('extintores', itemId, { excluido: true });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['equipments_data', user_site] });
+      queryClient.invalidateQueries({ queryKey: ['equipments_data', user_site, params.form] });
     },
   });
 

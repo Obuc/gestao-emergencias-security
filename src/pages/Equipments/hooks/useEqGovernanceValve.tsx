@@ -9,9 +9,8 @@ const useEqGovernanceValve = () => {
   const params = useParams();
   const location = useLocation();
   const user_site = localStorage.getItem('user_site');
-  const equipments_value = localStorage.getItem('equipments_value');
 
-  const path = `?$Select=Id,cod_qrcode,cod_equipamento,tipo_equipamento/Title,conforme,site/Title,pavimento/Title,local/Title&$expand=site,tipo_equipamento,pavimento,local&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq '${equipments_value}')`;
+  const path = `?$Select=Id,cod_qrcode,cod_equipamento,tipo_equipamento/Title,conforme,site/Title,pavimento/Title,local/Title&$expand=site,tipo_equipamento,pavimento,local&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Válvulas de Governo')`;
 
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'equipamentos_diversos', path });
@@ -42,33 +41,26 @@ const useEqGovernanceValve = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey:
-      equipments_value === 'Válvulas de Governo'
-        ? ['governance_valve_data', user_site, equipments_value]
-        : ['governance_valve_data', user_site],
+    queryKey: ['governance_valve_data', user_site, params.form],
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: equipments_value === 'Válvulas de Governo' && location.pathname === '/equipments',
+    enabled: params.form === 'valves' && location.pathname === '/equipments/valves',
   });
 
   const fetchEqGovernanceValveData = async () => {
-    if (params.id && equipments_value === 'Válvulas de Governo') {
-      const pathModal = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,cod_equipamento,conforme&$expand=site,predio,pavimento,local,tipo_equipamento&$Filter=((tipo_equipamento/Title eq '${equipments_value}') and (Id eq ${params.id}) and (site/Title eq '${user_site}'))`;
+    const pathModal = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,cod_equipamento,conforme&$expand=site,predio,pavimento,local,tipo_equipamento&$Filter=((tipo_equipamento/Title eq 'Válvulas de Governo') and (Id eq ${params.id}) and (site/Title eq '${user_site}'))`;
 
-      const resp = await crud.getListItemsv2('equipamentos_diversos', pathModal);
-      return resp.results[0];
-    }
+    const resp = await crud.getListItemsv2('equipamentos_diversos', pathModal);
+    return resp.results[0];
   };
 
   const fechRecordsGovernanceValveData = async (governanceValveId: number) => {
-    if (params.id && equipments_value === 'Válvulas de Governo') {
-      const resp = await crud.getListItemsv2(
-        'registros_valvula_governo',
-        `?$Select=Id,valvula_id/Id,bombeiro_id/Title,observacao,conforme,Created,data_legado&$expand=bombeiro_id,valvula_id&$Filter=(valvula_id/Id eq '${governanceValveId}')`,
-      );
-      return resp.results || null;
-    }
+    const resp = await crud.getListItemsv2(
+      'registros_valvula_governo',
+      `?$Select=Id,valvula_id/Id,bombeiro_id/Title,observacao,conforme,Created,data_legado&$expand=bombeiro_id,valvula_id&$Filter=(valvula_id/Id eq '${governanceValveId}')`,
+    );
+    return resp.results || null;
   };
 
   const {
@@ -76,11 +68,11 @@ const useEqGovernanceValve = () => {
     isLoading: isLoadingEqEqGovernanceValveModal,
   }: UseQueryResult<IEqGovernanceValveModal> = useQuery({
     queryKey:
-      params.id && equipments_value === 'Válvulas de Governo'
-        ? ['eq_governance_valve_modal', params.id, equipments_value]
+      params.id && params.form === 'valves'
+        ? ['eq_governance_valve_modal', params.id, params.form]
         : ['eq_governance_valve_modal'],
     queryFn: async () => {
-      if (params.id && equipments_value === 'Válvulas de Governo') {
+      if (params.id && params.form === 'valves') {
         const eqGovernanceValveData = await fetchEqGovernanceValveData();
 
         const recordsGovernanceValveData =
@@ -100,8 +92,7 @@ const useEqGovernanceValve = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled:
-      params.id !== undefined && equipments_value === 'Válvulas de Governo' && location.pathname === '/equipments',
+    enabled: params.id !== undefined && params.form === 'valves',
   });
 
   const {
@@ -111,7 +102,7 @@ const useEqGovernanceValve = () => {
   }: UseQueryResult<Array<IEqGovernanceValve>> = useQuery({
     queryKey: ['eq_governance_valve_data'],
     queryFn: async () => {
-      const path = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,excluido,cod_equipamento,conforme&$expand=site,predio,pavimento,local,tipo_equipamento&$Filter=((tipo_equipamento/Title eq '${equipments_value}') and (site/Title eq '${user_site}') and (excluido eq false))`;
+      const path = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,excluido,cod_equipamento,conforme&$expand=site,predio,pavimento,local,tipo_equipamento&$Filter=((tipo_equipamento/Title eq 'Válvulas de Governo') and (site/Title eq '${user_site}') and (excluido eq false))`;
 
       const resp = await crud.getListItems('equipamentos_diversos', path);
 
@@ -131,7 +122,7 @@ const useEqGovernanceValve = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: equipments_value === 'Válvulas de Governo' && location.pathname === '/equipments',
+    enabled: params.form === 'valves' && location.pathname === '/equipments/valves',
   });
 
   const { mutateAsync: mutateRemoveEqGovernanceValve, isLoading: isLoadingMutateRemoveEqGovernanceValve } = useMutation(

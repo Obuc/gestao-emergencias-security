@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import useTestCMI from './hooks/useTestCMI';
@@ -22,6 +22,7 @@ import LoadRatioTable from './components/tables/EmergencyVehicles/LoadRatioTable
 import GeneralChecklistTable from './components/tables/EmergencyVehicles/GeneralChecklistTable';
 
 const Records = () => {
+  const params = useParams();
   const navigate = useNavigate();
   const { formularios, submenu, isLoadingFormularios } = appContext();
   const localSite = localStorage.getItem('user_site');
@@ -51,7 +52,9 @@ const Records = () => {
   }, []);
 
   useEffect(() => {
-    navigate(`/records/${formValue}`);
+    if (params.id === undefined) {
+      navigate(`/records/${formValue}`);
+    }
   }, [formValue]);
 
   const handleExportToExcel = () => {
@@ -145,8 +148,6 @@ const Records = () => {
                     {form.Title}
                   </Select.Item>
                 ))}
-
-                <Select.Separator />
               </Select.Component>
             </div>
 

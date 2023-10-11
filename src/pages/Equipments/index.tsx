@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { faDownload, faExpand } from '@fortawesome/free-solid-svg-icons';
 
 import useEqTestCmi from './hooks/useEqTestCmi';
 import LayoutBase from '../../layout/LayoutBase';
 import { Button } from '../../components/Button';
+import { Select } from '../../components/Select';
 import { appContext } from '../../context/appContext';
 import useEqExtinguisher from './hooks/useEqExtinguisher';
 import useEqInspectionCmi from './hooks/useEqInspectionCmi';
@@ -22,13 +24,14 @@ import EqLoadRatioTable from './components/tables/EmergencyVehicles/EqLoadRatioT
 import EqGovernanceValveQRCode from './components/tables/QRCode/EqGovernanceValveQRCode';
 import EqGeneralChecklistQRCode from './components/tables/QRCode/EqGeneralChecklistQRCode';
 import EqGeneralChecklistTable from './components/tables/EmergencyVehicles/EqGeneralChecklistTable';
-import { Select } from '../../components/Select';
 
 const Equipments = () => {
   const { formularios, submenu, isLoadingFormularios } = appContext();
 
   const localSite = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
+  const navigate = useNavigate();
+  const params = useParams();
 
   const [formValue, setFormValue] = useState<string>(equipments_value ?? 'Extintores');
   const [openModalGenerateQRCode, setOpenModalGenerateQRCode] = useState<boolean | null>(null);
@@ -50,47 +53,53 @@ const Equipments = () => {
 
   const handleExportToExcel = () => {
     switch (formValue) {
-      case 'Extintores':
+      case 'extinguisher':
         handleExportExtinguisherToExcel();
         break;
 
-      case 'Teste CMI':
+      case 'cmi_test':
         handleExportEqTestCmiToExcel();
         break;
 
-      case 'Inspeção CMI':
+      case 'cmi_inspection':
         handleExportEqInspectionCmiToExcel();
         break;
 
-      case 'Checklist Geral':
+      case 'general_checklist':
         handleExportEqGeneralChecklistToExcel();
         break;
 
-      case 'Scania':
+      case 'scania':
         handleExportEqLoadRatioToExcel();
         break;
 
-      case 'S10':
+      case 's10':
         handleExportEqLoadRatioToExcel();
         break;
 
-      case 'Mercedes':
+      case 'mercedes':
         handleExportEqLoadRatioToExcel();
         break;
 
-      case 'Furgão':
+      case 'van':
         handleExportEqLoadRatioToExcel();
         break;
 
-      case 'Ambulância Iveco':
+      case 'iveco':
         handleExportEqLoadRatioToExcel();
         break;
 
-      case 'Ambulância Sprinter':
+      case 'sprinter':
         handleExportEqLoadRatioToExcel();
         break;
     }
   };
+
+  useEffect(() => {
+    if (params.id === undefined) {
+      navigate(`/equipments/${formValue}`);
+    }
+  }, [formValue]);
 
   return (
     <LayoutBase showMenu>
@@ -105,7 +114,10 @@ const Equipments = () => {
               <Select.Component
                 id="state_id"
                 name="state_id"
-                value={formValue}
+                value={
+                  filteredForms?.find((form) => form.url_path === formValue)?.Title ||
+                  filteredSubMenu?.find((form) => form.path_url === formValue)?.Title
+                }
                 className="w-[22.5rem]"
                 mode="gray"
                 isLoading={isLoadingFormularios}
@@ -115,7 +127,7 @@ const Equipments = () => {
                 }}
               >
                 {filteredForms?.map((form) => (
-                  <Select.Item key={form.Id} value={form.Title}>
+                  <Select.Item key={form.Id} value={form.url_path}>
                     {form.Title}
                   </Select.Item>
                 ))}
@@ -124,7 +136,7 @@ const Equipments = () => {
                 <Select.Label>Veículos de Emergência</Select.Label>
 
                 {filteredSubMenu?.map((form) => (
-                  <Select.Item key={form.Id * 2} value={form.Title}>
+                  <Select.Item key={form.Id * 2} value={form.path_url}>
                     {form.Title}
                   </Select.Item>
                 ))}
@@ -146,35 +158,35 @@ const Equipments = () => {
             </div>
           </div>
 
-          {formValue === 'Extintores' && <EqExtinguisherTable />}
-          {formValue === 'Válvulas de Governo' && <EqEqGovernanceValve />}
-          {formValue === 'Teste CMI' && <EqCmiTestTable />}
-          {formValue === 'Inspeção CMI' && <EqCmiInspectionTable />}
+          {formValue === 'extinguisher' && <EqExtinguisherTable />}
+          {formValue === 'valves' && <EqEqGovernanceValve />}
+          {formValue === 'cmi_test' && <EqCmiTestTable />}
+          {formValue === 'cmi_inspection' && <EqCmiInspectionTable />}
 
-          {formValue === 'Checklist Geral' && <EqGeneralChecklistTable />}
-          {formValue === 'Scania' && <EqLoadRatioTable />}
-          {formValue === 'S10' && <EqLoadRatioTable />}
-          {formValue === 'Mercedes' && <EqLoadRatioTable />}
-          {formValue === 'Furgão' && <EqLoadRatioTable />}
-          {formValue === 'Ambulância Iveco' && <EqLoadRatioTable />}
-          {formValue === 'Ambulância Sprinter' && <EqLoadRatioTable />}
+          {formValue === 'general_checklist' && <EqGeneralChecklistTable />}
+          {formValue === 'scania' && <EqLoadRatioTable />}
+          {formValue === 's10' && <EqLoadRatioTable />}
+          {formValue === 'mercedes' && <EqLoadRatioTable />}
+          {formValue === 'van' && <EqLoadRatioTable />}
+          {formValue === 'iveco' && <EqLoadRatioTable />}
+          {formValue === 'sprinter' && <EqLoadRatioTable />}
         </div>
       </div>
 
       {openModalGenerateQRCode && (
         <EqGenerateQRCodeModal open={openModalGenerateQRCode} onOpenChange={() => setOpenModalGenerateQRCode(null)}>
-          {formValue === 'Extintores' && <EqExtinguisherQRCode />}
-          {formValue === 'Teste CMI' && <EqTestCmiQRCode />}
-          {formValue === 'Inspeção CMI' && <EqInspectionCmiQRCode />}
-          {formValue === 'Válvulas de Governo' && <EqGovernanceValveQRCode />}
+          {formValue === 'extinguisher' && <EqExtinguisherQRCode />}
+          {formValue === 'cmi_test' && <EqTestCmiQRCode />}
+          {formValue === 'cmi_inspection' && <EqInspectionCmiQRCode />}
+          {formValue === 'valves' && <EqGovernanceValveQRCode />}
 
-          {formValue === 'Checklist Geral' && <EqGeneralChecklistQRCode />}
-          {formValue === 'Scania' && <EqLoadRatioQRCode />}
-          {formValue === 'S10' && <EqLoadRatioQRCode />}
-          {formValue === 'Mercedes' && <EqLoadRatioQRCode />}
-          {formValue === 'Furgão' && <EqLoadRatioQRCode />}
-          {formValue === 'Ambulância Iveco' && <EqLoadRatioQRCode />}
-          {formValue === 'Ambulância Sprinter' && <EqLoadRatioQRCode />}
+          {formValue === 'general_checklist' && <EqGeneralChecklistQRCode />}
+          {formValue === 'scania' && <EqLoadRatioQRCode />}
+          {formValue === 's10' && <EqLoadRatioQRCode />}
+          {formValue === 'mercedes' && <EqLoadRatioQRCode />}
+          {formValue === 'van' && <EqLoadRatioQRCode />}
+          {formValue === 'iveco' && <EqLoadRatioQRCode />}
+          {formValue === 'sprinter' && <EqLoadRatioQRCode />}
         </EqGenerateQRCodeModal>
       )}
     </LayoutBase>
