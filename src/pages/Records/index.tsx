@@ -17,6 +17,7 @@ import GovernanceValveTable from './components/tables/GovernanceValveTable';
 import useGeneralChecklist from './hooks/EmergencyVehicles/useGeneralChecklist';
 import LoadRatioTable from './components/tables/EmergencyVehicles/LoadRatioTable';
 import GeneralChecklistTable from './components/tables/EmergencyVehicles/GeneralChecklistTable';
+import HydrantsTable from './components/tables/HydrantsTable';
 
 const Records = () => {
   const { formularios, submenu, isLoadingFormularios } = appContext();
@@ -166,6 +167,7 @@ const Records = () => {
           {formValue === 'Válvulas de Governo' && <GovernanceValveTable />}
           {formValue === 'Teste CMI' && <TestCmiTable />}
           {formValue === 'Inspeção CMI' && <InspectionCmiTable />}
+          {formValue === 'Hidrantes' && <HydrantsTable />}
 
           {/* Veiculos de Emergencia */}
           {formValue === 'Checklist Geral' && <GeneralChecklistTable />}
