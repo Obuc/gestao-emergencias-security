@@ -1,8 +1,6 @@
 export interface GovernanceValve {
   Created: Date;
-  data_legado?: string;
   Id: number;
-  Title: null;
   bombeiro: string;
   conforme: boolean;
   valvula: {

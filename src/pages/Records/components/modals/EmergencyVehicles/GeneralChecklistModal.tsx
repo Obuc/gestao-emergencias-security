@@ -39,7 +39,7 @@ const GeneralChecklistModal = () => {
 
   const handleOnOpenChange = () => {
     setGeneralChecklistItem(null);
-    navigate('/records');
+    navigate('/records/general_checklist');
   };
 
   const expotToPdf = () => {

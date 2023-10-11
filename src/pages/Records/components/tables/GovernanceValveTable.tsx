@@ -5,6 +5,7 @@ import { Skeleton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroller';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { Table } from '../../../../components/Table';
 import { Select } from '../../../../components/Select';
@@ -12,7 +13,6 @@ import TextField from '../../../../components/TextField';
 import DatePicker from '../../../../components/DatePicker';
 import { appContext } from '../../../../context/appContext';
 import useGovernanceValve from '../../hooks/useGovernanceValve';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PopoverTables from '../../../../components/PopoverTables';
 import GovernanceValveModal from '../modals/GovernanceValveModal';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
@@ -37,19 +37,26 @@ const GovernanceValveTable = () => {
     hasNextPage,
     isLoading,
     isError,
-    mutateRemoveExtinguisher,
-    IsLoadingMutateRemoveExtinguisher,
+    mutateRemoveGovernanceValve,
+    isLoadingMutateRemoveGovernanceValve,
   } = useGovernanceValve(governanceValveFilters);
 
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/records/${id}?edit=false`);
+    navigate(`/records/valves/${id}?edit=false`);
   };
 
   const handleEdit = (id: number) => {
-    navigate(`/records/${id}?edit=true`);
+    navigate(`/records/valves/${id}?edit=true`);
+  };
+
+  const handleRemove = async () => {
+    if (removeItem) {
+      mutateRemoveGovernanceValve(removeItem);
+      setRemoveItem(null);
+    }
   };
 
   const handleRemoveAllFilters = () => {
@@ -263,8 +270,8 @@ const GovernanceValveTable = () => {
 
       {removeItem !== null && (
         <RemoveItem
-          handleRemove={async () => await mutateRemoveExtinguisher(removeItem)}
-          isLoading={IsLoadingMutateRemoveExtinguisher}
+          handleRemove={handleRemove}
+          isLoading={isLoadingMutateRemoveGovernanceValve}
           onOpenChange={() => setRemoveItem(null)}
           open={removeItem !== null}
         />

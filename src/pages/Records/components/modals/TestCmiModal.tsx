@@ -33,7 +33,7 @@ const TestCmiModal = () => {
 
   const handleOnOpenChange = () => {
     setCmiItem(null);
-    navigate('/records');
+    navigate('/records/cmi_test');
   };
 
   const expotToPdf = () => {
@@ -55,8 +55,6 @@ const TestCmiModal = () => {
   const initialRequestBadgeValues: TestCmiDataModal = {
     Created: testCmiDataModal?.Created || '',
     Id: testCmiDataModal?.Id || 0,
-    Modified: testCmiDataModal?.Modified || '',
-    Title: null,
     bombeiro: testCmiDataModal?.bombeiro ?? '',
     cmi: {
       Id: testCmiDataModal?.extintor?.Id || '',
@@ -68,9 +66,7 @@ const TestCmiModal = () => {
       cod_qrcode: testCmiDataModal?.extintor?.cod_qrcode || '',
     },
     respostas: testCmiDataModal?.respostas || {},
-    novo: testCmiDataModal?.novo || false,
     observacao: testCmiDataModal?.observacao || '',
-    status: '',
   };
 
   const handleSubmit = async (values: TestCmiDataModal) => {
@@ -94,7 +90,6 @@ const TestCmiModal = () => {
       >
         {(props: FormikProps<TestCmiDataModal>) => (
           <>
-            {/* <div onClick={() => console.log(props.values)}>Props</div> */}
             <div ref={componentRef} id="container">
               <div className="py-6 px-8">
                 <div className="flex gap-2 py-2">
@@ -115,9 +110,7 @@ const TestCmiModal = () => {
                     label="Data"
                     disabled
                     onChange={props.handleChange}
-                    value={
-                      props.values?.Created && format(new Date(props.values?.Created), 'dd MMM yyyy', { locale: ptBR })
-                    }
+                    value={props.values.Created ? format(props.values?.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}
                     isLoading={isLoadingTestCmiDataModal}
                   />
 

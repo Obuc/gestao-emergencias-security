@@ -15,17 +15,45 @@ const useLoadRatio = () => {
   const equipments_value = localStorage.getItem('equipments_value');
 
   const isVehicleValue =
-    equipments_value === 'Scania' ||
-    equipments_value === 'S10' ||
-    equipments_value === 'Mercedes' ||
-    equipments_value === 'Furgão' ||
-    equipments_value === 'Ambulância Iveco' ||
-    equipments_value === 'Ambulância Sprinter';
+    params.form === 'scania' ||
+    params.form === 's10' ||
+    params.form === 'mercedes' ||
+    params.form === 'van' ||
+    params.form === 'iveco' ||
+    params.form === 'sprinter';
+
+  let caseEquipmentsValue: string;
+
+  switch (equipments_value) {
+    case 'scania':
+      caseEquipmentsValue = 'Scania';
+      break;
+
+    case 's10':
+      caseEquipmentsValue = 'S10';
+      break;
+
+    case 'mercedes':
+      caseEquipmentsValue = 'Mercedes';
+      break;
+
+    case 'van':
+      caseEquipmentsValue = 'Furgão';
+      break;
+
+    case 'iveco':
+      caseEquipmentsValue = 'Ambulância Iveco';
+      break;
+
+    case 'sprinter':
+      caseEquipmentsValue = 'Ambulância Sprinter';
+      break;
+  }
 
   const [isLoadingLoadRatioExportToExcel, setIsLoadingLoadRatioExportToExcel] = useState<boolean>(false);
 
   const fechLoadRatio = async ({ pageParam }: { pageParam?: string }) => {
-    const path = `?$Select=*,site/Title,bombeiro/Title,tipo_veiculo/Title&$expand=site,bombeiro,tipo_veiculo&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_veiculo/Title eq '${equipments_value}')`;
+    const path = `?$Select=*,site/Title,bombeiro/Title,tipo_veiculo/Title&$expand=site,bombeiro,tipo_veiculo&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_veiculo/Title eq '${caseEquipmentsValue}')`;
     const response = await crud.getPaged(
       pageParam ? { nextUrl: pageParam } : { list: 'registros_relacao_carga', path },
     );
@@ -75,7 +103,7 @@ const useLoadRatio = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['load_ratio_data', user_site, equipments_value],
+    queryKey: ['load_ratio_data', user_site, params.form],
     queryFn: fechLoadRatio,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -115,7 +143,7 @@ const useLoadRatio = () => {
   };
 
   const { data: loadRatioDataModal, isLoading: isLoadingLoadRatioDataModal } = useQuery({
-    queryKey: params.id ? ['load_ratio_data_modal', params.id, equipments_value] : ['load_ratio_data_modal'],
+    queryKey: params.id ? ['load_ratio_data_modal', params.id, params.form] : ['load_ratio_data_modal'],
     queryFn: async () => {
       if (params.id && isVehicleValue) {
         const generalChecklistData = await fetchLoadRatioData();
@@ -170,7 +198,7 @@ const useLoadRatio = () => {
       await crud.deleteItemList('registros_relacao_carga', itemId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['load_ratio_data', user_site, equipments_value] });
+      queryClient.invalidateQueries({ queryKey: ['load_ratio_data', user_site, params.form] });
     },
   });
 
@@ -228,13 +256,13 @@ const useLoadRatio = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['load_ratio_data_modal', params.id, equipments_value] });
-      queryClient.invalidateQueries({ queryKey: ['load_ratio_data', user_site, equipments_value] });
+      queryClient.invalidateQueries({ queryKey: ['load_ratio_data_modal', params.id, params.form] });
+      queryClient.invalidateQueries({ queryKey: ['load_ratio_data', user_site, params.form] });
     },
   });
 
   const fetchGeneralChecklistAllRecords = async () => {
-    const path = `?$Select=*,site/Title,bombeiro/Title,tipo_veiculo/Title&$expand=site,bombeiro,tipo_veiculo&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_veiculo/Title eq '${equipments_value}')`;
+    const path = `?$Select=*,site/Title,bombeiro/Title,tipo_veiculo/Title&$expand=site,bombeiro,tipo_veiculo&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_veiculo/Title eq '${caseEquipmentsValue}')`;
 
     const response = await crud.getListItems('registros_relacao_carga', path);
 
@@ -285,7 +313,7 @@ const useLoadRatio = () => {
       const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
       XLSX.utils.book_append_sheet(wb, ws, '');
-      XLSX.writeFile(wb, `Registros - Veiculos Emergencia ${equipments_value}.xlsx`);
+      XLSX.writeFile(wb, `Registros - Veiculos Emergencia ${caseEquipmentsValue}.xlsx`);
     }
 
     setIsLoadingLoadRatioExportToExcel(false);

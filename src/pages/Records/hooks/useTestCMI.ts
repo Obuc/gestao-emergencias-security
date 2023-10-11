@@ -1,5 +1,6 @@
 import * as XLSX from 'xlsx';
 import { useState } from 'react';
+import { parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -11,11 +12,11 @@ const useTestCMI = () => {
   const params = useParams();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
-  const equipments_value = localStorage.getItem('equipments_value');
 
   const [isLoadingTestCmiExportToExcel, setIsLoadingTestCmiExportToExcel] = useState<boolean>(false);
 
-  const path = `?$Select=*,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  const path = `?$Select=Id,cmi_idId,site/Title,bombeiro_id/Title,Created,conforme&$expand=site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+
   const fetchTestCMI = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'registros_teste_cmi', path });
 
@@ -23,8 +24,12 @@ const useTestCMI = () => {
       response.data.value.map(async (item: any) => {
         const cmiResponse = await crud.getListItemsv2(
           'equipamentos_diversos',
-          `?$Select=*,Id,predio/Title,conforme,cod_qrcode&$expand=predio&$Filter=(Id eq ${item.cmi_idId})`,
+          `?$Select=Id,predio/Title&$expand=predio&$Filter=(Id eq ${item.cmi_idId})`,
         );
+
+        const dataCriadoIsoDate = item.Created && parseISO(item.Created);
+        const dataCriado =
+          dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
 
         const cmi = cmiResponse.results[0] || null;
 
@@ -37,6 +42,7 @@ const useTestCMI = () => {
 
         return {
           ...item,
+          Created: dataCriado,
           bombeiro: item.bombeiro_id?.Title,
           cmi: cmiValues,
         };
@@ -63,10 +69,8 @@ const useTestCMI = () => {
     queryFn: fetchTestCMI,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: equipments_value === 'Teste CMI',
+    enabled: params.form === 'cmi_test',
   });
-
-  //
 
   const fetchCmiData = async () => {
     const pathModal = `?$Select=*,bombeiro_id/Title&$expand=bombeiro_id&$filter=Id eq ${params.id}`;
@@ -103,11 +107,15 @@ const useTestCMI = () => {
   const { data: testCmiDataModal, isLoading: isLoadingTestCmiDataModal } = useQuery({
     queryKey: params.id ? ['teste_cmi_data_modal', params.id] : ['teste_cmi_data_modal'],
     queryFn: async () => {
-      if (params.id && equipments_value === 'Teste CMI') {
+      if (params.id && params.form === 'cmi_test') {
         const cmiData = await fetchCmiData();
         const cmi = await fetchEquipmentCmiData(cmiData.cmi_idId);
-
         const respostas = await fetchResponseTestCmi();
+
+        const dataCriadoIsoDate = cmiData.Created && parseISO(cmiData.Created);
+
+        const dataCriado =
+          dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
 
         const cmiValues = cmi
           ? {
@@ -121,6 +129,7 @@ const useTestCMI = () => {
 
         return {
           ...cmiData,
+          Created: dataCriado,
           bombeiro: cmiData.bombeiro_id?.Title,
           extintor: cmiValues,
           respostas: respostas,
@@ -131,13 +140,12 @@ const useTestCMI = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && equipments_value === 'Teste CMI',
+    enabled: params.id !== undefined && params.form === 'cmi_test',
   });
 
   const { mutateAsync: mutateRemoveTestCmi, isLoading: IsLoadingMutateRemoveTestCmi } = useMutation({
     mutationFn: async (itemId: number) => {
       if (itemId) {
-        // Remove List: respostas_teste_cmi
         const itemResponse = await crud.getListItemsv2(
           'respostas_teste_cmi',
           `?$Select=Id,registro_id/Id&$expand=registro_id&$Filter=(registro_id/Id eq ${itemId})`,
@@ -152,8 +160,6 @@ const useTestCMI = () => {
           console.log('Nenhum item encontrado para excluir.');
         }
       }
-
-      // Remove List: registros_teste_cmi
       await crud.deleteItemList('registros_teste_cmi', itemId);
     },
     onSuccess: () => {

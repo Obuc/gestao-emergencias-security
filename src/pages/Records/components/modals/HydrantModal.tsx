@@ -35,7 +35,7 @@ const HydrantModal = () => {
 
   const handleOnOpenChange = () => {
     setHydrantItem(null);
-    navigate('/records');
+    navigate('/records/hydrants');
   };
 
   const expotToPdf = () => {

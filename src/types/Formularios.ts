@@ -1,5 +1,6 @@
 export interface IFormulario {
   Id: number;
+  url_path: string;
   Title: string;
   site: {
     Title?: string;

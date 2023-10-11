@@ -1,12 +1,11 @@
+import jsPDF from 'jspdf';
 import { format } from 'date-fns';
+import html2canvas from 'html2canvas';
 import { ptBR } from 'date-fns/locale';
-import { useEffect, useRef, useState } from 'react';
 import { Formik, FormikProps } from 'formik';
+import { useEffect, useRef, useState } from 'react';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 import Modal from '../../../../components/Modal';
 import { Button } from '../../../../components/Button';
@@ -14,8 +13,8 @@ import TextArea from '../../../../components/TextArea';
 import TextField from '../../../../components/TextField';
 import { Answers } from '../../../../components/Answers';
 import { RespostaExtintor } from '../../types/Extinguisher';
-import useGovernanceValve from '../../hooks/useGovernanceValve';
 import { GovernanceValve } from '../../types/GovernanceValve';
+import useGovernanceValve from '../../hooks/useGovernanceValve';
 
 const GovernanceValveModal = () => {
   const params = useParams();
@@ -28,7 +27,7 @@ const GovernanceValveModal = () => {
     governaceValveModal,
     isLoadingGovernaceValveModal,
     mutateEditGovernanceValve,
-    IsLoadingMutateEditGovernanceValve,
+    isLoadingMutateEditGovernanceValve,
   } = useGovernanceValve();
 
   const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
@@ -41,7 +40,7 @@ const GovernanceValveModal = () => {
 
   const handleOnOpenChange = () => {
     setExtinguisherItem(null);
-    navigate('/records');
+    navigate('/records/valves');
   };
 
   const expotToPdf = () => {
@@ -65,9 +64,7 @@ const GovernanceValveModal = () => {
 
   const initialRequestBadgeValues: GovernanceValve = {
     Created: governaceValveModal?.Created || '',
-    data_legado: governaceValveModal?.data_legado || '',
     Id: governaceValveModal?.Id || 0,
-    Title: null,
     bombeiro: governaceValveModal?.bombeiro ?? '',
     conforme: governaceValveModal?.conforme ?? '',
     valvula: {
@@ -105,7 +102,6 @@ const GovernanceValveModal = () => {
       >
         {(props: FormikProps<GovernanceValve>) => (
           <>
-            {/* <div onClick={() => console.log(props.values)}>Props</div> */}
             <div ref={componentRef} id="container">
               <div className="py-6 px-8">
                 <div className="flex gap-2 py-2">
@@ -126,13 +122,7 @@ const GovernanceValveModal = () => {
                     label="Data"
                     disabled
                     onChange={props.handleChange}
-                    value={
-                      props.values?.data_legado
-                        ? props.values?.data_legado &&
-                          format(new Date(props.values.data_legado), 'dd MMM yyyy', { locale: ptBR })
-                        : props.values?.Created &&
-                          format(new Date(props.values.Created), 'dd MMM yyyy', { locale: ptBR })
-                    }
+                    value={props.values?.Created ? format(props.values.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}
                     isLoading={isLoadingGovernaceValveModal}
                   />
 
@@ -263,7 +253,7 @@ const GovernanceValveModal = () => {
                     fill
                     className="w-[10rem] h-10"
                   >
-                    {IsLoadingMutateEditGovernanceValve ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
+                    {isLoadingMutateEditGovernanceValve ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
                   </Button.Root>
                 )}
               </div>

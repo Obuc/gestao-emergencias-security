@@ -12,7 +12,6 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
   const params = useParams();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
-  const equipments_value = localStorage.getItem('equipments_value');
 
   const [isLoadingExtinguisherExportToExcel, setIsLoadingExtinguisherExportToExcel] = useState<boolean>(false);
 
@@ -146,7 +145,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
     queryFn: fetchExtinguisher,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: equipments_value === 'Extintores',
+    enabled: params.form === 'extinguisher',
   });
 
   const fetchExtinguisherData = async () => {
@@ -189,11 +188,22 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
   const { data: extinguisherModal, isLoading: isLoadingExtinguisherModal } = useQuery({
     queryKey: params.id ? ['extinguisher_data_modal', params.id] : ['extinguisher_data_modal'],
     queryFn: async () => {
-      if (params.id && equipments_value === 'Extintores') {
+      if (params.id && params.form === 'extinguisher') {
         const extinguisherData = await fetchExtinguisherData();
+
         const bombeiro = await fetchBombeiroData(extinguisherData.bombeiro_idId);
         const extintor = await fetchExtintorData(extinguisherData.extintor_idId);
         const respostas = await fetchRespostasExtintor();
+
+        const extintorValidadeIsoDate = extintor.validade && parseISO(extintor.validade);
+        const dataCriadoIsoDate = extinguisherData.Created && parseISO(extinguisherData.Created);
+
+        const dataCriado =
+          dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
+
+        const extintorValidade =
+          extintorValidadeIsoDate &&
+          new Date(extintorValidadeIsoDate.getTime() + extintorValidadeIsoDate.getTimezoneOffset() * 60000);
 
         const bombeiroValue = bombeiro ? bombeiro.Title : null;
 
@@ -205,7 +215,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
               pavimento: extintor.pavimento.Title,
               local: extintor.local.Title,
               cod_extintor: extintor.cod_extintor,
-              validade: extintor.validade,
+              validade: extintorValidade,
               conforme: extintor.conforme,
               massa: extintor.massa.Title,
               cod_qrcode: extintor.cod_qrcode,
@@ -215,6 +225,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
 
         return {
           ...extinguisherData,
+          Created: dataCriado,
           bombeiro: bombeiroValue,
           extintor: extintorValues,
           respostas: respostas,
@@ -225,13 +236,26 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && equipments_value === 'Extintores',
+    enabled: params.id !== undefined && params.form === 'extinguisher',
   });
 
-  const { mutateAsync: mutateRemoveExtinguisher, isLoading: IsLoadingMutateRemoveExtinguisher } = useMutation({
+  const { mutateAsync: mutateRemoveExtinguisher, isLoading: isLoadingMutateRemoveExtinguisher } = useMutation({
     mutationFn: async (itemId: number) => {
       if (itemId) {
-        await crud.deleteItemList('Extintores', itemId);
+        const itemResponse = await crud.getListItemsv2(
+          'respostas_extintor',
+          `?$Select=Id,registro_id/Id&$expand=registro_id&$Filter=(registro_id/Id eq ${itemId})`,
+        );
+
+        if (itemResponse.results.length > 0) {
+          for (const item of itemResponse.results) {
+            const itemIdToDelete = item.Id;
+            await crud.deleteItemList('respostas_extintor', itemIdToDelete);
+          }
+        } else {
+          console.log('Nenhum item encontrado para excluir.');
+        }
+        await crud.deleteItemList('registros_extintor', itemId);
       }
     },
     onSuccess: () => {
@@ -388,20 +412,6 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
     setIsLoadingExtinguisherExportToExcel(false);
   };
 
-  // const { data: extintoresLocal } = useQuery({
-  //   queryKey: equipments_value ? ['extinguisher_place', equipments_value] : ['extinguisher_place'],
-  //   queryFn: async () => {
-  //     const resp = await crud.getListItems(
-  //       'local',
-  //       `?$Select=Id,Title,site/Title&$expand=site&$Filter=( site/Title eq '${localSite}')`,
-  //     );
-  //     return resp;
-  //   },
-  //   staleTime: 5000 * 60, // 5 Minute
-  //   refetchOnWindowFocus: false,
-  //   enabled: equipments_value === 'Extintores',
-  // });
-
   return {
     extinguisher,
     fetchNextPage,
@@ -411,7 +421,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
     extinguisherModal,
     isLoadingExtinguisherModal,
     mutateRemoveExtinguisher,
-    IsLoadingMutateRemoveExtinguisher,
+    isLoadingMutateRemoveExtinguisher,
     mutateEditExtinguisher,
     IsLoadingMutateEditExtinguisher,
 

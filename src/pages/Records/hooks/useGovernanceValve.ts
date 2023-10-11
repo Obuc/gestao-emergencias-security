@@ -1,19 +1,18 @@
 import * as XLSX from 'xlsx';
 import { useState } from 'react';
+import { parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { RespostaExtintor } from '../types/Extinguisher';
 import { sharepointContext } from '../../../context/sharepointContext';
 import { GovernanceValve, IGovernanceValveFiltersProps } from '../types/GovernanceValve';
-import { parseISO } from 'date-fns';
 
 const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProps) => {
   const { crud } = sharepointContext();
   const params = useParams();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
-  const equipments_value = localStorage.getItem('equipments_value');
 
   const [isLoadingGovernanceValveExportToExcel, setIsLoadingGovernanceValveExportToExcel] = useState<boolean>(false);
 
@@ -70,7 +69,7 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
       response.data.value.map(async (item: any) => {
         const valvulaResponse = await crud.getListItemsv2(
           'equipamentos_diversos',
-          `?$Select=Id,tipo_equipamento/Title,predio/Title,pavimento/Title,local/Title,cod_equipamento,conforme,cod_qrcode,excluido&$expand=predio,pavimento,local,tipo_equipamento&$Filter=((Id eq ${item.valvula_id.Id}) and (tipo_equipamento/Title eq '${equipments_value}'))`,
+          `?$Select=Id,tipo_equipamento/Title,predio/Title,pavimento/Title,local/Title,cod_equipamento,conforme,cod_qrcode,excluido&$expand=predio,pavimento,local,tipo_equipamento&$Filter=((Id eq ${item.valvula_id.Id}) and (tipo_equipamento/Title eq 'Válvulas de Governo'))`,
         );
 
         const valvula = valvulaResponse.results[0] || null;
@@ -129,7 +128,7 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
     queryFn: fetchGovernaceValve,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: equipments_value === 'Válvulas de Governo',
+    enabled: params.form === 'valves',
   });
 
   const fetchGovernaceValveModalData = async () => {
@@ -138,22 +137,22 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
     return resp.results[0];
   };
 
-  const fetchGovernaceValveData = async (extintorId: number) => {
+  const fetchGovernaceValveData = async (valveId: number) => {
     const response = await crud.getListItemsv2(
       'equipamentos_diversos',
-      `?$Select=Id,tipo_equipamento/Title,predio/Title,site/Title,pavimento/Title,local/Title,cod_equipamento,conforme,cod_qrcode,excluido&$expand=predio,pavimento,local,tipo_equipamento,site&$Filter=((Id eq ${extintorId}) and (tipo_equipamento/Title eq '${equipments_value}'))`,
+      `?$Select=Id,tipo_equipamento/Title,predio/Title,site/Title,pavimento/Title,local/Title,cod_equipamento,conforme,cod_qrcode,excluido&$expand=predio,pavimento,local,tipo_equipamento,site&$Filter=((Id eq ${valveId}) and (tipo_equipamento/Title eq 'Válvulas de Governo'))`,
     );
     return response.results[0] || null;
   };
 
   const fetchRespostasValvulas = async () => {
-    const respostasExtintorResponse = await crud.getListItemsv2(
+    const response = await crud.getListItemsv2(
       'respostas_valvula_governo',
       `?$Select=Id,valvula_idId,pergunta_idId,registro_idId,resposta,pergunta_id/Title,pergunta_id/categoria&$expand=pergunta_id&$filter=(registro_idId eq ${params.id})`,
     );
 
     const respostasPorCategoria: Record<string, Array<RespostaExtintor>> = {};
-    respostasExtintorResponse.results.forEach((resposta: any) => {
+    response.results.forEach((resposta: any) => {
       const categoria = resposta.pergunta_id.categoria;
       if (!respostasPorCategoria[categoria]) {
         respostasPorCategoria[categoria] = [];
@@ -172,6 +171,10 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
         const valvula = await fetchGovernaceValveData(governaceValveModalData.valvula_idId);
         const respostas = await fetchRespostasValvulas();
 
+        const dataCriadoIsoDate = governaceValveModalData.Created && parseISO(governaceValveModalData.Created);
+        const dataCriado =
+          dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
+
         const valvulaValues = valvula
           ? {
               Id: valvula.Id,
@@ -188,6 +191,7 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
 
         return {
           ...governaceValveModalData,
+          Created: dataCriado,
           bombeiro: governaceValveModalData.bombeiro_id.Title,
           extintor: valvulaValues,
           respostas: respostas,
@@ -198,13 +202,26 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && equipments_value === 'Válvulas de Governo',
+    enabled: params.id !== undefined && params.form === 'valves',
   });
 
-  const { mutateAsync: mutateRemoveExtinguisher, isLoading: IsLoadingMutateRemoveExtinguisher } = useMutation({
+  const { mutateAsync: mutateRemoveGovernanceValve, isLoading: isLoadingMutateRemoveGovernanceValve } = useMutation({
     mutationFn: async (itemId: number) => {
       if (itemId) {
-        // await crud.deleteItemList('Extintores', itemId);
+        const itemResponse = await crud.getListItemsv2(
+          'respostas_valvula_governo',
+          `?$Select=Id,registro_id/Id&$expand=registro_id&$Filter=(registro_id/Id eq ${itemId})`,
+        );
+
+        if (itemResponse.results.length > 0) {
+          for (const item of itemResponse.results) {
+            const itemIdToDelete = item.Id;
+            await crud.deleteItemList('respostas_valvula_governo', itemIdToDelete);
+          }
+        } else {
+          console.log('Nenhum item encontrado para excluir.');
+        }
+        await crud.deleteItemList('registros_valvula_governo', itemId);
       }
     },
     onSuccess: () => {
@@ -224,7 +241,7 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
     },
   });
 
-  const { mutateAsync: mutateEditGovernanceValve, isLoading: IsLoadingMutateEditGovernanceValve } = useMutation({
+  const { mutateAsync: mutateEditGovernanceValve, isLoading: isLoadingMutateEditGovernanceValve } = useMutation({
     mutationFn: async (values: GovernanceValve) => {
       const idRegistrosValvulaGoverno = values.Id;
       const idValvulaGoverno = +values.valvula.Id;
@@ -299,7 +316,7 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
       response.map(async (item: any) => {
         const valvulaResponse = await crud.getListItemsv2(
           'equipamentos_diversos',
-          `?$Select=Id,tipo_equipamento/Title,predio/Title,pavimento/Title,local/Title,cod_equipamento,conforme,cod_qrcode,excluido&$expand=predio,pavimento,local,tipo_equipamento&$Filter=((Id eq ${item.valvula_id.Id}) and (tipo_equipamento/Title eq '${equipments_value}'))`,
+          `?$Select=Id,tipo_equipamento/Title,predio/Title,pavimento/Title,local/Title,cod_equipamento,conforme,cod_qrcode,excluido&$expand=predio,pavimento,local,tipo_equipamento&$Filter=((Id eq ${item.valvula_id.Id}) and (tipo_equipamento/Title eq 'Válvulas de Governo'))`,
         );
 
         const valvula = valvulaResponse.results[0] || null;
@@ -370,11 +387,11 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
     governaceValveModal,
     isLoadingGovernaceValveModal,
 
-    mutateRemoveExtinguisher,
-    IsLoadingMutateRemoveExtinguisher,
+    mutateRemoveGovernanceValve,
+    isLoadingMutateRemoveGovernanceValve,
 
     mutateEditGovernanceValve,
-    IsLoadingMutateEditGovernanceValve,
+    isLoadingMutateEditGovernanceValve,
 
     handleExportGovernanceValveToExcel,
     isLoadingGovernanceValveExportToExcel,

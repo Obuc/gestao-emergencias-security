@@ -1,12 +1,11 @@
+import jsPDF from 'jspdf';
 import { format } from 'date-fns';
+import html2canvas from 'html2canvas';
 import { ptBR } from 'date-fns/locale';
-import { useEffect, useRef, useState } from 'react';
 import { Formik, FormikProps } from 'formik';
+import { useEffect, useRef, useState } from 'react';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 import Modal from '../../../../components/Modal';
 import { Button } from '../../../../components/Button';
@@ -35,7 +34,7 @@ const ExtinguisherModal = () => {
 
   const handleOnOpenChange = () => {
     setExtinguisherItem(null);
-    navigate('/records');
+    navigate('/records/extinguisher');
   };
 
   const expotToPdf = () => {
@@ -57,8 +56,6 @@ const ExtinguisherModal = () => {
   const initialRequestBadgeValues: ExtinguisherDataModal = {
     Created: extinguisherModal?.Created || '',
     Id: extinguisherModal?.Id || 0,
-    Modified: extinguisherModal?.Modified || '',
-    Title: null,
     bombeiro: extinguisherModal?.bombeiro ?? '',
     data_pesagem: extinguisherModal?.data_pesagem || '',
     extintor: {
@@ -77,7 +74,6 @@ const ExtinguisherModal = () => {
     respostas: extinguisherModal?.respostas || {},
     novo: extinguisherModal?.novo || false,
     observacao: extinguisherModal?.observacao || '',
-    status: null,
   };
 
   const handleSubmit = async (values: ExtinguisherDataModal) => {
@@ -101,7 +97,6 @@ const ExtinguisherModal = () => {
       >
         {(props: FormikProps<ExtinguisherDataModal>) => (
           <>
-            {/* <div onClick={() => console.log(props.values)}>Props</div> */}
             <div ref={componentRef} id="container">
               <div className="py-6 px-8">
                 <div className="flex gap-2 py-2">
@@ -122,9 +117,7 @@ const ExtinguisherModal = () => {
                     label="Data"
                     disabled
                     onChange={props.handleChange}
-                    value={
-                      props.values?.Created && format(new Date(props.values?.Created), 'dd MMM yyyy', { locale: ptBR })
-                    }
+                    value={props.values?.Created ? format(props.values?.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}
                     isLoading={isLoadingExtinguisherModal}
                   />
 
@@ -142,17 +135,6 @@ const ExtinguisherModal = () => {
 
                 <div className="flex gap-2 py-2">
                   <TextField
-                    id="extintor.cod_qrcode"
-                    name="extintor.cod_qrcode"
-                    label="Cód. Área"
-                    width="w-[16.25rem]"
-                    disabled
-                    onChange={props.handleChange}
-                    value={props.values.extintor.cod_qrcode}
-                    isLoading={isLoadingExtinguisherModal}
-                  />
-
-                  <TextField
                     id="extintor.site"
                     name="extintor.site"
                     label="Site"
@@ -166,26 +148,24 @@ const ExtinguisherModal = () => {
                     id="extintor.predio"
                     name="extintor.predio"
                     label="Prédio"
-                    width="w-[12.5rem]"
                     disabled
                     onChange={props.handleChange}
                     value={props.values.extintor.predio}
                     isLoading={isLoadingExtinguisherModal}
                   />
-                </div>
 
-                <div className="flex gap-2 py-2">
                   <TextField
                     id="extintor.pavimento"
                     name="extintor.pavimento"
                     label="Pavimento"
-                    width="w-[12.5rem]"
                     disabled
                     onChange={props.handleChange}
                     value={props.values.extintor.pavimento}
                     isLoading={isLoadingExtinguisherModal}
                   />
+                </div>
 
+                <div className="flex gap-2 py-2">
                   <TextField
                     id="extintor.local"
                     name="extintor.local"
@@ -195,9 +175,6 @@ const ExtinguisherModal = () => {
                     value={props.values.extintor.local}
                     isLoading={isLoadingExtinguisherModal}
                   />
-                </div>
-
-                <div className="flex gap-2 py-2">
                   <TextField
                     id="extintor.validade"
                     name="extintor.validade"
@@ -205,34 +182,33 @@ const ExtinguisherModal = () => {
                     disabled
                     onChange={props.handleChange}
                     value={
-                      props.values?.extintor.validade &&
-                      format(new Date(props.values?.extintor.validade), 'dd MMM yyyy', { locale: ptBR })
+                      props.values?.extintor?.validade
+                        ? format(props.values?.extintor.validade, 'dd MMM yyyy', { locale: ptBR })
+                        : ''
                     }
                     isLoading={isLoadingExtinguisherModal}
                   />
+                </div>
 
+                <div className="flex gap-2 py-2">
                   <TextField
                     id="extintor.tipo_extintor"
                     name="extintor.tipo_extintor"
                     label="Tipo"
-                    width="w-[6.25rem]"
                     disabled
                     onChange={props.handleChange}
                     value={props.values.extintor.tipo_extintor}
                     isLoading={isLoadingExtinguisherModal}
                   />
-
                   <TextField
                     id="extintor.massa"
                     name="extintor.massa"
                     label="Peso"
-                    width="w-[6.25rem]"
                     disabled
                     onChange={props.handleChange}
                     value={props.values.extintor.massa}
                     isLoading={isLoadingExtinguisherModal}
                   />
-
                   <TextField
                     id="extintor.cod_extintor"
                     name="extintor.cod_extintor"

@@ -38,7 +38,7 @@ const InspectionCmiModal = () => {
 
   const handleOnOpenChange = () => {
     setCmiItem(null);
-    navigate('/records');
+    navigate('/records/cmi_inspection');
   };
 
   const expotToPdf = () => {
@@ -60,8 +60,6 @@ const InspectionCmiModal = () => {
   const initialRequestBadgeValues: InspectionCmiDataModal = {
     Created: inspectionCmiDataModal?.Created || '',
     Id: inspectionCmiDataModal?.Id || 0,
-    Modified: inspectionCmiDataModal?.Modified || '',
-    Title: null,
     bombeiro: inspectionCmiDataModal?.bombeiro ?? '',
     cmi: {
       Id: inspectionCmiDataModal?.extintor?.Id || '',
@@ -75,7 +73,6 @@ const InspectionCmiModal = () => {
     respostas: inspectionCmiDataModal?.respostas || {},
     novo: inspectionCmiDataModal?.novo || false,
     observacao: inspectionCmiDataModal?.observacao || '',
-    status: '',
   };
 
   const handleSubmit = async (values: InspectionCmiDataModal) => {
@@ -90,7 +87,7 @@ const InspectionCmiModal = () => {
       className="w-[71rem]"
       open={cmiItem !== null}
       onOpenChange={handleOnOpenChange}
-      title={`Registro Teste CMI N°${params.id}`}
+      title={`Registro Inspeção CMI N°${params.id}`}
     >
       <Formik
         enableReinitialize={true}
@@ -99,7 +96,6 @@ const InspectionCmiModal = () => {
       >
         {(props: FormikProps<InspectionCmiDataModal>) => (
           <>
-            {/* <div onClick={() => console.log(props.values)}>Props</div> */}
             <div ref={componentRef} id="container">
               <div className="py-6 px-8">
                 <div className="flex gap-2 py-2">
@@ -120,9 +116,7 @@ const InspectionCmiModal = () => {
                     label="Data"
                     disabled
                     onChange={props.handleChange}
-                    value={
-                      props.values?.Created && format(new Date(props.values?.Created), 'dd MMM yyyy', { locale: ptBR })
-                    }
+                    value={props.values?.Created ? format(props.values.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}
                     isLoading={isLoadingInspectionCmiDataModal}
                   />
 

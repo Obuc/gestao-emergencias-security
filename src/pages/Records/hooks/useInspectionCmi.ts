@@ -5,17 +5,18 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tansta
 
 import { sharepointContext } from '../../../context/sharepointContext';
 import { InspectionCmiDataModal, ResponstaInspectionCMI } from '../types/InspectionCMI';
+import { parseISO } from 'date-fns';
 
 const useInspectionCmi = () => {
   const { crud } = sharepointContext();
   const params = useParams();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
-  const equipments_value = localStorage.getItem('equipments_value');
 
   const [isLoadingInspectionCmiExportToExcel, setIsLoadingInspectionCmiExportToExcel] = useState<boolean>(false);
 
-  const path = `?$Select=*,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  const path = `?$Select=Id,Created,conforme,cmi_idId,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+
   const fetchTestCMI = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'registros_inspecao_cmi', path });
 
@@ -23,10 +24,15 @@ const useInspectionCmi = () => {
       response.data.value.map(async (item: any) => {
         const cmiResponse = await crud.getListItemsv2(
           'equipamentos_diversos',
-          `?$Select=*,Id,predio/Title,conforme,cod_qrcode&$expand=predio&$Filter=(Id eq ${item.cmi_idId})`,
+          `?$Select=Id,predio/Title&$expand=predio&$Filter=(Id eq ${item.cmi_idId})`,
         );
 
         const cmi = cmiResponse.results[0] || null;
+
+        const dataCriadoIsoDate = item.Created && parseISO(item.Created);
+
+        const dataCriado =
+          dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
 
         const cmiValues = cmi
           ? {
@@ -37,6 +43,7 @@ const useInspectionCmi = () => {
 
         return {
           ...item,
+          Created: dataCriado,
           bombeiro: item.bombeiro_id?.Title,
           cmi: cmiValues,
         };
@@ -63,7 +70,7 @@ const useInspectionCmi = () => {
     queryFn: fetchTestCMI,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: equipments_value === 'Inspeção CMI',
+    enabled: params.form === 'cmi_inspection',
   });
 
   const fetchCmiData = async () => {
@@ -101,11 +108,15 @@ const useInspectionCmi = () => {
   const { data: inspectionCmiDataModal, isLoading: isLoadingInspectionCmiDataModal } = useQuery({
     queryKey: params.id ? ['inspection_cmi_data_modal', params.id] : ['inspection_cmi_data_modal'],
     queryFn: async () => {
-      if (params.id && equipments_value === 'Inspeção CMI') {
+      if (params.id && params.form === 'cmi_inspection') {
         const cmiData = await fetchCmiData();
         const cmi = await fetchEquipmentCmiData(cmiData.cmi_idId);
-
         const respostas = await fetchResponseInspectionCmi();
+
+        const dataCriadoIsoDate = cmiData.Created && parseISO(cmiData.Created);
+
+        const dataCriado =
+          dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
 
         const cmiValues = cmi
           ? {
@@ -119,6 +130,7 @@ const useInspectionCmi = () => {
 
         return {
           ...cmiData,
+          Created: dataCriado,
           bombeiro: cmiData.bombeiro_id?.Title,
           extintor: cmiValues,
           respostas: respostas,
@@ -129,10 +141,10 @@ const useInspectionCmi = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && equipments_value === 'Inspeção CMI',
+    enabled: params.id !== undefined && params.form === 'cmi_inspection',
   });
 
-  const { mutateAsync: mutateRemoveInspectionCmi, isLoading: IsLoadingMutateRemoveInspectionCmi } = useMutation({
+  const { mutateAsync: mutateRemoveInspectionCmi, isLoading: isLoadingMutateRemoveInspectionCmi } = useMutation({
     mutationFn: async (itemId: number) => {
       if (itemId) {
         // Remove List: respostas_inspecao_cmi
@@ -277,7 +289,7 @@ const useInspectionCmi = () => {
     inspectionCmiDataModal,
     isLoadingInspectionCmiDataModal,
     mutateRemoveInspectionCmi,
-    IsLoadingMutateRemoveInspectionCmi,
+    isLoadingMutateRemoveInspectionCmi,
     mutateEditInspectionCmi,
     isLoadingMutateEditInspectionCmi,
 

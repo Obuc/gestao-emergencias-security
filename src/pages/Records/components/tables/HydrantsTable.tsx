@@ -39,11 +39,11 @@ const HydrantsTable = () => {
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/records/${id}?edit=false`);
+    navigate(`/records/hydrants/${id}?edit=false`);
   };
 
   const handleEdit = (id: number) => {
-    navigate(`/records/${id}?edit=true`);
+    navigate(`/records/hydrants/${id}?edit=true`);
   };
 
   const handleRemove = async () => {
@@ -192,7 +192,7 @@ const HydrantsTable = () => {
             <Table.Tbody>
               {hydrants?.pages[0].data.value.length === 0 && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={9} className="text-center text-primary">
+                  <Table.Td colSpan={7} className="text-center text-primary">
                     Nenhum registro encontrado!
                   </Table.Td>
                 </Table.Tr>
@@ -200,7 +200,7 @@ const HydrantsTable = () => {
 
               {isError && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={9} className="text-center text-primary">
+                  <Table.Td colSpan={7} className="text-center text-primary">
                     Ops, ocorreu um erro, recarregue a página e tente novamente!
                   </Table.Td>
                 </Table.Tr>
@@ -210,7 +210,7 @@ const HydrantsTable = () => {
                 <>
                   {Array.from({ length: 30 }).map((_, index) => (
                     <Table.Tr key={index}>
-                      <Table.Td className="h-14 px-4" colSpan={9}>
+                      <Table.Td className="h-14 px-4" colSpan={7}>
                         <Skeleton height="3.5rem" animation="wave" />
                       </Table.Td>
                     </Table.Tr>

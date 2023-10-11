@@ -119,7 +119,7 @@ const SelectComponent = ({
             </SelectRadix.Trigger>
 
             <SelectRadix.Portal>
-              <SelectRadix.Content position="popper" className={twMerge(content())}>
+              <SelectRadix.Content position="popper" className={twMerge(content(), className)}>
                 <SelectRadix.Viewport className={arrow()}>
                   <SelectRadix.Group>
                     {multi &&

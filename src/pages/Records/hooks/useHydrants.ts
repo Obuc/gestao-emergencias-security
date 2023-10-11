@@ -12,11 +12,10 @@ const useHydrants = () => {
   const params = useParams();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
-  const equipments_value = localStorage.getItem('equipments_value');
 
   const [isLoadingHydrantsExportToExcel, setIsLoadingHydrantsExportToExcel] = useState<boolean>(false);
 
-  let path = `?$Select=Id,site/Title,hidrante_id/Id,bombeiro/Title,conforme,observacao,Created&$expand=site,hidrante_id,bombeiro&$Filter=(site/Title eq '${user_site}')`;
+  let path = `?$Select=Id,site/Title,hidrante_id/Id,bombeiro/Title,conforme,observacao,Created&$expand=site,hidrante_id,bombeiro&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
 
   // if (extinguisherFilters?.place) {
   //   for (let i = 0; i < extinguisherFilters.place.length; i++) {
@@ -124,7 +123,7 @@ const useHydrants = () => {
     queryFn: fetchHydrants,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: equipments_value === 'Hidrantes',
+    enabled: params.form === 'hydrants',
   });
 
   const fetchHydrantsData = async () => {
@@ -162,7 +161,7 @@ const useHydrants = () => {
   const { data: hydrantsDataModal, isLoading: isLoadingHydrantsDataModal } = useQuery({
     queryKey: params.id ? ['hydrants_data_modal', params.id] : ['hydrants_data_modal'],
     queryFn: async () => {
-      if (params.id && equipments_value === 'Hidrantes') {
+      if (params.id && params.form === 'hydrants') {
         const hydrantsData = await fetchHydrantsData();
 
         const dataCriadoIsoDate = hydrantsData.Created && parseISO(hydrantsData.Created);
@@ -200,7 +199,7 @@ const useHydrants = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && equipments_value === 'Hidrantes',
+    enabled: params.id !== undefined && params.form === 'hydrants',
   });
 
   const { mutateAsync: mutateRemoveHydrants, isLoading: isLoadingMutateRemoveHydrants } = useMutation({
@@ -219,8 +218,8 @@ const useHydrants = () => {
         } else {
           console.log('Nenhum item encontrado para excluir.');
         }
+        await crud.deleteItemList('registros_hidrantes', itemId);
       }
-      await crud.deleteItemList('registros_hidrantes', itemId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -301,11 +300,11 @@ const useHydrants = () => {
 
         return {
           ...item,
-          bombeiro: item.bombeiro_id?.Title,
+          bombeiro: item.bombeiro?.Title,
           hidrante_id: hidrante?.Id,
-          predio: hidrante?.predio,
-          pavimento: hidrante?.pavimento,
-          local: hidrante?.local,
+          predio: hidrante?.predio.Title,
+          pavimento: hidrante?.pavimento.Title,
+          local: hidrante?.local.Title,
         };
       }),
     );

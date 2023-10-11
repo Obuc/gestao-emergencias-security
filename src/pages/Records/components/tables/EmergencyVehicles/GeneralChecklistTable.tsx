@@ -23,18 +23,18 @@ const GeneralChecklistTable = () => {
     isError,
 
     mutateRemoveGeneralChecklist,
-    IsLoadingMutateRemoveGeneralChecklist,
+    isLoadingMutateRemoveGeneralChecklist,
   } = useGeneralChecklist();
 
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/records/${id}?edit=false`);
+    navigate(`/records/general_checklist/${id}?edit=false`);
   };
 
   const handleEdit = (id: number) => {
-    navigate(`/records/${id}?edit=true`);
+    navigate(`/records/general_checklist/${id}?edit=true`);
   };
 
   const handleRemove = async () => {
@@ -69,7 +69,7 @@ const GeneralChecklistTable = () => {
             <Table.Tbody>
               {general_checklist?.pages[0].data.value.length === 0 && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={9} className="text-center text-primary">
+                  <Table.Td colSpan={6} className="text-center text-primary">
                     Nenhum registro encontrado!
                   </Table.Td>
                 </Table.Tr>
@@ -77,7 +77,7 @@ const GeneralChecklistTable = () => {
 
               {isError && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={9} className="text-center text-primary">
+                  <Table.Td colSpan={6} className="text-center text-primary">
                     Ops, ocorreu um erro, recarregue a página e tente novamente!
                   </Table.Td>
                 </Table.Tr>
@@ -87,7 +87,7 @@ const GeneralChecklistTable = () => {
                 <>
                   {Array.from({ length: 30 }).map((_, index) => (
                     <Table.Tr key={index}>
-                      <Table.Td className="h-14 px-4" colSpan={9}>
+                      <Table.Td className="h-14 px-4" colSpan={6}>
                         <Skeleton height="3.5rem" animation="wave" />
                       </Table.Td>
                     </Table.Tr>
@@ -102,7 +102,7 @@ const GeneralChecklistTable = () => {
                       <Table.Td className="pl-8">{item.Id}</Table.Td>
                       <Table.Td>{item.veiculo.tipo_veiculo}</Table.Td>
                       <Table.Td>{item.veiculo.placa}</Table.Td>
-                      <Table.Td>{format(item.Created, 'dd MMM yyyy', { locale: ptBR })}</Table.Td>
+                      <Table.Td>{item.Created ? format(item.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}</Table.Td>
                       <Table.Td>
                         {item?.conforme ? (
                           <div className="flex justify-center items-center gap-2 px-4 py-1 rounded-full bg-[#EBFFE2] max-w-[8.4375rem]">
@@ -136,7 +136,7 @@ const GeneralChecklistTable = () => {
       {removeItem !== null && (
         <RemoveItem
           handleRemove={handleRemove}
-          isLoading={IsLoadingMutateRemoveGeneralChecklist}
+          isLoading={isLoadingMutateRemoveGeneralChecklist}
           onOpenChange={() => setRemoveItem(null)}
           open={removeItem !== null}
         />

@@ -40,7 +40,7 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     queryFn: async () => {
       const resp = await crud.getListItemsv2(
         'menu',
-        '?$Select=Id,Title,site/Title,todos_sites,submenu,menu_equipamento&$expand=site',
+        '?$Select=Id,Title,url_path,site/Title,todos_sites,submenu,menu_equipamento&$expand=site',
       );
       return resp.results;
     },
@@ -53,7 +53,7 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     queryFn: async () => {
       const resp = await crud.getListItemsv2(
         'submenu',
-        '?$Select=Id,Title,site/Title,todos_sites,menu_idId&$expand=site',
+        '?$Select=Id,Title,path_url,site/Title,todos_sites,menu_idId&$expand=site',
       );
       return resp.results;
     },

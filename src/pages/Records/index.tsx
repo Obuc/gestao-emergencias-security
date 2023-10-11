@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import useTestCMI from './hooks/useTestCMI';
+import useHydrants from './hooks/useHydrants';
 import { Select } from '../../components/Select';
 import { Button } from '../../components/Button';
 import LayoutBase from '../../layout/LayoutBase';
@@ -10,6 +12,7 @@ import useExtinguisher from './hooks/useExtinguisher';
 import useInspectionCmi from './hooks/useInspectionCmi';
 import TestCmiTable from './components/tables/TestCmiTable';
 import useGovernanceValve from './hooks/useGovernanceValve';
+import HydrantsTable from './components/tables/HydrantsTable';
 import useLoadRatio from './hooks/EmergencyVehicles/useLoadRatio';
 import ExtinguisherTable from './components/tables/ExtinguisherTable';
 import InspectionCmiTable from './components/tables/InspectionCmiTable';
@@ -17,9 +20,9 @@ import GovernanceValveTable from './components/tables/GovernanceValveTable';
 import useGeneralChecklist from './hooks/EmergencyVehicles/useGeneralChecklist';
 import LoadRatioTable from './components/tables/EmergencyVehicles/LoadRatioTable';
 import GeneralChecklistTable from './components/tables/EmergencyVehicles/GeneralChecklistTable';
-import HydrantsTable from './components/tables/HydrantsTable';
 
 const Records = () => {
+  const navigate = useNavigate();
   const { formularios, submenu, isLoadingFormularios } = appContext();
   const localSite = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
@@ -30,6 +33,7 @@ const Records = () => {
   const { handleExportGovernanceValveToExcel, isLoadingGovernanceValveExportToExcel } = useGovernanceValve();
   const { handleExportGeneralChecklistToExcel, isLoadingGeneralChecklistExportToExcel } = useGeneralChecklist();
   const { handleExportLoadRatioToExcel, isLoadingLoadRatioExportToExcel } = useLoadRatio();
+  const { handleExportHydrantsToExcel, isLoadingHydrantsExportToExcel } = useHydrants();
 
   const filteredForms =
     formularios &&
@@ -46,49 +50,57 @@ const Records = () => {
     !equipments_value?.length && localStorage.setItem('equipments_value', 'Extintores');
   }, []);
 
+  useEffect(() => {
+    navigate(`/records/${formValue}`);
+  }, [formValue]);
+
   const handleExportToExcel = () => {
     switch (formValue) {
-      case 'Extintores':
+      case 'extinguisher':
         handleExportExtinguisherToExcel();
         break;
 
-      case 'Válvulas de Governo':
+      case 'valves':
         handleExportGovernanceValveToExcel();
         break;
 
-      case 'Teste CMI':
+      case 'hydrants':
+        handleExportHydrantsToExcel();
+        break;
+
+      case 'cmi_test':
         handleExportTestCmiToExcel();
         break;
 
-      case 'Inspeção CMI':
+      case 'cmi_inspection':
         handleExportInspectionCmiToExcel();
         break;
 
-      case 'Checklist Geral':
+      case 'general_checklist':
         handleExportGeneralChecklistToExcel();
         break;
 
-      case 'Scania':
+      case 'scania':
         handleExportLoadRatioToExcel();
         break;
 
-      case 'S10':
+      case 's10':
         handleExportLoadRatioToExcel();
         break;
 
-      case 'Mercedes':
+      case 'mercedes':
         handleExportLoadRatioToExcel();
         break;
 
-      case 'Furgão':
+      case 'van':
         handleExportLoadRatioToExcel();
         break;
 
-      case 'Ambulância Iveco':
+      case 'iveco':
         handleExportLoadRatioToExcel();
         break;
 
-      case 'Ambulância Sprinter':
+      case 'sprinter':
         handleExportLoadRatioToExcel();
         break;
     }
@@ -107,7 +119,10 @@ const Records = () => {
               <Select.Component
                 id="state_id"
                 name="state_id"
-                value={formValue}
+                value={
+                  filteredForms?.find((form) => form.url_path === formValue)?.Title ||
+                  filteredSubMenu?.find((form) => form.path_url === formValue)?.Title
+                }
                 className="w-[22.5rem]"
                 mode="gray"
                 isLoading={isLoadingFormularios}
@@ -117,7 +132,7 @@ const Records = () => {
                 }}
               >
                 {filteredForms?.map((form) => (
-                  <Select.Item key={form.Id} value={form.Title}>
+                  <Select.Item key={form.Id} value={form.url_path}>
                     {form.Title}
                   </Select.Item>
                 ))}
@@ -126,7 +141,7 @@ const Records = () => {
                 <Select.Label>Veículos de Emergência</Select.Label>
 
                 {filteredSubMenu?.map((form) => (
-                  <Select.Item key={form.Id * 2} value={form.Title}>
+                  <Select.Item key={form.Id * 2} value={form.path_url}>
                     {form.Title}
                   </Select.Item>
                 ))}
@@ -143,11 +158,13 @@ const Records = () => {
                 isLoadingInspectionCmiExportToExcel ||
                 isLoadingGeneralChecklistExportToExcel ||
                 isLoadingGovernanceValveExportToExcel ||
-                isLoadingLoadRatioExportToExcel
+                isLoadingLoadRatioExportToExcel ||
+                isLoadingHydrantsExportToExcel
               }
               onClick={handleExportToExcel}
             >
               {isLoadingExtinguisherExportToExcel ||
+              isLoadingHydrantsExportToExcel ||
               isLoadingTestCmiExportToExcel ||
               isLoadingInspectionCmiExportToExcel ||
               isLoadingGeneralChecklistExportToExcel ||
@@ -163,21 +180,21 @@ const Records = () => {
             </Button.Root>
           </div>
 
-          {formValue === 'Extintores' && <ExtinguisherTable />}
-          {formValue === 'Válvulas de Governo' && <GovernanceValveTable />}
-          {formValue === 'Teste CMI' && <TestCmiTable />}
-          {formValue === 'Inspeção CMI' && <InspectionCmiTable />}
-          {formValue === 'Hidrantes' && <HydrantsTable />}
+          {formValue === 'extinguisher' && <ExtinguisherTable />}
+          {formValue === 'valves' && <GovernanceValveTable />}
+          {formValue === 'cmi_test' && <TestCmiTable />}
+          {formValue === 'cmi_inspection' && <InspectionCmiTable />}
+          {formValue === 'hydrants' && <HydrantsTable />}
 
           {/* Veiculos de Emergencia */}
-          {formValue === 'Checklist Geral' && <GeneralChecklistTable />}
+          {formValue === 'general_checklist' && <GeneralChecklistTable />}
 
-          {formValue === 'Scania' && <LoadRatioTable />}
-          {formValue === 'S10' && <LoadRatioTable />}
-          {formValue === 'Mercedes' && <LoadRatioTable />}
-          {formValue === 'Furgão' && <LoadRatioTable />}
-          {formValue === 'Ambulância Iveco' && <LoadRatioTable />}
-          {formValue === 'Ambulância Sprinter' && <LoadRatioTable />}
+          {formValue === 'scania' && <LoadRatioTable />}
+          {formValue === 's10' && <LoadRatioTable />}
+          {formValue === 'mercedes' && <LoadRatioTable />}
+          {formValue === 'van' && <LoadRatioTable />}
+          {formValue === 'iveco' && <LoadRatioTable />}
+          {formValue === 'sprinter' && <LoadRatioTable />}
         </div>
       </div>
     </LayoutBase>

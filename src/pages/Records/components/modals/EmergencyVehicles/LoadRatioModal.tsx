@@ -37,7 +37,7 @@ const LoadRatioModal = () => {
 
   const handleOnOpenChange = () => {
     setGeneralChecklistItem(null);
-    navigate('/records');
+    navigate(`/records/${equipments_value}`);
   };
 
   const expotToPdf = () => {
@@ -88,7 +88,7 @@ const LoadRatioModal = () => {
       className="w-[71rem]"
       open={generalChecklistItem !== null}
       onOpenChange={handleOnOpenChange}
-      title={`Registro ${equipments_value} N°${params.id}`}
+      title={`Registro Relação de Carga N°${params.id}`}
     >
       <Formik
         enableReinitialize={true}

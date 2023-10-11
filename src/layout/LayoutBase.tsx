@@ -13,10 +13,12 @@ interface ILayoutBaseProps {
   showMenu?: boolean;
 }
 
+const equipments_value = localStorage.getItem('equipments_value');
+
 const menuItems: MenuItem[] = [
   {
     icon: FileText,
-    path: '/records',
+    path: `/records/${equipments_value}`,
     label: 'Registros',
   },
   {

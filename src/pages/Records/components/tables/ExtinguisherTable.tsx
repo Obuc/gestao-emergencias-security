@@ -5,6 +5,7 @@ import { Skeleton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroller';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { Table } from '../../../../components/Table';
 import { Select } from '../../../../components/Select';
@@ -14,7 +15,6 @@ import DatePicker from '../../../../components/DatePicker';
 import ExtinguisherModal from '../modals/ExtinguisherModal';
 import { appContext } from '../../../../context/appContext';
 import PopoverTables from '../../../../components/PopoverTables';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
 import { Extinguisher, IExtinguisherFiltersProps } from '../../types/Extinguisher';
 
@@ -38,18 +38,25 @@ const ExtinguisherTable = () => {
     isLoading,
     isError,
     mutateRemoveExtinguisher,
-    IsLoadingMutateRemoveExtinguisher,
+    isLoadingMutateRemoveExtinguisher,
   } = useExtinguisher(extinguisherFilters);
 
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/records/${id}?edit=false`);
+    navigate(`/records/extinguisher/${id}?edit=false`);
   };
 
   const handleEdit = (id: number) => {
-    navigate(`/records/${id}?edit=true`);
+    navigate(`/records/extinguisher/${id}?edit=true`);
+  };
+
+  const handleRemove = async () => {
+    if (removeItem) {
+      await mutateRemoveExtinguisher(removeItem);
+      setRemoveItem(null);
+    }
   };
 
   const handleRemoveAllFilters = () => {
@@ -273,8 +280,8 @@ const ExtinguisherTable = () => {
 
       {removeItem !== null && (
         <RemoveItem
-          handleRemove={async () => await mutateRemoveExtinguisher(removeItem)}
-          isLoading={IsLoadingMutateRemoveExtinguisher}
+          handleRemove={handleRemove}
+          isLoading={isLoadingMutateRemoveExtinguisher}
           onOpenChange={() => setRemoveItem(null)}
           open={removeItem !== null}
         />

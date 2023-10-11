@@ -1,6 +1,7 @@
 export interface ISubMenu {
   Id: number;
   Title: string;
+  path_url: string;
   site: {
     Title?: string;
   };

@@ -1,8 +1,6 @@
 export interface InspectionCmiDataModal {
-  Created: string;
+  Created: Date;
   Id: number;
-  Modified: string;
-  Title: null;
   bombeiro: string;
   cmi: {
     Id: number;
@@ -15,22 +13,19 @@ export interface InspectionCmiDataModal {
   };
   respostas?: Record<string, Array<ResponstaInspectionCMI>>;
   novo: boolean;
-  observacao: string;
-  status: string;
+  observacao?: string;
 }
 
 export interface InspectionCMI {
-  Created: string;
+  Created: Date;
   Id: number;
-  Title: null;
   bombeiro_id: {
     Title: string;
   };
   bombeiro_idId: number;
   cmi_idId: number;
   conforme: boolean;
-  data_legado: null;
-  observacao: null;
+  observacao?: string;
   site: {
     Title: string;
   };

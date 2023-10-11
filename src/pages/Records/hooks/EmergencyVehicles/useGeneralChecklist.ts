@@ -12,11 +12,10 @@ const useGeneralChecklist = () => {
   const params = useParams();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
-  const equipments_value = localStorage.getItem('equipments_value');
 
   const [isLoadingGeneralChecklistExportToExcel, setIsLoadingGeneralChecklistExportToExcel] = useState<boolean>(false);
 
-  const path = `?$Select=*,site/Title,bombeiro/Title&$expand=site,bombeiro&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  const path = `?$Select=Id,veiculo_idId,site/Title,bombeiro/Title&$expand=site,bombeiro&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
   const fechGeneralChecklist = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(
       pageParam ? { nextUrl: pageParam } : { list: 'registros_veiculos_emergencia', path },
@@ -29,6 +28,10 @@ const useGeneralChecklist = () => {
           `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,conforme,excluido&$expand=site,tipo_veiculo&$Filter=(Id eq ${item.veiculo_idId})`,
         );
 
+        const dataCriadoIsoDate = item.Created && parseISO(item.Created);
+        const dataCriado =
+          dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
+
         const vehicle = vehicleResponse.results[0] || null;
 
         const vehicleValues = vehicle
@@ -40,11 +43,9 @@ const useGeneralChecklist = () => {
             }
           : null;
 
-        const createdIsoDate = parseISO(item.Created);
-
         return {
           ...item,
-          Created: new Date(createdIsoDate.getTime() + createdIsoDate.getTimezoneOffset() * 60000),
+          Created: dataCriado,
           bombeiro: item.bombeiro?.Title,
           veiculo: vehicleValues,
         };
@@ -71,7 +72,7 @@ const useGeneralChecklist = () => {
     queryFn: fechGeneralChecklist,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: equipments_value === 'Checklist Geral',
+    enabled: params.form === 'general_checklist',
   });
 
   const fetchGeneralChecklistData = async () => {
@@ -109,7 +110,7 @@ const useGeneralChecklist = () => {
   const { data: generalChecklistDataModal, isLoading: isLoadingGeneralChecklistDataModal } = useQuery({
     queryKey: params.id ? ['general_checklist_data_modal', params.id] : ['general_checklist_data_modal'],
     queryFn: async () => {
-      if (params.id && equipments_value === 'Checklist Geral') {
+      if (params.id && params.form === 'general_checklist') {
         const generalChecklistData = await fetchGeneralChecklistData();
         const vehicle = await fetchVehicleData(generalChecklistData.veiculo_idId);
         const respostas = await fetchResponseGeneralChecklist();
@@ -139,10 +140,10 @@ const useGeneralChecklist = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && equipments_value === 'Checklist Geral',
+    enabled: params.id !== undefined && params.form === 'general_checklist',
   });
 
-  const { mutateAsync: mutateRemoveGeneralChecklist, isLoading: IsLoadingMutateRemoveGeneralChecklist } = useMutation({
+  const { mutateAsync: mutateRemoveGeneralChecklist, isLoading: isLoadingMutateRemoveGeneralChecklist } = useMutation({
     mutationFn: async (itemId: number) => {
       if (itemId) {
         const itemResponse = await crud.getListItemsv2(
@@ -293,7 +294,7 @@ const useGeneralChecklist = () => {
     isLoadingGeneralChecklistDataModal,
 
     mutateRemoveGeneralChecklist,
-    IsLoadingMutateRemoveGeneralChecklist,
+    isLoadingMutateRemoveGeneralChecklist,
 
     mutateEditTGeneralChecklist,
     isLoadingEditTGeneralChecklist,

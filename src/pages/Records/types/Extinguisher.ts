@@ -1,8 +1,6 @@
 export interface ExtinguisherDataModal {
-  Created: string;
+  Created: Date;
   Id: number;
-  Modified: string;
-  Title: null;
   bombeiro: string;
   data_pesagem: string;
   extintor: {
@@ -12,7 +10,7 @@ export interface ExtinguisherDataModal {
     pavimento: string;
     local: string;
     cod_extintor: string;
-    validade: string;
+    validade: Date;
     conforme: boolean;
     massa: string;
     cod_qrcode: string;
@@ -21,16 +19,11 @@ export interface ExtinguisherDataModal {
   respostas?: Record<string, Array<RespostaExtintor>>;
   novo: boolean;
   observacao: string;
-  status: null;
 }
 
 export interface Extinguisher {
-  Attachments: boolean;
-  AuthorId: number;
   Created: Date;
   Id: number;
-  Modified: string;
-  Title: null;
   bombeiro_idId: number;
   bombeiro: string;
   conforme: boolean;
@@ -51,7 +44,6 @@ export interface Extinguisher {
   respostas?: Record<string, Array<RespostaExtintor>>;
   novo: boolean;
   observacao: string;
-  status: null;
 }
 
 export interface RespostaExtintor {

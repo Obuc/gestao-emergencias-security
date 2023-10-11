@@ -1,8 +1,6 @@
 export interface TestCmiDataModal {
-  Created: string;
+  Created: Date;
   Id: number;
-  Modified: string;
-  Title: null;
   bombeiro: string;
   cmi: {
     Id: number;
@@ -14,15 +12,12 @@ export interface TestCmiDataModal {
     cod_qrcode: string;
   };
   respostas?: Record<string, Array<ResponstaTestCmi>>;
-  novo: boolean;
   observacao: string;
-  status: string;
 }
 
 export interface TestCMI {
-  Created: string;
+  Created: Date;
   Id: number;
-  Title: null;
   bombeiro_id: {
     Title: string;
   };
