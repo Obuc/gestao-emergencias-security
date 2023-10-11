@@ -7,7 +7,7 @@ export const selectVariants = tv({
     trigger:
       'min-w-full outline-none py-2 pl-2 flex group justify-between items-center h-10 leading-none whitespace-nowrap',
     triggerIcon: 'w-[3.125rem] h-10 flex justify-center items-center duration-150',
-    content: 'overflow-hidden z-10 bg-white shadow-xs-primary-app max-h-[28.125rem]',
+    content: 'overflow-hidden z-10 bg-white shadow-xs-primary-app', // max-h-[28.125rem]
     viewport: 'py-1',
     arrow: 'fill-white',
   },
