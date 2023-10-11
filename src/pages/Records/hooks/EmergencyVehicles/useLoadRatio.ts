@@ -5,9 +5,9 @@ import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../../context/sharepointContext';
-import { ILoadRatioModal, IRespostaLoadRatio } from '../../types/EmergencyVehicles/LoadRatio';
+import { ILoadRatioFiltersProps, ILoadRatioModal, IRespostaLoadRatio } from '../../types/EmergencyVehicles/LoadRatio';
 
-const useLoadRatio = () => {
+const useLoadRatio = (loadRatioFilters?: ILoadRatioFiltersProps) => {
   const { crud } = sharepointContext();
   const params = useParams();
   const queryClient = useQueryClient();
@@ -53,7 +53,44 @@ const useLoadRatio = () => {
   const [isLoadingLoadRatioExportToExcel, setIsLoadingLoadRatioExportToExcel] = useState<boolean>(false);
 
   const fechLoadRatio = async ({ pageParam }: { pageParam?: string }) => {
-    const path = `?$Select=*,site/Title,bombeiro/Title,tipo_veiculo/Title&$expand=site,bombeiro,tipo_veiculo&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_veiculo/Title eq '${caseEquipmentsValue}')`;
+    let path = `?$Select=*,site/Title,bombeiro/Title,tipo_veiculo/Title,conforme,veiculo_id/placa&$expand=site,bombeiro,tipo_veiculo,veiculo_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_veiculo/Title eq '${caseEquipmentsValue}')`;
+
+    if (loadRatioFilters?.conformity && loadRatioFilters?.conformity === 'Conforme') {
+      path += ` and (conforme ne 'false')`;
+    }
+
+    if (loadRatioFilters?.conformity && loadRatioFilters?.conformity !== 'Conforme') {
+      path += ` and (conforme eq 'false')`;
+    }
+
+    if (loadRatioFilters?.startDate || loadRatioFilters?.endDate) {
+      const startDate = loadRatioFilters.startDate && new Date(loadRatioFilters.startDate);
+      startDate && startDate.setUTCHours(0, 0, 0, 0);
+
+      const endDate = loadRatioFilters.endDate && new Date(loadRatioFilters.endDate);
+      endDate && endDate.setUTCHours(23, 59, 59, 999);
+
+      if (startDate) {
+        path += ` and (Created ge datetime'${startDate.toISOString()}')`;
+      }
+
+      if (endDate) {
+        path += ` and (Created le datetime'${endDate.toISOString()}')`;
+      }
+    }
+
+    if (loadRatioFilters?.responsible) {
+      path += ` and ( substringof('${loadRatioFilters.responsible}', bombeiro/Title ))`;
+    }
+
+    if (loadRatioFilters?.recordId) {
+      path += ` and ( Id eq '${loadRatioFilters.recordId}')`;
+    }
+
+    if (loadRatioFilters?.plate) {
+      path += ` and ( substringof('${loadRatioFilters.plate}', veiculo_id/placa ))`;
+    }
+
     const response = await crud.getPaged(
       pageParam ? { nextUrl: pageParam } : { list: 'registros_relacao_carga', path },
     );
@@ -103,7 +140,17 @@ const useLoadRatio = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['load_ratio_data', user_site, params.form],
+    queryKey: [
+      'load_ratio_data',
+      user_site,
+      params.form,
+      loadRatioFilters?.responsible,
+      loadRatioFilters?.recordId,
+      loadRatioFilters?.startDate,
+      loadRatioFilters?.endDate,
+      loadRatioFilters?.plate,
+      loadRatioFilters?.conformity,
+    ],
     queryFn: fechLoadRatio,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -198,7 +245,19 @@ const useLoadRatio = () => {
       await crud.deleteItemList('registros_relacao_carga', itemId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['load_ratio_data', user_site, params.form] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'load_ratio_data',
+          user_site,
+          params.form,
+          loadRatioFilters?.responsible,
+          loadRatioFilters?.recordId,
+          loadRatioFilters?.startDate,
+          loadRatioFilters?.endDate,
+          loadRatioFilters?.plate,
+          loadRatioFilters?.conformity,
+        ],
+      });
     },
   });
 
@@ -257,7 +316,19 @@ const useLoadRatio = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['load_ratio_data_modal', params.id, params.form] });
-      queryClient.invalidateQueries({ queryKey: ['load_ratio_data', user_site, params.form] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'load_ratio_data',
+          user_site,
+          params.form,
+          loadRatioFilters?.responsible,
+          loadRatioFilters?.recordId,
+          loadRatioFilters?.startDate,
+          loadRatioFilters?.endDate,
+          loadRatioFilters?.plate,
+          loadRatioFilters?.conformity,
+        ],
+      });
     },
   });
 

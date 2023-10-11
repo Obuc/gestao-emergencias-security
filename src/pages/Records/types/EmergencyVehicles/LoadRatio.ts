@@ -50,3 +50,12 @@ export interface IPergunta {
   categoria: string;
   Id: number;
 }
+
+export interface ILoadRatioFiltersProps {
+  recordId: string | null;
+  plate: string | null;
+  responsible: string | null;
+  startDate: Date | null;
+  endDate: Date | null;
+  conformity: string | null;
+}
