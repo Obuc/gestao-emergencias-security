@@ -26,3 +26,9 @@ export interface IEqInspectionCmiModal {
     conforme: boolean;
   }>;
 }
+
+export interface IEqInspectionCmiFiltersProps {
+  id: string | null;
+  pavement: Array<string> | [];
+  conformity: string | null;
+}

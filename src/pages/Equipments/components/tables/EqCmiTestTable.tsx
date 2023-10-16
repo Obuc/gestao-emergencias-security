@@ -8,24 +8,33 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useEqTestCmi from '../../hooks/useEqTestCmi';
 import { Table } from '../../../../components/Table';
 import EqCmiTestModal from '../modals/EqCmiTestModal';
-import { IEqTestCmi } from '../../types/EquipmentsTestCmi';
+import { Select } from '../../../../components/Select';
+import TextField from '../../../../components/TextField';
+import { appContext } from '../../../../context/appContext';
 import PopoverTables from '../../../../components/PopoverTables';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
+import { IEqTestCmi, IEqTestCmiFiltersProps } from '../../types/EquipmentsTestCmi';
 
 const EqCmiTestTable = () => {
+  const [eqCMITestFilters, setEqCMITestFilters] = useState<IEqTestCmiFiltersProps>({
+    id: '',
+    pavement: [],
+    conformity: null,
+  });
+
   const {
     equipments,
     fetchNextPage,
     hasNextPage,
     isError,
     isLoading,
-
     mutateRemoveEqTestCmi,
     isLoadingMutateRemoveEqTestCmi,
-  } = useEqTestCmi();
+  } = useEqTestCmi(eqCMITestFilters);
 
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
+  const { pavimento } = appContext();
 
   const handleView = (id: number) => {
     navigate(`/equipments/cmi_test/${id}`);
@@ -38,9 +47,71 @@ const EqCmiTestTable = () => {
     }
   };
 
+  const handleRemoveAllFilters = () => {
+    setEqCMITestFilters({
+      id: '',
+      pavement: [],
+      conformity: null,
+    });
+  };
+
   return (
-    <>
-      <div className="min-[1100px]:max-h-[38rem] min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[43rem] w-full overflow-y-auto">
+    <div className="h-full">
+      <Table.Filter>
+        <div className="flex gap-4">
+          <TextField
+            id="id"
+            name="id"
+            placeholder="ID"
+            width="w-[16.25rem]"
+            value={eqCMITestFilters.id || ''}
+            onChange={(event) => {
+              setEqCMITestFilters((prev) => ({ ...prev, id: event.target.value }));
+            }}
+          />
+
+          <Select.Component
+            multi
+            id="pavement"
+            name="pavement"
+            variant="outline"
+            placeholder="Pavimento"
+            className="max-h-[28.125rem]"
+            selectedValues={eqCMITestFilters.pavement}
+            onSelectedValuesChange={(newSelectedValues) => {
+              setEqCMITestFilters((prev) => ({ ...prev, pavement: newSelectedValues }));
+            }}
+          >
+            {pavimento?.map((pavimento) => (
+              <Select.Item key={pavimento.Id} value={pavimento.Title}>
+                {pavimento.Title}
+              </Select.Item>
+            ))}
+          </Select.Component>
+
+          <Select.Component
+            id="conformity"
+            name="conformity"
+            variant="outline"
+            placeholder="Conformidade"
+            className="w-[11.25rem] max-h-[28.125rem]"
+            value={eqCMITestFilters.conformity ?? ''}
+            onValueChange={(newSelectedValues: any) => {
+              setEqCMITestFilters((prev) => ({ ...prev, conformity: newSelectedValues }));
+            }}
+          >
+            <Select.Item value="Conforme">Conforme</Select.Item>
+            <Select.Item value="Não Conforme">Não Conforme</Select.Item>
+          </Select.Component>
+        </div>
+
+        <button className="flex justify-center items-center gap-2 group" onClick={handleRemoveAllFilters}>
+          <span className="text-primary font-semibold">LIMPAR FILTROS</span>
+          <FontAwesomeIcon icon={faXmark} className="text-pink group-hover:text-pink/80 duration-200" />
+        </button>
+      </Table.Filter>
+
+      <div className="min-[1100px]:max-h-[33.125rem] relative min-[1600px]:max-h-[39.6875rem] min-[1800px]:max-h-[39.6875rem] w-full overflow-y-auto">
         <InfiniteScroll
           pageStart={0}
           loadMore={() => fetchNextPage()}
@@ -132,7 +203,7 @@ const EqCmiTestTable = () => {
           open={removeItem !== null}
         />
       )}
-    </>
+    </div>
   );
 };
 
