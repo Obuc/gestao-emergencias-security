@@ -26,3 +26,9 @@ export interface IEqLoadRatioModal {
     conforme: boolean;
   }>;
 }
+
+export interface IEqLoadRatioFiltersProps {
+  id: string | null;
+  plate: string | null;
+  conformity: string | null;
+}

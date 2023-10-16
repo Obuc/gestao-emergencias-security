@@ -2,10 +2,14 @@ import * as XLSX from 'xlsx';
 import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import {
+  IEqLoadRatio,
+  IEqLoadRatioFiltersProps,
+  IEqLoadRatioModal,
+} from '../../types/EmergencyVehicles/EquipmentsLoadRatio';
 import { sharepointContext } from '../../../../context/sharepointContext';
-import { IEqLoadRatio, IEqLoadRatioModal } from '../../types/EmergencyVehicles/EquipmentsLoadRatio';
 
-const useEqLoadRatio = () => {
+const useEqLoadRatio = (eqLoadRatioFilters?: IEqLoadRatioFiltersProps) => {
   const { crud } = sharepointContext();
   const params = useParams();
   const location = useLocation();
@@ -20,7 +24,23 @@ const useEqLoadRatio = () => {
     params.form === 'iveco' ||
     params.form === 'sprinter';
 
-  const path = `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme,excluido&$Top=100&$expand=site,tipo_veiculo&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false') and (tipo_veiculo/url_path eq '${params.form}')`;
+  let path = `?$Select=Id,cod_qrcode,site/Title,Modified,tipo_veiculo/Title,placa,ultima_inspecao,conforme,excluido&$Top=100&$expand=site,tipo_veiculo&$Orderby=Modified desc&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false') and (tipo_veiculo/url_path eq '${params.form}')`;
+
+  if (eqLoadRatioFilters?.conformity && eqLoadRatioFilters?.conformity === 'Conforme') {
+    path += ` and (conforme ne 'false')`;
+  }
+
+  if (eqLoadRatioFilters?.conformity && eqLoadRatioFilters?.conformity !== 'Conforme') {
+    path += ` and (conforme eq 'false')`;
+  }
+
+  if (eqLoadRatioFilters?.plate) {
+    path += ` and ( substringof('${eqLoadRatioFilters?.plate}', placa ))`;
+  }
+
+  if (eqLoadRatioFilters?.id) {
+    path += ` and ( Id eq '${eqLoadRatioFilters?.id}')`;
+  }
 
   const fetchEqLoadRatio = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'veiculos_emergencia', path });
@@ -51,7 +71,14 @@ const useEqLoadRatio = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['eq_load_ratio_data', user_site, params.form],
+    queryKey: [
+      'eq_load_ratio_data',
+      user_site,
+      params.form,
+      eqLoadRatioFilters?.conformity,
+      eqLoadRatioFilters?.plate,
+      eqLoadRatioFilters?.id,
+    ],
     queryFn: fetchEqLoadRatio,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -131,7 +158,16 @@ const useEqLoadRatio = () => {
       await crud.updateItemList('veiculos_emergencia', itemId, { excluido: true });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['eq_load_ratio_data', user_site, params.form] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'eq_load_ratio_data',
+          user_site,
+          params.form,
+          eqLoadRatioFilters?.conformity,
+          eqLoadRatioFilters?.plate,
+          eqLoadRatioFilters?.id,
+        ],
+      });
     },
   });
 

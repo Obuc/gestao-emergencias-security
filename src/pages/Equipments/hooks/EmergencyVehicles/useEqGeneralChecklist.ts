@@ -4,11 +4,12 @@ import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient
 
 import {
   IEqGeneralChecklist,
+  IEqGeneralChecklistFiltersProps,
   IEqGeneralChecklistModal,
 } from '../../types/EmergencyVehicles/EquipmentsGeneralChecklist';
 import { sharepointContext } from '../../../../context/sharepointContext';
 
-const useEqGeneralChecklist = () => {
+const useEqGeneralChecklist = (eqGeneralChecklistFilters?: IEqGeneralChecklistFiltersProps) => {
   const { crud } = sharepointContext();
   const params = useParams();
   const location = useLocation();
@@ -16,7 +17,29 @@ const useEqGeneralChecklist = () => {
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
 
-  const path = `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme_check_geral,excluido_check_geral&$Top=100&$expand=site,tipo_veiculo&$Filter=(site/Title eq '${user_site}') and (excluido_check_geral eq 'false')`;
+  let path = `?$Select=Id,cod_qrcode,Modified,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme_check_geral,excluido_check_geral&$Top=100&$expand=site,tipo_veiculo&$Orderby=Modified desc&$Filter=(site/Title eq '${user_site}') and (excluido_check_geral eq 'false')`;
+
+  if (eqGeneralChecklistFilters?.conformity && eqGeneralChecklistFilters?.conformity === 'Conforme') {
+    path += ` and (conforme ne 'false')`;
+  }
+
+  if (eqGeneralChecklistFilters?.conformity && eqGeneralChecklistFilters?.conformity !== 'Conforme') {
+    path += ` and (conforme eq 'false')`;
+  }
+
+  if (eqGeneralChecklistFilters?.vehicleType) {
+    for (let i = 0; i < eqGeneralChecklistFilters?.vehicleType.length; i++) {
+      path += `${i === 0 ? ' and' : ' or'} (tipo_veiculo/Title eq '${eqGeneralChecklistFilters?.vehicleType[i]}')`;
+    }
+  }
+
+  if (eqGeneralChecklistFilters?.plate) {
+    path += ` and ( substringof('${eqGeneralChecklistFilters?.plate}', placa ))`;
+  }
+
+  if (eqGeneralChecklistFilters?.id) {
+    path += ` and ( Id eq '${eqGeneralChecklistFilters?.id}')`;
+  }
 
   const fetchEqGeneralChecklist = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'veiculos_emergencia', path });
@@ -47,7 +70,15 @@ const useEqGeneralChecklist = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['eq_general_checklist_data', user_site, params.form],
+    queryKey: [
+      'eq_general_checklist_data',
+      user_site,
+      params.form,
+      eqGeneralChecklistFilters?.conformity,
+      eqGeneralChecklistFilters?.vehicleType,
+      eqGeneralChecklistFilters?.plate,
+      eqGeneralChecklistFilters?.id,
+    ],
 
     queryFn: fetchEqGeneralChecklist,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
@@ -135,7 +166,17 @@ const useEqGeneralChecklist = () => {
       await crud.updateItemList('veiculos_emergencia', itemId, { excluido_check_geral: true });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['eq_general_checklist_data', user_site, params.form] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'eq_general_checklist_data',
+          user_site,
+          params.form,
+          eqGeneralChecklistFilters?.conformity,
+          eqGeneralChecklistFilters?.vehicleType,
+          eqGeneralChecklistFilters?.plate,
+          eqGeneralChecklistFilters?.id,
+        ],
+      });
     },
   });
 

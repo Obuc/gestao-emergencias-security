@@ -140,8 +140,6 @@ const Equipments = () => {
                     {form.Title}
                   </Select.Item>
                 ))}
-
-                <Select.Separator />
               </Select.Component>
             </div>
 

@@ -6,13 +6,21 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { Table } from '../../../../../components/Table';
+import { Select } from '../../../../../components/Select';
+import TextField from '../../../../../components/TextField';
 import PopoverTables from '../../../../../components/PopoverTables';
 import RemoveItem from '../../../../../components/AppModals/RemoveItem';
 import useEqLoadRatio from '../../../hooks/EmergencyVehicles/useEqLoadRatio';
 import EqLoadRatioModal from '../../modals/EmergencyVehicles/EqLoadRatioModal';
-import { IEqLoadRatio } from '../../../types/EmergencyVehicles/EquipmentsLoadRatio';
+import { IEqLoadRatio, IEqLoadRatioFiltersProps } from '../../../types/EmergencyVehicles/EquipmentsLoadRatio';
 
 const EqLoadRatioTable = () => {
+  const [eqLoadRatioFilters, setEqLoadRatioFilters] = useState<IEqLoadRatioFiltersProps>({
+    id: '',
+    plate: null,
+    conformity: null,
+  });
+
   const {
     eq_load_ratio,
     fetchNextPage,
@@ -21,7 +29,7 @@ const EqLoadRatioTable = () => {
     isLoading,
     mutateRemoveEqLoadRatio,
     isLoadingMutateRemoveEqLoadRatio,
-  } = useEqLoadRatio();
+  } = useEqLoadRatio(eqLoadRatioFilters);
 
   const params = useParams();
   const navigate = useNavigate();
@@ -38,9 +46,63 @@ const EqLoadRatioTable = () => {
     }
   };
 
+  const handleRemoveAllFilters = () => {
+    setEqLoadRatioFilters({
+      id: '',
+      plate: null,
+      conformity: null,
+    });
+  };
+
   return (
-    <>
-      <div className="min-[1100px]:max-h-[38rem] min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[41rem] w-full overflow-y-auto">
+    <div className="h-full">
+      <Table.Filter>
+        <div className="flex gap-4">
+          <TextField
+            id="id"
+            name="id"
+            placeholder="ID"
+            width="w-[16.25rem]"
+            value={eqLoadRatioFilters.id || ''}
+            onChange={(event) => {
+              setEqLoadRatioFilters((prev) => ({ ...prev, id: event.target.value }));
+            }}
+          />
+
+          <TextField
+            id="plate"
+            name="plate"
+            placeholder="Placa"
+            width="w-[16.25rem]"
+            value={eqLoadRatioFilters.plate || ''}
+            onChange={(event) => {
+              setEqLoadRatioFilters((prev) => ({ ...prev, plate: event.target.value }));
+            }}
+          />
+
+          <Select.Component
+            id="conformity"
+            name="conformity"
+            variant="outline"
+            placeholder="Conformidade"
+            className="w-[11.25rem] max-h-[28.125rem]"
+            value={eqLoadRatioFilters.conformity ?? ''}
+            onValueChange={(newSelectedValues: any) => {
+              setEqLoadRatioFilters((prev) => ({ ...prev, conformity: newSelectedValues }));
+            }}
+          >
+            <Select.Item value="Conforme">Conforme</Select.Item>
+            <Select.Item value="Não Conforme">Não Conforme</Select.Item>
+          </Select.Component>
+        </div>
+
+        <button className="flex justify-center items-center gap-2 group" onClick={handleRemoveAllFilters}>
+          <span className="text-primary font-semibold">LIMPAR FILTROS</span>
+          <FontAwesomeIcon icon={faXmark} className="text-pink group-hover:text-pink/80 duration-200" />
+        </button>
+      </Table.Filter>
+
+      <div className="min-[1100px]:max-h-[33.125rem] relative min-[1600px]:max-h-[39.6875rem] min-[1800px]:max-h-[39.6875rem] w-full overflow-y-auto">
         <InfiniteScroll
           pageStart={0}
           loadMore={() => fetchNextPage()}
@@ -134,7 +196,7 @@ const EqLoadRatioTable = () => {
           open={removeItem !== null}
         />
       )}
-    </>
+    </div>
   );
 };
 

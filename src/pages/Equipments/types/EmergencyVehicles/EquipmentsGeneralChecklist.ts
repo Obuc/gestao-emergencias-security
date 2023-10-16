@@ -26,3 +26,10 @@ export interface IEqGeneralChecklistModal {
     conforme: boolean;
   }>;
 }
+
+export interface IEqGeneralChecklistFiltersProps {
+  id: string | null;
+  vehicleType: Array<string> | [];
+  plate: string | null;
+  conformity: string | null;
+}
