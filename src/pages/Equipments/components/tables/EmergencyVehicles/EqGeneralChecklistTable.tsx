@@ -19,7 +19,6 @@ const EqGeneralChecklistTable = () => {
     hasNextPage,
     isError,
     isLoading,
-
     mutateRemoveEqGeneralChecklist,
     isLoadingMutateRemoveEqGeneralChecklist,
   } = useEqGeneralChecklist();

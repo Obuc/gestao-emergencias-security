@@ -36,7 +36,7 @@ const EqLoadRatioModal = () => {
 
   const handleOnOpenChange = () => {
     setGeneralChecklist(null);
-    navigate('/equipments');
+    navigate(`/equipments/${params.form}`);
   };
 
   const generateQrCodePdf = () => {
@@ -162,7 +162,7 @@ const EqLoadRatioModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/${item.Id}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/records/${params.form}/${item.Id}`} />
                   <EquipmentCard.Content date={cardDate} responsible={item.bombeiro?.Title} action={item.observacao} />
                 </EquipmentCard.Root>
               );

@@ -45,10 +45,10 @@ const Records = () => {
   const filteredSubMenu =
     submenu && submenu.filter((form) => form.todos_sites === true || form.site.Title === localSite);
 
-  const [formValue, setFormValue] = useState<string>(equipments_value ?? 'Extintores');
+  const [formValue, setFormValue] = useState<string>(equipments_value ?? 'extinguisher');
 
   useEffect(() => {
-    !equipments_value?.length && localStorage.setItem('equipments_value', 'Extintores');
+    !equipments_value?.length && localStorage.setItem('equipments_value', 'extinguisher');
   }, []);
 
   useEffect(() => {
