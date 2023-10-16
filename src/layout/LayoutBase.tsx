@@ -13,6 +13,8 @@ interface ILayoutBaseProps {
   showMenu?: boolean;
 }
 
+const equipments_value = localStorage.getItem('equipments_value');
+
 const menuItems: MenuItem[] = [
   {
     icon: FileText,
@@ -21,7 +23,7 @@ const menuItems: MenuItem[] = [
   },
   {
     icon: Extinguisher,
-    path: '/equipments',
+    path: `/equipments/${equipments_value ? equipments_value : 'extinguisher'}`,
     label: 'Mapa de Equipamentos',
   },
   {

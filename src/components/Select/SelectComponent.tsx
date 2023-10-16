@@ -69,7 +69,13 @@ const SelectComponent = ({
 
         {!isLoading && (
           <SelectRadix.Root {...props}>
-            <SelectRadix.Trigger id={id} aria-invalid="true" disabled={isLoading || disabled} className={trigger()}>
+            <SelectRadix.Trigger
+              onClick={() => console.log('sss')}
+              id={id}
+              aria-invalid="true"
+              disabled={isLoading || disabled}
+              className={trigger()}
+            >
               {!multi && <SelectRadix.Value>{props.value}</SelectRadix.Value>}
               {!multi && !props.value && <span className="w-full text-start text-[#6D6D6D]">{placeholder}</span>}
 

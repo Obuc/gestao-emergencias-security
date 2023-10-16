@@ -7,7 +7,7 @@ interface IEquipmentCardRootProps {
 
 const cardRoot = tv({
   slots: {
-    base: 'w-full h-[11rem] rounded-lg p-6 flex flex-col text-[#282828] mb-2', // bg-[#282828]/5
+    base: 'w-full min-h-[11rem] rounded-lg p-6 flex flex-col text-[#282828] mb-2', // bg-[#282828]/5
   },
   variants: {
     variant: {

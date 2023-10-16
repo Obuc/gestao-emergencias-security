@@ -10,7 +10,9 @@ import { appContext } from '../../context/appContext';
 import useEqExtinguisher from './hooks/useEqExtinguisher';
 import useEqInspectionCmi from './hooks/useEqInspectionCmi';
 import EqCmiTestTable from './components/tables/EqCmiTestTable';
+import EqEqHydrantsTable from './components/tables/EqEqHydrantsTable';
 import useEqLoadRatio from './hooks/EmergencyVehicles/useEqLoadRatio';
+import EqHydrantQRCode from './components/tables/QRCode/EqHydrantQRCode';
 import EqTestCmiQRCode from './components/tables/QRCode/EqTestCmiQRCode';
 import EqExtinguisherTable from './components/tables/EqExtinguisherTable';
 import EqEqGovernanceValve from './components/tables/EqEqGovernanceValve';
@@ -33,7 +35,7 @@ const Equipments = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const [formValue, setFormValue] = useState<string>(equipments_value ?? 'Extintores');
+  const [formValue, setFormValue] = useState<string>(equipments_value ?? 'extinguisher');
   const [openModalGenerateQRCode, setOpenModalGenerateQRCode] = useState<boolean | null>(null);
 
   const { handleExportEqTestCmiToExcel } = useEqTestCmi();
@@ -160,6 +162,7 @@ const Equipments = () => {
           {formValue === 'valves' && <EqEqGovernanceValve />}
           {formValue === 'cmi_test' && <EqCmiTestTable />}
           {formValue === 'cmi_inspection' && <EqCmiInspectionTable />}
+          {formValue === 'hydrants' && <EqEqHydrantsTable />}
 
           {formValue === 'general_checklist' && <EqGeneralChecklistTable />}
           {formValue === 'scania' && <EqLoadRatioTable />}
@@ -177,6 +180,7 @@ const Equipments = () => {
           {formValue === 'cmi_test' && <EqTestCmiQRCode />}
           {formValue === 'cmi_inspection' && <EqInspectionCmiQRCode />}
           {formValue === 'valves' && <EqGovernanceValveQRCode />}
+          {formValue === 'hydrants' && <EqHydrantQRCode />}
 
           {formValue === 'general_checklist' && <EqGeneralChecklistQRCode />}
           {formValue === 'scania' && <EqLoadRatioQRCode />}
