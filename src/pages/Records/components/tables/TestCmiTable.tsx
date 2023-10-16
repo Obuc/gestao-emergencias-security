@@ -114,6 +114,7 @@ const TestCmiTable = () => {
             variant="outline"
             placeholder="Conformidade"
             className="w-[11.25rem] max-h-[28.125rem]"
+            popperWidth="w-[11.25rem]"
             value={testCMIFilters.conformity ?? ''}
             onValueChange={(newSelectedValues: any) => {
               setTestCMIFilters((prev) => ({ ...prev, conformity: newSelectedValues }));

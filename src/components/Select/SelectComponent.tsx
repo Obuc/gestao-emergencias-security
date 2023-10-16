@@ -19,6 +19,7 @@ const SelectComponent = ({
   error,
   mode,
   className,
+  popperWidth,
   variant,
   selectedValues = [],
   onSelectedValuesChange = () => {},
@@ -69,13 +70,7 @@ const SelectComponent = ({
 
         {!isLoading && (
           <SelectRadix.Root {...props}>
-            <SelectRadix.Trigger
-              onClick={() => console.log('sss')}
-              id={id}
-              aria-invalid="true"
-              disabled={isLoading || disabled}
-              className={trigger()}
-            >
+            <SelectRadix.Trigger id={id} aria-invalid="true" disabled={isLoading || disabled} className={trigger()}>
               {!multi && <SelectRadix.Value>{props.value}</SelectRadix.Value>}
               {!multi && !props.value && <span className="w-full text-start text-[#6D6D6D]">{placeholder}</span>}
 
@@ -125,7 +120,7 @@ const SelectComponent = ({
             </SelectRadix.Trigger>
 
             <SelectRadix.Portal>
-              <SelectRadix.Content position="popper" className={twMerge(content(), className)}>
+              <SelectRadix.Content position="popper" className={twMerge(content(), `${popperWidth && popperWidth}`)}>
                 <SelectRadix.Viewport className={arrow()}>
                   <SelectRadix.Group>
                     {multi &&

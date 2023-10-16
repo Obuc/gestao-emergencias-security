@@ -154,6 +154,7 @@ const HydrantsTable = () => {
             variant="outline"
             placeholder="Pavimento"
             className="w-[11.25rem] max-h-[28.125rem]"
+            popperWidth="w-[11.25rem]"
             selectedValues={hydrantsFilters.pavement}
             onSelectedValuesChange={(newSelectedValues) => {
               setHydrantsFilters((prev) => ({ ...prev, pavement: newSelectedValues }));
@@ -172,6 +173,7 @@ const HydrantsTable = () => {
             variant="outline"
             placeholder="Conformidade"
             className="w-[11.25rem] max-h-[28.125rem]"
+            popperWidth="w-[11.25rem]"
             value={hydrantsFilters.conformity ?? ''}
             onValueChange={(newSelectedValues: any) => {
               setHydrantsFilters((prev) => ({ ...prev, conformity: newSelectedValues }));

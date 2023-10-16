@@ -129,6 +129,7 @@ const LoadRatioTable = () => {
             variant="outline"
             placeholder="Conformidade"
             className="w-[11.25rem] max-h-[28.125rem]"
+            popperWidth="w-[11.25rem]"
             value={loadRatioFilters.conformity ?? ''}
             onValueChange={(newSelectedValues: any) => {
               setLoadRatioFilters((prev) => ({ ...prev, conformity: newSelectedValues }));

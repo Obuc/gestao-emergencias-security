@@ -92,7 +92,8 @@ const EqGeneralChecklistTable = () => {
             name="vehicleType"
             variant="outline"
             placeholder="Tipo Veículo"
-            className="max-h-[28.125rem]"
+            className="w-[13.75rem] max-h-[28.125rem]"
+            popperWidth="w-[13.75rem]"
             selectedValues={eqGeneralChecklistFilters.vehicleType}
             onSelectedValuesChange={(newSelectedValues) => {
               setEqGeneralChecklistFilters((prev) => ({ ...prev, vehicleType: newSelectedValues }));
@@ -110,7 +111,8 @@ const EqGeneralChecklistTable = () => {
             name="conformity"
             variant="outline"
             placeholder="Conformidade"
-            className="w-[11.25rem] max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
+            popperWidth="w-[12.5rem]"
             value={eqGeneralChecklistFilters.conformity ?? ''}
             onValueChange={(newSelectedValues: any) => {
               setEqGeneralChecklistFilters((prev) => ({ ...prev, conformity: newSelectedValues }));

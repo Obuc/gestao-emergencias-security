@@ -127,6 +127,7 @@ const Records = () => {
                   filteredSubMenu?.find((form) => form.path_url === formValue)?.Title
                 }
                 className="w-[22.5rem]"
+                popperWidth="w-[22.5rem]"
                 mode="gray"
                 isLoading={isLoadingFormularios}
                 onValueChange={(value: any) => {

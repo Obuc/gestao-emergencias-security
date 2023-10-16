@@ -93,7 +93,8 @@ const EqExtinguisherTable = () => {
             name="pavement"
             variant="outline"
             placeholder="Pavimento"
-            className="max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
+            popperWidth="w-[12.5rem]"
             selectedValues={eqExtinguisherFilters.pavement}
             onSelectedValuesChange={(newSelectedValues) => {
               setEqExtinguisherFilters((prev) => ({ ...prev, pavement: newSelectedValues }));
@@ -112,7 +113,7 @@ const EqExtinguisherTable = () => {
             name="place"
             variant="outline"
             placeholder="Local"
-            className="max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
             selectedValues={eqExtinguisherFilters.place}
             onSelectedValuesChange={(newSelectedValues: any) => {
               setEqExtinguisherFilters((prev) => ({ ...prev, place: newSelectedValues }));
@@ -132,6 +133,7 @@ const EqExtinguisherTable = () => {
             variant="outline"
             placeholder="Tipo Extintor"
             className="w-[12.5rem] max-h-[28.125rem]"
+            popperWidth="w-[12.5rem]"
             selectedValues={eqExtinguisherFilters.extinguisherType}
             onSelectedValuesChange={(newSelectedValues: any) => {
               setEqExtinguisherFilters((prev) => ({ ...prev, extinguisherType: newSelectedValues }));
@@ -149,7 +151,8 @@ const EqExtinguisherTable = () => {
             name="conformity"
             variant="outline"
             placeholder="Conformidade"
-            className="w-[11.25rem] max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
+            popperWidth="w-[12.5rem]"
             value={eqExtinguisherFilters.conformity ?? ''}
             onValueChange={(newSelectedValues: any) => {
               setEqExtinguisherFilters((prev) => ({ ...prev, conformity: newSelectedValues }));

@@ -76,7 +76,8 @@ const EqCmiInspectionTable = () => {
             name="pavement"
             variant="outline"
             placeholder="Pavimento"
-            className="max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
+            popperWidth="w-[12.5rem]"
             selectedValues={eqCMIInspectionFilters.pavement}
             onSelectedValuesChange={(newSelectedValues) => {
               setEqCMIInspectionFilters((prev) => ({ ...prev, pavement: newSelectedValues }));
@@ -94,7 +95,8 @@ const EqCmiInspectionTable = () => {
             name="conformity"
             variant="outline"
             placeholder="Conformidade"
-            className="w-[11.25rem] max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
+            popperWidth="w-[12.5rem]"
             value={eqCMIInspectionFilters.conformity ?? ''}
             onValueChange={(newSelectedValues: any) => {
               setEqCMIInspectionFilters((prev) => ({ ...prev, conformity: newSelectedValues }));

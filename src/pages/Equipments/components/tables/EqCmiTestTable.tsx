@@ -76,7 +76,8 @@ const EqCmiTestTable = () => {
             name="pavement"
             variant="outline"
             placeholder="Pavimento"
-            className="max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
+            popperWidth="w-[12.5rem]"
             selectedValues={eqCMITestFilters.pavement}
             onSelectedValuesChange={(newSelectedValues) => {
               setEqCMITestFilters((prev) => ({ ...prev, pavement: newSelectedValues }));
@@ -94,7 +95,8 @@ const EqCmiTestTable = () => {
             name="conformity"
             variant="outline"
             placeholder="Conformidade"
-            className="w-[11.25rem] max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
+            popperWidth="w-[12.5rem]"
             value={eqCMITestFilters.conformity ?? ''}
             onValueChange={(newSelectedValues: any) => {
               setEqCMITestFilters((prev) => ({ ...prev, conformity: newSelectedValues }));

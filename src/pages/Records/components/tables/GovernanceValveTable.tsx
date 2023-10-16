@@ -133,6 +133,7 @@ const GovernanceValveTable = () => {
             variant="outline"
             placeholder="Prédio"
             className="w-[11.25rem] max-h-[28.125rem]"
+            popperWidth="w-[11.25rem]"
             selectedValues={governanceValveFilters.property}
             onSelectedValuesChange={(newSelectedValues) => {
               setGovernanceValveFilters((prev) => ({ ...prev, property: newSelectedValues }));
@@ -151,6 +152,7 @@ const GovernanceValveTable = () => {
             variant="outline"
             placeholder="Conformidade"
             className="w-[11.25rem] max-h-[28.125rem]"
+            popperWidth="w-[11.25rem]"
             value={governanceValveFilters.conformity ?? ''}
             onValueChange={(newSelectedValues: any) => {
               setGovernanceValveFilters((prev) => ({ ...prev, conformity: newSelectedValues }));

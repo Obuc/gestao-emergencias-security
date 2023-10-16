@@ -84,7 +84,8 @@ const EqEqGovernanceValve = () => {
             name="pavement"
             variant="outline"
             placeholder="Pavimento"
-            className="max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
+            popperWidth="w-[12.5rem]"
             selectedValues={eqGovernancevalveFilters.pavement}
             onSelectedValuesChange={(newSelectedValues) => {
               setEqGovernancevalveFilters((prev) => ({ ...prev, pavement: newSelectedValues }));
@@ -103,7 +104,7 @@ const EqEqGovernanceValve = () => {
             name="place"
             variant="outline"
             placeholder="Local"
-            className="max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
             selectedValues={eqGovernancevalveFilters.place}
             onSelectedValuesChange={(newSelectedValues: any) => {
               setEqGovernancevalveFilters((prev) => ({ ...prev, place: newSelectedValues }));
@@ -121,7 +122,8 @@ const EqEqGovernanceValve = () => {
             name="conformity"
             variant="outline"
             placeholder="Conformidade"
-            className="w-[11.25rem] max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
+            popperWidth="w-[12.5rem]"
             value={eqGovernancevalveFilters.conformity ?? ''}
             onValueChange={(newSelectedValues: any) => {
               setEqGovernancevalveFilters((prev) => ({ ...prev, conformity: newSelectedValues }));

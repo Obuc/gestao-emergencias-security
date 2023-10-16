@@ -116,6 +116,7 @@ const GeneralChecklistTable = () => {
             variant="outline"
             placeholder="Tipo de Veículo"
             className="w-[12.5rem] max-h-[28.125rem]"
+            popperWidth="w-[12.5rem]"
             selectedValues={generalChecklistFilters.vehicle_type}
             onSelectedValuesChange={(newSelectedValues) => {
               setGeneralChecklistFilters((prev) => ({ ...prev, vehicle_type: newSelectedValues }));
@@ -152,6 +153,7 @@ const GeneralChecklistTable = () => {
             variant="outline"
             placeholder="Conformidade"
             className="w-[11.25rem] max-h-[28.125rem]"
+            popperWidth="w-[11.25rem]"
             value={generalChecklistFilters.conformity ?? ''}
             onValueChange={(newSelectedValues: any) => {
               setGeneralChecklistFilters((prev) => ({ ...prev, conformity: newSelectedValues }));

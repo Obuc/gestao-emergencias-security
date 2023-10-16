@@ -114,6 +114,7 @@ const InspectionCmiTable = () => {
             variant="outline"
             placeholder="Conformidade"
             className="w-[11.25rem] max-h-[28.125rem]"
+            popperWidth="w-[11.25rem]"
             value={inspectionCMIFilters.conformity ?? ''}
             onValueChange={(newSelectedValues: any) => {
               setInspectionCMIFilters((prev) => ({ ...prev, conformity: newSelectedValues }));

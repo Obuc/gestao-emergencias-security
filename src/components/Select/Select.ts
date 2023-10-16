@@ -18,6 +18,7 @@ export type SelectProps = SelectRadix.SelectProps &
     children: React.ReactNode;
     disabled?: boolean;
     className?: string;
+    popperWidth?: string;
     multi?: boolean;
 
     selectedValues?: string[];

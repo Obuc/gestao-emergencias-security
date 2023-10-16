@@ -93,7 +93,8 @@ const EqEqHydrantsTable = () => {
             name="pavement"
             variant="outline"
             placeholder="Pavimento"
-            className="max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
+            popperWidth="w-[12.5rem]"
             selectedValues={eqHydrantsFilters.pavement}
             onSelectedValuesChange={(newSelectedValues) => {
               setEqHydrantsFilters((prev) => ({ ...prev, pavement: newSelectedValues }));
@@ -112,7 +113,7 @@ const EqEqHydrantsTable = () => {
             name="place"
             variant="outline"
             placeholder="Local"
-            className="max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
             selectedValues={eqHydrantsFilters.place}
             onSelectedValuesChange={(newSelectedValues: any) => {
               setEqHydrantsFilters((prev) => ({ ...prev, place: newSelectedValues }));
@@ -131,6 +132,7 @@ const EqEqHydrantsTable = () => {
             variant="outline"
             placeholder="Possui Abrigo"
             className="w-[14.375rem] max-h-[28.125rem]"
+            popperWidth="w-[14.375rem]"
             value={eqHydrantsFilters.hasShelter ?? ''}
             onValueChange={(newSelectedValues: any) => {
               setEqHydrantsFilters((prev) => ({ ...prev, hasShelter: newSelectedValues }));
@@ -145,7 +147,8 @@ const EqEqHydrantsTable = () => {
             name="conformity"
             variant="outline"
             placeholder="Conformidade"
-            className="w-[11.25rem] max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
+            popperWidth="w-[12.5rem]"
             value={eqHydrantsFilters.conformity ?? ''}
             onValueChange={(newSelectedValues: any) => {
               setEqHydrantsFilters((prev) => ({ ...prev, conformity: newSelectedValues }));

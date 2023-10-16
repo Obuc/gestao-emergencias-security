@@ -85,7 +85,8 @@ const EqLoadRatioTable = () => {
             name="conformity"
             variant="outline"
             placeholder="Conformidade"
-            className="w-[11.25rem] max-h-[28.125rem]"
+            className="w-[12.5rem] max-h-[28.125rem]"
+            popperWidth="w-[12.5rem]"
             value={eqLoadRatioFilters.conformity ?? ''}
             onValueChange={(newSelectedValues: any) => {
               setEqLoadRatioFilters((prev) => ({ ...prev, conformity: newSelectedValues }));

@@ -10,13 +10,13 @@ import { IReports } from '../../types/Reports';
 import useReports from '../../hooks/useReports';
 import Modal from '../../../../components/Modal';
 import { Button } from '../../../../components/Button';
+import { Select } from '../../../../components/Select';
 import TextField from '../../../../components/TextField';
 import DatePicker from '../../../../components/DatePicker';
 import { appContext } from '../../../../context/appContext';
 import { FileImport } from '../../../../components/FileImport';
 import { RadioGroup } from '../../../../components/RadioGroup';
 import { arraysAreEqual } from '../../../../utils/arraysAreEqual';
-import { Select } from '../../../../components/Select';
 
 interface IReportsModal extends Partial<IReports> {
   isRevalidate: string;
@@ -287,6 +287,7 @@ const ReportsModal = () => {
                         label="Tipo"
                         value={props.values.tipo_laudoId ? props.values.tipo_laudoId.toString() : ''}
                         className="w-[50.625rem]"
+                        popperWidth="w-[50.625rem]"
                         isLoading={isLoadingReportModal || isLoadingTipoLaudo}
                         onValueChange={(value) => {
                           props.setFieldValue('tipo_laudoId', value);
