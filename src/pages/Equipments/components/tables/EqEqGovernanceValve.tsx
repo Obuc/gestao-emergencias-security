@@ -6,13 +6,24 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { Table } from '../../../../components/Table';
+import { Select } from '../../../../components/Select';
+import TextField from '../../../../components/TextField';
+import { appContext } from '../../../../context/appContext';
 import PopoverTables from '../../../../components/PopoverTables';
 import useEqGovernanceValve from '../../hooks/useEqGovernanceValve';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
 import EqGovernanceValveModal from '../modals/EqGovernanceValveModal';
-import { IEqGovernanceValve } from '../../types/EquipmentsGovernanceValve';
+import { IEqGovernanceValve, IEqGovernanceValveFiltersProps } from '../../types/EquipmentsGovernanceValve';
 
 const EqEqGovernanceValve = () => {
+  const [eqGovernancevalveFilters, setEqGovernancevalveFilters] = useState<IEqGovernanceValveFiltersProps>({
+    id: '',
+    pavement: [],
+    place: [],
+    valveId: null,
+    conformity: null,
+  });
+
   const {
     governanceValve,
     fetchNextPage,
@@ -21,18 +32,113 @@ const EqEqGovernanceValve = () => {
     isLoading,
     mutateRemoveEqGovernanceValve,
     isLoadingMutateRemoveEqGovernanceValve,
-  } = useEqGovernanceValve();
+  } = useEqGovernanceValve(eqGovernancevalveFilters);
 
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
+  const { local, pavimento } = appContext();
 
   const handleView = (id: number) => {
     navigate(`/equipments/valves/${id}`);
   };
 
+  const handleRemoveAllFilters = () => {
+    setEqGovernancevalveFilters({
+      id: '',
+      pavement: [],
+      place: [],
+      valveId: null,
+      conformity: null,
+    });
+  };
+
   return (
-    <>
-      <div className="min-[1100px]:max-h-[38rem] min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[43rem] w-full overflow-y-auto">
+    <div className="h-full">
+      <Table.Filter>
+        <div className="flex gap-4">
+          <TextField
+            id="id"
+            name="id"
+            placeholder="ID"
+            width="w-[16.25rem]"
+            value={eqGovernancevalveFilters.id || ''}
+            onChange={(event) => {
+              setEqGovernancevalveFilters((prev) => ({ ...prev, id: event.target.value }));
+            }}
+          />
+
+          <TextField
+            id="valveId"
+            name="valveId"
+            placeholder="Cód. Válvula"
+            width="w-[9.375rem]"
+            value={eqGovernancevalveFilters.valveId || ''}
+            onChange={(event) => {
+              setEqGovernancevalveFilters((prev) => ({ ...prev, valveId: event.target.value }));
+            }}
+          />
+
+          <Select.Component
+            multi
+            id="pavement"
+            name="pavement"
+            variant="outline"
+            placeholder="Pavimento"
+            className="max-h-[28.125rem]"
+            selectedValues={eqGovernancevalveFilters.pavement}
+            onSelectedValuesChange={(newSelectedValues) => {
+              setEqGovernancevalveFilters((prev) => ({ ...prev, pavement: newSelectedValues }));
+            }}
+          >
+            {pavimento?.map((pavimento) => (
+              <Select.Item key={pavimento.Id} value={pavimento.Title}>
+                {pavimento.Title}
+              </Select.Item>
+            ))}
+          </Select.Component>
+
+          <Select.Component
+            multi
+            id="place"
+            name="place"
+            variant="outline"
+            placeholder="Local"
+            className="max-h-[28.125rem]"
+            selectedValues={eqGovernancevalveFilters.place}
+            onSelectedValuesChange={(newSelectedValues: any) => {
+              setEqGovernancevalveFilters((prev) => ({ ...prev, place: newSelectedValues }));
+            }}
+          >
+            {local?.map((local) => (
+              <Select.Item key={local.Id} value={local.Title}>
+                {local.Title}
+              </Select.Item>
+            ))}
+          </Select.Component>
+
+          <Select.Component
+            id="conformity"
+            name="conformity"
+            variant="outline"
+            placeholder="Conformidade"
+            className="w-[11.25rem] max-h-[28.125rem]"
+            value={eqGovernancevalveFilters.conformity ?? ''}
+            onValueChange={(newSelectedValues: any) => {
+              setEqGovernancevalveFilters((prev) => ({ ...prev, conformity: newSelectedValues }));
+            }}
+          >
+            <Select.Item value="Conforme">Conforme</Select.Item>
+            <Select.Item value="Não Conforme">Não Conforme</Select.Item>
+          </Select.Component>
+        </div>
+
+        <button className="flex justify-center items-center gap-2 group" onClick={handleRemoveAllFilters}>
+          <span className="text-primary font-semibold">LIMPAR FILTROS</span>
+          <FontAwesomeIcon icon={faXmark} className="text-pink group-hover:text-pink/80 duration-200" />
+        </button>
+      </Table.Filter>
+
+      <div className="min-[1100px]:max-h-[33.125rem] relative min-[1600px]:max-h-[39.6875rem] min-[1800px]:max-h-[39.6875rem] w-full overflow-y-auto">
         <InfiniteScroll
           pageStart={0}
           loadMore={() => fetchNextPage()}
@@ -128,7 +234,7 @@ const EqEqGovernanceValve = () => {
           open={removeItem !== null}
         />
       )}
-    </>
+    </div>
   );
 };
 

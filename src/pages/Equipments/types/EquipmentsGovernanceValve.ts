@@ -30,3 +30,11 @@ export interface IEqGovernanceValveModal {
     data_legado?: string;
   }>;
 }
+
+export interface IEqGovernanceValveFiltersProps {
+  id: string | null;
+  pavement: Array<string> | [];
+  place: Array<string> | [];
+  valveId: string | null;
+  conformity: string | null;
+}
