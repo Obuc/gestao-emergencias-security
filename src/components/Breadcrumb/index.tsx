@@ -1,6 +1,5 @@
-import { useLocation } from 'react-router-dom';
-
 import { Breadcrumbs } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -16,6 +15,26 @@ const Breadcrumb = () => {
       url: url,
     };
   });
+
+  const labelMappings: any = {
+    records: 'Registros',
+    equipments: 'Mapa de Equipamentos',
+    schedule: 'Agenda',
+    reports: 'Laudos',
+    new: 'Novo Laudo',
+    extinguisher: 'Extintores',
+    hydrants: 'Hidrantes',
+    valves: 'Válvulas de Governo',
+    cmi_test: 'Teste CMI',
+    cmi_inspection: 'Inspeção CMI',
+    general_checklist: 'Checklist Geral',
+    scania: 'Scania',
+    s10: 'S10',
+    mercedes: 'Mercedes',
+    van: 'Furgão',
+    sprinter: 'Ambulância Sprinter',
+    iveco: 'Ambulância Iveco',
+  };
 
   return (
     <>
@@ -34,17 +53,7 @@ const Breadcrumb = () => {
               key={index}
               href={item.url}
             >
-              {item.label === 'records'
-                ? 'Registros'
-                : item.label === 'equipments'
-                ? 'Mapa de Equipamentos'
-                : item.label === 'schedule'
-                ? 'Agenda'
-                : item.label === 'reports'
-                ? 'Laudos'
-                : item.label === 'new'
-                ? 'Novo Laudo'
-                : item.label}
+              {labelMappings[item.label] || item.label}
             </a>
           ))}
         </Breadcrumbs>

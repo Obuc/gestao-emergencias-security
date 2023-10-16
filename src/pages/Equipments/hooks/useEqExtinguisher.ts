@@ -3,16 +3,50 @@ import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
-import { IEqExtinguisher, IEqExtinguisherModal } from '../types/EquipmentsExtinguisher';
+import { IEqExtinguisher, IEqExtinguisherFiltersProps, IEqExtinguisherModal } from '../types/EquipmentsExtinguisher';
 
-const useEqExtinguisher = () => {
+const useEqExtinguisher = (eqExtinguisherFilters?: IEqExtinguisherFiltersProps) => {
   const { crud } = sharepointContext();
   const params = useParams();
   const location = useLocation();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
 
-  const path = `?$Select=Id,cod_qrcode,cod_extintor,excluido,Modified,conforme,site/Title,pavimento/Title,local/Title&$expand=site,pavimento,local&$Orderby=Modified desc&$Top=100&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
+  let path = `?$Select=Id,cod_qrcode,cod_extintor,excluido,Modified,conforme,site/Title,pavimento/Title,local/Title,tipo_extintor/Title&$expand=site,pavimento,tipo_extintor,local&$Orderby=Modified desc&$Top=100&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
+
+  if (eqExtinguisherFilters?.place) {
+    for (let i = 0; i < eqExtinguisherFilters.place.length; i++) {
+      path += `${i === 0 ? ' and' : ' or'} (local/Title eq '${eqExtinguisherFilters.place[i]}')`;
+    }
+  }
+
+  if (eqExtinguisherFilters?.pavement) {
+    for (let i = 0; i < eqExtinguisherFilters.pavement.length; i++) {
+      path += `${i === 0 ? ' and' : ' or'} (pavimento/Title eq '${eqExtinguisherFilters.pavement[i]}')`;
+    }
+  }
+
+  if (eqExtinguisherFilters?.extinguisherType) {
+    for (let i = 0; i < eqExtinguisherFilters?.extinguisherType.length; i++) {
+      path += `${i === 0 ? ' and' : ' or'} (tipo_extintor/Title eq '${eqExtinguisherFilters?.extinguisherType[i]}')`;
+    }
+  }
+
+  if (eqExtinguisherFilters?.conformity && eqExtinguisherFilters?.conformity === 'Conforme') {
+    path += ` and (conforme ne 'false')`;
+  }
+
+  if (eqExtinguisherFilters?.conformity && eqExtinguisherFilters?.conformity !== 'Conforme') {
+    path += ` and (conforme eq 'false')`;
+  }
+
+  if (eqExtinguisherFilters?.extinguisherId) {
+    path += ` and ( substringof('${eqExtinguisherFilters?.extinguisherId}', cod_extintor ))`;
+  }
+
+  if (eqExtinguisherFilters?.id) {
+    path += ` and ( Id eq '${eqExtinguisherFilters?.id}')`;
+  }
 
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'extintores', path });
@@ -22,6 +56,7 @@ const useEqExtinguisher = () => {
           ...item,
           local: item.local?.Title,
           pavimento: item.pavimento?.Title,
+          tipo_extintor: item.tipo_extintor?.Title,
           site: item.site?.Title,
         };
       }),
@@ -43,7 +78,17 @@ const useEqExtinguisher = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['equipments_data', user_site, params.form],
+    queryKey: [
+      'equipments_data',
+      user_site,
+      params.form,
+      eqExtinguisherFilters?.place,
+      eqExtinguisherFilters?.pavement,
+      eqExtinguisherFilters?.extinguisherType,
+      eqExtinguisherFilters?.conformity,
+      eqExtinguisherFilters?.extinguisherId,
+      eqExtinguisherFilters?.id,
+    ],
 
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
@@ -136,7 +181,19 @@ const useEqExtinguisher = () => {
       await crud.updateItemList('extintores', itemId, { excluido: true });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['equipments_data', user_site, params.form] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'equipments_data',
+          user_site,
+          params.form,
+          eqExtinguisherFilters?.place,
+          eqExtinguisherFilters?.pavement,
+          eqExtinguisherFilters?.extinguisherType,
+          eqExtinguisherFilters?.conformity,
+          eqExtinguisherFilters?.extinguisherId,
+          eqExtinguisherFilters?.id,
+        ],
+      });
     },
   });
 

@@ -8,6 +8,7 @@ interface ICurrentUser {
   LoginName: string;
   Title: string;
   photo: string;
+  isAdmin: boolean;
 }
 
 interface IUserContext {
@@ -30,12 +31,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     queryFn: async () => {
       let photo = '';
       const resp = await crud.getCurrentUser();
+      const userGroup = await crud.getUsersGroup(1946); // https://bayergroup.sharepoint.com/sites/005070/gestao_emergencia/_layouts/15/people.aspx?MembershipGroupId=1946
+
+      const isUserAdmin = userGroup.some((userObj) => userObj.Email === resp.Email);
 
       if (resp) {
         photo = await crud.getUserPhoto(resp.Email);
       }
 
-      return { ...resp, photo };
+      return { ...resp, photo, isAdmin: isUserAdmin };
     },
     refetchOnWindowFocus: false,
   });

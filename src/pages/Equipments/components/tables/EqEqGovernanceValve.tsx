@@ -90,7 +90,7 @@ const EqEqGovernanceValve = () => {
                     item?.data?.value?.map((item: IEqGovernanceValve) => (
                       <Table.Tr key={item.Id}>
                         <Table.Td className="pl-8">{item?.Id}</Table.Td>
-                        <Table.Td className="pl-8">{item?.site}</Table.Td>
+                        <Table.Td>{item?.site}</Table.Td>
                         <Table.Td>{item?.pavimento}</Table.Td>
                         <Table.Td>{item?.local}</Table.Td>
                         <Table.Td>{item?.cod_equipamento}</Table.Td>

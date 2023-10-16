@@ -133,7 +133,7 @@ const ExtinguisherTable = () => {
             placeholder="Local"
             className="w-[11.25rem] max-h-[28.125rem]"
             selectedValues={extinguisherFilters.place}
-            onSelectedValuesChange={(newSelectedValues) => {
+            onSelectedValuesChange={(newSelectedValues: any) => {
               setExtinguisherFilters((prev) => ({ ...prev, place: newSelectedValues }));
             }}
           >

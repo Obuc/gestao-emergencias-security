@@ -5,6 +5,7 @@ export interface IEqExtinguisher {
   pavimento?: string;
   local?: string;
   predio?: string;
+  tipo_extintor?: string;
   cod_extintor: string;
   conforme: boolean;
 }
@@ -34,4 +35,13 @@ export interface IEqExtinguisherModal {
     Created: string;
     cod_extintor: string;
   }>;
+}
+
+export interface IEqExtinguisherFiltersProps {
+  id: string | null;
+  pavement: Array<string> | [];
+  place: Array<string> | [];
+  extinguisherType: Array<string> | [];
+  extinguisherId: string | null;
+  conformity: string | null;
 }

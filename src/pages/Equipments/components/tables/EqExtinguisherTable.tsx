@@ -6,13 +6,25 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { Table } from '../../../../components/Table';
+import { Select } from '../../../../components/Select';
+import TextField from '../../../../components/TextField';
+import { appContext } from '../../../../context/appContext';
 import useEqExtinguisher from '../../hooks/useEqExtinguisher';
 import EqExtinguisherModal from '../modals/EqExtinguisherModal';
 import PopoverTables from '../../../../components/PopoverTables';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
-import { IEqExtinguisher } from '../../types/EquipmentsExtinguisher';
+import { IEqExtinguisher, IEqExtinguisherFiltersProps } from '../../types/EquipmentsExtinguisher';
 
 const EqExtinguisherTable = () => {
+  const [eqExtinguisherFilters, setEqExtinguisherFilters] = useState<IEqExtinguisherFiltersProps>({
+    id: '',
+    pavement: [],
+    place: [],
+    extinguisherType: [],
+    extinguisherId: null,
+    conformity: null,
+  });
+
   const {
     equipments,
     fetchNextPage,
@@ -21,10 +33,11 @@ const EqExtinguisherTable = () => {
     isLoading,
     isLoadingMutateRemoveEquipment,
     mutateRemoveEquipment,
-  } = useEqExtinguisher();
+  } = useEqExtinguisher(eqExtinguisherFilters);
 
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
+  const { local, pavimento, tipo_extintor } = appContext();
 
   const handleView = (id: number) => {
     navigate(`/equipments/extinguisher/${id}`);
@@ -37,9 +50,123 @@ const EqExtinguisherTable = () => {
     }
   };
 
+  const handleRemoveAllFilters = () => {
+    setEqExtinguisherFilters({
+      id: '',
+      pavement: [],
+      place: [],
+      extinguisherType: [],
+      extinguisherId: null,
+      conformity: null,
+    });
+  };
+
   return (
-    <>
-      <div className="min-[1100px]:max-h-[38rem] min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[43rem] w-full overflow-y-auto">
+    <div className="h-full">
+      <Table.Filter>
+        <div className="flex gap-4">
+          <TextField
+            id="id"
+            name="id"
+            placeholder="ID"
+            width="w-[16.25rem]"
+            value={eqExtinguisherFilters.id || ''}
+            onChange={(event) => {
+              setEqExtinguisherFilters((prev) => ({ ...prev, id: event.target.value }));
+            }}
+          />
+
+          <TextField
+            id="extinguisherId"
+            name="extinguisherId"
+            placeholder="Cód. Extintor"
+            width="w-[9.375rem]"
+            value={eqExtinguisherFilters.extinguisherId || ''}
+            onChange={(event) => {
+              setEqExtinguisherFilters((prev) => ({ ...prev, extinguisherId: event.target.value }));
+            }}
+          />
+
+          <Select.Component
+            multi
+            id="pavement"
+            name="pavement"
+            variant="outline"
+            placeholder="Pavimento"
+            className="max-h-[28.125rem]"
+            selectedValues={eqExtinguisherFilters.pavement}
+            onSelectedValuesChange={(newSelectedValues) => {
+              setEqExtinguisherFilters((prev) => ({ ...prev, pavement: newSelectedValues }));
+            }}
+          >
+            {pavimento?.map((pavimento) => (
+              <Select.Item key={pavimento.Id} value={pavimento.Title}>
+                {pavimento.Title}
+              </Select.Item>
+            ))}
+          </Select.Component>
+
+          <Select.Component
+            multi
+            id="place"
+            name="place"
+            variant="outline"
+            placeholder="Local"
+            className="max-h-[28.125rem]"
+            selectedValues={eqExtinguisherFilters.place}
+            onSelectedValuesChange={(newSelectedValues: any) => {
+              setEqExtinguisherFilters((prev) => ({ ...prev, place: newSelectedValues }));
+            }}
+          >
+            {local?.map((local) => (
+              <Select.Item key={local.Id} value={local.Title}>
+                {local.Title}
+              </Select.Item>
+            ))}
+          </Select.Component>
+
+          <Select.Component
+            multi
+            id="extinguisherType"
+            name="extinguisherType"
+            variant="outline"
+            placeholder="Tipo Extintor"
+            className="w-[12.5rem] max-h-[28.125rem]"
+            selectedValues={eqExtinguisherFilters.extinguisherType}
+            onSelectedValuesChange={(newSelectedValues: any) => {
+              setEqExtinguisherFilters((prev) => ({ ...prev, extinguisherType: newSelectedValues }));
+            }}
+          >
+            {tipo_extintor?.map((local) => (
+              <Select.Item key={local.Id} value={local.Title}>
+                {local.Title}
+              </Select.Item>
+            ))}
+          </Select.Component>
+
+          <Select.Component
+            id="conformity"
+            name="conformity"
+            variant="outline"
+            placeholder="Conformidade"
+            className="w-[11.25rem] max-h-[28.125rem]"
+            value={eqExtinguisherFilters.conformity ?? ''}
+            onValueChange={(newSelectedValues: any) => {
+              setEqExtinguisherFilters((prev) => ({ ...prev, conformity: newSelectedValues }));
+            }}
+          >
+            <Select.Item value="Conforme">Conforme</Select.Item>
+            <Select.Item value="Não Conforme">Não Conforme</Select.Item>
+          </Select.Component>
+        </div>
+
+        <button className="flex justify-center items-center gap-2 group" onClick={handleRemoveAllFilters}>
+          <span className="text-primary font-semibold">LIMPAR FILTROS</span>
+          <FontAwesomeIcon icon={faXmark} className="text-pink group-hover:text-pink/80 duration-200" />
+        </button>
+      </Table.Filter>
+
+      <div className="min-[1100px]:max-h-[33.125rem] relative min-[1600px]:max-h-[39.6875rem] min-[1800px]:max-h-[39.6875rem] w-full overflow-y-auto">
         <InfiniteScroll
           pageStart={0}
           loadMore={() => fetchNextPage()}
@@ -54,6 +181,7 @@ const EqExtinguisherTable = () => {
                 <Table.Th>Site</Table.Th>
                 <Table.Th>Pavimento</Table.Th>
                 <Table.Th>Local</Table.Th>
+                <Table.Th>Tipo Extintor</Table.Th>
                 <Table.Th>N° Extintor</Table.Th>
                 <Table.Th>Conformidade</Table.Th>
                 <Table.Th>{''}</Table.Th>
@@ -63,7 +191,7 @@ const EqExtinguisherTable = () => {
             <Table.Tbody className="max-h-[28rem] overflow-y-scroll">
               {equipments?.pages[0].data.value.length === 0 && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={7} className="text-center text-primary">
+                  <Table.Td colSpan={8} className="text-center text-primary">
                     Nenhum registro encontrado!
                   </Table.Td>
                 </Table.Tr>
@@ -71,7 +199,7 @@ const EqExtinguisherTable = () => {
 
               {isError && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={7} className="text-center text-primary">
+                  <Table.Td colSpan={8} className="text-center text-primary">
                     Ops, ocorreu um erro, recarregue a página e tente novamente!
                   </Table.Td>
                 </Table.Tr>
@@ -81,7 +209,7 @@ const EqExtinguisherTable = () => {
                 <>
                   {Array.from({ length: 30 }).map((_, index) => (
                     <Table.Tr key={index}>
-                      <Table.Td className="h-14 px-4" colSpan={7}>
+                      <Table.Td className="h-14 px-4" colSpan={8}>
                         <Skeleton height="3.5rem" animation="wave" />
                       </Table.Td>
                     </Table.Tr>
@@ -100,6 +228,7 @@ const EqExtinguisherTable = () => {
                         <Table.Td>{item?.site}</Table.Td>
                         <Table.Td>{item?.pavimento}</Table.Td>
                         <Table.Td>{item?.local}</Table.Td>
+                        <Table.Td>{item?.tipo_extintor}</Table.Td>
                         <Table.Td>{item?.cod_extintor}</Table.Td>
                         <Table.Td>
                           {item?.conforme ? (
@@ -135,7 +264,7 @@ const EqExtinguisherTable = () => {
           open={removeItem !== null}
         />
       )}
-    </>
+    </div>
   );
 };
 

@@ -7,6 +7,7 @@ import { IPavimento } from '../types/Pavimento';
 import { IFormulario } from '../types/Formularios';
 import { ITipoVeiculo } from '../types/TipoVeiculo';
 import { sharepointContext } from './sharepointContext';
+import { ITipoExtintor } from '../types/TipoExtintor';
 
 interface IAppContext {
   sites?: Array<ISite>;
@@ -15,6 +16,7 @@ interface IAppContext {
   local?: Array<ILocal>;
   pavimento?: Array<IPavimento>;
   tipo_veiculo?: Array<ITipoVeiculo>;
+  tipo_extintor?: Array<ITipoExtintor>;
   predio?: Array<IPredio>;
   isLoadingFormularios: boolean;
   isLoadingSites: boolean;
@@ -127,6 +129,17 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     enabled: !!localSite,
   });
 
+  const { data: tipo_extintor }: UseQueryResult<Array<ITipoExtintor>> = useQuery({
+    queryKey: ['tipo_extintor'],
+    queryFn: async () => {
+      const resp = await crud.getListItems('tipo_extintor', `?$Select=Id,Title&$orderby=Title asc`);
+      return resp;
+    },
+    staleTime: 5000 * 60, // 5 Minute
+    refetchOnWindowFocus: false,
+    enabled: !!localSite,
+  });
+
   return (
     <AppContext.Provider
       value={{
@@ -136,6 +149,7 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         local,
         pavimento,
         predio,
+        tipo_extintor,
         tipo_veiculo,
         isLoadingFormularios,
         isLoadingSites,

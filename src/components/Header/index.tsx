@@ -76,8 +76,10 @@ const Header = () => {
                 <Avatar image={user.photo ? user.photo : undefined} username={user?.Title} />
               </div>
               <div className="flex flex-col gap-1 select-none ml-3">
-                <span className="font-bold text-primary">{user.Title}</span>
-                <span className="text-[.875rem] italic text-primary">Administrador</span>
+                <span className="font-bold text-primary">{user?.Title}</span>
+                <span className="text-[.875rem] italic text-primary">
+                  {user?.isAdmin ? 'Administrador' : 'Usuário Comum'}
+                </span>
               </div>
             </>
           )}
