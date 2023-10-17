@@ -350,7 +350,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
   });
 
   const fetchExtinguisherAllRecords = async () => {
-    const path = `?$Select=Id,local,extintor_idId,data_pesagem,observacao,novo,pavimento,bombeiro_id/Title,site/Title&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+    const path = `?$Select=Id,local,extintor_idId,data_pesagem,observacao,novo,pavimento,conforme,bombeiro_id/Title,site/Title&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
     const response = await crud.getListItems('registros_extintor', path);
 
     const dataWithTransformations = await Promise.all(
@@ -372,7 +372,8 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
           tipo_extintor: extintor?.tipo_extintor?.Title,
           cod_extintor: extintor?.cod_extintor,
           predio: extintor?.predio?.Title,
-          validade: format(new Date(extintor?.validade), 'dd/MM/yyyy'),
+          conforme: item?.conforme ? 'CONFORME' : 'NÃO CONFORME',
+          validade: extintor?.validade ? format(new Date(extintor?.validade), 'dd/MM/yyyy') : '',
         };
       }),
     );
@@ -396,6 +397,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
       'cod_extintor',
       'predio',
       'validade',
+      'conforme',
       'observacao',
     ];
 
@@ -417,11 +419,12 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
 
       const wscols = [
         { wch: 10 },
-        { wch: 30 },
         { wch: 15 },
         { wch: 15 },
         { wch: 15 },
-        { wch: 30 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
         { wch: 15 },
         { wch: 15 },
         { wch: 15 },
@@ -433,7 +436,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
 
       const firstRowHeight = 30;
       const wsrows = [{ hpx: firstRowHeight }];
-      const filterRange = { ref: `A1:H1` };
+      const filterRange = { ref: `A1:L1` };
 
       ws['!autofilter'] = filterRange;
       ws['!rows'] = wsrows;

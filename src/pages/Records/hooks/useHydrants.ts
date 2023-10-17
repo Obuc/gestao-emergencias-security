@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 import { useState } from 'react';
-import { parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -316,14 +316,14 @@ const useHydrants = (hydrantsFilters?: IHydrantsFiltersProps) => {
   });
 
   const fetchHydrantsAllRecords = async () => {
-    const path = `?$Select=Id,site/Title,hidrante_id/Id,bombeiro/Title,conforme,observacao,Created&$expand=site,hidrante_id,bombeiro&$Filter=(site/Title eq '${user_site}')`;
+    const path = `?$Select=Id,site/Title,hidrante_id/Id,bombeiro/Title,conforme,observacao&$expand=site,hidrante_id,bombeiro&$Filter=(site/Title eq '${user_site}')`;
     const response = await crud.getListItems('registros_hidrantes', path);
 
     const dataWithTransformations = await Promise.all(
       response.map(async (item: any) => {
         const hydrantsResponse = await crud.getListItemsv2(
           'hidrantes',
-          `?$Select=Id,cod_hidrante,predio/Title,pavimento/Title,local/Title&$expand=predio,pavimento,local&$Filter=(Id eq '${item.hidrante_id.Id}')`,
+          `?$Select=Id,cod_hidrante,predio/Title,possui_abrigo,ultima_inspecao,pavimento/Title,local/Title&$expand=predio,pavimento,local&$Filter=(Id eq '${item.hidrante_id.Id}')`,
         );
 
         const hidrante = hydrantsResponse.results[0] || null;
@@ -332,9 +332,13 @@ const useHydrants = (hydrantsFilters?: IHydrantsFiltersProps) => {
           ...item,
           bombeiro: item.bombeiro?.Title,
           hidrante_id: hidrante?.Id,
-          predio: hidrante?.predio.Title,
-          pavimento: hidrante?.pavimento.Title,
-          local: hidrante?.local.Title,
+          predio: hidrante?.predio?.Title,
+          pavimento: hidrante?.pavimento?.Title,
+          local: hidrante?.local?.Title,
+          possui_abrigo: hidrante?.possui_abrigo ? 'SIM' : 'NÃO',
+          ultima_inspecao: hidrante?.ultima_inspecao ? format(new Date(hidrante?.ultima_inspecao), 'dd/MM/yyyy') : '',
+          cod_hidrante: hidrante?.cod_hidrante,
+          conforme: item?.conforme ? 'CONFORME' : 'NÃO CONFORME',
         };
       }),
     );
@@ -347,7 +351,18 @@ const useHydrants = (hydrantsFilters?: IHydrantsFiltersProps) => {
 
     const data = await fetchHydrantsAllRecords();
 
-    const columns = ['Id', 'bombeiro', 'hidrante_id', 'predio', 'pavimento', 'local', 'cod_hidrante', 'conforme'];
+    const columns = [
+      'Id',
+      'bombeiro',
+      'predio',
+      'pavimento',
+      'local',
+      'cod_hidrante',
+      'possui_abrigo',
+      'ultima_inspecao',
+      'conforme',
+      'observacao',
+    ];
 
     const headerRow = columns.map((column) => column.toString());
 
@@ -365,7 +380,30 @@ const useHydrants = (hydrantsFilters?: IHydrantsFiltersProps) => {
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-      XLSX.utils.book_append_sheet(wb, ws, '');
+      const wscols = [
+        { wch: 10 },
+        { wch: 30 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 30 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 30 },
+      ];
+
+      dataArray[0][0] = { t: 's', v: 'Texto com\nQuebra de Linha' };
+
+      const firstRowHeight = 30;
+      const wsrows = [{ hpx: firstRowHeight }];
+      const filterRange = { ref: `A1:J1` };
+
+      ws['!autofilter'] = filterRange;
+      ws['!rows'] = wsrows;
+      ws['!cols'] = wscols;
+
+      XLSX.utils.book_append_sheet(wb, ws, 'Hidrantes');
       XLSX.writeFile(wb, `Registros - Hidrantes.xlsx`);
     }
 
