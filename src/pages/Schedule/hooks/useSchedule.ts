@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import { parseISO } from 'date-fns';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
 import { DataEquipments } from '../types/DataEquipments';
 import { sharepointContext } from '../../../context/sharepointContext';
-import { parseISO } from 'date-fns';
 
 export const useSchedule = () => {
   const { crud } = sharepointContext();
@@ -38,11 +38,21 @@ export const useSchedule = () => {
   };
 
   const nextMonth = () => {
-    setSelectedMonth(selectedMonth + 1);
+    const newMonth = selectedMonth + 1;
+    const newYear = selectedYear + Math.floor(newMonth / 12);
+    setSelectedMonth(newMonth % 12);
+    setSelectedYear(newYear);
   };
 
   const prevMonth = () => {
-    setSelectedMonth(selectedMonth - 1);
+    let newMonth = selectedMonth - 1;
+    let newYear = selectedYear;
+    if (newMonth < 0) {
+      newMonth = 11;
+      newYear -= 1;
+    }
+    setSelectedMonth(newMonth);
+    setSelectedYear(newYear);
   };
 
   const chunkArray = (array: (Date | null)[], chunkSize: number) => {
@@ -95,17 +105,17 @@ export const useSchedule = () => {
       case 'Extintor':
         return 30;
 
-      case 'Válvula de Governo':
+      case 'Válvulas de Governo':
         return 90;
 
       case 'Inspeção CMI':
         return 30;
 
-      case 'Tste CMI':
+      case 'Teste CMI':
         return 30;
 
       default:
-        return 0; // Valor padrão para tipos desconhecidos ou não especificados
+        0; // Valor padrão para tipos desconhecidos ou não especificados
     }
   };
 
@@ -116,7 +126,9 @@ export const useSchedule = () => {
     // const formattedEndDate = `${endDate.toISOString().split('T')[0]}T00:00:00Z`;
     // const filterString = `ultima_inspecao ge datetime'${formattedStartDate}' and ultima_inspecao le datetime'${formattedEndDate}'`;
 
-    const path = `?$Select=Id,excluido,cod_extintor,cod_qrcode,conforme,local/Title,massa/Title,pavimento/Title,predio/Title,site/Title,tipo_extintor/Title,validade,ultima_inspecao&$expand=local,massa,pavimento,predio,site,tipo_extintor&$Filter=(excluido eq 'false' and ultima_inspecao ne null)`;
+    // const path = `?$Select=Id,excluido,cod_extintor,cod_qrcode,conforme,local/Title,massa/Title,pavimento/Title,predio/Title,site/Title,tipo_extintor/Title,validade,ultima_inspecao&$expand=local,massa,pavimento,predio,site,tipo_extintor&$Filter=(excluido eq 'false' and ultima_inspecao ne null)`;
+
+    const path = `?$Select=Id,excluido,validade,ultima_inspecao&$Filter=(excluido eq 'false' and ultima_inspecao ne null)`;
 
     const resp = await crud.getListItemsv2('extintores', path);
     return resp.results;
@@ -149,7 +161,8 @@ export const useSchedule = () => {
           ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
         );
         const timeToExpiration = calculateTimeToExpiration('Extintor');
-        const proximaInspecao = new Date(ultimaInspecao.getTime() + timeToExpiration * 24 * 60 * 60 * 1000);
+        const proximaInspecao =
+          timeToExpiration && new Date(ultimaInspecao.getTime() + timeToExpiration * 24 * 60 * 60 * 1000);
 
         return {
           type: 'Extintor',
@@ -165,9 +178,9 @@ export const useSchedule = () => {
         const ultimaInspecao = new Date(
           ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
         );
-
         const timeToExpiration = calculateTimeToExpiration(equipment.tipo_equipamento.Title);
-        const proximaInspecao = new Date(ultimaInspecao.getTime() + timeToExpiration * 24 * 60 * 60 * 1000);
+        const proximaInspecao =
+          timeToExpiration && new Date(ultimaInspecao.getTime() + timeToExpiration * 24 * 60 * 60 * 1000);
 
         return {
           type: equipment.tipo_equipamento.Title,

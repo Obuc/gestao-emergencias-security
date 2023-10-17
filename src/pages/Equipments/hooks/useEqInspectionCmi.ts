@@ -2,39 +2,17 @@ import * as XLSX from 'xlsx';
 import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import {
-  IEqInspectionCmi,
-  IEqInspectionCmiFiltersProps,
-  IEqInspectionCmiModal,
-} from '../types/EquipmentsInspectionCmi';
 import { sharepointContext } from '../../../context/sharepointContext';
+import { IEqInspectionCmi, IEqInspectionCmiModal } from '../types/EquipmentsInspectionCmi';
 
-const useEqInspectionCmi = (eqCMIInspectionFilters?: IEqInspectionCmiFiltersProps) => {
+const useEqInspectionCmi = () => {
   const { crud } = sharepointContext();
   const params = useParams();
   const location = useLocation();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
 
-  let path = `?$Select=Id,cod_qrcode,conforme,Modified,excluido,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,tipo_equipamento&$Orderby=Modified desc&$Top=100&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Inspeção CMI') and (excluido eq 'false')`;
-
-  if (eqCMIInspectionFilters?.conformity && eqCMIInspectionFilters?.conformity === 'Conforme') {
-    path += ` and (conforme ne 'false')`;
-  }
-
-  if (eqCMIInspectionFilters?.conformity && eqCMIInspectionFilters?.conformity !== 'Conforme') {
-    path += ` and (conforme eq 'false')`;
-  }
-
-  if (eqCMIInspectionFilters?.pavement) {
-    for (let i = 0; i < eqCMIInspectionFilters.pavement.length; i++) {
-      path += `${i === 0 ? ' and' : ' or'} (pavimento/Title eq '${eqCMIInspectionFilters.pavement[i]}')`;
-    }
-  }
-
-  if (eqCMIInspectionFilters?.id) {
-    path += ` and ( Id eq '${eqCMIInspectionFilters?.id}')`;
-  }
+  const path = `?$Select=Id,cod_qrcode,conforme,excluido,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,tipo_equipamento&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Inspeção CMI') and (excluido eq 'false')`;
 
   const fetchEqInspectionCmi = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'equipamentos_diversos', path });
@@ -64,14 +42,7 @@ const useEqInspectionCmi = (eqCMIInspectionFilters?: IEqInspectionCmiFiltersProp
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: [
-      'equipments_data_inspection_cmi',
-      user_site,
-      params.form,
-      eqCMIInspectionFilters?.conformity,
-      eqCMIInspectionFilters?.pavement,
-      eqCMIInspectionFilters?.id,
-    ],
+    queryKey: ['equipments_data_inspection_cmi', user_site, params.form],
     queryFn: fetchEqInspectionCmi,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -159,16 +130,7 @@ const useEqInspectionCmi = (eqCMIInspectionFilters?: IEqInspectionCmiFiltersProp
       await crud.updateItemList('equipamentos_diversos', itemId, { excluido: true });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [
-          'equipments_data_inspection_cmi',
-          user_site,
-          params.form,
-          eqCMIInspectionFilters?.conformity,
-          eqCMIInspectionFilters?.pavement,
-          eqCMIInspectionFilters?.id,
-        ],
-      });
+      queryClient.invalidateQueries({ queryKey: ['equipments_data_inspection_cmi', user_site, params.form] });
     },
   });
 

@@ -1,3 +1,4 @@
+import * as XLSX from 'xlsx';
 import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -189,6 +190,38 @@ const useEqHydrants = (eqHydrantsFilters?: IEqHydrantsFiltersProps) => {
 
   const qrCodeValue = `Hidrantes;${eqHydrantModal?.site};${eqHydrantModal?.cod_qrcode}`;
 
+  const handleExportEqHydrantsToExcel = () => {
+    const columns: (keyof IEqHydrants)[] = [
+      'Id',
+      'site',
+      'pavimento',
+      'local',
+      'cod_hidrante',
+      'possui_abrigo',
+      'conforme',
+    ];
+
+    const headerRow = columns.map((column) => column.toString());
+
+    const dataFiltered = eqHydrantQrCodeList?.map((item) => {
+      const newItem: { [key: string]: any } = {};
+      columns.forEach((column) => {
+        newItem[column] = item[column];
+      });
+      return newItem;
+    });
+
+    if (dataFiltered) {
+      const dataArray = [headerRow, ...dataFiltered.map((item) => columns.map((column) => item[column]))];
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(dataArray);
+
+      XLSX.utils.book_append_sheet(wb, ws, '');
+      XLSX.writeFile(wb, `Equipamentos - Hidrantes.xlsx`);
+    }
+  };
+
   return {
     eqHydrantsData,
     fetchNextPage,
@@ -207,6 +240,7 @@ const useEqHydrants = (eqHydrantsFilters?: IEqHydrantsFiltersProps) => {
     isErrorEqHydrantQrCodeList,
 
     qrCodeValue,
+    handleExportEqHydrantsToExcel,
   };
 };
 

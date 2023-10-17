@@ -33,3 +33,12 @@ export interface ITipoLaudo {
     Title: string;
   };
 }
+
+export interface IReportsFiltersProps {
+  id: string | null;
+  startDate: Date | null;
+  endDate: Date | null;
+  emission: Date | null;
+  validity: Date | null;
+  reportType: string | null;
+}

@@ -58,7 +58,7 @@ const CollapsedMenu = ({ items }: { items: Array<MenuItem> }) => {
   return (
     <CollapsedMenuRoot>
       {items.map((item, index) => {
-        const isLocationActive = localtion.pathname.includes(item.path!);
+        const isLocationActivePartial = localtion.pathname.split('/')[1] === item.path?.split('/')[1];
 
         const handleCollapsedMenuItemAction = () => {
           if (item.path) return handleNavigate(item.path);
@@ -69,11 +69,11 @@ const CollapsedMenu = ({ items }: { items: Array<MenuItem> }) => {
           <React.Fragment key={item.label}>
             <CollapsedMenuItemRoot label={item.label}>
               <CollapsedMenuItemAction
-                active={isLocationActive ? 'true' : 'false'}
+                active={isLocationActivePartial ? 'true' : 'false'}
                 onClick={handleCollapsedMenuItemAction}
               >
-                <CollapsedMenuItemIcon active={isLocationActive} icon={item.icon} />
-                <CollapsedMenuItemLabel active={isLocationActive}>{item.label}</CollapsedMenuItemLabel>
+                <CollapsedMenuItemIcon active={isLocationActivePartial} icon={item.icon} />
+                <CollapsedMenuItemLabel active={isLocationActivePartial}>{item.label}</CollapsedMenuItemLabel>
 
                 {!openMenus[index] && item?.subitems && item.subitems[index] && (
                   <FontAwesomeIcon className="pr-4" icon={faAngleDown} />
@@ -87,16 +87,18 @@ const CollapsedMenu = ({ items }: { items: Array<MenuItem> }) => {
             {item.subitems && (
               <Collapse in={openMenus[index]} timeout="auto" unmountOnExit>
                 {item.subitems.map((item) => {
-                  const collpseLocationActive = localtion.pathname === item.path;
+                  const collpseLocationActivePartial = localtion.pathname.split('/')[1] === item.path.split('/')[1];
 
                   return (
                     <CollapsedMenuItemRoot isSub key={item.path} label={item.label}>
                       <CollapsedMenuItemAction
-                        active={collpseLocationActive ? 'true' : 'false'}
+                        active={collpseLocationActivePartial ? 'true' : 'false'}
                         onClick={() => handleNavigate(item.path)}
                       >
-                        <CollapsedMenuItemIcon active={collpseLocationActive} icon={item.icon} />
-                        <CollapsedMenuItemLabel active={isLocationActive}>{item.label}</CollapsedMenuItemLabel>
+                        <CollapsedMenuItemIcon active={collpseLocationActivePartial} icon={item.icon} />
+                        <CollapsedMenuItemLabel active={collpseLocationActivePartial}>
+                          {item.label}
+                        </CollapsedMenuItemLabel>
                       </CollapsedMenuItemAction>
                     </CollapsedMenuItemRoot>
                   );

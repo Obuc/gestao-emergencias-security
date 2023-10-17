@@ -18,7 +18,7 @@ const equipments_value = localStorage.getItem('equipments_value');
 const menuItems: MenuItem[] = [
   {
     icon: FileText,
-    path: `/records`,
+    path: `/records/${equipments_value ? equipments_value : 'extinguisher'}`,
     label: 'Registros',
   },
   {

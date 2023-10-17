@@ -187,7 +187,7 @@ const ExtinguisherTable = () => {
         </button>
       </Table.Filter>
 
-      <div className="min-[1100px]:max-h-[33.125rem] relative min-[1600px]:max-h-[39.6875rem] min-[1800px]:max-h-[39.6875rem] w-full overflow-y-auto">
+      <div className="min-[1100px]:max-h-[33.125rem] relative min-[1600px]:max-h-[40rem] min-[1800px]:max-h-[40rem] w-full overflow-y-auto">
         <InfiniteScroll
           pageStart={0}
           loadMore={() => fetchNextPage()}

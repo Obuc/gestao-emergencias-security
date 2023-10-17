@@ -2,16 +2,72 @@ import { parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { Attachments, IReports, ITipoLaudo } from '../types/Reports';
 import { sharepointContext } from '../../../context/sharepointContext';
+import { Attachments, IReports, IReportsFiltersProps, ITipoLaudo } from '../types/Reports';
 
-const useReports = () => {
+const useReports = (reportsFilters?: IReportsFiltersProps) => {
   const { crud } = sharepointContext();
   const params = useParams();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
 
-  const path = `?$Select=Id,Created,tipo_laudo/Title,site/Title,emissao,revalidado,validade,dias_antecedentes_alerta,excluido,Attachments&$expand=site,tipo_laudo,AttachmentFiles&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
+  let path = `?$Select=Id,Created,tipo_laudo/Title,site/Title,emissao,revalidado,validade,dias_antecedentes_alerta,excluido,Attachments&$expand=site,tipo_laudo,AttachmentFiles&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
+
+  if (reportsFilters?.startDate || reportsFilters?.endDate) {
+    const startDate = reportsFilters.startDate && new Date(reportsFilters.startDate);
+    startDate && startDate.setUTCHours(0, 0, 0, 0);
+
+    const endDate = reportsFilters.endDate && new Date(reportsFilters.endDate);
+    endDate && endDate.setUTCHours(23, 59, 59, 999);
+
+    if (startDate) {
+      path += ` and (Created ge datetime'${startDate.toISOString()}')`;
+    }
+
+    if (endDate) {
+      path += ` and (Created le datetime'${endDate.toISOString()}')`;
+    }
+  }
+
+  if (reportsFilters?.id) {
+    path += ` and ( Id eq '${reportsFilters.id}')`;
+  }
+
+  if (reportsFilters?.reportType) {
+    path += ` and ( tipo_laudo/Title eq '${reportsFilters.reportType}')`;
+  }
+
+  if (reportsFilters?.emission) {
+    const startEmission = reportsFilters.emission && new Date(reportsFilters.emission);
+    startEmission && startEmission.setUTCHours(0, 0, 0, 0);
+
+    const endEmission = reportsFilters.emission && new Date(reportsFilters.emission);
+    endEmission && endEmission.setUTCHours(23, 59, 59, 999);
+
+    if (startEmission) {
+      path += ` and (emissao ge datetime'${startEmission.toISOString()}')`;
+    }
+
+    if (endEmission) {
+      path += ` and (emissao le datetime'${endEmission.toISOString()}')`;
+    }
+  }
+
+  if (reportsFilters?.validity) {
+    const startValidity = reportsFilters.validity && new Date(reportsFilters.validity);
+    startValidity && startValidity.setUTCHours(0, 0, 0, 0);
+
+    const endValidity = reportsFilters.validity && new Date(reportsFilters.validity);
+    endValidity && endValidity.setUTCHours(23, 59, 59, 999);
+
+    if (startValidity) {
+      path += ` and (emissao ge datetime'${startValidity.toISOString()}')`;
+    }
+
+    if (endValidity) {
+      path += ` and (emissao le datetime'${endValidity.toISOString()}')`;
+    }
+  }
 
   const fetchReports = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'laudos', path });
@@ -47,7 +103,16 @@ const useReports = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['reports_data', user_site],
+    queryKey: [
+      'reports_data',
+      user_site,
+      reportsFilters?.startDate,
+      reportsFilters?.endDate,
+      reportsFilters?.id,
+      reportsFilters?.reportType,
+      reportsFilters?.emission,
+      reportsFilters?.validity,
+    ],
     queryFn: fetchReports,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -60,7 +125,18 @@ const useReports = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reports_data', user_site] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'reports_data',
+          user_site,
+          reportsFilters?.startDate,
+          reportsFilters?.endDate,
+          reportsFilters?.id,
+          reportsFilters?.reportType,
+          reportsFilters?.emission,
+          reportsFilters?.validity,
+        ],
+      });
     },
   });
 
@@ -93,16 +169,12 @@ const useReports = () => {
   });
 
   const { data: tipoLaudo, isLoading: isLoadingTipoLaudo }: UseQueryResult<Array<ITipoLaudo>> = useQuery({
-    queryKey: params.id ? ['tipo_laudo', params.id] : ['tipo_laudo'],
+    queryKey: ['tipo_laudo'],
     queryFn: async () => {
-      if (params.id) {
-        const patch = `?$Select=Id,Title,site/Title&$expand=site&$Orderby=Title asc`;
+      const patch = `?$Select=Id,Title,site/Title&$expand=site&$Orderby=Title asc`;
 
-        const resp = await crud.getListItemsv2('tipo_laudo', patch);
-        return resp.results;
-      } else {
-        return [];
-      }
+      const resp = await crud.getListItemsv2('tipo_laudo', patch);
+      return resp.results;
     },
   });
 
@@ -135,7 +207,18 @@ const useReports = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reports_data', user_site] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'reports_data',
+          user_site,
+          reportsFilters?.startDate,
+          reportsFilters?.endDate,
+          reportsFilters?.id,
+          reportsFilters?.reportType,
+          reportsFilters?.emission,
+          reportsFilters?.validity,
+        ],
+      });
       queryClient.invalidateQueries({ queryKey: ['report_data_modal', params.id] });
     },
   });
@@ -148,7 +231,18 @@ const useReports = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reports_data', user_site] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'reports_data',
+          user_site,
+          reportsFilters?.startDate,
+          reportsFilters?.endDate,
+          reportsFilters?.id,
+          reportsFilters?.reportType,
+          reportsFilters?.emission,
+          reportsFilters?.validity,
+        ],
+      });
       queryClient.invalidateQueries({ queryKey: ['report_data_modal', params.id] });
     },
   });
@@ -162,7 +256,18 @@ const useReports = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reports_data', user_site] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'reports_data',
+          user_site,
+          reportsFilters?.startDate,
+          reportsFilters?.endDate,
+          reportsFilters?.id,
+          reportsFilters?.reportType,
+          reportsFilters?.emission,
+          reportsFilters?.validity,
+        ],
+      });
       queryClient.invalidateQueries({ queryKey: ['report_data_modal', params.id] });
     },
   });

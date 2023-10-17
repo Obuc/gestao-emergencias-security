@@ -79,7 +79,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
       response?.data?.value?.map(async (item: any) => {
         const extintorResponse = await crud.getListItemsv2(
           'extintores',
-          `?$Select=*,Id,predio/Title,pavimento/Title,local/Title,cod_extintor,validade,conforme,cod_qrcode&$expand=predio,pavimento,local&$Filter=(Id eq ${item.extintor_idId})`,
+          `?$Select=Id,predio/Title,pavimento/Title,local/Title,cod_extintor,validade,conforme,cod_qrcode&$expand=predio,pavimento,local&$Filter=(Id eq ${item.extintor_idId})`,
         );
 
         const extintor = extintorResponse.results[0] || null;

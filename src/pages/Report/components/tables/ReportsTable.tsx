@@ -5,15 +5,18 @@ import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroller';
 import { differenceInDays, format } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUpRightFromSquare, faXmark } from '@fortawesome/free-solid-svg-icons';
 
-import { IReports } from '../../types/Reports';
 import useReports from '../../hooks/useReports';
 import ReportsModal from '../modals/ReportsModal';
 import { Table } from '../../../../components/Table';
 import Tooltip from '../../../../components/Tooltip';
+import { Select } from '../../../../components/Select';
+import TextField from '../../../../components/TextField';
+import DatePicker from '../../../../components/DatePicker';
 import PopoverTables from '../../../../components/PopoverTables';
 import RemoveItem from '../../../../components/AppModals/RemoveItem';
+import { IReports, IReportsFiltersProps } from '../../types/Reports';
 
 const ReportsTable = () => {
   const navigate = useNavigate();
@@ -22,8 +25,25 @@ const ReportsTable = () => {
   const now = new Date();
   const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  const { reports, fetchNextPage, hasNextPage, isError, isLoading, mutateRemoveReport, isLoadingMutateRemoveReport } =
-    useReports();
+  const [reportsFilters, setReportsFilters] = useState<IReportsFiltersProps>({
+    id: '',
+    startDate: null,
+    endDate: null,
+    emission: null,
+    validity: null,
+    reportType: null,
+  });
+
+  const {
+    reports,
+    fetchNextPage,
+    hasNextPage,
+    isError,
+    isLoading,
+    mutateRemoveReport,
+    isLoadingMutateRemoveReport,
+    tipoLaudo,
+  } = useReports(reportsFilters);
 
   const handleView = (id: number) => {
     navigate(`/reports/${id}?edit=false`);
@@ -40,9 +60,92 @@ const ReportsTable = () => {
     }
   };
 
+  const handleRemoveAllFilters = () => {
+    setReportsFilters({
+      id: '',
+      startDate: null,
+      endDate: null,
+      emission: null,
+      validity: null,
+      reportType: null,
+    });
+  };
+
   return (
-    <>
-      <div className="min-[1100px]:max-h-[38rem] relative min-[1600px]:max-h-[39rem] min-[1800px]:max-h-[43rem] w-full overflow-y-auto">
+    <div className="h-full">
+      <Table.Filter>
+        <div className="flex gap-4">
+          <TextField
+            id="id"
+            name="id"
+            placeholder="Número"
+            width="w-[16.25rem]"
+            value={reportsFilters.id || ''}
+            onChange={(event) => {
+              setReportsFilters((prev) => ({ ...prev, id: event.target.value }));
+            }}
+          />
+
+          <DatePicker
+            name="startDate"
+            placeholder="Data Inicial"
+            width="w-[11.25rem]"
+            value={reportsFilters.startDate ? new Date(reportsFilters.startDate) : null}
+            onChange={(date: any) => setReportsFilters((prev) => ({ ...prev, startDate: date }))}
+          />
+
+          {reportsFilters.startDate && (
+            <DatePicker
+              name="endDate"
+              placeholder="Data Final"
+              width="w-[11.25rem]"
+              value={reportsFilters.endDate ? new Date(reportsFilters.endDate) : null}
+              onChange={(date: any) => setReportsFilters((prev) => ({ ...prev, endDate: date }))}
+            />
+          )}
+
+          <DatePicker
+            name="emission"
+            placeholder="Emissão Laudo"
+            width="w-[11.25rem]"
+            value={reportsFilters.emission ? new Date(reportsFilters.emission) : null}
+            onChange={(date: any) => setReportsFilters((prev) => ({ ...prev, emission: date }))}
+          />
+
+          <DatePicker
+            name="validity"
+            placeholder="Validade"
+            width="w-[11.25rem]"
+            value={reportsFilters.validity ? new Date(reportsFilters.validity) : null}
+            onChange={(date: any) => setReportsFilters((prev) => ({ ...prev, validity: date }))}
+          />
+
+          <Select.Component
+            id="reportType"
+            name="reportType"
+            variant="outline"
+            placeholder="Tipo de Laudo"
+            className="w-[18.75rem] max-h-[28.125rem]"
+            value={reportsFilters.reportType ?? ''}
+            onValueChange={(newSelectedValues) => {
+              setReportsFilters((prev) => ({ ...prev, reportType: newSelectedValues }));
+            }}
+          >
+            {tipoLaudo?.map((laudo) => (
+              <Select.Item key={laudo.Id} value={laudo.Title}>
+                {laudo.Title}
+              </Select.Item>
+            ))}
+          </Select.Component>
+        </div>
+
+        <button className="flex justify-center items-center gap-2 group" onClick={handleRemoveAllFilters}>
+          <span className="text-primary font-semibold">LIMPAR FILTROS</span>
+          <FontAwesomeIcon icon={faXmark} className="text-pink group-hover:text-pink/80 duration-200" />
+        </button>
+      </Table.Filter>
+
+      <div className="min-[1100px]:max-h-[30rem] relative min-[1600px]:max-h-[42rem] min-[1800px]:max-h-[42rem] w-full overflow-y-auto">
         <InfiniteScroll
           pageStart={0}
           loadMore={() => fetchNextPage()}
@@ -172,7 +275,7 @@ const ReportsTable = () => {
           open={removeItem !== null}
         />
       )}
-    </>
+    </div>
   );
 };
 

@@ -3,9 +3,9 @@ import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
-import { IEqTestCmi, IEqTestCmiFiltersProps, IEqTestCmiModal } from '../types/EquipmentsTestCmi';
+import { IEqTestCmi, IEqTestCmiModal } from '../types/EquipmentsTestCmi';
 
-const useEqTestCmi = (eqCMITestFilters?: IEqTestCmiFiltersProps) => {
+const useEqTestCmi = () => {
   const { crud } = sharepointContext();
   const params = useParams();
   const location = useLocation();
@@ -13,25 +13,7 @@ const useEqTestCmi = (eqCMITestFilters?: IEqTestCmiFiltersProps) => {
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
 
-  let path = `?$Select=Id,cod_qrcode,conforme,Modified,excluido,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,tipo_equipamento&$Orderby=Modified desc&$Top=100&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Teste CMI') and (excluido eq 'false')`;
-
-  if (eqCMITestFilters?.conformity && eqCMITestFilters?.conformity === 'Conforme') {
-    path += ` and (conforme ne 'false')`;
-  }
-
-  if (eqCMITestFilters?.conformity && eqCMITestFilters?.conformity !== 'Conforme') {
-    path += ` and (conforme eq 'false')`;
-  }
-
-  if (eqCMITestFilters?.pavement) {
-    for (let i = 0; i < eqCMITestFilters.pavement.length; i++) {
-      path += `${i === 0 ? ' and' : ' or'} (pavimento/Title eq '${eqCMITestFilters.pavement[i]}')`;
-    }
-  }
-
-  if (eqCMITestFilters?.id) {
-    path += ` and ( Id eq '${eqCMITestFilters?.id}')`;
-  }
+  const path = `?$Select=Id,cod_qrcode,conforme,excluido,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,tipo_equipamento&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Teste CMI') and (excluido eq 'false')`;
 
   const fetchEqTestCmi = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'equipamentos_diversos', path });
@@ -61,14 +43,7 @@ const useEqTestCmi = (eqCMITestFilters?: IEqTestCmiFiltersProps) => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: [
-      'equipments_data_test_cmi',
-      user_site,
-      params.form,
-      eqCMITestFilters?.conformity,
-      eqCMITestFilters?.pavement,
-      eqCMITestFilters?.id,
-    ],
+    queryKey: ['equipments_data_test_cmi', user_site, params.form],
     queryFn: fetchEqTestCmi,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -152,16 +127,7 @@ const useEqTestCmi = (eqCMITestFilters?: IEqTestCmiFiltersProps) => {
       await crud.updateItemList('equipamentos_diversos', itemId, { excluido: true });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [
-          'equipments_data_test_cmi',
-          user_site,
-          params.form,
-          eqCMITestFilters?.conformity,
-          eqCMITestFilters?.pavement,
-          eqCMITestFilters?.id,
-        ],
-      });
+      queryClient.invalidateQueries({ queryKey: ['equipments_data_test_cmi', user_site, params.form] });
     },
   });
 

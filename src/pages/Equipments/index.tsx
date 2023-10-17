@@ -6,10 +6,12 @@ import useEqTestCmi from './hooks/useEqTestCmi';
 import LayoutBase from '../../layout/LayoutBase';
 import { Button } from '../../components/Button';
 import { Select } from '../../components/Select';
+import useEqHydrants from './hooks/useEqHydrants';
 import { appContext } from '../../context/appContext';
 import useEqExtinguisher from './hooks/useEqExtinguisher';
 import useEqInspectionCmi from './hooks/useEqInspectionCmi';
 import EqCmiTestTable from './components/tables/EqCmiTestTable';
+import useEqGovernanceValve from './hooks/useEqGovernanceValve';
 import EqEqHydrantsTable from './components/tables/EqEqHydrantsTable';
 import useEqLoadRatio from './hooks/EmergencyVehicles/useEqLoadRatio';
 import EqHydrantQRCode from './components/tables/QRCode/EqHydrantQRCode';
@@ -43,6 +45,8 @@ const Equipments = () => {
   const { handleExportEqInspectionCmiToExcel } = useEqInspectionCmi();
   const { handleExportEqGeneralChecklistToExcel } = useEqGeneralChecklist();
   const { handleExportEqLoadRatioToExcel } = useEqLoadRatio();
+  const { handleExportEqHydrantsToExcel } = useEqHydrants();
+  const { handleExportEqGovernanceValveModalToExcel } = useEqGovernanceValve();
 
   const filteredForms =
     formularios &&
@@ -57,6 +61,14 @@ const Equipments = () => {
     switch (formValue) {
       case 'extinguisher':
         handleExportExtinguisherToExcel();
+        break;
+
+      case 'hydrants':
+        handleExportEqHydrantsToExcel();
+        break;
+
+      case 'valves':
+        handleExportEqGovernanceValveModalToExcel();
         break;
 
       case 'cmi_test':
