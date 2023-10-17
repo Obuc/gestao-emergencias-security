@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 import { useState } from 'react';
-import { parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -287,22 +287,23 @@ const useInspectionCmi = (inspectionCMIFilters?: IInspectionCMIFiltersProps) => 
   });
 
   const fetchCmiInspectionAllRecords = async () => {
-    const path = `?$Select=*,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+    const path = `?$Select=Id,site/Title,cmi_idId,bombeiro_id/Title,conforme,observacao&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
     const response = await crud.getListItems('registros_inspecao_cmi', path);
 
     const dataWithTransformations = await Promise.all(
       response.map(async (item: any) => {
         const cmiResponse = await crud.getListItemsv2(
           'equipamentos_diversos',
-          `?$Select=*,Id,predio/Title,conforme,cod_qrcode&$expand=predio&$Filter=(Id eq ${item.cmi_idId})`,
+          `?$Select=Id,predio/Title,ultima_inspecao&$expand=predio&$Filter=(Id eq ${item.cmi_idId})`,
         );
         const cmi = cmiResponse.results[0] || null;
 
         return {
           ...item,
           bombeiro: item.bombeiro_id?.Title,
-          cmi_id: cmi?.Id,
           predio: cmi?.predio.Title,
+          conforme: item?.conforme ? 'CONFORME' : 'NÃO CONFORME',
+          ultima_inspecao: cmi?.ultima_inspecao ? format(new Date(cmi?.ultima_inspecao), 'dd/MM/yyyy') : '',
         };
       }),
     );
@@ -314,9 +315,7 @@ const useInspectionCmi = (inspectionCMIFilters?: IInspectionCMIFiltersProps) => 
     setIsLoadingInspectionCmiExportToExcel(true);
 
     const data = await fetchCmiInspectionAllRecords();
-
-    const columns = ['Id', 'bombeiro', 'cmi_id', 'predio', 'conforme'];
-
+    const columns = ['Id', 'bombeiro', 'predio', 'ultima_inspecao', 'conforme', 'observacao'];
     const headerRow = columns.map((column) => column.toString());
 
     const dataFiltered = data?.map((item) => {
@@ -333,7 +332,19 @@ const useInspectionCmi = (inspectionCMIFilters?: IInspectionCMIFiltersProps) => 
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-      XLSX.utils.book_append_sheet(wb, ws, '');
+      const wscols = [{ wch: 10 }, { wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 30 }];
+
+      dataArray[0][0] = { t: 's', v: 'Texto com\nQuebra de Linha' };
+
+      const firstRowHeight = 30;
+      const wsrows = [{ hpx: firstRowHeight }];
+      const filterRange = { ref: `A1:F1` };
+
+      ws['!autofilter'] = filterRange;
+      ws['!rows'] = wsrows;
+      ws['!cols'] = wscols;
+
+      XLSX.utils.book_append_sheet(wb, ws, 'Inspeções CMI');
       XLSX.writeFile(wb, `Registros - Inspeção CMI.xlsx`);
     }
 

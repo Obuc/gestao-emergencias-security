@@ -329,7 +329,7 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
           pavimento: valvula.pavimento.Title,
           local: valvula.local.Title,
           conforme: item.conforme ? 'CONFORME' : 'NÃO CONFORME',
-          ultima_inspecao: format(new Date(valvula.ultima_inspecao), 'dd/MM/yyyy'),
+          ultima_inspecao: valvula?.ultima_inspecao ? format(new Date(valvula?.ultima_inspecao), 'dd/MM/yyyy') : '',
         };
       }),
     );

@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 import { useState } from 'react';
-import { parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -308,14 +308,14 @@ const useGeneralChecklist = (generalChecklistFilters?: IGeneralChecklistFiltersP
   });
 
   const fetchGeneralChecklistAllRecords = async () => {
-    const path = `?$Select=*,site/Title,bombeiro/Title&$expand=site,bombeiro&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+    const path = `?$Select=Id,site/Title,veiculo_idId,bombeiro/Title,conforme,observacao&$expand=site,bombeiro&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
     const response = await crud.getListItems('registros_veiculos_emergencia', path);
 
     const dataWithTransformations = await Promise.all(
       response.map(async (item: any) => {
         const vehicleResponse = await crud.getListItemsv2(
           'veiculos_emergencia',
-          `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,conforme,excluido&$expand=site,tipo_veiculo&$Filter=(Id eq ${item.veiculo_idId})`,
+          `?$Select=Id,site/Title,tipo_veiculo/Title,placa,ultima_inspecao&$expand=site,tipo_veiculo&$Filter=(Id eq ${item.veiculo_idId})`,
         );
 
         const vehicle = vehicleResponse.results[0] || null;
@@ -323,10 +323,11 @@ const useGeneralChecklist = (generalChecklistFilters?: IGeneralChecklistFiltersP
         return {
           ...item,
           bombeiro: item.bombeiro?.Title,
-          veiculo_id: vehicle.Id,
-          placa: vehicle.placa,
-          site: vehicle.site?.Title,
-          tipo_veiculo: vehicle.tipo_veiculo?.Title,
+          placa: vehicle?.placa,
+          site: vehicle?.site?.Title,
+          tipo_veiculo: vehicle?.tipo_veiculo?.Title,
+          conforme: item?.conforme ? 'CONFORME' : 'NÃO CONFORME',
+          ultima_inspecao: vehicle?.ultima_inspecao ? format(new Date(vehicle?.ultima_inspecao), 'dd/MM/yyyy') : '',
         };
       }),
     );
@@ -339,7 +340,7 @@ const useGeneralChecklist = (generalChecklistFilters?: IGeneralChecklistFiltersP
 
     const data = await fetchGeneralChecklistAllRecords();
 
-    const columns = ['Id', 'bombeiro', 'veiculo_id', 'placa', 'site', 'tipo_veiculo', 'conforme'];
+    const columns = ['Id', 'bombeiro', 'tipo_veiculo', 'placa', 'ultima_inspecao', 'conforme', 'observacao'];
 
     const headerRow = columns.map((column) => column.toString());
 
@@ -357,7 +358,28 @@ const useGeneralChecklist = (generalChecklistFilters?: IGeneralChecklistFiltersP
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-      XLSX.utils.book_append_sheet(wb, ws, '');
+      const wscols = [
+        { wch: 10 },
+        { wch: 30 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 30 },
+      ];
+
+      dataArray[0][0] = { t: 's', v: 'Texto com\nQuebra de Linha' };
+
+      const firstRowHeight = 30;
+      const wsrows = [{ hpx: firstRowHeight }];
+      const filterRange = { ref: `A1:G1` };
+
+      ws['!autofilter'] = filterRange;
+      ws['!rows'] = wsrows;
+      ws['!cols'] = wscols;
+
+      XLSX.utils.book_append_sheet(wb, ws, 'Registros Checklist Geral');
       XLSX.writeFile(wb, `Registros - Veiculos Emergencia Checklist Geral.xlsx`);
     }
 
