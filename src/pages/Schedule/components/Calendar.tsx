@@ -33,7 +33,7 @@ const Calendar = () => {
     <div className="flex gap-8 h-full items-center w-full justify-between">
       <div className="flex w-[45.9375rem] h-full bg-white">
         <div className="flex flex-col w-full shadow-xs-primary-app">
-          <div className="flex justify-between px-4 h-[4.625rem] items-center text-primary bg-[#F2F3F7]">
+          <div className="flex justify-between px-4 min-h-[4.625rem] items-center text-primary bg-[#F2F3F7]">
             <h2 className="text-2xl font-medium">
               {monthsList[selectedMonth].label} {selectedYear}
             </h2>
@@ -48,7 +48,7 @@ const Calendar = () => {
             </div>
           </div>
 
-          <div className="flex flex-col w-full px-4 pb-4">
+          <div className="flex flex-col w-full h-full px-4 pb-4">
             <table className="h-full text-center text-lg text-[#303030]">
               <thead>
                 <tr className="h-[6.25rem] text-xl text-primary font-medium">
@@ -65,7 +65,7 @@ const Calendar = () => {
                 {weeks.map((week, weekIndex) => (
                   <tr
                     key={weekIndex}
-                    className="min-[1100px]:h-[5.625rem] relative min-[1600px]:h-[6.25rem] min-[1800px]:h-[6.875rem] bg-white border border-[#F3F3F3]"
+                    className="min-[1100px]:h-[5rem] relative min-[1500px]:h-[5.625rem] min-[1800px]:h-[6.875rem] bg-white border border-[#F3F3F3]"
                   >
                     {week.map((day) => {
                       return (

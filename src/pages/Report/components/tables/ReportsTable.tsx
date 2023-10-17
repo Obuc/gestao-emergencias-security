@@ -145,7 +145,13 @@ const ReportsTable = () => {
         </button>
       </Table.Filter>
 
-      <div className="min-[1100px]:max-h-[30rem] relative min-[1600px]:max-h-[42rem] min-[1800px]:max-h-[42rem] w-full overflow-y-auto">
+      <div
+        className="
+            min-[1100px]:max-h-[30.3125rem]
+            min-[1500px]:max-h-[34.375rem]
+            min-[1800px]:max-h-[41.25rem]
+            w-full overflow-y-auto relative"
+      >
         <InfiniteScroll
           pageStart={0}
           loadMore={() => fetchNextPage()}

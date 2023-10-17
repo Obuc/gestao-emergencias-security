@@ -197,8 +197,8 @@ const useReports = (reportsFilters?: IReportsFiltersProps) => {
         if (data.isEdit) {
           const dataEdit = {
             dias_antecedentes_alerta: data.values.dias_antecedentes_alerta,
-            emissao: data.values.emissao.split('T')[0] + 'T00:00:00Z',
-            validade: data.values.validade.split('T')[0] + 'T00:00:00Z',
+            emissao: data.values.emissao.toISOString().split('T')[0] + 'T00:00:00Z',
+            validade: data.values.validade.toISOString().split('T')[0] + 'T00:00:00Z',
             tipo_laudoId: data.values.tipo_laudoId && +data.values.tipo_laudoId,
           };
           const resp = await crud.updateItemList('laudos', data.values.Id, dataEdit);

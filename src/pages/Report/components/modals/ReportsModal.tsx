@@ -17,6 +17,7 @@ import { appContext } from '../../../../context/appContext';
 import { FileImport } from '../../../../components/FileImport';
 import { RadioGroup } from '../../../../components/RadioGroup';
 import { arraysAreEqual } from '../../../../utils/arraysAreEqual';
+import Toast from '../../../../components/Toast';
 
 interface IReportsModal extends Partial<IReports> {
   isRevalidate: string;
@@ -31,6 +32,8 @@ const ReportsModal = () => {
   const localSite = localStorage.getItem('user_site');
   const [reporItem, setReportItem] = useState<boolean | null>(null);
   const isEdit = searchParams.get('edit') === 'true' || params.id === 'new' ? true : false;
+
+  const [errorAddFile, setErrorAddFile] = useState<boolean>(false);
 
   const {
     reportModal,
@@ -156,6 +159,7 @@ const ReportsModal = () => {
         >
           {(props: FormikProps<IReportsModal>) => (
             <>
+              {/* <div onClick={() => console.log(props.values.tipo_laudoId)}>Props</div> */}
               <form onSubmit={props.handleSubmit}>
                 <div className="py-6 px-8">
                   <div className="flex gap-2 py-2">
@@ -285,12 +289,14 @@ const ReportsModal = () => {
                         id="tipo_laudo"
                         name="tipo_laudo"
                         label="Tipo"
-                        value={props.values.tipo_laudoId ? props.values.tipo_laudoId.toString() : ''}
+                        value={tipoLaudo?.find((laudo) => laudo.Id === +props.values.tipo_laudoId!)?.Title ?? ''}
                         className="w-[50.625rem]"
                         popperWidth="w-[50.625rem]"
                         isLoading={isLoadingReportModal || isLoadingTipoLaudo}
                         onValueChange={(value) => {
-                          props.setFieldValue('tipo_laudoId', value);
+                          if (value) {
+                            props.setFieldValue('tipo_laudoId', value);
+                          }
                         }}
                         error={!!props.errors.tipo_laudoId && props.touched.tipo_laudoId}
                       >
@@ -376,10 +382,24 @@ const ReportsModal = () => {
                         {isEdit && <FileImport.Label error={!!props.errors.file}>Anexo Laudo</FileImport.Label>}
                         <FileImport.Input
                           accept=".jpg, .jpeg, .png, .pdf, .doc, .docx"
+                          // onChange={(event) => {
+                          //   event.target.files &&
+                          //     event.target?.files?.length > 0 &&
+                          //     props.setFieldValue('file', Array.from(event.target.files));
+                          // }}
                           onChange={(event) => {
-                            event.target.files &&
-                              event.target?.files?.length > 0 &&
-                              props.setFieldValue('file', Array.from(event.target.files));
+                            if (event.target.files && event.target.files.length > 0) {
+                              const file = event.target.files[0];
+                              const fileSize = file.size;
+                              const maxSize = 8 * 1024 * 1024; // 8 MB em bytes
+
+                              if (fileSize <= maxSize) {
+                                props.setFieldValue('file', Array.from(event.target.files));
+                              } else {
+                                // alert('O arquivo é muito grande. O tamanho máximo permitido é 8 MB.');
+                                setErrorAddFile(true);
+                              }
+                            }
                           }}
                         />
                         {props.values.Attachments &&
@@ -447,6 +467,12 @@ const ReportsModal = () => {
           )}
         </Formik>
       </Modal>
+
+      {errorAddFile && (
+        <Toast type="error" open={errorAddFile} onOpenChange={setErrorAddFile}>
+          O arquivo é muito grande. O tamanho máximo permitido é 8 MB.
+        </Toast>
+      )}
     </>
   );
 };

@@ -18,7 +18,11 @@ const SelectItem = forwardRef<HTMLDivElement, ISelectItemProps>(
         {...props}
       >
         <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap overflow-ellipsis max-w-full mr-3">
-          <div>{multi && <Checkbox checked={isSelected} />}</div>
+          {multi && (
+            <div>
+              <Checkbox checked={isSelected} />
+            </div>
+          )}
 
           <span title={children?.toString()} className="max-w-full text-ellipsis overflow-hidden text-sm">
             {children}
