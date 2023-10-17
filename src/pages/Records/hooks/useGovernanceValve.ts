@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 import { useState } from 'react';
-import { parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -316,7 +316,7 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
       response.map(async (item: any) => {
         const valvulaResponse = await crud.getListItemsv2(
           'equipamentos_diversos',
-          `?$Select=Id,tipo_equipamento/Title,predio/Title,pavimento/Title,local/Title,cod_equipamento,conforme,cod_qrcode,excluido&$expand=predio,pavimento,local,tipo_equipamento&$Filter=((Id eq ${item.valvula_id.Id}) and (tipo_equipamento/Title eq 'Válvulas de Governo'))`,
+          `?$Select=Id,ultima_inspecao,predio/Title,pavimento/Title,local/Title,cod_equipamento&$expand=predio,pavimento,local&$Filter=((Id eq ${item.valvula_id.Id}) and (tipo_equipamento/Title eq 'Válvulas de Governo'))`,
         );
 
         const valvula = valvulaResponse.results[0] || null;
@@ -328,8 +328,8 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
           cod_equipamento: valvula.cod_equipamento,
           pavimento: valvula.pavimento.Title,
           local: valvula.local.Title,
-          validade: valvula.validade,
-          valvula_conforme: valvula.conforme,
+          conforme: item.conforme ? 'CONFORME' : 'NÃO CONFORME',
+          ultima_inspecao: format(new Date(valvula.ultima_inspecao), 'dd/MM/yyyy'),
         };
       }),
     );
@@ -349,9 +349,8 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
       'cod_equipamento',
       'pavimento',
       'local',
-      'validade',
       'conforme',
-      'valvula_conforme',
+      'ultima_inspecao',
     ];
 
     const headerRow = columns.map((column) => column.toString());
@@ -370,7 +369,28 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-      XLSX.utils.book_append_sheet(wb, ws, '');
+      const wscols = [
+        { wch: 10 },
+        { wch: 30 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 30 },
+        { wch: 15 },
+        { wch: 15 },
+      ];
+
+      dataArray[0][0] = { t: 's', v: 'Texto com\nQuebra de Linha' };
+
+      const firstRowHeight = 30;
+      const wsrows = [{ hpx: firstRowHeight }];
+      const filterRange = { ref: `A1:H1` };
+
+      ws['!autofilter'] = filterRange;
+      ws['!rows'] = wsrows;
+      ws['!cols'] = wscols;
+
+      XLSX.utils.book_append_sheet(wb, ws, 'Valvulas de Governo');
       XLSX.writeFile(wb, `Registros - Valvula de Governo.xlsx`);
     }
 

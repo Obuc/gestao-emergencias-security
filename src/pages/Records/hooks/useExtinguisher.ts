@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 import { useState } from 'react';
-import { parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -350,14 +350,14 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
   });
 
   const fetchExtinguisherAllRecords = async () => {
-    const path = `?$Select=*,site/Title,bombeiro_id/Title&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+    const path = `?$Select=Id,local,extintor_idId,data_pesagem,observacao,novo,pavimento,bombeiro_id/Title,site/Title&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
     const response = await crud.getListItems('registros_extintor', path);
 
     const dataWithTransformations = await Promise.all(
       response.map(async (item: any) => {
         const extintorResponse = await crud.getListItemsv2(
           'extintores',
-          `?$Select=*,Id,predio/Title,pavimento/Title,local/Title,cod_extintor,validade,conforme,cod_qrcode&$expand=predio,pavimento,local&$Filter=(Id eq ${item.extintor_idId})`,
+          `?$Select=Id,predio/Title,tipo_extintor/Title,cod_extintor,validade,conforme,cod_qrcode&$expand=predio,tipo_extintor&$Filter=(Id eq ${item.extintor_idId})`,
         );
 
         const extintor = extintorResponse.results[0] || null;
@@ -365,12 +365,14 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
         return {
           ...item,
           bombeiro: item.bombeiro_id?.Title,
-          extintor_id: extintor?.Id,
-          predio: extintor?.predio,
-          pavimento: extintor?.pavimento,
-          local: extintor?.local,
+          local: item?.local,
+          pavimento: item?.pavimento,
+          data_pesagem: item?.data_pesagem ? format(new Date(item?.data_pesagem), 'dd/MM/yyyy') : 'N/A',
+          novo: item?.novo ? 'SIM' : 'NÃO',
+          tipo_extintor: extintor?.tipo_extintor?.Title,
           cod_extintor: extintor?.cod_extintor,
-          validade: extintor?.validade,
+          predio: extintor?.predio?.Title,
+          validade: format(new Date(extintor?.validade), 'dd/MM/yyyy'),
         };
       }),
     );
@@ -386,14 +388,15 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
     const columns = [
       'Id',
       'bombeiro',
-      'data_pesagem',
-      'extintor_id',
-      'predio',
-      'pavimento',
       'local',
+      'pavimento',
+      'data_pesagem',
+      'novo',
+      'tipo_extintor',
       'cod_extintor',
+      'predio',
       'validade',
-      'conforme',
+      'observacao',
     ];
 
     const headerRow = columns.map((column) => column.toString());
@@ -412,7 +415,31 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-      XLSX.utils.book_append_sheet(wb, ws, '');
+      const wscols = [
+        { wch: 10 },
+        { wch: 30 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 30 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
+      ];
+
+      dataArray[0][0] = { t: 's', v: 'Texto com\nQuebra de Linha' };
+
+      const firstRowHeight = 30;
+      const wsrows = [{ hpx: firstRowHeight }];
+      const filterRange = { ref: `A1:H1` };
+
+      ws['!autofilter'] = filterRange;
+      ws['!rows'] = wsrows;
+      ws['!cols'] = wscols;
+
+      XLSX.utils.book_append_sheet(wb, ws, 'Extintores');
       XLSX.writeFile(wb, `Registros - Extintores.xlsx`);
     }
 

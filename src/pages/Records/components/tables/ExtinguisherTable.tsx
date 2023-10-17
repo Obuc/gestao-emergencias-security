@@ -73,8 +73,6 @@ const ExtinguisherTable = () => {
     });
   };
 
-  console.log(window.screen.width);
-
   return (
     <div className="h-full">
       <Table.Filter>
