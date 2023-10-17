@@ -8,6 +8,7 @@ export default {
   ],
   theme: {
     extend: {
+
       colors: {
         'primary': '#10384F',
         'primary-opacity': 'rgba(16, 56, 79, .18)',

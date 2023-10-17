@@ -1,16 +1,50 @@
+import * as XLSX from 'xlsx';
 import { useLocation, useParams } from 'react-router-dom';
-import { UseQueryResult, useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
+import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import {
+  IEqGovernanceValve,
+  IEqGovernanceValveFiltersProps,
+  IEqGovernanceValveModal,
+} from '../types/EquipmentsGovernanceValve';
 import { sharepointContext } from '../../../context/sharepointContext';
-import { IEqGovernanceValve, IEqGovernanceValveModal } from '../types/EquipmentsGovernanceValve';
 
-const useEqGovernanceValve = () => {
+const useEqGovernanceValve = (eqGovernancevalveFilters?: IEqGovernanceValveFiltersProps) => {
   const { crud } = sharepointContext();
   const params = useParams();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
 
-  const path = `?$Select=Id,cod_qrcode,cod_equipamento,tipo_equipamento/Title,conforme,site/Title,pavimento/Title,local/Title&$expand=site,tipo_equipamento,pavimento,local&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Válvulas de Governo')`;
+  let path = `?$Select=Id,cod_qrcode,cod_equipamento,Modified,excluido,tipo_equipamento/Title,conforme,site/Title,pavimento/Title,local/Title&$expand=site,tipo_equipamento,pavimento,local&$Orderby=Modified desc&$Top=100&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Válvulas de Governo') and (excluido eq 'false')`;
+
+  if (eqGovernancevalveFilters?.place) {
+    for (let i = 0; i < eqGovernancevalveFilters.place.length; i++) {
+      path += `${i === 0 ? ' and' : ' or'} (local/Title eq '${eqGovernancevalveFilters.place[i]}')`;
+    }
+  }
+
+  if (eqGovernancevalveFilters?.pavement) {
+    for (let i = 0; i < eqGovernancevalveFilters.pavement.length; i++) {
+      path += `${i === 0 ? ' and' : ' or'} (pavimento/Title eq '${eqGovernancevalveFilters.pavement[i]}')`;
+    }
+  }
+
+  if (eqGovernancevalveFilters?.conformity && eqGovernancevalveFilters?.conformity === 'Conforme') {
+    path += ` and (conforme ne 'false')`;
+  }
+
+  if (eqGovernancevalveFilters?.conformity && eqGovernancevalveFilters?.conformity !== 'Conforme') {
+    path += ` and (conforme eq 'false')`;
+  }
+
+  if (eqGovernancevalveFilters?.valveId) {
+    path += ` and ( substringof('${eqGovernancevalveFilters?.valveId}', cod_equipamento ))`;
+  }
+
+  if (eqGovernancevalveFilters?.id) {
+    path += ` and ( Id eq '${eqGovernancevalveFilters?.id}')`;
+  }
 
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'equipamentos_diversos', path });
@@ -41,7 +75,16 @@ const useEqGovernanceValve = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['governance_valve_data', user_site, params.form],
+    queryKey: [
+      'governance_valve_data',
+      user_site,
+      params.form,
+      eqGovernancevalveFilters?.place,
+      eqGovernancevalveFilters?.pavement,
+      eqGovernancevalveFilters?.conformity,
+      eqGovernancevalveFilters?.valveId,
+      eqGovernancevalveFilters?.id,
+    ],
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -128,14 +171,50 @@ const useEqGovernanceValve = () => {
   const { mutateAsync: mutateRemoveEqGovernanceValve, isLoading: isLoadingMutateRemoveEqGovernanceValve } = useMutation(
     {
       mutationFn: async (itemId: number) => {
-        if (itemId) {
-          await crud.deleteItemList('Extintores', itemId);
-        }
+        await crud.updateItemList('equipamentos_diversos', itemId, { excluido: true });
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: [
+            'governance_valve_data',
+            user_site,
+            params.form,
+            eqGovernancevalveFilters?.place,
+            eqGovernancevalveFilters?.pavement,
+            eqGovernancevalveFilters?.conformity,
+            eqGovernancevalveFilters?.valveId,
+            eqGovernancevalveFilters?.id,
+          ],
+        });
       },
     },
   );
 
   const qrCodeValue = `Valvula;${eqEqGovernanceValveModal?.site};${eqEqGovernanceValveModal?.cod_qrcode}`;
+
+  const handleExportEqGovernanceValveModalToExcel = () => {
+    const columns: (keyof IEqGovernanceValve)[] = ['Id', 'site', 'pavimento', 'local', 'cod_equipamento', 'conforme'];
+
+    const headerRow = columns.map((column) => column.toString());
+
+    const dataFiltered = eqGovernanceValve?.map((item) => {
+      const newItem: { [key: string]: any } = {};
+      columns.forEach((column) => {
+        newItem[column] = item[column];
+      });
+      return newItem;
+    });
+
+    if (dataFiltered) {
+      const dataArray = [headerRow, ...dataFiltered.map((item) => columns.map((column) => item[column]))];
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(dataArray);
+
+      XLSX.utils.book_append_sheet(wb, ws, '');
+      XLSX.writeFile(wb, `Equipamentos - Valvula de Governo.xlsx`);
+    }
+  };
 
   return {
     governanceValve,
@@ -155,6 +234,7 @@ const useEqGovernanceValve = () => {
     isErrorEqGovernanceValve,
 
     qrCodeValue,
+    handleExportEqGovernanceValveModalToExcel,
   };
 };
 

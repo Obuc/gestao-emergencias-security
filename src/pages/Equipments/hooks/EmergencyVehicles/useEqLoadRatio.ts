@@ -2,26 +2,45 @@ import * as XLSX from 'xlsx';
 import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import {
+  IEqLoadRatio,
+  IEqLoadRatioFiltersProps,
+  IEqLoadRatioModal,
+} from '../../types/EmergencyVehicles/EquipmentsLoadRatio';
 import { sharepointContext } from '../../../../context/sharepointContext';
-import { IEqLoadRatio, IEqLoadRatioModal } from '../../types/EmergencyVehicles/EquipmentsLoadRatio';
 
-const useEqLoadRatio = () => {
+const useEqLoadRatio = (eqLoadRatioFilters?: IEqLoadRatioFiltersProps) => {
   const { crud } = sharepointContext();
   const params = useParams();
   const location = useLocation();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
-  const equipments_value = localStorage.getItem('equipments_value');
 
   const isVehicleValue =
-    equipments_value === 'Scania' ||
-    equipments_value === 'S10' ||
-    equipments_value === 'Mercedes' ||
-    equipments_value === 'Furgão' ||
-    equipments_value === 'Ambulância Iveco' ||
-    equipments_value === 'Ambulância Sprinter';
+    params.form === 'scania' ||
+    params.form === 's10' ||
+    params.form === 'mercedes' ||
+    params.form === 'van' ||
+    params.form === 'iveco' ||
+    params.form === 'sprinter';
 
-  const path = `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme,excluido&$Top=100&$expand=site,tipo_veiculo&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false') and (tipo_veiculo/Title eq '${equipments_value}')`;
+  let path = `?$Select=Id,cod_qrcode,site/Title,Modified,tipo_veiculo/Title,placa,ultima_inspecao,conforme,excluido&$Top=100&$expand=site,tipo_veiculo&$Orderby=Modified desc&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false') and (tipo_veiculo/url_path eq '${params.form}')`;
+
+  if (eqLoadRatioFilters?.conformity && eqLoadRatioFilters?.conformity === 'Conforme') {
+    path += ` and (conforme ne 'false')`;
+  }
+
+  if (eqLoadRatioFilters?.conformity && eqLoadRatioFilters?.conformity !== 'Conforme') {
+    path += ` and (conforme eq 'false')`;
+  }
+
+  if (eqLoadRatioFilters?.plate) {
+    path += ` and ( substringof('${eqLoadRatioFilters?.plate}', placa ))`;
+  }
+
+  if (eqLoadRatioFilters?.id) {
+    path += ` and ( Id eq '${eqLoadRatioFilters?.id}')`;
+  }
 
   const fetchEqLoadRatio = async ({ pageParam }: { pageParam?: string }) => {
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'veiculos_emergencia', path });
@@ -52,11 +71,18 @@ const useEqLoadRatio = () => {
     isLoading,
     isError,
   } = useInfiniteQuery({
-    queryKey: ['eq_load_ratio_data', user_site, equipments_value],
+    queryKey: [
+      'eq_load_ratio_data',
+      user_site,
+      params.form,
+      eqLoadRatioFilters?.conformity,
+      eqLoadRatioFilters?.plate,
+      eqLoadRatioFilters?.id,
+    ],
     queryFn: fetchEqLoadRatio,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: isVehicleValue && location.pathname === '/equipments',
+    enabled: isVehicleValue && location.pathname === `/equipments/${params.form}`,
   });
 
   const fetchEqLoadRatioData = async () => {
@@ -78,7 +104,7 @@ const useEqLoadRatio = () => {
   };
 
   const { data: eqLoadRatioModal, isLoading: isLoadingEqLoadRatioModal }: UseQueryResult<IEqLoadRatioModal> = useQuery({
-    queryKey: ['eq_load_ratio_data_modal', params.id, equipments_value],
+    queryKey: ['eq_load_ratio_data_modal', params.id, params.form],
     queryFn: async () => {
       if (params.id && isVehicleValue) {
         const eqVehicle = await fetchEqLoadRatioData();
@@ -96,7 +122,7 @@ const useEqLoadRatio = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && isVehicleValue && location.pathname === '/equipments',
+    enabled: params.id !== undefined && isVehicleValue,
   });
 
   const {
@@ -104,9 +130,9 @@ const useEqLoadRatio = () => {
     isLoading: isLoadingVehiclesLoadRatio,
     isError: isErrorEqVehiclesLoadRatio,
   }: UseQueryResult<Array<IEqLoadRatio>> = useQuery({
-    queryKey: ['eq_general_checklist', equipments_value],
+    queryKey: ['eq_general_checklist', params.form],
     queryFn: async () => {
-      const path = `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme,excluido&$expand=site,tipo_veiculo&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false') and (tipo_veiculo/Title eq '${equipments_value}')`;
+      const path = `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme,excluido&$expand=site,tipo_veiculo&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false') and (tipo_veiculo/url_path eq '${params.form}')`;
 
       const resp = await crud.getListItems('veiculos_emergencia', path);
 
@@ -124,7 +150,7 @@ const useEqLoadRatio = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: isVehicleValue && location.pathname === '/equipments',
+    enabled: isVehicleValue && location.pathname === `/equipments/${params.form}`,
   });
 
   const { mutateAsync: mutateRemoveEqLoadRatio, isLoading: isLoadingMutateRemoveEqLoadRatio } = useMutation({
@@ -132,7 +158,16 @@ const useEqLoadRatio = () => {
       await crud.updateItemList('veiculos_emergencia', itemId, { excluido: true });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['eq_load_ratio_data', user_site, equipments_value] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          'eq_load_ratio_data',
+          user_site,
+          params.form,
+          eqLoadRatioFilters?.conformity,
+          eqLoadRatioFilters?.plate,
+          eqLoadRatioFilters?.id,
+        ],
+      });
     },
   });
 
@@ -158,7 +193,7 @@ const useEqLoadRatio = () => {
       const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
       XLSX.utils.book_append_sheet(wb, ws, '');
-      XLSX.writeFile(wb, `Equipamentos - ${equipments_value}.xlsx`);
+      XLSX.writeFile(wb, `Equipamentos - ${params.form}.xlsx`);
     }
   };
 

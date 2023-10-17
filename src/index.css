@@ -23,8 +23,8 @@
       font-size: 65%;
     }
 
-    @media (min-width: 1600px) {
-      font-size: 80%;
+    @media (min-width: 1500px) {
+      font-size: 76%;
     }
 
     @media (min-width: 1800px) {
