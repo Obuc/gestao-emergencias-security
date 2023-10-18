@@ -198,11 +198,11 @@ const useEqExtinguisher = (eqExtinguisherFilters?: IEqExtinguisherFiltersProps) 
   const handleExportExtinguisherToExcel = () => {
     const columns: (keyof IEqExtinguisher)[] = [
       'Id',
-      'cod_extintor',
-      'local',
-      'cod_qrcode',
-      'predio',
       'pavimento',
+      'local',
+      'predio',
+      'cod_extintor',
+      'tipo_extintor',
       'conforme',
       'site',
     ];
@@ -223,7 +223,7 @@ const useEqExtinguisher = (eqExtinguisherFilters?: IEqExtinguisherFiltersProps) 
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-      XLSX.utils.book_append_sheet(wb, ws, '');
+      XLSX.utils.book_append_sheet(wb, ws, 'Extintores');
       XLSX.writeFile(wb, `Equipamentos - Extintores.xlsx`);
     }
   };

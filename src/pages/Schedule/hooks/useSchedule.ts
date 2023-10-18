@@ -1,12 +1,18 @@
 import { useState } from 'react';
 import { parseISO } from 'date-fns';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
-import { DataEquipments } from '../types/DataEquipments';
+import { DataEquipments, DataEquipmentsModal } from '../types/DataEquipments';
 import { sharepointContext } from '../../../context/sharepointContext';
 
 export const useSchedule = () => {
   const { crud } = sharepointContext();
+  const params = useParams();
+  const [searchParams] = useSearchParams();
+  const equipmentModal = searchParams.get('equipment');
+  const isMiscellaneousEquipment =
+    equipmentModal === 'Inspeção CMI' || equipmentModal === 'Teste CMI' || equipmentModal === 'Válvulas de Governo';
 
   const [dateSelected, setDateSected] = useState<Date | null>(null);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
@@ -120,28 +126,12 @@ export const useSchedule = () => {
   };
 
   const fetchExtinguisher = async () => {
-    // const startDate = new Date(selectedYear, selectedMonth, 1);
-    // const endDate = new Date(selectedYear, selectedMonth + 1, 0);
-    // const formattedStartDate = `${startDate.toISOString().split('T')[0]}T00:00:00Z`;
-    // const formattedEndDate = `${endDate.toISOString().split('T')[0]}T00:00:00Z`;
-    // const filterString = `ultima_inspecao ge datetime'${formattedStartDate}' and ultima_inspecao le datetime'${formattedEndDate}'`;
-
-    // const path = `?$Select=Id,excluido,cod_extintor,cod_qrcode,conforme,local/Title,massa/Title,pavimento/Title,predio/Title,site/Title,tipo_extintor/Title,validade,ultima_inspecao&$expand=local,massa,pavimento,predio,site,tipo_extintor&$Filter=(excluido eq 'false' and ultima_inspecao ne null)`;
-
     const path = `?$Select=Id,excluido,validade,ultima_inspecao&$Filter=(excluido eq 'false' and ultima_inspecao ne null)`;
-
     const resp = await crud.getListItemsv2('extintores', path);
     return resp.results;
   };
 
   const fetchMiscellaneousEquipment = async () => {
-    // const startDate = new Date(selectedYear, selectedMonth, 1);
-    // const endDate = new Date(selectedYear, selectedMonth + 1, 0);
-    // const formattedStartDate = `${startDate.toISOString().split('T')[0]}T00:00:00Z`;
-    // const formattedEndDate = `${endDate.toISOString().split('T')[0]}T00:00:00Z`;
-
-    // const filterString = `ultima_inspecao ge datetime'${formattedStartDate}' and ultima_inspecao le datetime'${formattedEndDate}'`;
-
     const path = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,cod_equipamento,ultima_inspecao,conforme,excluido&$expand=site,predio,pavimento,local,tipo_equipamento &$Filter=(excluido eq 'false' and ultima_inspecao ne null)`;
 
     const resp = await crud.getListItemsv2('equipamentos_diversos', path);
@@ -149,7 +139,7 @@ export const useSchedule = () => {
   };
 
   const { data: dataEquipments, isLoading: isLoadingDataEquipments }: UseQueryResult<Array<DataEquipments>> = useQuery({
-    queryKey: ['eq_extinguisher_data_modal'],
+    queryKey: ['dataEquipments_schedule'],
     queryFn: async () => {
       const extinguiserData = await fetchExtinguisher();
       const miscellaneousEquipmentData = await fetchMiscellaneousEquipment();
@@ -198,6 +188,71 @@ export const useSchedule = () => {
     refetchOnWindowFocus: false,
   });
 
+  const fechExtinguisherData = async (extinguisherId: string) => {
+    const resp = await crud.getListItemsv2(
+      'extintores',
+      `?$Select=Id,predio/Title,pavimento/Title,local/Title,ultima_inspecao&$expand=predio,pavimento,local&$Filter=(Id eq '${extinguisherId}')`,
+    );
+    return resp.results[0];
+  };
+
+  const fechMiscellaneousEquipment = async (equipmentId: string) => {
+    const resp = await crud.getListItemsv2(
+      'equipamentos_diversos',
+      `?$Select=Id,predio/Title,pavimento/Title,local/Title,ultima_inspecao&$expand=predio,pavimento,local&$Filter=(Id eq '${equipmentId}')`,
+    );
+    return resp.results[0];
+  };
+
+  const { data: dataEquipmentsModal, isLoading: isLoadingDataEquipmentsModal }: UseQueryResult<DataEquipmentsModal> =
+    useQuery({
+      queryKey:
+        params.id !== undefined && equipmentModal !== null
+          ? ['dataEquipments_schedule_modal', params.id, equipmentModal]
+          : ['dataEquipments_schedule_modal'],
+      queryFn: async () => {
+        if (params.id && equipmentModal === 'Extintor') {
+          const extinguisher = await fechExtinguisherData(params.id);
+          const ultimaInspecaoIsoDate = parseISO(extinguisher.ultima_inspecao);
+
+          const ultimaInspecao = new Date(
+            ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
+          );
+
+          return {
+            ...extinguisher,
+            predio: extinguisher?.predio?.Title,
+            pavimento: extinguisher?.pavimento?.Title,
+            local: extinguisher?.local?.Title,
+            ultima_inspecao: ultimaInspecao,
+          };
+        }
+
+        if (params.id && isMiscellaneousEquipment) {
+          const miscellaneousEquipment = await fechMiscellaneousEquipment(params.id);
+
+          const ultimaInspecaoIsoDate = parseISO(miscellaneousEquipment.ultima_inspecao);
+
+          const ultimaInspecao = new Date(
+            ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
+          );
+
+          return {
+            ...miscellaneousEquipment,
+            predio: miscellaneousEquipment?.predio?.Title,
+            pavimento: miscellaneousEquipment?.pavimento?.Title,
+            local: miscellaneousEquipment?.local?.Title,
+            ultima_inspecao: ultimaInspecao,
+          };
+        }
+
+        return [];
+      },
+      staleTime: 5000 * 60, // 5 Minute
+      refetchOnWindowFocus: false,
+      enabled: params.id !== undefined && equipmentModal !== null,
+    });
+
   return {
     getDaysInMonth,
     dateSelected,
@@ -215,5 +270,8 @@ export const useSchedule = () => {
 
     dataEquipments,
     isLoadingDataEquipments,
+
+    dataEquipmentsModal,
+    isLoadingDataEquipmentsModal,
   };
 };
