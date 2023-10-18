@@ -8,6 +8,7 @@ import { useSchedule } from '../hooks/useSchedule';
 import { Button } from '../../../components/Button';
 import { Select } from '../../../components/Select';
 import CalendarEquipmentModal from './CalendarEquipmentModal';
+import { Skeleton } from '@mui/material';
 
 const Calendar = () => {
   const {
@@ -23,6 +24,7 @@ const Calendar = () => {
     setSelectedYear,
     generateDateList,
     dataEquipments,
+    isLoadingDataEquipments,
   } = useSchedule();
 
   const navigate = useNavigate();
@@ -63,10 +65,10 @@ const Calendar = () => {
               </h2>
 
               <div className="flex justify-between p-2 bg-white/70 rounded-full w-[5.125rem] min-h-[2.25rem]">
-                <button className="w-[1.25rem] h-[1.25rem]" onClick={prevMonth}>
+                <button disabled={isLoadingDataEquipments} className="w-[1.25rem] h-[1.25rem]" onClick={prevMonth}>
                   <FontAwesomeIcon icon={faChevronLeft} />
                 </button>
-                <button className="w-[1.25rem] h-[1.25rem]" onClick={nextMonth}>
+                <button disabled={isLoadingDataEquipments} className="w-[1.25rem] h-[1.25rem]" onClick={nextMonth}>
                   <FontAwesomeIcon icon={faChevronRight} />
                 </button>
               </div>
@@ -152,7 +154,9 @@ const Calendar = () => {
                               data-is-done={isInspectionDone && !isOverdue && !isTodayInspection}
                               className="flex justify-center absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 items-center w-10 h-10 rounded-full data-[is-expired=true]:bg-pink data-[is-expired=true]:text-white data-[is-today-inspection=true]:bg-[#FFEE57] data-[is-today-inspection=true]:text-black data-[is-done=true]:bg-[#70EC364D]"
                             >
-                              {day ? day.getDate() : ''}
+                              {day && !isLoadingDataEquipments
+                                ? day.getDate()
+                                : isLoadingDataEquipments && <Skeleton className="w-[5.625rem] py-5" />}
                             </span>
                           </td>
                         );
@@ -174,8 +178,10 @@ const Calendar = () => {
                   className="w-[11.25rem]"
                   popperWidth="w-[11.25rem]"
                   variant="outline"
+                  mode="gray"
                   value={monthsList[selectedMonth].label ?? ''}
                   onValueChange={handleMonthChange}
+                  isLoading={isLoadingDataEquipments}
                 >
                   {monthsList.map((month) => (
                     <Select.Item key={month.value} value={month.value.toString()}>
@@ -191,7 +197,9 @@ const Calendar = () => {
                   className="w-[11.25rem]"
                   popperWidth="w-[11.25rem]"
                   value={selectedYear.toString()}
+                  mode="gray"
                   onValueChange={(value) => setSelectedYear(+value)}
+                  isLoading={isLoadingDataEquipments}
                 >
                   <Select.Item value="2023">2023</Select.Item>
                   <Select.Item value="2022">2022</Select.Item>
@@ -199,6 +207,7 @@ const Calendar = () => {
               </div>
               <div>
                 <Button.Root
+                  disabled={isLoadingDataEquipments}
                   className="w-[6.875rem] h-10"
                   onClick={() => {
                     const today = new Date();
@@ -233,37 +242,51 @@ const Calendar = () => {
 
                 return (
                   <div className="border-b p-6 border-b-primary/10" key={index}>
-                    <span className="text-[1.375rem] text-primary font-semibold">
-                      {format(date, "d 'de' MMMM - EEE", { locale: ptBR })}
-                    </span>
-                    <ul className="pt-4 pb-6">
-                      {eventsOnDate?.map((equipment, equipmentIndex) => {
-                        const isOverdue = isBefore(equipment.proxima_inspecao, new Date());
-                        const isInspectionDone = isSameDay(equipment.ultima_inspecao, date);
-                        const isTodayInspection = isSameDay(equipment.proxima_inspecao, date);
+                    {!isLoadingDataEquipments && (
+                      <span className="text-[1.375rem] text-primary font-semibold">
+                        {format(date, "d 'de' MMMM - EEE", { locale: ptBR })}
+                      </span>
+                    )}
 
-                        return (
-                          <li
-                            data-is-overdue={isOverdue}
-                            data-is-today={isTodayInspection && !isOverdue}
-                            data-is-done={isInspectionDone && !isOverdue && !isTodayInspection}
-                            className="p-2 mb-2 data-[is-overdue=true]:bg-[#FF316233] data-[is-done=true]:bg-[#70EC36]/20 data-[is-today=true]:bg-[#FFEE5733] rounded flex items-center gap-2 cursor-pointer"
-                            key={equipmentIndex}
-                            onClick={() => handleOpenModalViewEquipment({ id: equipment.Id, type: equipment.type })}
-                          >
-                            <>
-                              <div
-                                data-is-overdue={isOverdue}
-                                data-is-today={isTodayInspection && !isOverdue}
-                                data-is-done={isInspectionDone && !isOverdue && !isTodayInspection}
-                                className="w-3 h-3 data-[is-overdue=true]:bg-pink data-[is-done=true]:bg-[#70EC36] data-[is-today=true]:bg-[#FFEE57] rounded-full"
-                              />
-                              <span className="text-lg text-[#303030]">Inspeção - {equipment.type}</span>
-                            </>
-                          </li>
-                        );
-                      })}
-                    </ul>
+                    {isLoadingDataEquipments && <Skeleton className="w-full py-4" />}
+                    {isLoadingDataEquipments && (
+                      <ul className="pb-6">
+                        <li className="px-2">
+                          <Skeleton className="w-full py-4" />
+                        </li>
+                      </ul>
+                    )}
+
+                    {!isLoadingDataEquipments && (
+                      <ul className="pt-4 pb-6">
+                        {eventsOnDate?.map((equipment, equipmentIndex) => {
+                          const isOverdue = isBefore(equipment.proxima_inspecao, new Date());
+                          const isInspectionDone = isSameDay(equipment.ultima_inspecao, date);
+                          const isTodayInspection = isSameDay(equipment.proxima_inspecao, date);
+
+                          return (
+                            <li
+                              data-is-overdue={isOverdue}
+                              data-is-today={isTodayInspection && !isOverdue}
+                              data-is-done={isInspectionDone && !isOverdue && !isTodayInspection}
+                              className="p-2 mb-2 data-[is-overdue=true]:bg-[#FF316233] data-[is-done=true]:bg-[#70EC36]/20 data-[is-today=true]:bg-[#FFEE5733] rounded flex items-center gap-2 cursor-pointer"
+                              key={equipmentIndex}
+                              onClick={() => handleOpenModalViewEquipment({ id: equipment.Id, type: equipment.type })}
+                            >
+                              <>
+                                <div
+                                  data-is-overdue={isOverdue}
+                                  data-is-today={isTodayInspection && !isOverdue}
+                                  data-is-done={isInspectionDone && !isOverdue && !isTodayInspection}
+                                  className="w-3 h-3 data-[is-overdue=true]:bg-pink data-[is-done=true]:bg-[#70EC36] data-[is-today=true]:bg-[#FFEE57] rounded-full"
+                                />
+                                <span className="text-lg text-[#303030]">Inspeção - {equipment.type}</span>
+                              </>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
                   </div>
                 );
               })}

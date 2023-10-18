@@ -3,8 +3,8 @@ import { parseISO } from 'date-fns';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
-import { DataEquipments, DataEquipmentsModal } from '../types/DataEquipments';
 import { sharepointContext } from '../../../context/sharepointContext';
+import { DataEquipments, DataEquipmentsModal } from '../types/DataEquipments';
 
 export const useSchedule = () => {
   const { crud } = sharepointContext();
@@ -14,7 +14,7 @@ export const useSchedule = () => {
   const isMiscellaneousEquipment =
     equipmentModal === 'Inspeção CMI' || equipmentModal === 'Teste CMI' || equipmentModal === 'Válvulas de Governo';
 
-  const [dateSelected, setDateSected] = useState<Date | null>(null);
+  const [dateSelected, setDateSected] = useState<Date | null>(new Date());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
