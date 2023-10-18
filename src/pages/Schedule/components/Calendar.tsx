@@ -1,13 +1,12 @@
 import { ptBR } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
-import { format, isSameDay, isToday } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { format, getDate, getMonth, getYear, isBefore, isSameDay, isToday } from 'date-fns';
 
 import { useSchedule } from '../hooks/useSchedule';
 import { Button } from '../../../components/Button';
 import { Select } from '../../../components/Select';
-
 import CalendarEquipmentModal from './CalendarEquipmentModal';
 
 const Calendar = () => {
@@ -30,7 +29,12 @@ const Calendar = () => {
   const dateList = generateDateList();
 
   const handleMonthChange = (value: any) => {
-    setSelectedMonth(parseInt(value, 10));
+    const selectedMonthInt = parseInt(value, 10);
+    setSelectedMonth(selectedMonthInt);
+
+    const firstDayOfSelectedMonth = new Date(selectedYear, selectedMonthInt, 1);
+
+    setDateSected(firstDayOfSelectedMonth);
   };
 
   const handleOpenModalViewEquipment = (equipment: { id: number; type: string }) => {
@@ -38,6 +42,15 @@ const Calendar = () => {
       navigate(`/schedule/${equipment.id}?equipment=${equipment.type}`);
     }
   };
+
+  const filteredEvents = dataEquipments?.filter((equipment) => {
+    return dateList.some((date) => {
+      return (
+        equipment &&
+        (isSameDay(new Date(equipment.proxima_inspecao), date) || isSameDay(new Date(equipment.ultima_inspecao), date))
+      );
+    });
+  });
 
   return (
     <>
@@ -82,11 +95,10 @@ const Calendar = () => {
                         const isDayInMonth = day && day.getMonth() === selectedMonth;
 
                         const isOverdue =
-                          dateSelected &&
                           day &&
                           dataEquipments &&
                           dataEquipments.some((equipment) => {
-                            const equipmentDate = new Date(equipment.proxima_inspecao);
+                            const equipmentDate = equipment.proxima_inspecao;
                             return (
                               isDayInMonth &&
                               equipment.proxima_inspecao &&
@@ -96,7 +108,6 @@ const Calendar = () => {
                           });
 
                         const isTodayInspection =
-                          dateSelected &&
                           day &&
                           dataEquipments &&
                           dataEquipments.some((equipment) => {
@@ -110,13 +121,14 @@ const Calendar = () => {
                         const isInspectionDone =
                           dataEquipments &&
                           dataEquipments.some((equipment) => {
-                            // Verificar se a inspeção foi feita para este dia
+                            const inspectionDate = new Date(equipment.ultima_inspecao);
                             return (
                               isDayInMonth &&
                               equipment.ultima_inspecao &&
-                              new Date(equipment.ultima_inspecao).getDate() === day.getDate() &&
-                              new Date(equipment.ultima_inspecao).getMonth() === selectedMonth &&
-                              new Date(equipment.ultima_inspecao).getFullYear() === selectedYear
+                              isSameDay(inspectionDate, day) &&
+                              getDate(inspectionDate) === day.getDate() &&
+                              getMonth(inspectionDate) === selectedMonth &&
+                              getYear(inspectionDate) === selectedYear
                             );
                           });
 
@@ -124,14 +136,15 @@ const Calendar = () => {
                           <td
                             key={day?.toISOString()}
                             data-istoday={dateSelected && day ? isSameDay(day, dateSelected) : day && isToday(day)}
+                            data-is-selected={dateSelected && day && isToday(day)}
                             data-isdayinmonth={day && day.getMonth() !== selectedMonth}
                             onClick={() => {
                               if (day && day.getMonth() === selectedMonth) {
                                 setDateSected(day);
                               }
                             }}
-                            className="w-[5.625rem] relative data-[isdayinmonth=false]:border border-[#F3F3F3] data-[isdayinmonth=true]:bg-[#F2F3F7] data-[isdayinmonth=true]:text-[#929292] data-[istoday=true]:bg-[#00617F] data-[istoday=true]:text-[#FBFBFB]
-                          data-[isdayinmonth=false]:cursor-pointer data-[isdayinmonth=true]:cursor-not-allowed"
+                            className="w-[5.625rem] relative data-[isdayinmonth=false]:border border-[#F3F3F3] data-[isdayinmonth=true]:bg-[#F2F3F7] data-[isdayinmonth=true]:text-[#929292] data-[istoday=true]:shadow-[inset_0_0_4px_rgba(0,0,0,0.6)]
+                          data-[isdayinmonth=false]:cursor-pointer data-[isdayinmonth=true]:cursor-not-allowed data-[is-selected=true]:bg-[#00617F] data-[is-selected=true]:text-white data-[is-selected=true]:font-bold"
                           >
                             <span
                               data-is-expired={isOverdue}
@@ -146,93 +159,6 @@ const Calendar = () => {
                       })}
                     </tr>
                   ))}
-
-                  {/* {weeks.map((week, weekIndex) => (
-                  <tr
-                    key={weekIndex}
-                    className="min-[1100px]:h-[4.6875rem] relative min-[1600px]:h-[6.25rem] min-[1800px]:h-[6.5625rem] bg-white border border-[#F3F3F3]"
-                  >
-                    {week.map((day) => {
-                      const isDayInMonth = day && day.getMonth() === selectedMonth;
-
-                      const isInspectionDone =
-                        dataEquipments &&
-                        dataEquipments.some((equipment) => {
-                          // Verificar se a inspeção foi feita para este dia
-                          return (
-                            isDayInMonth &&
-                            equipment.ultima_inspecao &&
-                            new Date(equipment.ultima_inspecao).getDate() === day.getDate() &&
-                            new Date(equipment.ultima_inspecao).getMonth() === selectedMonth &&
-                            new Date(equipment.ultima_inspecao).getFullYear() === selectedYear
-                          );
-                        });
-
-                      const isOverdue =
-                        dateSelected &&
-                        day &&
-                        dataEquipments &&
-                        dataEquipments.some((equipment) => {
-                          return (
-                            isDayInMonth &&
-                            equipment.proxima_inspecao &&
-                            new Date(equipment.proxima_inspecao) < day &&
-                            isSameDay(new Date(equipment.proxima_inspecao), day)
-                          );
-                        });
-
-                      const isTodayInspection =
-                        dateSelected &&
-                        day &&
-                        dataEquipments &&
-                        dataEquipments.some((equipment) => {
-                          return (
-                            isDayInMonth &&
-                            equipment.proxima_inspecao &&
-                            isSameDay(new Date(equipment.proxima_inspecao), day)
-                          );
-                        });
-
-                      const isMissedInspection =
-                        dateSelected &&
-                        day &&
-                        dataEquipments &&
-                        dataEquipments.some((equipment) => {
-                          return (
-                            isDayInMonth &&
-                            !isInspectionDone &&
-                            equipment.proxima_inspecao &&
-                            new Date(equipment.proxima_inspecao) < day &&
-                            isSameDay(new Date(equipment.proxima_inspecao), day)
-                          );
-                        });
-
-                      return (
-                        <td
-                          key={day?.toISOString()}
-                          data-is-inspection-done={isInspectionDone}
-                          data-is-overdue={isOverdue}
-                          data-is-missed-inspection={isMissedInspection}
-                          data-is-today-inspection={isTodayInspection}
-                          data-istoday={dateSelected && day ? isSameDay(day, dateSelected) : day && isToday(day)}
-                          data-isdayinmonth={day && day.getMonth() !== selectedMonth}
-                          onClick={() => {
-                            if (day && isDayInMonth) {
-                              setDateSected(day);
-                            }
-                          }}
-                          className={`w-[5.625rem] data-[isdayinmonth=false]:border border-[#F3F3F3] data-[isdayinmonth=true]:bg-[#F2F3F7] data-[isdayinmonth=true]:text-[#929292] data-[istoday=true]:bg-[#00617F] data-[istoday=true]:text-[#FBFBFB] data-[isdayinmonth=false]:cursor-pointer data-[isdayinmonth=true]:cursor-not-allowed
-                      ${isInspectionDone ? 'bg-green-400' : ''}
-                      ${isOverdue ? 'bg-pink' : ''}
-                      ${isMissedInspection ? 'bg-yellow-400' : ''}
-                      ${isTodayInspection ? 'bg-blue-400' : ''}`}
-                        >
-                          {day ? day.getDate() : ''}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))} */}
                 </tbody>
               </table>
             </div>
@@ -286,7 +212,16 @@ const Calendar = () => {
               </div>
             </div>
 
+            <h2 className="px-6 py-6 text-2xl text-primary font-medium bg-white">Proximos Eventos:</h2>
+
             <div className="bg-white overflow-scroll h-full w-full">
+              {!filteredEvents ||
+                (filteredEvents.length === 0 && (
+                  <div className="p-6 text-xl text-primary">
+                    <h2>Nenhum equipamento agendado nos próximos 30 dias para esta data.</h2>
+                  </div>
+                ))}
+
               {dateList.map((date, index) => {
                 const eventsOnDate = dataEquipments?.filter(
                   (equipment) =>
@@ -297,23 +232,37 @@ const Calendar = () => {
                 }
 
                 return (
-                  <div className="mt-6 border-b p-6 border-b-primary/10" key={index}>
+                  <div className="border-b p-6 border-b-primary/10" key={index}>
                     <span className="text-[1.375rem] text-primary font-semibold">
                       {format(date, "d 'de' MMMM - EEE", { locale: ptBR })}
                     </span>
                     <ul className="pt-4 pb-6">
-                      {eventsOnDate?.map((equipment, equipmentIndex) => (
-                        <li
-                          className="p-2 mb-2 bg-[#FFEE5733] rounded flex items-center gap-2 cursor-pointer"
-                          key={equipmentIndex}
-                          onClick={() => handleOpenModalViewEquipment({ id: equipment.Id, type: equipment.type })}
-                        >
-                          <>
-                            <div className="w-3 h-3 bg-[#FFEE57] rounded-full" />
-                            <span className="text-lg text-[#303030]">Inspeção - {equipment.type}</span>
-                          </>
-                        </li>
-                      ))}
+                      {eventsOnDate?.map((equipment, equipmentIndex) => {
+                        const isOverdue = isBefore(equipment.proxima_inspecao, new Date());
+                        const isInspectionDone = isSameDay(equipment.ultima_inspecao, date);
+                        const isTodayInspection = isSameDay(equipment.proxima_inspecao, date);
+
+                        return (
+                          <li
+                            data-is-overdue={isOverdue}
+                            data-is-today={isTodayInspection && !isOverdue}
+                            data-is-done={isInspectionDone && !isOverdue && !isTodayInspection}
+                            className="p-2 mb-2 data-[is-overdue=true]:bg-[#FF316233] data-[is-done=true]:bg-[#70EC36]/20 data-[is-today=true]:bg-[#FFEE5733] rounded flex items-center gap-2 cursor-pointer"
+                            key={equipmentIndex}
+                            onClick={() => handleOpenModalViewEquipment({ id: equipment.Id, type: equipment.type })}
+                          >
+                            <>
+                              <div
+                                data-is-overdue={isOverdue}
+                                data-is-today={isTodayInspection && !isOverdue}
+                                data-is-done={isInspectionDone && !isOverdue && !isTodayInspection}
+                                className="w-3 h-3 data-[is-overdue=true]:bg-pink data-[is-done=true]:bg-[#70EC36] data-[is-today=true]:bg-[#FFEE57] rounded-full"
+                              />
+                              <span className="text-lg text-[#303030]">Inspeção - {equipment.type}</span>
+                            </>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 );
