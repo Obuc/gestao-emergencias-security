@@ -21,7 +21,7 @@ export const AnswersButton = ({ answersValue, ...props }: IAnswersButtonProps) =
     return (
       <button
         {...props}
-        className="p-1.5 mt-1 w-[6.25rem] bg-[#FFB3C1] flex justify-center items-center font-medium border border-[#FF012F] text-[#FF012F] rounded-sm"
+        className="p-1.5 mt-1 w-[6.25rem] h-10 bg-[#FFB3C1] flex justify-center items-center font-medium border border-[#FF012F] text-[#FF012F] rounded-sm"
       >
         Não
       </button>

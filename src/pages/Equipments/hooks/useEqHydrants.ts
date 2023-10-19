@@ -12,7 +12,7 @@ const useEqHydrants = (eqHydrantsFilters?: IEqHydrantsFiltersProps) => {
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
 
-  let path = `?$Select=Id,site/Title,predio/Title,pavimento/Title,local/Title,cod_hidrante,possui_abrigo,conforme,excluido,Modified&$expand=site,predio,pavimento,local&$Orderby=Modified desc&$Top=100&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
+  let path = `?$Select=Id,site/Title,predio/Title,pavimento/Title,local/Title,cod_hidrante,possui_abrigo,conforme,excluido,Modified&$expand=site,predio,pavimento,local&$Orderby=Modified desc&$Top=25&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
 
   if (eqHydrantsFilters?.place) {
     for (let i = 0; i < eqHydrantsFilters.place.length; i++) {

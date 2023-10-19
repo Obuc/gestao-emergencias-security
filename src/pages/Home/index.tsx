@@ -50,6 +50,8 @@ const Home = () => {
               id="county_id"
               name="county_id"
               className="w-[22.25rem]"
+              popperWidth="w-[22.25rem]"
+              mode="gray"
               value={site}
               isLoading={isLoadingSites}
               onValueChange={(value) => setSite(value)}

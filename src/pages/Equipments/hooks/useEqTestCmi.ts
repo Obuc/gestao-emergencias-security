@@ -13,7 +13,7 @@ const useEqTestCmi = (eqCMITestFilters?: IEqTestCmiFiltersProps) => {
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
 
-  let path = `?$Select=Id,cod_qrcode,conforme,Modified,excluido,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,tipo_equipamento&$Orderby=Modified desc&$Top=100&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Teste CMI') and (excluido eq 'false')`;
+  let path = `?$Select=Id,cod_qrcode,conforme,Modified,excluido,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,tipo_equipamento&$Orderby=Modified desc&$Top=25&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Teste CMI') and (excluido eq 'false')`;
 
   if (eqCMITestFilters?.conformity && eqCMITestFilters?.conformity === 'Conforme') {
     path += ` and (conforme ne 'false')`;

@@ -24,7 +24,7 @@ const useEqLoadRatio = (eqLoadRatioFilters?: IEqLoadRatioFiltersProps) => {
     params.form === 'iveco' ||
     params.form === 'sprinter';
 
-  let path = `?$Select=Id,cod_qrcode,site/Title,Modified,tipo_veiculo/Title,placa,ultima_inspecao,conforme,excluido&$Top=100&$expand=site,tipo_veiculo&$Orderby=Modified desc&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false') and (tipo_veiculo/url_path eq '${params.form}')`;
+  let path = `?$Select=Id,cod_qrcode,site/Title,Modified,tipo_veiculo/Title,placa,ultima_inspecao,conforme,excluido&$Top=25&$expand=site,tipo_veiculo&$Orderby=Modified desc&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false') and (tipo_veiculo/url_path eq '${params.form}')`;
 
   if (eqLoadRatioFilters?.conformity && eqLoadRatioFilters?.conformity === 'Conforme') {
     path += ` and (conforme ne 'false')`;

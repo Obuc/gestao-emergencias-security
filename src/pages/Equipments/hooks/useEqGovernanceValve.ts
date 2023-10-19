@@ -16,7 +16,7 @@ const useEqGovernanceValve = (eqGovernancevalveFilters?: IEqGovernanceValveFilte
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
 
-  let path = `?$Select=Id,cod_qrcode,cod_equipamento,Modified,excluido,tipo_equipamento/Title,conforme,site/Title,pavimento/Title,local/Title&$expand=site,tipo_equipamento,pavimento,local&$Orderby=Modified desc&$Top=100&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Válvulas de Governo') and (excluido eq 'false')`;
+  let path = `?$Select=Id,cod_qrcode,cod_equipamento,Modified,excluido,tipo_equipamento/Title,conforme,site/Title,pavimento/Title,local/Title&$expand=site,tipo_equipamento,pavimento,local&$Orderby=Modified desc&$Top=25&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Válvulas de Governo') and (excluido eq 'false')`;
 
   if (eqGovernancevalveFilters?.place) {
     for (let i = 0; i < eqGovernancevalveFilters.place.length; i++) {

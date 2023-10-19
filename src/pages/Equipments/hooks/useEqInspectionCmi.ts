@@ -16,7 +16,7 @@ const useEqInspectionCmi = (eqCMIInspectionFilters?: IEqInspectionCmiFiltersProp
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
 
-  let path = `?$Select=Id,cod_qrcode,conforme,Modified,excluido,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,tipo_equipamento&$Orderby=Modified desc&$Top=100&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Inspeção CMI') and (excluido eq 'false')`;
+  let path = `?$Select=Id,cod_qrcode,conforme,Modified,excluido,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,tipo_equipamento&$Orderby=Modified desc&$Top=25&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Inspeção CMI') and (excluido eq 'false')`;
 
   if (eqCMIInspectionFilters?.conformity && eqCMIInspectionFilters?.conformity === 'Conforme') {
     path += ` and (conforme ne 'false')`;

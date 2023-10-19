@@ -12,7 +12,7 @@ const useEqExtinguisher = (eqExtinguisherFilters?: IEqExtinguisherFiltersProps) 
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
 
-  let path = `?$Select=Id,cod_qrcode,cod_extintor,excluido,Modified,conforme,site/Title,pavimento/Title,local/Title,tipo_extintor/Title&$expand=site,pavimento,tipo_extintor,local&$Orderby=Modified desc&$Top=100&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
+  let path = `?$Select=Id,cod_qrcode,cod_extintor,excluido,Modified,conforme,site/Title,pavimento/Title,local/Title,tipo_extintor/Title&$expand=site,pavimento,tipo_extintor,local&$Orderby=Modified desc&$Top=25&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
 
   if (eqExtinguisherFilters?.place) {
     for (let i = 0; i < eqExtinguisherFilters.place.length; i++) {

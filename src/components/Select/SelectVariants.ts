@@ -47,7 +47,7 @@ export const selectVariants = tv({
     },
     variant: {
       filled: {
-        trigger: 'shadow-xs-app border',
+        trigger: 'shadow-xs-app',
         triggerIcon: 'group-data-[state="open"]:bg-primary polygon-select text-white',
       },
       outline: {

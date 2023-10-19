@@ -17,7 +17,7 @@ const useEqGeneralChecklist = (eqGeneralChecklistFilters?: IEqGeneralChecklistFi
   const user_site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
 
-  let path = `?$Select=Id,cod_qrcode,Modified,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme_check_geral,excluido_check_geral&$Top=100&$expand=site,tipo_veiculo&$Orderby=Modified desc&$Filter=(site/Title eq '${user_site}') and (excluido_check_geral eq 'false')`;
+  let path = `?$Select=Id,cod_qrcode,Modified,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme_check_geral,excluido_check_geral&$Top=25&$expand=site,tipo_veiculo&$Orderby=Modified desc&$Filter=(site/Title eq '${user_site}') and (excluido_check_geral eq 'false')`;
 
   if (eqGeneralChecklistFilters?.conformity && eqGeneralChecklistFilters?.conformity === 'Conforme') {
     path += ` and (conforme ne 'false')`;
