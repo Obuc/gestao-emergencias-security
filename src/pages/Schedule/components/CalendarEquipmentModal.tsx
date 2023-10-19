@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -57,6 +57,22 @@ const CalendarEquipmentModal = () => {
             }
             isLoading={isLoadingDataEquipmentsModal}
           />
+
+          {dataEquipmentsModal?.proximaInspecao && (
+            <TextField
+              id="proximaInspecao"
+              name="proximaInspecao"
+              label="Próxima Inspeção"
+              className={`${isBefore(dataEquipmentsModal?.proximaInspecao, new Date()) && 'text-pink font-medium'}`}
+              disabled
+              value={
+                dataEquipmentsModal?.proximaInspecao
+                  ? format(dataEquipmentsModal?.proximaInspecao, 'dd MMM yyyy', { locale: ptBR })
+                  : ''
+              }
+              isLoading={isLoadingDataEquipmentsModal}
+            />
+          )}
         </div>
 
         <div className="flex gap-2 py-2">
@@ -71,14 +87,38 @@ const CalendarEquipmentModal = () => {
             />
           )}
 
-          <TextField
-            id="predio"
-            name="predio"
-            label="Prédio"
-            disabled
-            value={dataEquipmentsModal?.predio}
-            isLoading={isLoadingDataEquipmentsModal}
-          />
+          {dataEquipmentsModal?.predio && (
+            <TextField
+              id="predio"
+              name="predio"
+              label="Prédio"
+              disabled
+              value={dataEquipmentsModal?.predio}
+              isLoading={isLoadingDataEquipmentsModal}
+            />
+          )}
+
+          {dataEquipmentsModal?.tipo_veiculo && (
+            <TextField
+              id="tipo_veiculo"
+              name="tipo_veiculo"
+              label="Tipo de Veículo"
+              disabled
+              value={dataEquipmentsModal?.tipo_veiculo}
+              isLoading={isLoadingDataEquipmentsModal}
+            />
+          )}
+
+          {dataEquipmentsModal?.placa && (
+            <TextField
+              id="placa"
+              name="placa"
+              label="Placa"
+              disabled
+              value={dataEquipmentsModal?.placa}
+              isLoading={isLoadingDataEquipmentsModal}
+            />
+          )}
         </div>
 
         {dataEquipmentsModal?.local && (

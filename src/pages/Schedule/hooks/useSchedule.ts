@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { parseISO } from 'date-fns';
+import { addDays, differenceInDays, parseISO } from 'date-fns';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
@@ -11,6 +11,8 @@ export const useSchedule = () => {
   const params = useParams();
   const [searchParams] = useSearchParams();
   const equipmentModal = searchParams.get('equipment');
+  const user_site = localStorage.getItem('user_site');
+
   const isMiscellaneousEquipment =
     equipmentModal === 'Inspeção CMI' || equipmentModal === 'Teste CMI' || equipmentModal === 'Válvulas de Governo';
 
@@ -105,7 +107,6 @@ export const useSchedule = () => {
     { value: 11, label: 'Dezembro' },
   ];
 
-  // Requests
   const calculateTimeToExpiration = (type: string) => {
     switch (type) {
       case 'Extintor':
@@ -115,27 +116,191 @@ export const useSchedule = () => {
         return 90;
 
       case 'Inspeção CMI':
-        return 30;
+        return 7;
 
       case 'Teste CMI':
+        return 7;
+
+      case 'Hidrantes':
         return 30;
 
+      case 'Checklist Geral':
+        return 15;
+
+      case 'Relação Carga':
+        return 15;
+
       default:
-        0; // Valor padrão para tipos desconhecidos ou não especificados
+        0;
     }
   };
 
   const fetchExtinguisher = async () => {
-    const path = `?$Select=Id,excluido,validade,ultima_inspecao&$Filter=(excluido eq 'false' and ultima_inspecao ne null)`;
+    const path = `?$Select=Id,excluido,validade,ultima_inspecao,data_inspecao_base,site/Title&$expand=site&$Filter=(excluido eq 'false' and ultima_inspecao ne null and site/Title eq '${user_site}')`;
     const resp = await crud.getListItemsv2('extintores', path);
-    return resp.results;
+
+    const data = resp.results.map((extinguisher: any) => {
+      const ultimaInspecaoIsoDate = parseISO(extinguisher.data_inspecao_base);
+
+      const ultimaInspecao = new Date(
+        ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
+      );
+      const timeToExpiration = calculateTimeToExpiration('Extintor');
+
+      const dates = [];
+      let nextInspection = ultimaInspecao;
+
+      for (let i = 0; i < 10; i++) {
+        if (timeToExpiration) {
+          nextInspection = new Date(nextInspection.getTime() + timeToExpiration * 24 * 60 * 60 * 1000);
+
+          const diffInDays = differenceInDays(parseISO(extinguisher.ultima_inspecao), nextInspection);
+          const realizadaForaDoPrazo = diffInDays > 0;
+
+          dates.push({
+            type: 'Extintor',
+            Id: extinguisher.Id,
+            ultima_inspecao: ultimaInspecao,
+            proxima_inspecao: nextInspection,
+            frequencia: timeToExpiration,
+            realizada_fora_do_prazo: realizadaForaDoPrazo,
+          });
+        }
+      }
+
+      return dates;
+    });
+
+    const combinedData = data.reduce((acc: any, curr: any) => acc.concat(curr), []);
+    return combinedData;
   };
 
   const fetchMiscellaneousEquipment = async () => {
-    const path = `?$Select=Id,cod_qrcode,site/Title,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,cod_equipamento,ultima_inspecao,conforme,excluido&$expand=site,predio,pavimento,local,tipo_equipamento &$Filter=(excluido eq 'false' and ultima_inspecao ne null)`;
-
+    const path = `?$Select=Id,site/Title,tipo_equipamento/Title,ultima_inspecao,excluido&$expand=site,tipo_equipamento&$Filter=(excluido eq 'false' and ultima_inspecao ne null and site/Title eq '${user_site}')`;
     const resp = await crud.getListItemsv2('equipamentos_diversos', path);
-    return resp.results;
+
+    const data = resp.results.map((equipment: any) => {
+      const ultimaInspecaoIsoDate = parseISO(equipment.ultima_inspecao);
+      const ultimaInspecao = new Date(
+        ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
+      );
+      const timeToExpiration = calculateTimeToExpiration(equipment.tipo_equipamento.Title);
+
+      const dates = [];
+      let nextInspection = ultimaInspecao;
+
+      for (let i = 0; i < 10; i++) {
+        if (timeToExpiration) {
+          nextInspection = new Date(nextInspection.getTime() + timeToExpiration * 24 * 60 * 60 * 1000);
+          dates.push({
+            type: equipment.tipo_equipamento.Title,
+            Id: equipment.Id,
+            ultima_inspecao: ultimaInspecao,
+            proxima_inspecao: nextInspection,
+            frequencia: timeToExpiration,
+          });
+        }
+      }
+
+      return dates;
+    });
+
+    const combinedData = data.reduce((acc: any, curr: any) => acc.concat(curr), []);
+    return combinedData;
+  };
+
+  const fetchHydrants = async () => {
+    const path = `?$Select=Id,site/Title,ultima_inspecao,excluido&$expand=site&$Filter=(excluido eq 'false' and ultima_inspecao ne null and site/Title eq '${user_site}')`;
+    const resp = await crud.getListItemsv2('hidrantes', path);
+
+    const data = resp.results.map((equipment: any) => {
+      const ultimaInspecaoIsoDate = parseISO(equipment.ultima_inspecao);
+      const ultimaInspecao = new Date(
+        ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
+      );
+      const timeToExpiration = calculateTimeToExpiration('Hidrantes');
+
+      const dates = [];
+      let nextInspection = ultimaInspecao;
+
+      for (let i = 0; i < 10; i++) {
+        if (timeToExpiration) {
+          nextInspection = new Date(nextInspection.getTime() + timeToExpiration * 24 * 60 * 60 * 1000);
+          dates.push({
+            type: 'Hidrantes',
+            Id: equipment.Id,
+            ultima_inspecao: ultimaInspecao,
+            proxima_inspecao: nextInspection,
+            frequencia: timeToExpiration,
+          });
+        }
+      }
+
+      return dates;
+    });
+
+    const combinedData = data.reduce((acc: any, curr: any) => acc.concat(curr), []);
+    return combinedData;
+  };
+
+  const fetchVehicles = async () => {
+    const path = `?$Select=Id,site/Title,ultima_inspecao,ultima_inspecao_relacao_carga,excluido,tipo_veiculo/Title&$expand=site,tipo_veiculo&$Filter=(excluido eq 'false' and site/Title eq '${user_site}')`;
+    const resp = await crud.getListItemsv2('veiculos_emergencia', path);
+
+    const data = resp.results.map((equipment: any) => {
+      if (equipment.ultima_inspecao) {
+        const ultimaInspecaoIsoDate = parseISO(equipment.ultima_inspecao);
+        const ultimaInspecao = new Date(
+          ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
+        );
+        const timeToExpiration = calculateTimeToExpiration('Checklist Geral');
+
+        const dates = [];
+        let nextInspection = ultimaInspecao;
+
+        for (let i = 0; i < 10; i++) {
+          if (timeToExpiration) {
+            nextInspection = new Date(nextInspection.getTime() + timeToExpiration * 24 * 60 * 60 * 1000);
+            dates.push({
+              type: `Checklist Geral - ${equipment?.tipo_veiculo?.Title}`,
+              Id: equipment.Id,
+              ultima_inspecao: ultimaInspecao,
+              proxima_inspecao: nextInspection,
+            });
+          }
+        }
+
+        return dates;
+      } else if (equipment.ultima_inspecao_relacao_carga) {
+        const ultimaInspecaoIsoDate = parseISO(equipment.ultima_inspecao_relacao_carga);
+        const ultimaInspecao = new Date(
+          ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
+        );
+        const timeToExpiration = calculateTimeToExpiration('Relação Carga');
+
+        const dates = [];
+        let nextInspection = ultimaInspecao;
+
+        for (let i = 0; i < 10; i++) {
+          if (timeToExpiration) {
+            nextInspection = new Date(nextInspection.getTime() + timeToExpiration * 24 * 60 * 60 * 1000);
+            dates.push({
+              type: `Relação Carga - ${equipment?.tipo_veiculo?.Title}`,
+              Id: equipment.Id,
+              ultima_inspecao: ultimaInspecao,
+              proxima_inspecao: nextInspection,
+            });
+          }
+        }
+
+        return dates;
+      } else {
+        return [];
+      }
+    });
+
+    const combinedData = data.reduce((acc: any, curr: any) => acc.concat(curr), []);
+    return combinedData;
   };
 
   const { data: dataEquipments, isLoading: isLoadingDataEquipments }: UseQueryResult<Array<DataEquipments>> = useQuery({
@@ -143,45 +308,10 @@ export const useSchedule = () => {
     queryFn: async () => {
       const extinguiserData = await fetchExtinguisher();
       const miscellaneousEquipmentData = await fetchMiscellaneousEquipment();
+      const hydrantsData = await fetchHydrants();
+      const vehiclesData = await fetchVehicles();
 
-      const formattedExtinguisherData = extinguiserData.map((extinguisher: any) => {
-        const ultimaInspecaoIsoDate = parseISO(extinguisher.ultima_inspecao);
-
-        const ultimaInspecao = new Date(
-          ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
-        );
-        const timeToExpiration = calculateTimeToExpiration('Extintor');
-        const proximaInspecao =
-          timeToExpiration && new Date(ultimaInspecao.getTime() + timeToExpiration * 24 * 60 * 60 * 1000);
-
-        return {
-          type: 'Extintor',
-          Id: extinguisher.Id,
-          ultima_inspecao: ultimaInspecao,
-          proxima_inspecao: proximaInspecao,
-        };
-      });
-
-      const formattedMiscellaneousEquipmentData = miscellaneousEquipmentData.map((equipment: any) => {
-        const ultimaInspecaoIsoDate = parseISO(equipment.ultima_inspecao);
-
-        const ultimaInspecao = new Date(
-          ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
-        );
-        const timeToExpiration = calculateTimeToExpiration(equipment.tipo_equipamento.Title);
-        const proximaInspecao =
-          timeToExpiration && new Date(ultimaInspecao.getTime() + timeToExpiration * 24 * 60 * 60 * 1000);
-
-        return {
-          type: equipment.tipo_equipamento.Title,
-          Id: equipment.Id,
-          ultima_inspecao: ultimaInspecao,
-          proxima_inspecao: proximaInspecao,
-        };
-      });
-
-      const combinedData = [...formattedExtinguisherData, ...formattedMiscellaneousEquipmentData];
-
+      const combinedData = [...extinguiserData, ...miscellaneousEquipmentData, ...hydrantsData, ...vehiclesData];
       return combinedData;
     },
     staleTime: 5000 * 60, // 5 Minute
@@ -199,7 +329,23 @@ export const useSchedule = () => {
   const fechMiscellaneousEquipment = async (equipmentId: string) => {
     const resp = await crud.getListItemsv2(
       'equipamentos_diversos',
+      `?$Select=Id,predio/Title,pavimento/Title,local/Title,tipo_equipamento/Title,ultima_inspecao&$expand=tipo_equipamento,predio,pavimento,local&$Filter=(Id eq '${equipmentId}')`,
+    );
+    return resp.results[0];
+  };
+
+  const fechHydrant = async (equipmentId: string) => {
+    const resp = await crud.getListItemsv2(
+      'hidrantes',
       `?$Select=Id,predio/Title,pavimento/Title,local/Title,ultima_inspecao&$expand=predio,pavimento,local&$Filter=(Id eq '${equipmentId}')`,
+    );
+    return resp.results[0];
+  };
+
+  const fechVehicle = async (equipmentId: string) => {
+    const resp = await crud.getListItemsv2(
+      'veiculos_emergencia',
+      `?$Select=Id,tipo_veiculo/Title,placa,ultima_inspecao,ultima_inspecao_relacao_carga&$expand=tipo_veiculo&$Filter=(Id eq '${equipmentId}')`,
     );
     return resp.results[0];
   };
@@ -219,12 +365,16 @@ export const useSchedule = () => {
             ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
           );
 
+          const timeToExpiration = calculateTimeToExpiration('Extintor');
+          const proximaInspecao = timeToExpiration && addDays(ultimaInspecao, timeToExpiration);
+
           return {
             ...extinguisher,
             predio: extinguisher?.predio?.Title,
             pavimento: extinguisher?.pavimento?.Title,
             local: extinguisher?.local?.Title,
             ultima_inspecao: ultimaInspecao,
+            proximaInspecao: proximaInspecao,
           };
         }
 
@@ -237,13 +387,76 @@ export const useSchedule = () => {
             ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
           );
 
+          const timeToExpiration = calculateTimeToExpiration(miscellaneousEquipment?.tipo_equipamento?.Title);
+          const proximaInspecao = timeToExpiration && addDays(ultimaInspecao, timeToExpiration);
+
           return {
             ...miscellaneousEquipment,
             predio: miscellaneousEquipment?.predio?.Title,
             pavimento: miscellaneousEquipment?.pavimento?.Title,
             local: miscellaneousEquipment?.local?.Title,
             ultima_inspecao: ultimaInspecao,
+            proximaInspecao: proximaInspecao,
           };
+        }
+
+        if (params.id && equipmentModal === 'Hidrantes') {
+          const hydrant = await fechHydrant(params.id);
+          const ultimaInspecaoIsoDate = parseISO(hydrant.ultima_inspecao);
+
+          const ultimaInspecao = new Date(
+            ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
+          );
+
+          return {
+            ...hydrant,
+            predio: hydrant?.predio?.Title,
+            pavimento: hydrant?.pavimento?.Title,
+            local: hydrant?.local?.Title,
+            ultima_inspecao: ultimaInspecao,
+          };
+        }
+
+        if (params.id && equipmentModal?.includes('Checklist Geral')) {
+          const generalChecklist = await fechVehicle(params.id);
+
+          if (generalChecklist.ultima_inspecao) {
+            const ultimaInspecaoIsoDate = parseISO(generalChecklist.ultima_inspecao);
+
+            const ultimaInspecao = new Date(
+              ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
+            );
+
+            return {
+              ...generalChecklist,
+              tipo_veiculo: generalChecklist?.tipo_veiculo?.Title,
+              placa: generalChecklist?.placa,
+              ultima_inspecao: ultimaInspecao,
+            };
+          } else {
+            return {};
+          }
+        }
+
+        if (params.id && equipmentModal?.includes('Relação Carga')) {
+          const generalChecklist = await fechVehicle(params.id);
+
+          if (generalChecklist.ultima_inspecao_relacao_carga) {
+            const ultimaInspecaoIsoDate = parseISO(generalChecklist.ultima_inspecao_relacao_carga);
+
+            const ultimaInspecao = new Date(
+              ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
+            );
+
+            return {
+              ...generalChecklist,
+              tipo_veiculo: generalChecklist?.tipo_veiculo?.Title,
+              placa: generalChecklist?.placa,
+              ultima_inspecao: ultimaInspecao,
+            };
+          } else {
+            return {};
+          }
         }
 
         return [];

@@ -1,14 +1,16 @@
 import { ptBR } from 'date-fns/locale';
+import { Skeleton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { differenceInDays } from 'date-fns/esm';
+import { format, isBefore, isSameDay, isToday, subDays } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { format, getDate, getMonth, getYear, isBefore, isSameDay, isToday } from 'date-fns';
 
 import { useSchedule } from '../hooks/useSchedule';
 import { Button } from '../../../components/Button';
 import { Select } from '../../../components/Select';
+import { DataEquipments } from '../types/DataEquipments';
 import CalendarEquipmentModal from './CalendarEquipmentModal';
-import { Skeleton } from '@mui/material';
 
 const Calendar = () => {
   const {
@@ -91,7 +93,7 @@ const Calendar = () => {
                   {weeks.map((week, weekIndex) => (
                     <tr
                       key={weekIndex}
-                      className="min-[1100px]:h-[5rem] relative min-[1500px]:h-[5.625rem] min-[1800px]:h-[6.875rem] bg-white border border-[#F3F3F3]"
+                      className="min-[1100px]:h-[3.875rem] relative min-[1500px]:h-[4.5rem] min-[1800px]:h-[5.75rem] bg-white border border-[#F3F3F3]"
                     >
                       {week.map((day) => {
                         const isDayInMonth = day && day.getMonth() === selectedMonth;
@@ -101,36 +103,29 @@ const Calendar = () => {
                           dataEquipments &&
                           dataEquipments.some((equipment) => {
                             const equipmentDate = equipment.proxima_inspecao;
-                            return (
-                              isDayInMonth &&
-                              equipment.proxima_inspecao &&
-                              equipmentDate.getTime() < new Date().getTime() &&
-                              isSameDay(equipmentDate, day)
-                            );
+                            return isDayInMonth && isBefore(equipmentDate, new Date()) && isSameDay(equipmentDate, day);
                           });
 
                         const isTodayInspection =
                           day &&
                           dataEquipments &&
                           dataEquipments.some((equipment) => {
-                            return (
-                              isDayInMonth &&
-                              equipment.proxima_inspecao &&
-                              isSameDay(new Date(equipment.proxima_inspecao), day)
-                            );
+                            return isDayInMonth && isSameDay(equipment.proxima_inspecao, day);
                           });
 
                         const isInspectionDone =
                           dataEquipments &&
                           dataEquipments.some((equipment) => {
-                            const inspectionDate = new Date(equipment.ultima_inspecao);
+                            return isDayInMonth && isSameDay(equipment.ultima_inspecao, day);
+                          });
+
+                        const isOverdueMultipleInspections =
+                          dataEquipments &&
+                          dataEquipments.some((equipment) => {
                             return (
                               isDayInMonth &&
-                              equipment.ultima_inspecao &&
-                              isSameDay(inspectionDate, day) &&
-                              getDate(inspectionDate) === day.getDate() &&
-                              getMonth(inspectionDate) === selectedMonth &&
-                              getYear(inspectionDate) === selectedYear
+                              differenceInDays(day, equipment.ultima_inspecao) > equipment.frequencia &&
+                              isSameDay(equipment.proxima_inspecao, day)
                             );
                           });
 
@@ -152,7 +147,8 @@ const Calendar = () => {
                               data-is-expired={isOverdue}
                               data-is-today-inspection={isTodayInspection && !isOverdue}
                               data-is-done={isInspectionDone && !isOverdue && !isTodayInspection}
-                              className="flex justify-center absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 items-center w-10 h-10 rounded-full data-[is-expired=true]:bg-pink data-[is-expired=true]:text-white data-[is-today-inspection=true]:bg-[#FFEE57] data-[is-today-inspection=true]:text-black data-[is-done=true]:bg-[#70EC364D]"
+                              data-is-overdue-multiple-inspections={isOverdueMultipleInspections}
+                              className="flex justify-center absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 items-center w-10 h-10 rounded-full data-[is-expired=true]:bg-pink data-[is-expired=true]:text-white data-[is-today-inspection=true]:bg-[#FFEE57] data-[is-today-inspection=true]:text-black data-[is-done=true]:bg-[#70EC364D] data-[is-overdue-multiple-inspections=true]:bg-[#443247] data-[is-overdue-multiple-inspections=true]:text-white"
                             >
                               {day && !isLoadingDataEquipments
                                 ? day.getDate()
@@ -165,6 +161,37 @@ const Calendar = () => {
                   ))}
                 </tbody>
               </table>
+              <div className="h-full mt-2  flex flex-col gap-2">
+                <span className="text-primary text-xl font-medium">Legenda:</span>
+                <div className="flex gap-4">
+                  <div className="flex flex-1 gap-2 items-center">
+                    <span className="w-5 h-5 rounded-full bg-[#70EC364D]" />
+                    Inspeções Realizadas
+                  </div>
+
+                  <div className="flex flex-1 gap-2 items-center">
+                    <span className="w-5 h-5 rounded-full bg-pink" />
+                    Inspeções Vencidas
+                  </div>
+
+                  <div className="flex flex-1 gap-2 items-center">
+                    <span className="w-5 h-5 rounded-full bg-[#FFEE57]" />
+                    Próximas Inspeções
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex  gap-2 items-center">
+                    <span className="w-5 h-5 bg-[#00617F]" />
+                    Dia Atual
+                  </div>
+
+                  <div className="flex gap-2 items-center">
+                    <span className="w-5 h-5 rounded-full bg-[#443247]" />
+                    Inspeção anterior não vencida ou não realizada
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -232,11 +259,21 @@ const Calendar = () => {
                 ))}
 
               {dateList.map((date, index) => {
-                const eventsOnDate = dataEquipments?.filter(
-                  (equipment) =>
-                    isSameDay(equipment.proxima_inspecao, date) || isSameDay(equipment.ultima_inspecao, date),
-                );
-                if (eventsOnDate?.length === 0) {
+                const eventsOnDateSet = new Set();
+                const processedIds = new Set();
+
+                dataEquipments?.forEach((equipment) => {
+                  const isUltimaInspecaoOnDate = isSameDay(equipment.ultima_inspecao, date);
+                  if (isSameDay(equipment.proxima_inspecao, date) || isUltimaInspecaoOnDate) {
+                    if (!processedIds.has(equipment.Id)) {
+                      eventsOnDateSet.add(equipment);
+                      processedIds.add(equipment.Id);
+                    }
+                  }
+                });
+
+                const eventsOnDate: any[] = Array.from(eventsOnDateSet);
+                if (eventsOnDate.length === 0) {
                   return null;
                 }
 
@@ -259,29 +296,56 @@ const Calendar = () => {
 
                     {!isLoadingDataEquipments && (
                       <ul className="pt-4 pb-6">
-                        {eventsOnDate?.map((equipment, equipmentIndex) => {
+                        {eventsOnDate?.map((equipment: DataEquipments, equipmentIndex) => {
                           const isOverdue = isBefore(equipment.proxima_inspecao, new Date());
                           const isInspectionDone = isSameDay(equipment.ultima_inspecao, date);
                           const isTodayInspection = isSameDay(equipment.proxima_inspecao, date);
 
+                          const isOverdueMultipleInspections =
+                            differenceInDays(date, equipment.ultima_inspecao) > equipment.frequencia;
+
+                          // console.log({
+                          //   id: equipment.Id,
+                          //   equipamento: equipment.type,
+                          //   ultima_inspecao: equipment.ultima_inspecao,
+                          //   data: date,
+                          //   isInspectionDone: isInspectionDone,
+                          //   isTodayInspection: !isTodayInspection,
+                          //   isOverdue: isOverdue,
+                          //   proxima_inspecao: equipment.proxima_inspecao,
+                          //   isDoneFunction: isSameDay(equipment.ultima_inspecao, date),
+                          //   isOverdueMultipleInspections: isOverdueMultipleInspections,
+                          //   diff_dias: differenceInDays(date, equipment.ultima_inspecao),
+                          // });
+
                           return (
                             <li
-                              data-is-overdue={isOverdue}
+                              data-is-overdue={isOverdue && !isInspectionDone}
                               data-is-today={isTodayInspection && !isOverdue}
-                              data-is-done={isInspectionDone && !isOverdue && !isTodayInspection}
-                              className="p-2 mb-2 data-[is-overdue=true]:bg-[#FF316233] data-[is-done=true]:bg-[#70EC36]/20 data-[is-today=true]:bg-[#FFEE5733] rounded flex items-center gap-2 cursor-pointer"
+                              data-is-done={isInspectionDone && !isTodayInspection}
+                              data-is-overdue-multiple-inspections={isOverdueMultipleInspections}
+                              className="p-2 mb-2 data-[is-overdue=true]:bg-[#FF316233] data-[is-done=true]:bg-[#70EC36]/20 data-[is-today=true]:bg-[#FFEE5733] data-[is-overdue-multiple-inspections=true]:bg-[#443247]/20 rounded flex justify-between items-center gap-2 cursor-pointer"
                               key={equipmentIndex}
                               onClick={() => handleOpenModalViewEquipment({ id: equipment.Id, type: equipment.type })}
                             >
-                              <>
+                              <div className="flex gap-2 items-center">
                                 <div
-                                  data-is-overdue={isOverdue}
+                                  data-is-overdue={isOverdue && !isInspectionDone}
                                   data-is-today={isTodayInspection && !isOverdue}
-                                  data-is-done={isInspectionDone && !isOverdue && !isTodayInspection}
-                                  className="w-3 h-3 data-[is-overdue=true]:bg-pink data-[is-done=true]:bg-[#70EC36] data-[is-today=true]:bg-[#FFEE57] rounded-full"
+                                  data-is-done={isInspectionDone && !isTodayInspection}
+                                  data-is-overdue-multiple-inspections={isOverdueMultipleInspections}
+                                  className="flex justify-between w-3 h-3 data-[is-overdue=true]:bg-pink data-[is-done=true]:bg-[#70EC36] data-[is-today=true]:bg-[#FFEE57] data-[is-overdue-multiple-inspections=true]:bg-[#443247] rounded-full"
                                 />
                                 <span className="text-lg text-[#303030]">Inspeção - {equipment.type}</span>
-                              </>
+                              </div>
+
+                              <span>
+                                {isOverdueMultipleInspections &&
+                                  `Inspeção dia ${format(
+                                    subDays(date, equipment.frequencia),
+                                    'dd/MM/yyyy',
+                                  )} não realizada ou não vencida`}
+                              </span>
                             </li>
                           );
                         })}
