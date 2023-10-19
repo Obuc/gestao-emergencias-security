@@ -4,7 +4,8 @@ export interface DataEquipments {
   proxima_inspecao: Date;
   ultima_inspecao: Date;
   frequencia: number;
-  realizadaForaDoPrazo: boolean;
+  realizada_fora_do_prazo: boolean;
+  deveria_ser_realizada: Date;
 }
 
 export interface DataEquipmentsModal {

@@ -140,22 +140,33 @@ export const useSchedule = () => {
     const resp = await crud.getListItemsv2('extintores', path);
 
     const data = resp.results.map((extinguisher: any) => {
-      const ultimaInspecaoIsoDate = parseISO(extinguisher.data_inspecao_base);
+      const ultimaInspecaoIsoDate = parseISO(extinguisher.ultima_inspecao);
+      const dataInspecaoBase = parseISO(extinguisher.data_inspecao_base);
 
       const ultimaInspecao = new Date(
         ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
       );
+
+      const inspecaoBase = new Date(dataInspecaoBase.getTime() + dataInspecaoBase.getTimezoneOffset() * 60000);
+
       const timeToExpiration = calculateTimeToExpiration('Extintor');
 
       const dates = [];
-      let nextInspection = ultimaInspecao;
+      let nextInspection = inspecaoBase;
 
       for (let i = 0; i < 10; i++) {
         if (timeToExpiration) {
           nextInspection = new Date(nextInspection.getTime() + timeToExpiration * 24 * 60 * 60 * 1000);
 
-          const diffInDays = differenceInDays(parseISO(extinguisher.ultima_inspecao), nextInspection);
+          const diffInDays = differenceInDays(ultimaInspecao, inspecaoBase);
           const realizadaForaDoPrazo = diffInDays > 0;
+
+          console.log({
+            id: extinguisher.Id,
+            diffInDays: diffInDays,
+            ultima_inspecao: ultimaInspecao,
+            deveria_ser_realizada: inspecaoBase,
+          });
 
           dates.push({
             type: 'Extintor',
@@ -164,6 +175,7 @@ export const useSchedule = () => {
             proxima_inspecao: nextInspection,
             frequencia: timeToExpiration,
             realizada_fora_do_prazo: realizadaForaDoPrazo,
+            deveria_ser_realizada: inspecaoBase,
           });
         }
       }

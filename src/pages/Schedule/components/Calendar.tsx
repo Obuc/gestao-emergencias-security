@@ -129,6 +129,16 @@ const Calendar = () => {
                             );
                           });
 
+                        const isOutOfTime =
+                          dataEquipments &&
+                          dataEquipments.some((equipment) => {
+                            return (
+                              isDayInMonth &&
+                              equipment.realizada_fora_do_prazo &&
+                              isSameDay(equipment.ultima_inspecao, day)
+                            );
+                          });
+
                         return (
                           <td
                             key={day?.toISOString()}
@@ -148,7 +158,8 @@ const Calendar = () => {
                               data-is-today-inspection={isTodayInspection && !isOverdue}
                               data-is-done={isInspectionDone && !isOverdue && !isTodayInspection}
                               data-is-overdue-multiple-inspections={isOverdueMultipleInspections}
-                              className="flex justify-center absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 items-center w-10 h-10 rounded-full data-[is-expired=true]:bg-pink data-[is-expired=true]:text-white data-[is-today-inspection=true]:bg-[#FFEE57] data-[is-today-inspection=true]:text-black data-[is-done=true]:bg-[#70EC364D] data-[is-overdue-multiple-inspections=true]:bg-[#443247] data-[is-overdue-multiple-inspections=true]:text-white"
+                              data-is-out-of-time={isOutOfTime}
+                              className="flex justify-center absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 items-center w-10 h-10 rounded-full data-[is-expired=true]:bg-pink data-[is-expired=true]:text-white data-[is-today-inspection=true]:bg-[#FFEE57] data-[is-today-inspection=true]:text-black data-[is-done=true]:bg-[#70EC364D] data-[is-overdue-multiple-inspections=true]:bg-[#443247] data-[is-overdue-multiple-inspections=true]:text-white data-[is-out-of-time=true]:border-2 data-[is-out-of-time=true]:border-pink"
                             >
                               {day && !isLoadingDataEquipments
                                 ? day.getDate()
@@ -300,22 +311,24 @@ const Calendar = () => {
                           const isOverdue = isBefore(equipment.proxima_inspecao, new Date());
                           const isInspectionDone = isSameDay(equipment.ultima_inspecao, date);
                           const isTodayInspection = isSameDay(equipment.proxima_inspecao, date);
+                          const isOutOfTime = equipment.realizada_fora_do_prazo;
 
                           const isOverdueMultipleInspections =
                             differenceInDays(date, equipment.ultima_inspecao) > equipment.frequencia;
 
                           // console.log({
                           //   id: equipment.Id,
-                          //   equipamento: equipment.type,
-                          //   ultima_inspecao: equipment.ultima_inspecao,
-                          //   data: date,
-                          //   isInspectionDone: isInspectionDone,
-                          //   isTodayInspection: !isTodayInspection,
-                          //   isOverdue: isOverdue,
-                          //   proxima_inspecao: equipment.proxima_inspecao,
-                          //   isDoneFunction: isSameDay(equipment.ultima_inspecao, date),
-                          //   isOverdueMultipleInspections: isOverdueMultipleInspections,
-                          //   diff_dias: differenceInDays(date, equipment.ultima_inspecao),
+                          //   isOutOfTime: isOutOfTime,
+                          //   // equipamento: equipment.type,
+                          //   // ultima_inspecao: equipment.ultima_inspecao,
+                          //   // data: date,
+                          //   // isInspectionDone: isInspectionDone,
+                          //   // isTodayInspection: !isTodayInspection,
+                          //   // isOverdue: isOverdue,
+                          //   // proxima_inspecao: equipment.proxima_inspecao,
+                          //   // isDoneFunction: isSameDay(equipment.ultima_inspecao, date),
+                          //   // isOverdueMultipleInspections: isOverdueMultipleInspections,
+                          //   // diff_dias: differenceInDays(date, equipment.ultima_inspecao),
                           // });
 
                           return (
@@ -324,7 +337,8 @@ const Calendar = () => {
                               data-is-today={isTodayInspection && !isOverdue}
                               data-is-done={isInspectionDone && !isTodayInspection}
                               data-is-overdue-multiple-inspections={isOverdueMultipleInspections}
-                              className="p-2 mb-2 data-[is-overdue=true]:bg-[#FF316233] data-[is-done=true]:bg-[#70EC36]/20 data-[is-today=true]:bg-[#FFEE5733] data-[is-overdue-multiple-inspections=true]:bg-[#443247]/20 rounded flex justify-between items-center gap-2 cursor-pointer"
+                              data-is-out-of-time={isOutOfTime && !isTodayInspection}
+                              className="p-2 mb-2 data-[is-overdue=true]:bg-[#FF316233] data-[is-done=true]:bg-[#70EC36]/20 data-[is-today=true]:bg-[#FFEE5733] data-[is-overdue-multiple-inspections=true]:bg-[#443247]/20 data-[is-out-of-time=true]:border-2 data-[is-out-of-time=true]:border-pink rounded flex justify-between items-center gap-2 cursor-pointer"
                               key={equipmentIndex}
                               onClick={() => handleOpenModalViewEquipment({ id: equipment.Id, type: equipment.type })}
                             >
@@ -339,12 +353,21 @@ const Calendar = () => {
                                 <span className="text-lg text-[#303030]">Inspeção - {equipment.type}</span>
                               </div>
 
-                              <span>
-                                {isOverdueMultipleInspections &&
-                                  `Inspeção dia ${format(
-                                    subDays(date, equipment.frequencia),
-                                    'dd/MM/yyyy',
-                                  )} não realizada ou não vencida`}
+                              <span className="font-medium">
+                                <>
+                                  {isOverdueMultipleInspections &&
+                                    `Inspeção dia ${format(
+                                      subDays(date, equipment.frequencia),
+                                      'dd/MM/yyyy',
+                                    )} não realizada ou não vencida`}
+
+                                  {isOutOfTime &&
+                                    !isTodayInspection &&
+                                    ` Inspeção Realizada fora do prazo. Deveria ter sido realizada em ${format(
+                                      equipment.deveria_ser_realizada,
+                                      'dd/MM/yyyy',
+                                    )}`}
+                                </>
                               </span>
                             </li>
                           );
