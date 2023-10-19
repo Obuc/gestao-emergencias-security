@@ -30,10 +30,6 @@ export interface InspectionCMI {
     Title: string;
   };
   siteId: number;
-  cmi: {
-    Id: number;
-    predio: string;
-  };
 }
 
 export interface ResponstaInspectionCMI {

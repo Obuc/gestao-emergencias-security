@@ -24,22 +24,15 @@ export interface ExtinguisherDataModal {
 export interface Extinguisher {
   Created: Date;
   Id: number;
-  bombeiro_idId: number;
   bombeiro: string;
   conforme: boolean;
   data_pesagem: Date;
-  extintor_idId: number;
   extintor: {
-    site: string;
     predio: string;
     pavimento: string;
     local: string;
     cod_extintor: string;
     validade: Date;
-    conforme: boolean;
-    massa: string;
-    cod_qrcode: string;
-    tipo_extintor: string;
   };
   respostas?: Record<string, Array<RespostaExtintor>>;
   novo: boolean;

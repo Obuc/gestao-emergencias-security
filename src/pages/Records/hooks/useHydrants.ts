@@ -15,7 +15,7 @@ const useHydrants = (hydrantsFilters?: IHydrantsFiltersProps) => {
 
   const [isLoadingHydrantsExportToExcel, setIsLoadingHydrantsExportToExcel] = useState<boolean>(false);
 
-  let path = `?$Select=Id,local,pavimento,site/Title,hidrante_id/Id,hidrante_id/cod_hidrante,bombeiro/Title,conforme,observacao,Created&$expand=site,hidrante_id,bombeiro&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  let path = `?$Select=Id,local,pavimento,site/Title,hidrante_id/Id,hidrante_id/cod_hidrante,bombeiro/Title,conforme,observacao,Created&$expand=site,hidrante_id,bombeiro&$Top=25&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
 
   if (hydrantsFilters?.place) {
     for (let i = 0; i < hydrantsFilters.place.length; i++) {
@@ -70,26 +70,16 @@ const useHydrants = (hydrantsFilters?: IHydrantsFiltersProps) => {
 
     const dataWithTransformations = await Promise.all(
       response?.data?.value?.map(async (item: any) => {
-        const hydrantsResponse = await crud.getListItemsv2(
-          'hidrantes',
-          `?$Select=Id,cod_hidrante,predio/Title,pavimento/Title,local/Title&$expand=predio,pavimento,local&$Filter=(Id eq '${item.hidrante_id.Id}')`,
-        );
-
-        const hidrante = hydrantsResponse.results[0] || null;
         const dataCriadoIsoDate = item.Created && parseISO(item.Created);
 
         const dataCriado =
           dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
 
-        const hidranteValues = hidrante
-          ? {
-              Id: hidrante.Id,
-              predio: hidrante.predio.Title,
-              cod_hidrante: hidrante.cod_hidrante,
-              pavimento: hidrante.pavimento.Title,
-              local: hidrante.local.Title,
-            }
-          : null;
+        const hidranteValues = {
+          cod_hidrante: item?.hidrante_id?.cod_hidrante,
+          pavimento: item?.pavimento,
+          local: item?.local,
+        };
 
         return {
           ...item,

@@ -53,7 +53,7 @@ const useLoadRatio = (loadRatioFilters?: ILoadRatioFiltersProps) => {
   const [isLoadingLoadRatioExportToExcel, setIsLoadingLoadRatioExportToExcel] = useState<boolean>(false);
 
   const fechLoadRatio = async ({ pageParam }: { pageParam?: string }) => {
-    let path = `?$Select=*,site/Title,bombeiro/Title,tipo_veiculo/Title,conforme,veiculo_id/placa&$expand=site,bombeiro,tipo_veiculo,veiculo_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_veiculo/Title eq '${caseEquipmentsValue}')`;
+    let path = `?$Select=Id,Created,site/Title,bombeiro/Title,tipo_veiculo/Title,conforme,veiculo_id/placa&$expand=site,bombeiro,tipo_veiculo,veiculo_id&$Top=25&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_veiculo/Title eq '${caseEquipmentsValue}')`;
 
     if (loadRatioFilters?.conformity && loadRatioFilters?.conformity === 'Conforme') {
       path += ` and (conforme ne 'false')`;
@@ -97,28 +97,17 @@ const useLoadRatio = (loadRatioFilters?: ILoadRatioFiltersProps) => {
 
     const dataWithTransformations = await Promise.all(
       response.data.value.map(async (item: any) => {
-        const vehicleResponse = await crud.getListItemsv2(
-          'veiculos_emergencia',
-          `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,conforme,excluido&$expand=site,tipo_veiculo&$Filter=(Id eq ${item.veiculo_idId})`,
-        );
+        const vehicleValues = {
+          placa: item?.veiculo_id?.placa,
+          tipo_veiculo: item?.tipo_veiculo?.Title,
+        };
 
-        const vehicle = vehicleResponse.results[0] || null;
-
-        const vehicleValues = vehicle
-          ? {
-              Id: vehicle.Id,
-              placa: vehicle.placa,
-              site: vehicle.site?.Title,
-              tipo_veiculo: vehicle.tipo_veiculo?.Title,
-            }
-          : null;
-
-        const createdIsoDate = parseISO(item.Created);
+        const createdIsoDate = parseISO(item?.Created);
 
         return {
           ...item,
           Created: new Date(createdIsoDate.getTime() + createdIsoDate.getTimezoneOffset() * 60000),
-          bombeiro: item.bombeiro?.Title,
+          bombeiro: item?.bombeiro?.Title,
           veiculo: vehicleValues,
         };
       }),

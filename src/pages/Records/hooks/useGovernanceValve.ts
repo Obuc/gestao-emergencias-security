@@ -16,7 +16,7 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
 
   const [isLoadingGovernanceValveExportToExcel, setIsLoadingGovernanceValveExportToExcel] = useState<boolean>(false);
 
-  let path = `?$Select=Id,predio,Created,site/Title,valvula_id/cod_equipamento,valvula_id/Id,bombeiro_id/Title,conforme,observacao,data_legado&$expand=site,valvula_id,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  let path = `?$Select=Id,predio,Created,site/Title,valvula_id/cod_equipamento,valvula_id/Id,bombeiro_id/Title,conforme,observacao,data_legado&$expand=site,valvula_id,bombeiro_id&$Top=25&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
 
   if (governanceValveFilters?.responsible) {
     path += ` and ( substringof('${governanceValveFilters.responsible}', bombeiro_id/Title ))`;
@@ -67,27 +67,15 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
 
     const dataWithTransformations = await Promise.all(
       response?.data?.value?.map(async (item: any) => {
-        const valvulaResponse = await crud.getListItemsv2(
-          'equipamentos_diversos',
-          `?$Select=Id,tipo_equipamento/Title,predio/Title,pavimento/Title,local/Title,cod_equipamento,conforme,cod_qrcode,excluido&$expand=predio,pavimento,local,tipo_equipamento&$Filter=((Id eq ${item.valvula_id.Id}) and (tipo_equipamento/Title eq 'Válvulas de Governo'))`,
-        );
-
-        const valvula = valvulaResponse.results[0] || null;
         const dataCriadoIsoDate = item.Created && parseISO(item.Created);
 
         const dataCriado =
           dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
 
-        const valvulaValues = valvula
-          ? {
-              predio: valvula.predio.Title,
-              cod_equipamento: valvula.cod_equipamento,
-              pavimento: valvula.pavimento.Title,
-              local: valvula.local.Title,
-              validade: valvula.validade,
-              conforme: valvula.conforme,
-            }
-          : null;
+        const valvulaValues = {
+          predio: item?.predio,
+          cod_equipamento: item?.valvula_id?.cod_equipamento,
+        };
 
         return {
           ...item,

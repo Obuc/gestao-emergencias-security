@@ -150,7 +150,6 @@ const InspectionCmiTable = () => {
               <Table.Tr className="bg-[#FCFCFC]">
                 <Table.Th className="pl-8">Registro</Table.Th>
                 <Table.Th>Responsável</Table.Th>
-                <Table.Th>Prédio</Table.Th>
                 <Table.Th>Data Registro</Table.Th>
                 <Table.Th>Conformidade</Table.Th>
                 <Table.Th>{''}</Table.Th>
@@ -160,7 +159,7 @@ const InspectionCmiTable = () => {
             <Table.Tbody>
               {inspection_cmi?.pages[0].data.value.length === 0 && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={6} className="text-center text-primary">
+                  <Table.Td colSpan={5} className="text-center text-primary">
                     Nenhum registro encontrado!
                   </Table.Td>
                 </Table.Tr>
@@ -168,7 +167,7 @@ const InspectionCmiTable = () => {
 
               {isError && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={6} className="text-center text-primary">
+                  <Table.Td colSpan={5} className="text-center text-primary">
                     Ops, ocorreu um erro, recarregue a página e tente novamente!
                   </Table.Td>
                 </Table.Tr>
@@ -178,7 +177,7 @@ const InspectionCmiTable = () => {
                 <>
                   {Array.from({ length: 30 }).map((_, index) => (
                     <Table.Tr key={index}>
-                      <Table.Td className="h-14 px-4" colSpan={6}>
+                      <Table.Td className="h-14 px-4" colSpan={5}>
                         <Skeleton height="3.5rem" animation="wave" />
                       </Table.Td>
                     </Table.Tr>
@@ -192,7 +191,6 @@ const InspectionCmiTable = () => {
                     <Table.Tr key={item.Id}>
                       <Table.Td className="pl-8">{item?.Id}</Table.Td>
                       <Table.Td>{item?.bombeiro_id?.Title}</Table.Td>
-                      <Table.Td>{item?.cmi.predio}</Table.Td>
                       <Table.Td>{item?.Created ? format(item.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}</Table.Td>
                       <Table.Td>
                         {item?.conforme ? (

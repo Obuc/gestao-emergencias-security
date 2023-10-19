@@ -15,7 +15,7 @@ const useTestCMI = (testCMIFilters?: ITestCMIFiltersProps) => {
 
   const [isLoadingTestCmiExportToExcel, setIsLoadingTestCmiExportToExcel] = useState<boolean>(false);
 
-  let path = `?$Select=Id,cmi_idId,site/Title,bombeiro_id/Title,Created,conforme&$expand=site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  let path = `?$Select=Id,cmi_idId,site/Title,bombeiro_id/Title,Created,conforme&$expand=site,bombeiro_id&$Top=25&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
 
   if (testCMIFilters?.startDate || testCMIFilters?.endDate) {
     const startDate = testCMIFilters.startDate && new Date(testCMIFilters.startDate);
@@ -54,29 +54,14 @@ const useTestCMI = (testCMIFilters?: ITestCMIFiltersProps) => {
 
     const dataWithTransformations = await Promise.all(
       response?.data?.value?.map(async (item: any) => {
-        const cmiResponse = await crud.getListItemsv2(
-          'equipamentos_diversos',
-          `?$Select=Id,predio/Title&$expand=predio&$Filter=(Id eq ${item.cmi_idId})`,
-        );
-
         const dataCriadoIsoDate = item.Created && parseISO(item.Created);
         const dataCriado =
           dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
-
-        const cmi = cmiResponse.results[0] || null;
-
-        const cmiValues = cmi
-          ? {
-              Id: cmi.Id,
-              predio: cmi.predio.Title,
-            }
-          : null;
 
         return {
           ...item,
           Created: dataCriado,
           bombeiro: item.bombeiro_id?.Title,
-          cmi: cmiValues,
         };
       }),
     );

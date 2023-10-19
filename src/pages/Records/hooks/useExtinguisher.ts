@@ -15,7 +15,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
 
   const [isLoadingExtinguisherExportToExcel, setIsLoadingExtinguisherExportToExcel] = useState<boolean>(false);
 
-  let path = `?$Select=*,Created,conforme,local,extintor_id/validade,extintor_id/cod_extintor,pavimento,site/Title,bombeiro_id/Title&$expand=extintor_id,site,bombeiro_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  let path = `?$Select=Id,Created,conforme,local,extintor_id/Id,extintor_id/validade,extintor_id/cod_extintor,pavimento,site/Title,bombeiro_id/Title&$expand=extintor_id,site,bombeiro_id&$Top=25&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
 
   if (extinguisherFilters?.place) {
     for (let i = 0; i < extinguisherFilters.place.length; i++) {
@@ -77,13 +77,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
 
     const dataWithTransformations = await Promise.all(
       response?.data?.value?.map(async (item: any) => {
-        const extintorResponse = await crud.getListItemsv2(
-          'extintores',
-          `?$Select=Id,predio/Title,pavimento/Title,local/Title,cod_extintor,validade,conforme,cod_qrcode&$expand=predio,pavimento,local&$Filter=(Id eq ${item.extintor_idId})`,
-        );
-
-        const extintor = extintorResponse.results[0] || null;
-        const extintorValidadeIsoDate = extintor.validade && parseISO(extintor.validade);
+        const extintorValidadeIsoDate = item?.extintor_id?.validade && parseISO(item?.extintor_id?.validade);
         const dataCriadoIsoDate = item.Created && parseISO(item.Created);
         const dataPesagemIsoDate = item.data_pesagem && parseISO(item.data_pesagem);
 
@@ -97,17 +91,14 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
         const dataPesagem =
           dataPesagemIsoDate && new Date(dataPesagemIsoDate.getTime() + dataPesagemIsoDate.getTimezoneOffset() * 60000);
 
-        const extintorValues = extintor
-          ? {
-              Id: extintor.Id,
-              predio: extintor.predio.Title,
-              pavimento: extintor.pavimento.Title,
-              local: extintor.local.Title,
-              cod_extintor: extintor.cod_extintor,
-              validade: extintorValidade,
-              conforme: extintor.conforme,
-            }
-          : null;
+        const extintorValues = {
+          Id: item?.extintor_id?.Id,
+          pavimento: item?.pavimento,
+          local: item?.local,
+          cod_extintor: item?.extintor_id?.cod_extintor,
+          validade: extintorValidade,
+          conforme: item.conforme,
+        };
 
         return {
           ...item,

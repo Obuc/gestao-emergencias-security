@@ -30,10 +30,6 @@ export interface TestCMI {
     Title: string;
   };
   siteId: number;
-  cmi: {
-    Id: number;
-    predio: string;
-  };
 }
 
 export interface ResponstaTestCmi {

@@ -19,7 +19,7 @@ const useGeneralChecklist = (generalChecklistFilters?: IGeneralChecklistFiltersP
 
   const [isLoadingGeneralChecklistExportToExcel, setIsLoadingGeneralChecklistExportToExcel] = useState<boolean>(false);
 
-  let path = `?$Select=Id,veiculo_idId,veiculo_id/placa,tipo_veiculo,site/Title,bombeiro/Title,Created,conforme&$expand=site,bombeiro,veiculo_id&$Top=100&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  let path = `?$Select=Id,veiculo_idId,veiculo_id/placa,tipo_veiculo,site/Title,bombeiro/Title,Created,conforme&$expand=site,bombeiro,veiculo_id&$Top=25&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
 
   if (generalChecklistFilters?.conformity && generalChecklistFilters?.conformity === 'Conforme') {
     path += ` and (conforme ne 'false')`;
@@ -70,25 +70,14 @@ const useGeneralChecklist = (generalChecklistFilters?: IGeneralChecklistFiltersP
 
     const dataWithTransformations = await Promise.all(
       response?.data?.value?.map(async (item: any) => {
-        const vehicleResponse = await crud.getListItemsv2(
-          'veiculos_emergencia',
-          `?$Select=Id,cod_qrcode,site/Title,tipo_veiculo/Title,placa,conforme,excluido&$expand=site,tipo_veiculo&$Filter=(Id eq ${item.veiculo_idId})`,
-        );
-
         const dataCriadoIsoDate = item.Created && parseISO(item.Created);
         const dataCriado =
           dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
 
-        const vehicle = vehicleResponse.results[0] || null;
-
-        const vehicleValues = vehicle
-          ? {
-              Id: vehicle.Id,
-              placa: vehicle.placa,
-              site: vehicle.site?.Title,
-              tipo_veiculo: vehicle.tipo_veiculo?.Title,
-            }
-          : null;
+        const vehicleValues = {
+          placa: item?.veiculo_id?.placa,
+          tipo_veiculo: item?.tipo_veiculo,
+        };
 
         return {
           ...item,
