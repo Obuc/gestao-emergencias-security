@@ -53,7 +53,7 @@ const useLoadRatio = (loadRatioFilters?: ILoadRatioFiltersProps) => {
   const [isLoadingLoadRatioExportToExcel, setIsLoadingLoadRatioExportToExcel] = useState<boolean>(false);
 
   const fechLoadRatio = async ({ pageParam }: { pageParam?: string }) => {
-    let path = `?$Select=Id,Created,site/Title,bombeiro/Title,tipo_veiculo/Title,conforme,veiculo_id/placa&$expand=site,bombeiro,tipo_veiculo,veiculo_id&$Top=25&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_veiculo/Title eq '${caseEquipmentsValue}')`;
+    let path = `?$Select=Id,Created,site/Title,bombeiro/Title,tipo_veiculo/Title,tipo_veiculo/url_path,conforme,veiculo_id/placa&$expand=site,bombeiro,tipo_veiculo,veiculo_id&$Top=25&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}') and (tipo_veiculo/url_path eq '${equipments_value}')`;
 
     if (loadRatioFilters?.conformity && loadRatioFilters?.conformity === 'Conforme') {
       path += ` and (conforme ne 'false')`;
