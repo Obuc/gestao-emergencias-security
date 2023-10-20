@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 
-import { ExtinguisherDataModal } from '../../types/Extinguisher';
+import { HydrantsDataModal } from '../../types/Hydrants';
 import { BayerLogoWhitePDF } from '../../../../components/Icons/BayerLogoWhitePDF';
 
 const styles = StyleSheet.create({
@@ -170,11 +170,11 @@ const styles = StyleSheet.create({
   },
 });
 
-interface IExtinguisherPdfProps {
-  data: ExtinguisherDataModal;
+interface IHydrantsPdfProps {
+  data: HydrantsDataModal;
 }
 
-export const ExtinguisherPdf = ({ data }: IExtinguisherPdfProps) => {
+export const HydrantsPdf = ({ data }: IHydrantsPdfProps) => {
   const formattedDate = new Date().toLocaleString('pt-BR');
 
   return (
@@ -195,7 +195,7 @@ export const ExtinguisherPdf = ({ data }: IExtinguisherPdfProps) => {
 
         <View style={styles.container}>
           <View style={styles.containerHeader}>
-            <Text style={styles.containerTitle}>Informações Extintor</Text>
+            <Text style={styles.containerTitle}>Informações Hidrante</Text>
           </View>
           <View style={styles.containerContent}>
             <View style={styles.containerContentItem}>
@@ -231,7 +231,7 @@ export const ExtinguisherPdf = ({ data }: IExtinguisherPdfProps) => {
               <View style={[styles.containerItem, { width: '100%' }]}>
                 <Text style={styles.containerItemTitle}>Site</Text>
                 <View style={styles.containerItemInput}>
-                  <Text style={styles.containerItemTitle}>{data?.extintor?.site}</Text>
+                  <Text style={styles.containerItemTitle}>{data?.hidrante?.site}</Text>
                 </View>
               </View>
 
@@ -239,7 +239,7 @@ export const ExtinguisherPdf = ({ data }: IExtinguisherPdfProps) => {
               <View style={[styles.containerItem, { width: '100%' }]}>
                 <Text style={styles.containerItemTitle}>Prédio</Text>
                 <View style={styles.containerItemInput}>
-                  <Text style={styles.containerItemTitle}>{data?.extintor?.predio}</Text>
+                  <Text style={styles.containerItemTitle}>{data?.hidrante?.predio}</Text>
                 </View>
               </View>
 
@@ -247,7 +247,7 @@ export const ExtinguisherPdf = ({ data }: IExtinguisherPdfProps) => {
               <View style={[styles.containerItem, { width: '100%' }]}>
                 <Text style={styles.containerItemTitle}>Pavimento</Text>
                 <View style={styles.containerItemInput}>
-                  <Text style={styles.containerItemTitle}>{data?.extintor?.pavimento}</Text>
+                  <Text style={styles.containerItemTitle}>{data?.hidrante?.pavimento}</Text>
                 </View>
               </View>
             </View>
@@ -257,43 +257,25 @@ export const ExtinguisherPdf = ({ data }: IExtinguisherPdfProps) => {
               <View style={[styles.containerItem, { width: '100%' }]}>
                 <Text style={styles.containerItemTitle}>Local Específico</Text>
                 <View style={styles.containerItemInput}>
-                  <Text style={styles.containerItemTitle}>{data?.extintor?.local}</Text>
-                </View>
-              </View>
-
-              {/* Data de Vencimento */}
-              <View style={[styles.containerItem, { width: '100%' }]}>
-                <Text style={styles.containerItemTitle}>Data de Vencimento</Text>
-                <View style={styles.containerItemInput}>
-                  <Text style={styles.containerItemTitle}>
-                    {data?.extintor?.validade && format(data?.extintor?.validade, 'dd MMM yyyy', { locale: ptBR })}
-                  </Text>
+                  <Text style={styles.containerItemTitle}>{data?.hidrante?.local}</Text>
                 </View>
               </View>
             </View>
 
             <View style={styles.containerContentItem}>
-              {/* Tipo */}
+              {/* Cód. Hidrante */}
               <View style={[styles.containerItem, { width: '100%' }]}>
-                <Text style={styles.containerItemTitle}>Tipo</Text>
+                <Text style={styles.containerItemTitle}>Cód. Hidrante</Text>
                 <View style={styles.containerItemInput}>
-                  <Text style={styles.containerItemTitle}>{data?.extintor?.tipo_extintor}</Text>
+                  <Text style={styles.containerItemTitle}>{data?.hidrante?.cod_hidrante}</Text>
                 </View>
               </View>
 
-              {/* Peso */}
+              {/* Possui Abrigo?  */}
               <View style={[styles.containerItem, { width: '100%' }]}>
-                <Text style={styles.containerItemTitle}>Peso</Text>
+                <Text style={styles.containerItemTitle}>Possui Abrigo?</Text>
                 <View style={styles.containerItemInput}>
-                  <Text style={styles.containerItemTitle}>{data?.extintor?.massa}</Text>
-                </View>
-              </View>
-
-              {/* Cód. Extintor */}
-              <View style={[styles.containerItem, { width: '100%' }]}>
-                <Text style={styles.containerItemTitle}>Cód. Extintor</Text>
-                <View style={styles.containerItemInput}>
-                  <Text style={styles.containerItemTitle}>{data?.extintor?.cod_extintor}</Text>
+                  <Text style={styles.containerItemTitle}>{data?.hidrante?.possui_abrigo ? 'Sim' : 'Não'}</Text>
                 </View>
               </View>
             </View>

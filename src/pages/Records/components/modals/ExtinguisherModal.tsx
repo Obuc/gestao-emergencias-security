@@ -43,7 +43,7 @@ const ExtinguisherModal = () => {
     setGeneratePdf(true);
     const blob = await pdf(<ExtinguisherPdf data={extinguisherModal} />).toBlob();
     setGeneratePdf(false);
-    saveAs(blob, 'teste.pdf');
+    saveAs(blob, `Registro Extintor - ID${params.id} - ${format(new Date(), 'dd/MM/yyyy')}.pdf`);
   };
 
   const initialRequestBadgeValues: ExtinguisherDataModal = {
