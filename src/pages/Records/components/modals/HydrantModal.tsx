@@ -8,13 +8,13 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import Modal from '../../../../components/Modal';
+import { HydrantsPdf } from '../pdf/HydrantsPdf';
 import useHydrants from '../../hooks/useHydrants';
 import { Button } from '../../../../components/Button';
 import TextArea from '../../../../components/TextArea';
 import TextField from '../../../../components/TextField';
 import { Answers } from '../../../../components/Answers';
 import { HydrantsDataModal, RespostaHydrants } from '../../types/Hydrants';
-import { HydrantsPdf } from '../pdf/HydrantsPdf';
 
 const HydrantModal = () => {
   const params = useParams();

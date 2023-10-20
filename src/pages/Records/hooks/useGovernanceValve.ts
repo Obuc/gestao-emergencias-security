@@ -181,7 +181,7 @@ const useGovernanceValve = (governanceValveFilters?: IGovernanceValveFiltersProp
           ...governaceValveModalData,
           Created: dataCriado,
           bombeiro: governaceValveModalData.bombeiro_id.Title,
-          extintor: valvulaValues,
+          valvula: valvulaValues,
           respostas: respostas,
         };
       } else {
