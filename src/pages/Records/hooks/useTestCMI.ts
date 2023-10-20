@@ -156,7 +156,7 @@ const useTestCMI = (testCMIFilters?: ITestCMIFiltersProps) => {
           ...cmiData,
           Created: dataCriado,
           bombeiro: cmiData.bombeiro_id?.Title,
-          extintor: cmiValues,
+          cmi: cmiValues,
           respostas: respostas,
         };
       } else {
