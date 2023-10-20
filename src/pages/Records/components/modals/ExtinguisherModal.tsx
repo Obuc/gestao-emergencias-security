@@ -1,9 +1,9 @@
-import jsPDF from 'jspdf';
 import { format } from 'date-fns';
-import html2canvas from 'html2canvas';
+import { saveAs } from 'file-saver';
 import { ptBR } from 'date-fns/locale';
+import { pdf } from '@react-pdf/renderer';
 import { Formik, FormikProps } from 'formik';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -12,6 +12,7 @@ import { Button } from '../../../../components/Button';
 import TextArea from '../../../../components/TextArea';
 import TextField from '../../../../components/TextField';
 import { Answers } from '../../../../components/Answers';
+import { ExtinguisherPdf } from '../pdf/ExtinguisherPdf';
 import useExtinguisher from '../../hooks/useExtinguisher';
 import { ExtinguisherDataModal, RespostaExtintor } from '../../types/Extinguisher';
 
@@ -20,11 +21,12 @@ const ExtinguisherModal = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isEdit = searchParams.get('edit') === 'true' ? true : false;
-  const componentRef = useRef(null);
 
   const { extinguisherModal, IsLoadingMutateEditExtinguisher, mutateEditExtinguisher, isLoadingExtinguisherModal } =
     useExtinguisher();
+
   const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
+  const [generatePdf, setGeneratePdf] = useState<boolean>(false);
 
   useEffect(() => {
     if (params?.id) {
@@ -37,20 +39,11 @@ const ExtinguisherModal = () => {
     navigate('/records/extinguisher');
   };
 
-  const expotToPdf = () => {
-    html2canvas(document.querySelector('#container')!, {
-      scrollY: -window.scrollY,
-      useCORS: true,
-      scale: 2,
-    }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'px', [595.28, canvas.height], false);
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`teste.pdf`);
-    });
+  const exportToPdf = async () => {
+    setGeneratePdf(true);
+    const blob = await pdf(<ExtinguisherPdf data={extinguisherModal} />).toBlob();
+    setGeneratePdf(false);
+    saveAs(blob, 'teste.pdf');
   };
 
   const initialRequestBadgeValues: ExtinguisherDataModal = {
@@ -97,7 +90,7 @@ const ExtinguisherModal = () => {
       >
         {(props: FormikProps<ExtinguisherDataModal>) => (
           <>
-            <div ref={componentRef} id="container">
+            <div>
               <div className="py-6 px-8">
                 <div className="flex gap-2 py-2">
                   <TextField
@@ -260,9 +253,20 @@ const ExtinguisherModal = () => {
 
               <div className="flex w-full gap-2 py-4 justify-end items-center pr-8">
                 {!isEdit && (
-                  <Button.Root onClick={expotToPdf} disabled={isLoadingExtinguisherModal} fill className="h-10">
-                    <Button.Label>Exportar para PDF</Button.Label>
-                    <Button.Icon icon={faDownload} />
+                  <Button.Root
+                    fill
+                    onClick={exportToPdf}
+                    className="min-w-[14.0625rem] h-10"
+                    disabled={isLoadingExtinguisherModal || generatePdf}
+                  >
+                    {generatePdf ? (
+                      <Button.Spinner />
+                    ) : (
+                      <>
+                        <Button.Label>Exportar para PDF</Button.Label>
+                        <Button.Icon icon={faDownload} />
+                      </>
+                    )}
                   </Button.Root>
                 )}
 
