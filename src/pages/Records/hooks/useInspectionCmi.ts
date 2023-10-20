@@ -157,7 +157,7 @@ const useInspectionCmi = (inspectionCMIFilters?: IInspectionCMIFiltersProps) => 
           ...cmiData,
           Created: dataCriado,
           bombeiro: cmiData.bombeiro_id?.Title,
-          extintor: cmiValues,
+          cmi: cmiValues,
           respostas: respostas,
         };
       } else {

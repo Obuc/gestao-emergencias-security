@@ -1,9 +1,9 @@
-import jsPDF from 'jspdf';
 import { format } from 'date-fns';
-import html2canvas from 'html2canvas';
+import { saveAs } from 'file-saver';
 import { ptBR } from 'date-fns/locale';
+import { pdf } from '@react-pdf/renderer';
+import { useEffect, useState } from 'react';
 import { Formik, FormikProps } from 'formik';
-import { useEffect, useRef, useState } from 'react';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -12,6 +12,7 @@ import { Button } from '../../../../components/Button';
 import TextArea from '../../../../components/TextArea';
 import TextField from '../../../../components/TextField';
 import { Answers } from '../../../../components/Answers';
+import { InspectionCmiPdf } from '../pdf/InspectionCmiPdf';
 import useInspectionCmi from '../../hooks/useInspectionCmi';
 import { InspectionCmiDataModal, ResponstaInspectionCMI } from '../../types/InspectionCMI';
 
@@ -20,7 +21,6 @@ const InspectionCmiModal = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isEdit = searchParams.get('edit') === 'true' ? true : false;
-  const componentRef = useRef(null);
 
   const {
     inspectionCmiDataModal,
@@ -28,7 +28,9 @@ const InspectionCmiModal = () => {
     mutateEditInspectionCmi,
     isLoadingMutateEditInspectionCmi,
   } = useInspectionCmi();
+
   const [cmiItem, setCmiItem] = useState<boolean | null>(null);
+  const [generatePdf, setGeneratePdf] = useState<boolean>(false);
 
   useEffect(() => {
     if (params?.id) {
@@ -41,20 +43,11 @@ const InspectionCmiModal = () => {
     navigate('/records/cmi_inspection');
   };
 
-  const expotToPdf = () => {
-    html2canvas(document.querySelector('#container')!, {
-      scrollY: -window.scrollY,
-      useCORS: true,
-      scale: 2,
-    }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'px', [595.28, canvas.height], false);
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`teste.pdf`);
-    });
+  const exportToPdf = async () => {
+    setGeneratePdf(true);
+    const blob = await pdf(<InspectionCmiPdf data={inspectionCmiDataModal} />).toBlob();
+    setGeneratePdf(false);
+    saveAs(blob, `Registro Inspecao CMI - ID${params.id} - ${format(new Date(), 'dd/MM/yyyy')}.pdf`);
   };
 
   const initialRequestBadgeValues: InspectionCmiDataModal = {
@@ -62,13 +55,13 @@ const InspectionCmiModal = () => {
     Id: inspectionCmiDataModal?.Id || 0,
     bombeiro: inspectionCmiDataModal?.bombeiro ?? '',
     cmi: {
-      Id: inspectionCmiDataModal?.extintor?.Id || '',
-      site: inspectionCmiDataModal?.extintor?.site || '',
-      predio: inspectionCmiDataModal?.extintor?.predio || '',
-      local: inspectionCmiDataModal?.extintor?.local || '',
-      validade: inspectionCmiDataModal?.extintor?.validade || '',
-      conforme: inspectionCmiDataModal?.extintor?.conforme || false,
-      cod_qrcode: inspectionCmiDataModal?.extintor?.cod_qrcode || '',
+      Id: inspectionCmiDataModal?.cmi?.Id || '',
+      site: inspectionCmiDataModal?.cmi?.site || '',
+      predio: inspectionCmiDataModal?.cmi?.predio || '',
+      local: inspectionCmiDataModal?.cmi?.local || '',
+      validade: inspectionCmiDataModal?.cmi?.validade || '',
+      conforme: inspectionCmiDataModal?.cmi?.conforme || false,
+      cod_qrcode: inspectionCmiDataModal?.cmi?.cod_qrcode || '',
     },
     respostas: inspectionCmiDataModal?.respostas || {},
     novo: inspectionCmiDataModal?.novo || false,
@@ -96,7 +89,7 @@ const InspectionCmiModal = () => {
       >
         {(props: FormikProps<InspectionCmiDataModal>) => (
           <>
-            <div ref={componentRef} id="container">
+            <div>
               <div className="py-6 px-8">
                 <div className="flex gap-2 py-2">
                   <TextField
@@ -199,9 +192,20 @@ const InspectionCmiModal = () => {
 
               <div className="flex w-full gap-2 py-4 justify-end items-center pr-8">
                 {!isEdit && (
-                  <Button.Root onClick={expotToPdf} disabled={isLoadingInspectionCmiDataModal} fill className="h-10">
-                    <Button.Label>Exportar para PDF</Button.Label>
-                    <Button.Icon icon={faDownload} />
+                  <Button.Root
+                    fill
+                    onClick={exportToPdf}
+                    className="min-w-[14.0625rem] h-10"
+                    disabled={isLoadingInspectionCmiDataModal || generatePdf}
+                  >
+                    {generatePdf ? (
+                      <Button.Spinner />
+                    ) : (
+                      <>
+                        <Button.Label>Exportar para PDF</Button.Label>
+                        <Button.Icon icon={faDownload} />
+                      </>
+                    )}
                   </Button.Root>
                 )}
 
