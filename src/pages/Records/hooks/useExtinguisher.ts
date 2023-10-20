@@ -15,7 +15,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
 
   const [isLoadingExtinguisherExportToExcel, setIsLoadingExtinguisherExportToExcel] = useState<boolean>(false);
 
-  let path = `?$Select=Id,Created,conforme,local,extintor_id/Id,extintor_id/validade,extintor_id/cod_extintor,pavimento,site/Title,bombeiro_id/Title&$expand=extintor_id,site,bombeiro_id&$Top=25&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+  let path = `?$Select=Id,Created,conforme,local,data_pesagem,extintor_id/Id,extintor_id/validade,extintor_id/cod_extintor,pavimento,site/Title,bombeiro_id/Title&$expand=extintor_id,site,bombeiro_id&$Top=25&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
 
   if (extinguisherFilters?.place) {
     for (let i = 0; i < extinguisherFilters.place.length; i++) {
