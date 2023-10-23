@@ -1,17 +1,32 @@
 import { useState } from 'react';
-import QRCode from 'qrcode.react';
+import { saveAs } from 'file-saver';
 import { Skeleton } from '@mui/material';
+import { pdf } from '@react-pdf/renderer';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import { Table } from '../../../../../components/Table';
 import Checkbox from '../../../../../components/Checkbox';
-import BXOLogo from '../../../../../components/Icons/BXOLogo';
-import SPOLogo from '../../../../../components/Icons/SPOLogo';
+import { Button } from '../../../../../components/Button';
+import { EqVehiclesQRCodePdf } from '../../pdf/EqVehiclesQRCodePdf';
 import useEqLoadRatio from '../../../hooks/EmergencyVehicles/useEqLoadRatio';
 import { IEqLoadRatio } from '../../../types/EmergencyVehicles/EquipmentsLoadRatio';
 
 const EqLoadRatioQRCode = () => {
+  const site_value = localStorage.getItem('user_site');
+
+  const [selectAll, setSelectAll] = useState(false);
   const { eqVehiclesLoadRatio, isLoadingVehiclesLoadRatio, isErrorEqVehiclesLoadRatio } = useEqLoadRatio();
   const [selectedItemsVehicles, setSelectedItemsVehicle] = useState<any[]>([]);
+  const [generatePdf, setGeneratePdf] = useState<boolean>(false);
+
+  const toggleSelectAll = () => {
+    setSelectAll(!selectAll);
+    if (!selectAll && eqVehiclesLoadRatio) {
+      setSelectedItemsVehicle(eqVehiclesLoadRatio);
+    } else {
+      setSelectedItemsVehicle([]);
+    }
+  };
 
   const toggleSelectItem = (item: IEqLoadRatio) => {
     setSelectedItemsVehicle((prevSelected) => {
@@ -24,12 +39,27 @@ const EqLoadRatioQRCode = () => {
     });
   };
 
+  const exportToPdf = async () => {
+    setGeneratePdf(true);
+    const blob = await pdf(
+      <EqVehiclesQRCodePdf
+        data={selectedItemsVehicles}
+        qrCodeValueEquipment="RelacaoCarga"
+        qrCodeValueDescription="RelacaoCarga"
+      />,
+    ).toBlob();
+    saveAs(blob, `QRCode Relação Carga - ${site_value}.pdf`);
+    setGeneratePdf(false);
+  };
+
   return (
     <>
       <Table.Root>
         <Table.Thead>
           <Table.Tr className="bg-[#FCFCFC]">
-            <Table.Th className="pl-8">{''}</Table.Th>
+            <Table.Th className="pl-8">
+              <Checkbox checked={selectAll} onClick={toggleSelectAll} />
+            </Table.Th>
             <Table.Th>Cód. Veículo</Table.Th>
             <Table.Th>Tipo de Veículo</Table.Th>
             <Table.Th>Placa</Table.Th>
@@ -81,28 +111,17 @@ const EqLoadRatioQRCode = () => {
         </Table.Tbody>
       </Table.Root>
 
-      <div className="w-full grid grid-cols-2 justify-center gap-4 p-2" id="qrCodeElement">
-        {selectedItemsVehicles.map((value: any) => {
-          const qrCodeValue = `RelacaoCarga;${value?.site};${value?.cod_qrcode};${value?.tipo_veiculo}`;
-
-          return (
-            <div key={value.Id} className="flex justify-center items-center">
-              <div className="flex flex-col justify-center w-[20rem] items-center gap-6 bg-white border-[.0625rem] border-black">
-                <div className="uppercase text-lg font-semibold py-4 m-auto bg-bg-home w-full text-center text-white">
-                  Gestão de Emergência
-                </div>
-
-                <div className="px-2 py-2 gap-3 flex flex-col justify-center items-center">
-                  <QRCode renderAs="svg" value={qrCodeValue} size={150} fgColor="#000" bgColor="#fff" />
-                  <span className="font-medium text-center text-sm italic">{`RelacaoCarga/${value?.site}/${value?.placa}/${value?.tipo_veiculo}`}</span>
-
-                  {value?.site === 'BXO' && <BXOLogo height="50" width="45" />}
-                  {value?.site === 'SPO' && <SPOLogo height="50" width="45" />}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+      <div className="flex w-full gap-2 pt-14 justify-end items-center">
+        <Button.Root fill onClick={exportToPdf} className="min-w-[14.0625rem] h-10" disabled={generatePdf}>
+          {generatePdf ? (
+            <Button.Spinner />
+          ) : (
+            <>
+              <Button.Label>Exportar para PDF</Button.Label>
+              <Button.Icon icon={faDownload} />
+            </>
+          )}
+        </Button.Root>
       </div>
     </>
   );
