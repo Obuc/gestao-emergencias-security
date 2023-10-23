@@ -1,30 +1,21 @@
-import QRCode from 'qrcode.react';
 import { format } from 'date-fns';
-import { saveAs } from 'file-saver';
-import html2canvas from 'html2canvas';
 import { ptBR } from 'date-fns/locale';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { faExpand } from '@fortawesome/free-solid-svg-icons';
 
 import CardEmpy from '../ui/CardEmpy';
 import { EquipmentCard } from '../ui/Card';
 import CardSkeleton from '../ui/CardSkeleton';
 import Modal from '../../../../components/Modal';
-import { Button } from '../../../../components/Button';
 import TextField from '../../../../components/TextField';
-import BXOLogo from '../../../../components/Icons/BXOLogo';
-import SPOLogo from '../../../../components/Icons/SPOLogo';
 import useEqExtinguisher from '../../hooks/useEqExtinguisher';
 
 const EqExtinguisherModal = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const pdfContainerRef = useRef(null);
 
-  const [showQrCode, setShowQrCode] = useState(false);
   const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
-  const { eqExtinguisherModal, isLoadingEqExtinguisherModal, qrCodeExtinguisherValue } = useEqExtinguisher();
+  const { eqExtinguisherModal, isLoadingEqExtinguisherModal } = useEqExtinguisher();
 
   useEffect(() => {
     if (params?.id) {
@@ -35,26 +26,6 @@ const EqExtinguisherModal = () => {
   const handleOnOpenChange = () => {
     setExtinguisherItem(null);
     navigate('/equipments/extinguisher');
-  };
-
-  const generateQrCodePdf = () => {
-    if (pdfContainerRef.current) {
-      html2canvas(pdfContainerRef.current, {
-        useCORS: true,
-        scale: 10,
-      })
-        .then((canvas) => {
-          canvas.toBlob((blob) => {
-            if (blob) {
-              saveAs(blob, `Extintor - ${eqExtinguisherModal?.site}.jpeg`);
-            }
-          }, 'image/jpeg');
-          setShowQrCode(false);
-        })
-        .catch((error) => {
-          console.error('Erro ao gerar o PDF:', error);
-        });
-    }
   };
 
   return (
@@ -136,45 +107,6 @@ const EqExtinguisherModal = () => {
               isLoading={isLoadingEqExtinguisherModal}
             />
           </div>
-        </div>
-
-        <div className="w-full p-4 gap-3 flex flex-col justify-center items-center my-10 bg-[#00354F0F]">
-          {showQrCode && (
-            <div
-              ref={pdfContainerRef}
-              id="container"
-              className="w-full h-full p-4 flex flex-col justify-center items-center gap-10"
-            >
-              <div className="flex flex-col justify-center w-[20rem] items-center gap-6 bg-white border-[.0625rem]">
-                <div className="uppercase text-lg font-semibold py-4 m-auto bg-bg-home w-full text-center text-white">
-                  Gestão de Emergência
-                </div>
-
-                <div className="px-2 py-2 gap-3 flex flex-col justify-center items-center">
-                  <QRCode value={qrCodeExtinguisherValue} size={150} fgColor="#000" bgColor="#fff" />
-                  <span className="font-medium text-sm italic">{`Extintor/${eqExtinguisherModal?.predio}/${eqExtinguisherModal?.pavimento}/${eqExtinguisherModal?.local}`}</span>
-
-                  {eqExtinguisherModal?.site === 'BXO' && <BXOLogo height="50" width="45" />}
-                  {eqExtinguisherModal?.site === 'SPO' && <SPOLogo height="50" width="45" />}
-                </div>
-              </div>
-            </div>
-          )}
-
-          <Button.Root
-            fill
-            disabled={isLoadingEqExtinguisherModal}
-            className="w-[13.75rem] h-10"
-            onClick={() => {
-              generateQrCodePdf();
-              setShowQrCode(true);
-            }}
-          >
-            <Button.Label>
-              {showQrCode && 'Baixar QRCode'} {!showQrCode && 'Gerar QRCode'}
-            </Button.Label>
-            <Button.Icon icon={faExpand} />
-          </Button.Root>
         </div>
 
         <div className="py-4 px-8">
