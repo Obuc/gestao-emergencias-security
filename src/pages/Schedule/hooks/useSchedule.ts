@@ -161,13 +161,6 @@ export const useSchedule = () => {
           const diffInDays = differenceInDays(ultimaInspecao, inspecaoBase);
           const realizadaForaDoPrazo = diffInDays > 0;
 
-          console.log({
-            id: extinguisher.Id,
-            diffInDays: diffInDays,
-            ultima_inspecao: ultimaInspecao,
-            deveria_ser_realizada: inspecaoBase,
-          });
-
           dates.push({
             type: 'Extintor',
             Id: extinguisher.Id,

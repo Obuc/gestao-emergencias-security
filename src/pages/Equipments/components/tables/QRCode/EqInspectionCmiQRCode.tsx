@@ -1,20 +1,25 @@
 import { useState } from 'react';
-import QRCode from 'qrcode.react';
+import { saveAs } from 'file-saver';
 import { Skeleton } from '@mui/material';
+import { pdf } from '@react-pdf/renderer';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
+import { EqQRCodePdf } from '../../pdf/EqQRCodePdf';
 import { Table } from '../../../../../components/Table';
+import { Button } from '../../../../../components/Button';
 import Checkbox from '../../../../../components/Checkbox';
-import BXOLogo from '../../../../../components/Icons/BXOLogo';
-import SPOLogo from '../../../../../components/Icons/SPOLogo';
 import useEqInspectionCmi from '../../../hooks/useEqInspectionCmi';
 import { IEqInspectionCmi } from '../../../types/EquipmentsInspectionCmi';
 
 const EqInspectionCmiQRCode = () => {
+  const site_value = localStorage.getItem('user_site');
+
   const { eqInspectionCmi, isLoadingEqInspectionCmi, isErrorEqInspectionCmi } = useEqInspectionCmi();
-  const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<any[]>([]);
+  const [selectedItemsInspectionCMI, setSelectedItemsInspectionCMI] = useState<any[]>([]);
+  const [generatePdf, setGeneratePdf] = useState<boolean>(false);
 
   const toggleSelectItem = (item: IEqInspectionCmi) => {
-    setSelectedItemsExtinguisher((prevSelected) => {
+    setSelectedItemsInspectionCMI((prevSelected) => {
       if (prevSelected.some((selectedItem) => selectedItem.Id === item.Id)) {
         return prevSelected.filter((selectedItem) => selectedItem.Id !== item.Id);
       } else if (prevSelected.length < 10) {
@@ -22,6 +27,19 @@ const EqInspectionCmiQRCode = () => {
       }
       return prevSelected;
     });
+  };
+
+  const exportToPdf = async () => {
+    setGeneratePdf(true);
+    const blob = await pdf(
+      <EqQRCodePdf
+        data={selectedItemsInspectionCMI}
+        qrCodeValueEquipment={site_value === 'BXO' ? 'InspecaoCMIBXO' : 'Casa'}
+        qrCodeValueDescription="Inspeção CMI"
+      />,
+    ).toBlob();
+    saveAs(blob, `QRCode Inspecao CMI - ${site_value}.pdf`);
+    setGeneratePdf(false);
   };
 
   return (
@@ -68,7 +86,7 @@ const EqInspectionCmiQRCode = () => {
               <Table.Tr key={item.Id}>
                 <Table.Td className="pl-8">
                   <Checkbox
-                    checked={selectedItemsExtinguisher.some((selectedItem) => selectedItem.Id === item.Id)}
+                    checked={selectedItemsInspectionCMI.some((selectedItem) => selectedItem.Id === item.Id)}
                     onClick={() => toggleSelectItem(item)}
                   />
                 </Table.Td>
@@ -79,31 +97,17 @@ const EqInspectionCmiQRCode = () => {
         </Table.Tbody>
       </Table.Root>
 
-      <div className="w-full grid grid-cols-2 justify-center gap-4 p-2" id="qrCodeElement">
-        {selectedItemsExtinguisher.map((value: any) => {
-          const qrCodeValue =
-            value?.site === 'BXO'
-              ? `InspecaoCMIBXO;${value?.site};${value?.cod_qrcode}`
-              : `Casa;${value?.site};${value?.cod_qrcode}`;
-
-          return (
-            <div key={value.Id} className="flex justify-center items-center">
-              <div className="flex flex-col justify-center w-[20rem] items-center gap-6 bg-white border-[.0625rem] border-black">
-                <div className="uppercase text-lg font-semibold py-4 m-auto bg-bg-home w-full text-center text-white">
-                  Gestão de Emergência
-                </div>
-
-                <div className="px-2 py-2 gap-3 flex flex-col justify-center items-center">
-                  <QRCode renderAs="svg" value={qrCodeValue} size={150} fgColor="#000" bgColor="#fff" />
-                  <span className="font-medium text-sm italic">{`Inspeção CMI/${value?.site}/${value?.predio}/${value?.pavimento}`}</span>
-
-                  {value?.site === 'BXO' && <BXOLogo height="50" width="45" />}
-                  {value?.site === 'SPO' && <SPOLogo height="50" width="45" />}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+      <div className="flex w-full gap-2 pt-14 justify-end items-center">
+        <Button.Root fill onClick={exportToPdf} className="min-w-[14.0625rem] h-10" disabled={generatePdf}>
+          {generatePdf ? (
+            <Button.Spinner />
+          ) : (
+            <>
+              <Button.Label>Exportar para PDF</Button.Label>
+              <Button.Icon icon={faDownload} />
+            </>
+          )}
+        </Button.Root>
       </div>
     </>
   );

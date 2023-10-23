@@ -4,12 +4,12 @@ import { Skeleton } from '@mui/material';
 import { pdf } from '@react-pdf/renderer';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
+import { EqQRCodePdf } from '../../pdf/EqQRCodePdf';
 import { Table } from '../../../../../components/Table';
 import useEqHydrants from '../../../hooks/useEqHydrants';
 import { Button } from '../../../../../components/Button';
 import Checkbox from '../../../../../components/Checkbox';
 import { IEqHydrants } from '../../../types/EquipmentsHydrants';
-import { EqHydrantsQRCodePdf } from '../../pdf/EqHydrantsQRCodePdf';
 
 const EqHydrantQRCode = () => {
   const site_value = localStorage.getItem('user_site');
@@ -42,7 +42,13 @@ const EqHydrantQRCode = () => {
 
   const exportToPdf = async () => {
     setGeneratePdf(true);
-    const blob = await pdf(<EqHydrantsQRCodePdf data={selectedItemsHydrantsValve} />).toBlob();
+    const blob = await pdf(
+      <EqQRCodePdf
+        data={selectedItemsHydrantsValve}
+        qrCodeValueEquipment="Hidrantes"
+        qrCodeValueDescription="Hidrantes"
+      />,
+    ).toBlob();
     saveAs(blob, `QRCode Hidrantes - ${site_value}.pdf`);
     setGeneratePdf(false);
   };
