@@ -5,7 +5,7 @@
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faFilterCircleXmark, faPaperclip } from '@fortawesome/free-solid-svg-icons';
 
-import { TableHead } from '@mui/material';
+import { TableHead } from './TableHead';
 import { TableRoot } from './TableRoot';
 import { TableRow } from './TableRow';
 import { TableData } from './TableData';

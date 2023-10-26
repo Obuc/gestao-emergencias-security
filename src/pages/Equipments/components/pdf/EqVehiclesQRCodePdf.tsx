@@ -1,9 +1,8 @@
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
 
-import HeaderBg from '../../../../assets/Caminho 3692.png';
-
-import BXOLogo from '../../../../assets/BXOLogo.png';
 import SPOLogo from '../../../../assets/SPO.png';
+import BXOLogo from '../../../../assets/BXOLogo.png';
+import HeaderBg from '../../../../assets/Caminho 3692.png';
 
 const styles = StyleSheet.create({
   page: {
@@ -67,6 +66,9 @@ const styles = StyleSheet.create({
     width: 30,
     height: 32,
   },
+  qrCodeImage: {
+    maxHeight: 135,
+  },
 });
 
 interface IEqVehiclesQRCodePdfProps {
@@ -82,30 +84,32 @@ export const EqVehiclesQRCodePdf = ({
 }: IEqVehiclesQRCodePdfProps) => {
   const generateQRCodeURL = (value: any) => {
     const qrCodeValue = `${qrCodeValueEquipment};${value?.site};${value?.cod_qrcode};${value?.tipo_veiculo}`;
-    return `https://chart.googleapis.com/chart?chs=95x75&cht=qr&chl=${qrCodeValue}`;
+    return `https://chart.googleapis.com/chart?chs=190x190&cht=qr&chl=${qrCodeValue}`;
   };
 
   return (
     <Document>
       <Page size="A0" wrap style={styles.page}>
-        {data.map((value) => (
-          <View style={styles.container} key={value.Id} wrap={false}>
-            <View style={styles.header}>
-              <Text style={styles.headerTitle}>Gestão de Emergência</Text>
-              <Image src={HeaderBg} style={styles.headerBg} />
-            </View>
+        {data.map((value) => {
+          return (
+            <View style={styles.container} key={value.Id} wrap={false}>
+              <View style={styles.header}>
+                <Text style={styles.headerTitle}>Gestão de Emergência</Text>
+                <Image src={HeaderBg} style={styles.headerBg} />
+              </View>
 
-            <View style={styles.containerQrCode}>
-              <Image src={generateQRCodeURL(value)} />
-              <Text
-                style={styles.footerTitle}
-              >{`${qrCodeValueDescription}/${value?.site}/${value?.placa}/${value?.tipo_veiculo}`}</Text>
+              <View style={styles.containerQrCode}>
+                <Image fixed src={generateQRCodeURL(value)} style={styles.qrCodeImage} />
+                <Text
+                  style={styles.footerTitle}
+                >{`${qrCodeValueDescription}/${value?.site}/${value?.placa}/${value?.tipo_veiculo}`}</Text>
 
-              {value.site === 'BXO' && <Image src={BXOLogo} style={styles.siteLogo} />}
-              {value.site === 'SPO' && <Image src={SPOLogo} style={styles.siteLogo} />}
+                {value.site === 'BXO' && <Image src={BXOLogo} style={styles.siteLogo} />}
+                {value.site === 'SPO' && <Image src={SPOLogo} style={styles.siteLogo} />}
+              </View>
             </View>
-          </View>
-        ))}
+          );
+        })}
       </Page>
     </Document>
   );

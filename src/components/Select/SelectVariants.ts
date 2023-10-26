@@ -14,7 +14,7 @@ export const selectVariants = tv({
   variants: {
     error: {
       true: {
-        trigger: 'border-pink',
+        trigger: 'border border-pink',
       },
       false: {
         trigger: '',
