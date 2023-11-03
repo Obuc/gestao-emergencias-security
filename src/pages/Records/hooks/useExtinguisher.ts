@@ -69,7 +69,7 @@ const useExtinguisher = (extinguisherFilters?: IExtinguisherFiltersProps) => {
   }
 
   if (extinguisherFilters?.extinguisherId) {
-    path += ` and ( substringof('${extinguisherFilters.responsible}', extintor_id/cod_extintor ))`;
+    path += ` and ( substringof('${extinguisherFilters.extinguisherId}', extintor_id/cod_extintor ))`;
   }
 
   const fetchExtinguisher = async ({ pageParam }: { pageParam?: string }) => {

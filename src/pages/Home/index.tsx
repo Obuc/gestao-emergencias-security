@@ -1,18 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import BayerLogoWhite from '../../components/Icons/BayerLogoWhite';
 
 import { Button } from '../../components/Button';
+import { Select } from '../../components/Select';
 import { appContext } from '../../context/appContext';
 import BgGradient from '../../components/Icons/BgGradient';
-import { Select } from '../../components/Select';
 
 const Home = () => {
-  const { sites, isLoadingSites } = appContext();
-  const [site, setSite] = useState<string>('');
   const navigate = useNavigate();
+  const { sites, isLoadingSites } = appContext();
+
+  const [site, setSite] = useState<string>('');
 
   const handleStart = () => {
     if (!site) return;
@@ -20,14 +21,6 @@ const Home = () => {
     localStorage.setItem('user_site', site);
     navigate('/records');
   };
-
-  useEffect(() => {
-    const site = localStorage.getItem('user_site');
-
-    if (site) {
-      navigate('/records');
-    }
-  }, []);
 
   return (
     <div className="h-screen w-full bg-bg-home flex text-white">

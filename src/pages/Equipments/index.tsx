@@ -115,6 +115,12 @@ const Equipments = () => {
     }
   }, [formValue]);
 
+  useEffect(() => {
+    if (localSite === null) {
+      navigate('/');
+    }
+  }, [localSite]);
+
   return (
     <LayoutBase showMenu>
       <div className="flex flex-col w-full justify-between bg-[#F1F1F1]">

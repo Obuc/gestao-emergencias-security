@@ -57,6 +57,12 @@ const Records = () => {
     }
   }, [formValue]);
 
+  useEffect(() => {
+    if (localSite === null) {
+      navigate('/');
+    }
+  }, [localSite]);
+
   const handleExportToExcel = () => {
     switch (formValue) {
       case 'extinguisher':
