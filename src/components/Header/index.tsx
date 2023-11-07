@@ -30,6 +30,7 @@ const Header = () => {
 
   const handleChangeSite = () => {
     localStorage.removeItem('user_site');
+    localStorage.removeItem('equipments_value');
 
     navigate('/');
   };

@@ -12,7 +12,10 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path="/" element={!site ? <Home /> : <Navigate to={`/records/${equipments_value}`} />} />
+      <Route
+        path="/"
+        element={!site && !equipments_value ? <Home /> : <Navigate to={`/records/${equipments_value}`} />}
+      />
 
       <Route path="/records/:form" element={<Records />} />
       <Route path="/records/:form/:id" element={<Records />} />

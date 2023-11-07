@@ -54,7 +54,7 @@ const GovernanceValveTable = () => {
 
   const handleRemove = async () => {
     if (removeItem) {
-      mutateRemoveGovernanceValve(removeItem);
+      await mutateRemoveGovernanceValve(removeItem);
       setRemoveItem(null);
     }
   };
