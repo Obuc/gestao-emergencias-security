@@ -48,11 +48,11 @@ const Records = () => {
   const [formValue, setFormValue] = useState<string>(equipments_value ?? 'extinguisher');
 
   useEffect(() => {
-    !equipments_value?.length && localStorage.setItem('equipments_value', 'extinguisher');
+    localSite && !equipments_value?.length && localStorage.setItem('equipments_value', 'extinguisher');
   }, []);
 
   useEffect(() => {
-    if (params.id === undefined) {
+    if (params.id === undefined && formValue) {
       navigate(`/records/${formValue}`);
     }
   }, [formValue]);

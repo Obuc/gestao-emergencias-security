@@ -2,22 +2,27 @@ import { useState } from 'react';
 import { saveAs } from 'file-saver';
 import { Skeleton } from '@mui/material';
 import { pdf } from '@react-pdf/renderer';
-import { faDownload } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload, faFilter, faFilterCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
 import { EqQRCodePdf } from '../../pdf/EqQRCodePdf';
 import { Table } from '../../../../../components/Table';
 import Checkbox from '../../../../../components/Checkbox';
 import { Button } from '../../../../../components/Button';
+import TextField from '../../../../../components/TextField';
 import useEqExtinguisher from '../../../hooks/useEqExtinguisher';
 import { IEqExtinguisher } from '../../../types/EquipmentsExtinguisher';
 
 const EqExtinguisherQRCode = () => {
   const site_value = localStorage.getItem('user_site');
-  const { eqExtinguisher, isLoadingEqExtinguisher, isErrorEqExtinguisher } = useEqExtinguisher();
+  const { eqExtinguisher, isLoadingEqExtinguisher, isErrorEqExtinguisher, filtersQRCode, setFiltersQRCode } =
+    useEqExtinguisher();
 
   const [selectAll, setSelectAll] = useState(false);
   const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<any[]>([]);
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
+
+  const [filter, setFilter] = useState<boolean>(false);
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
@@ -53,23 +58,96 @@ const EqExtinguisherQRCode = () => {
   };
 
   return (
-    <>
+    <div className="w-full">
       <Table.Root>
         <Table.Thead>
-          <Table.Tr className="bg-[#FCFCFC]">
+          <Table.Tr className="bg-[#FCFCFC] border border-[#EEE]">
             <Table.Th className="pl-8">
               <Checkbox checked={selectAll} onClick={toggleSelectAll} />
             </Table.Th>
-            <Table.Th>Cód. Equipamento</Table.Th>
-            <Table.Th>Predio</Table.Th>
-            <Table.Th>Local</Table.Th>
-            <Table.Th>Pavimento</Table.Th>
+            <Table.Th>
+              <div className="flex flex-col max-w-[5rem] gap-4 py-4 items-center">
+                Id
+                {filter && (
+                  <TextField
+                    id="id"
+                    name="id"
+                    value={filtersQRCode.id ?? ''}
+                    onChange={(event) => setFiltersQRCode((prev) => ({ ...prev, id: event.target.value }))}
+                  />
+                )}
+              </div>
+            </Table.Th>
+            <Table.Th>
+              <div className="flex flex-col max-w-[9.375rem] gap-4 py-4 items-center">
+                Cód. Extintor
+                {filter && (
+                  <TextField
+                    id="cod_equipamento"
+                    name="cod_equipamento"
+                    value={filtersQRCode.cod_equipamento ?? ''}
+                    onChange={(event) => setFiltersQRCode((prev) => ({ ...prev, cod_equipamento: event.target.value }))}
+                  />
+                )}
+              </div>
+            </Table.Th>
+            <Table.Th>
+              <div className="flex flex-col max-w-[7.5rem] gap-4 py-4 items-center">
+                Predio
+                {filter && (
+                  <TextField
+                    id="predio"
+                    name="predio"
+                    value={filtersQRCode.predio ?? ''}
+                    onChange={(event) => setFiltersQRCode((prev) => ({ ...prev, predio: event.target.value }))}
+                  />
+                )}
+              </div>
+            </Table.Th>
+            <Table.Th>
+              <div className="flex flex-col max-w-[7.5rem] gap-4 py-4 items-center">
+                Local
+                {filter && (
+                  <TextField
+                    id="local"
+                    name="local"
+                    value={filtersQRCode.local ?? ''}
+                    onChange={(event) => setFiltersQRCode((prev) => ({ ...prev, local: event.target.value }))}
+                  />
+                )}
+              </div>
+            </Table.Th>
+            <Table.Th>
+              <div className="flex flex-col max-w-[7.5rem] gap-4 py-4 items-center">
+                Pavimento
+                {filter && (
+                  <TextField
+                    id="pavimento"
+                    name="pavimento"
+                    value={filtersQRCode.pavimento ?? ''}
+                    onChange={(event) => setFiltersQRCode((prev) => ({ ...prev, pavimento: event.target.value }))}
+                  />
+                )}
+              </div>
+            </Table.Th>
+            <Table.Th>
+              <FontAwesomeIcon
+                className="cursor-pointer"
+                icon={filter ? faFilterCircleXmark : faFilter}
+                onClick={() => {
+                  if (selectAll) {
+                    toggleSelectAll();
+                  }
+                  setFilter((prev) => !prev);
+                }}
+              />
+            </Table.Th>
           </Table.Tr>
         </Table.Thead>
-        <Table.Tbody className="block max-h-[28rem] overflow-y-scroll">
+        <Table.Tbody className="block h-[28rem] overflow-y-scroll">
           {eqExtinguisher?.length === 0 && (
             <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-              <Table.Td colSpan={5} className="text-center text-primary">
+              <Table.Td colSpan={6} className="text-center text-primary">
                 Nenhum extintor encontrado!
               </Table.Td>
             </Table.Tr>
@@ -77,7 +155,7 @@ const EqExtinguisherQRCode = () => {
 
           {isErrorEqExtinguisher && (
             <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-              <Table.Td colSpan={5} className="text-center text-primary">
+              <Table.Td colSpan={6} className="text-center text-primary">
                 Ops, ocorreu um erro, recarregue a página e tente novamente!
               </Table.Td>
             </Table.Tr>
@@ -87,7 +165,7 @@ const EqExtinguisherQRCode = () => {
             <>
               {Array.from({ length: 15 }).map((_, index) => (
                 <Table.Tr key={index}>
-                  <Table.Td className="h-14 px-4" colSpan={5}>
+                  <Table.Td className="h-14 px-4" colSpan={6}>
                     <Skeleton height="3.5rem" animation="wave" />
                   </Table.Td>
                 </Table.Tr>
@@ -104,10 +182,12 @@ const EqExtinguisherQRCode = () => {
                     onClick={() => toggleSelectItem(item)}
                   />
                 </Table.Td>
-                <Table.Td className="pl-8">{item.cod_qrcode}</Table.Td>
+                <Table.Td className="pl-8">{item.Id}</Table.Td>
+                <Table.Td>{item.cod_extintor ?? '-'}</Table.Td>
                 <Table.Td>{item.predio}</Table.Td>
                 <Table.Td>{item.local}</Table.Td>
                 <Table.Td>{item.pavimento}</Table.Td>
+                <Table.Td>{``}</Table.Td>
               </Table.Tr>
             ))}
         </Table.Tbody>
@@ -125,7 +205,7 @@ const EqExtinguisherQRCode = () => {
           )}
         </Button.Root>
       </div>
-    </>
+    </div>
   );
 };
 

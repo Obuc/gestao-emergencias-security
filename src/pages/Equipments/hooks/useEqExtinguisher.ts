@@ -1,9 +1,15 @@
 import * as XLSX from 'xlsx';
+import { useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../context/sharepointContext';
-import { IEqExtinguisher, IEqExtinguisherFiltersProps, IEqExtinguisherModal } from '../types/EquipmentsExtinguisher';
+import {
+  IEqExintguisherFiltersQRCodeProps,
+  IEqExtinguisher,
+  IEqExtinguisherFiltersProps,
+  IEqExtinguisherModal,
+} from '../types/EquipmentsExtinguisher';
 
 const useEqExtinguisher = (eqExtinguisherFilters?: IEqExtinguisherFiltersProps) => {
   const { crud } = sharepointContext();
@@ -11,6 +17,14 @@ const useEqExtinguisher = (eqExtinguisherFilters?: IEqExtinguisherFiltersProps) 
   const location = useLocation();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
+
+  const [filtersQRCode, setFiltersQRCode] = useState<IEqExintguisherFiltersQRCodeProps>({
+    id: null,
+    cod_equipamento: null,
+    predio: null,
+    local: null,
+    pavimento: null,
+  });
 
   let path = `?$Select=Id,cod_qrcode,cod_extintor,excluido,Modified,conforme,site/Title,pavimento/Title,local/Title,tipo_extintor/Title&$expand=site,pavimento,tipo_extintor,local&$Orderby=Modified desc&$Top=25&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
 
@@ -147,9 +161,30 @@ const useEqExtinguisher = (eqExtinguisherFilters?: IEqExtinguisherFiltersProps) 
     isLoading: isLoadingEqExtinguisher,
     isError: isErrorEqExtinguisher,
   }: UseQueryResult<Array<IEqExtinguisher>> = useQuery({
-    queryKey: ['eq_extinguisher_data'],
+    queryKey: ['eq_extinguisher_data', filtersQRCode],
     queryFn: async () => {
-      const path = `?$Select=Id,cod_qrcode,predio/Title,tipo_extintor/Title,pavimento/Title,local/Title,site/Title,cod_extintor,conforme&$expand=tipo_extintor,predio,site,pavimento,local&$Filter(site/Title eq '${user_site}')`;
+      let path = `?$Select=Id,cod_qrcode,predio/Title,tipo_extintor/Title,pavimento/Title,local/Title,site/Title,cod_extintor,conforme&$expand=tipo_extintor,predio,site,pavimento,local&$Filter=(site/Title eq '${user_site}')`;
+
+      if (filtersQRCode?.id) {
+        path += ` and ( substringof('${filtersQRCode?.id}', Id ))`;
+      }
+
+      if (filtersQRCode?.cod_equipamento) {
+        path += ` and ( substringof('${filtersQRCode?.cod_equipamento}', cod_extintor ))`;
+      }
+
+      if (filtersQRCode?.predio) {
+        path += ` and ( substringof('${filtersQRCode?.predio}', predio/Title ))`;
+      }
+
+      if (filtersQRCode?.local) {
+        path += ` and ( substringof('${filtersQRCode?.local}', local/Title ))`;
+      }
+
+      if (filtersQRCode?.pavimento) {
+        path += ` and ( substringof('${filtersQRCode?.pavimento}', pavimento/Title ))`;
+      }
+
       const resp = await crud.getListItems('extintores', path);
 
       const dataWithTransformations = await Promise.all(
@@ -243,6 +278,9 @@ const useEqExtinguisher = (eqExtinguisherFilters?: IEqExtinguisherFiltersProps) 
     isErrorEqExtinguisher,
     qrCodeExtinguisherValue,
     handleExportExtinguisherToExcel,
+
+    filtersQRCode,
+    setFiltersQRCode,
   };
 };
 

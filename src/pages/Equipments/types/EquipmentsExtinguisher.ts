@@ -45,3 +45,11 @@ export interface IEqExtinguisherFiltersProps {
   extinguisherId: string | null;
   conformity: string | null;
 }
+
+export interface IEqExintguisherFiltersQRCodeProps {
+  id: string | null;
+  cod_equipamento: string | null;
+  predio: string | null;
+  local: string | null;
+  pavimento: string | null;
+}
