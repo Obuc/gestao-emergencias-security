@@ -48,20 +48,27 @@ const Records = () => {
   const [formValue, setFormValue] = useState<string>(equipments_value ?? 'extinguisher');
 
   useEffect(() => {
-    localSite && !equipments_value?.length && localStorage.setItem('equipments_value', 'extinguisher');
+    if (localSite?.length && !equipments_value?.length) {
+      localStorage.setItem('equipments_value', 'extinguisher');
+    }
   }, []);
 
   useEffect(() => {
-    if (params.id === undefined && formValue) {
+    if (params.id === undefined && formValue.length && localSite?.length) {
       navigate(`/records/${formValue}`);
     }
   }, [formValue]);
 
   useEffect(() => {
     if (localSite === null) {
-      navigate('/');
+      localStorage.removeItem('user_site');
+      localStorage.removeItem('equipments_value');
+
+      if (window.location.pathname !== '/') {
+        navigate('/');
+      }
     }
-  }, [localSite]);
+  }, [localSite, navigate]);
 
   const handleExportToExcel = () => {
     switch (formValue) {

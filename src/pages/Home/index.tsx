@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
@@ -17,12 +17,26 @@ const Home = () => {
   const [site, setSite] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
 
+  const localSite = localStorage.getItem('user_site');
+  const equipments_value = localStorage.getItem('equipments_value');
+
   const handleStart = () => {
     if (!site) return;
+
+    if (site === 'SPO') {
+      window.location.href = 'https://bayergroup.sharepoint.com/sites/005070/system/index_brigada.html';
+      return;
+    }
 
     localStorage.setItem('user_site', site);
     navigate('/records');
   };
+
+  useEffect(() => {
+    if (localSite?.length) {
+      navigate(`/records/${equipments_value?.length ? equipments_value?.length : 'extinguisher'}`);
+    }
+  }, [localSite, equipments_value]);
 
   return (
     // <div className="h-screen w-full bg-bg-home flex text-white">

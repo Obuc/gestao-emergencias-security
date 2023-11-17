@@ -7,15 +7,11 @@ import Schedule from './pages/Schedule';
 import Equipments from './pages/Equipments';
 
 const App = () => {
-  const site = localStorage.getItem('user_site');
   const equipments_value = localStorage.getItem('equipments_value');
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={!site && !equipments_value ? <Home /> : <Navigate to={`/records/${equipments_value}`} />}
-      />
+      <Route path="/" element={<Home />} />
 
       <Route path="/records/:form" element={<Records />} />
       <Route path="/records/:form/:id" element={<Records />} />
