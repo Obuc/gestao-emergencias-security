@@ -77,9 +77,11 @@ export const EqQRCodePdf = ({ data, qrCodeValueEquipment, qrCodeValueDescription
     return `https://chart.googleapis.com/chart?chs=95x75&cht=qr&chl=${qrCodeValue}`;
   };
 
+  const pageSize = qrCodeValueDescription === 'Teste CMI' || qrCodeValueDescription === 'Inspeção CMI' ? 'A4' : 'A0';
+
   return (
     <Document>
-      <Page size="A0" wrap style={styles.page}>
+      <Page size={pageSize} wrap style={styles.page}>
         {data.map((value) => (
           <View style={styles.container} key={value.Id} wrap={false}>
             <View style={styles.header}>

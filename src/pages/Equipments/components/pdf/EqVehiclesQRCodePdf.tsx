@@ -89,7 +89,7 @@ export const EqVehiclesQRCodePdf = ({
 
   return (
     <Document>
-      <Page size="A0" wrap style={styles.page}>
+      <Page size="A4" wrap style={styles.page}>
         {data.map((value) => {
           return (
             <View style={styles.container} key={value.Id} wrap={false}>
