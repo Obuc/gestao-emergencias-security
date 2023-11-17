@@ -1,9 +1,8 @@
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
 
-import HeaderBg from '../../../../assets/Caminho 3692.png';
-
-import BXOLogo from '../../../../assets/BXOLogo.png';
 import SPOLogo from '../../../../assets/SPO.png';
+import BXOLogo from '../../../../assets/BXOLogo.png';
+import HeaderBg from '../../../../assets/Caminho 3692.png';
 
 const styles = StyleSheet.create({
   page: {
@@ -90,9 +89,11 @@ export const EqQRCodePdf = ({ data, qrCodeValueEquipment, qrCodeValueDescription
 
             <View style={styles.containerQrCode}>
               <Image src={generateQRCodeURL(value)} />
-              <Text
-                style={styles.footerTitle}
-              >{`${qrCodeValueDescription}/${value?.site}/${value?.predio}/${value?.pavimento}`}</Text>
+              <Text style={styles.footerTitle}>
+                {qrCodeValueDescription === 'Hidrantes'
+                  ? `${qrCodeValueDescription}/${value?.cod_hidrante}/${value?.site}/${value?.predio}/${value?.pavimento}`
+                  : `${qrCodeValueDescription}/${value?.site}/${value?.predio}/${value?.pavimento}`}
+              </Text>
 
               {value.site === 'BXO' && <Image src={BXOLogo} style={styles.siteLogo} />}
               {value.site === 'SPO' && <Image src={SPOLogo} style={styles.siteLogo} />}

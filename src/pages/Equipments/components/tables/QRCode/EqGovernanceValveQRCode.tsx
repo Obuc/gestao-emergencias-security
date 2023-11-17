@@ -43,11 +43,17 @@ const EqGovernanceValveQRCode = () => {
   const exportToPdf = async () => {
     setGeneratePdf(true);
     const blob = await pdf(
-      <EqQRCodePdf data={selectedItemsGovernanceValve} qrCodeValueEquipment="Valvula" qrCodeValueDescription='Valvula' />,
+      <EqQRCodePdf
+        data={selectedItemsGovernanceValve}
+        qrCodeValueEquipment="Valvula"
+        qrCodeValueDescription="Valvula"
+      />,
     ).toBlob();
     saveAs(blob, `QRCode VGA - ${site_value}.pdf`);
     setGeneratePdf(false);
   };
+
+  console.log(selectedItemsGovernanceValve);
 
   return (
     <>
