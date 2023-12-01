@@ -94,6 +94,8 @@ export const EqQRCodePdf = ({ data, qrCodeValueEquipment, qrCodeValueDescription
               <Text style={styles.footerTitle}>
                 {qrCodeValueDescription === 'Hidrantes'
                   ? `${qrCodeValueDescription}/${value?.cod_hidrante}/${value?.site}/${value?.predio}/${value?.pavimento}`
+                  : qrCodeValueDescription === 'Valvula'
+                  ? `${qrCodeValueDescription}/${value?.cod_equipamento}/${value?.site}/${value?.predio}/${value?.pavimento}`
                   : `${qrCodeValueDescription}/${value?.site}/${value?.predio}/${value?.pavimento}`}
               </Text>
 

@@ -449,8 +449,6 @@ class CrudSharepoint {
         this.digestToken = await this.getDigest();
       }
 
-      console.log(this.digestToken.length);
-
       const dataToSend = {
         properties: {
           To: {
@@ -490,7 +488,6 @@ class CrudSharepoint {
       };
 
       const response = await axios.post(sendEmailUrl, JSON.stringify(dataToSend), { headers });
-      console.log(response.data);
       return response.data;
     } catch (error) {
       throw error;

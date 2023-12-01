@@ -53,8 +53,6 @@ const EqGovernanceValveQRCode = () => {
     setGeneratePdf(false);
   };
 
-  console.log(selectedItemsGovernanceValve);
-
   return (
     <>
       <Table.Root>
@@ -107,7 +105,7 @@ const EqGovernanceValveQRCode = () => {
                     onClick={() => toggleSelectItem(item)}
                   />
                 </Table.Td>
-                <Table.Td className="pl-8">{item.cod_qrcode}</Table.Td>
+                <Table.Td className="pl-8">{item?.cod_equipamento}</Table.Td>
                 <Table.Td>{item?.predio}</Table.Td>
                 <Table.Td>{item?.pavimento}</Table.Td>
                 <Table.Td>{item?.local}</Table.Td>
