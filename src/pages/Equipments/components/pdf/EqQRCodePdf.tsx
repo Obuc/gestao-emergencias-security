@@ -77,7 +77,12 @@ export const EqQRCodePdf = ({ data, qrCodeValueEquipment, qrCodeValueDescription
     return `https://chart.googleapis.com/chart?chs=95x75&cht=qr&chl=${qrCodeValue}`;
   };
 
-  const pageSize = qrCodeValueDescription === 'Teste CMI' || qrCodeValueDescription === 'Inspeção CMI' ? 'A4' : 'A0';
+  const pageSize =
+    qrCodeValueDescription === 'Teste CMI' ||
+    qrCodeValueDescription === 'Inspeção CMI' ||
+    qrCodeValueDescription === 'Valvula'
+      ? 'A4'
+      : 'A0';
 
   return (
     <Document>
