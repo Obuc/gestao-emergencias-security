@@ -3,6 +3,7 @@ import CrudSharepoint from '../services/api';
 
 interface ISharepointContext {
   crud: CrudSharepoint;
+  crudParent: CrudSharepoint;
 }
 
 const SharepointContext = createContext<ISharepointContext>({} as ISharepointContext);
@@ -14,12 +15,19 @@ export const SharepointProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       ? import.meta.env.VITE_BASE_URL_SHAREPOINT_DEV
       : import.meta.env.VITE_BASE_URL_SHAREPOINT_PROD;
 
+  const baseUrlParent =
+    import.meta.env.VITE_ENV === 'development'
+      ? import.meta.env.VITE_BASE_URL_SHAREPOINT_PARENT_DEV
+      : import.meta.env.VITE_BASE_URL_SHAREPOINT_PARENT_PROD;
+
   const crud = new CrudSharepoint(baseUrl);
+  const crudParent = new CrudSharepoint(baseUrlParent);
 
   return (
     <SharepointContext.Provider
       value={{
         crud,
+        crudParent,
       }}
     >
       {children}

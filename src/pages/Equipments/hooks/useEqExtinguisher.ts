@@ -207,6 +207,36 @@ const useEqExtinguisher = (eqExtinguisherFilters?: IEqExtinguisherFiltersProps) 
     enabled: location.pathname === '/equipments/extinguisher',
   });
 
+  // const data = useQuery({
+  //   queryKey: ['eq_extinguisher_data_2', filtersQRCode],
+  //   queryFn: async () => {
+  //     // let path = `?$Select=*&$Filter=((Id ge '3699') and (Id ne '3891'))`; // Extintor
+  //     // let path = `?$Select=*&$Filter=((Id ge '299') and (Id ne '318'))`; // Hidrante
+  //     // let path = `?$Select=*&$Filter=((Id ge '261') and (Id ne '276'))`; // Porta
+  //     let path = `?$Select=*&$Filter=(Id eq '260')`; // Casa de Bombas
+
+  //     const resp = await crudParent.getListItems('Diversos_Equipamentos', path);
+
+  //     // const dataWithTransformations = await Promise.all(
+  //     //   resp.map(async (item: any) => {
+  //     //     return {
+  //     //       ...item,
+  //     //       local: item.local?.Title,
+  //     //       pavimento: item.pavimento?.Title,
+  //     //       site: item.site?.Title,
+  //     //       predio: item.predio?.Title,
+  //     //       tipo_extintor: item.tipo_extintor?.Title,
+  //     //     };
+  //     //   }),
+  //     // );
+
+  //     return resp;
+  //   },
+  //   staleTime: 5000 * 60, // 5 Minute
+  //   refetchOnWindowFocus: false,
+  //   enabled: location.pathname === '/equipments/extinguisher',
+  // });
+
   const { mutateAsync: mutateRemoveEquipment, isLoading: isLoadingMutateRemoveEquipment } = useMutation({
     mutationFn: async (itemId: number) => {
       await crud.updateItemList('extintores', itemId, { excluido: true });
@@ -281,6 +311,8 @@ const useEqExtinguisher = (eqExtinguisherFilters?: IEqExtinguisherFiltersProps) 
 
     filtersQRCode,
     setFiltersQRCode,
+
+    // data,
   };
 };
 

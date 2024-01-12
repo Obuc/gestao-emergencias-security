@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     width: '6cm',
-    height: '8.5cm',
+    height: '9.2cm',
     border: 1,
     gap: 4,
     borderColor: '#000',
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
   },
   footerTitle: {
     fontSize: 10,
+    textAlign: 'center',
   },
   containerSiteLogo: {
     height: '100%',
@@ -60,8 +61,8 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   siteLogo: {
-    width: 30,
-    height: 32,
+    height: 36,
+    marginVertical: 8,
   },
 });
 
@@ -73,8 +74,14 @@ interface IEqQRCodePdfProps {
 
 export const EqQRCodePdf = ({ data, qrCodeValueEquipment, qrCodeValueDescription }: IEqQRCodePdfProps) => {
   const generateQRCodeURL = (value: any) => {
-    const qrCodeValue = `${qrCodeValueEquipment};${value?.site};${value?.cod_qrcode}`;
-    return `https://chart.googleapis.com/chart?chs=95x75&cht=qr&chl=${qrCodeValue}`;
+    const qrCodeValue = `${qrCodeValueEquipment};${value?.site};${value?.cod_qrcode}`; // Exintor
+
+    // Casa;SP;São Paulo;SPO;SPO - Site São Paulo;622
+    // const qrCodeValue = `Casa;SP;São Paulo;SPO;SPO - Site São Paulo;${value.Predio}`; // Hidrante
+    // const qrCodeValue = `Porta;SP;São Paulo;SPO;SPO - Site São Paulo;${value.Predio};${value.Pavimento};;${value.Title}`; // Porta
+
+    // return `https://chart.googleapis.com/chart?chs=95x75&cht=qr&chl=1`;
+    return `https://quickchart.io/qr?text=${qrCodeValue}`;
   };
 
   const pageSize =
@@ -111,5 +118,29 @@ export const EqQRCodePdf = ({ data, qrCodeValueEquipment, qrCodeValueDescription
         ))}
       </Page>
     </Document>
+
+    // <Document>
+    //   <Page size={'A4'} wrap style={styles.page}>
+    //     {data.map((value) => (
+    //       <View style={styles.container} key={value.Id} wrap={false}>
+    //         <View style={styles.header}>
+    //           <Text style={styles.headerTitle}>Gestão de Emergência</Text>
+    //           <Image src={HeaderBg} style={styles.headerBg} />
+    //         </View>
+
+    //         <View style={styles.containerQrCode}>
+    //           <Image src={generateQRCodeURL(value)} />
+    //           <Text style={styles.footerTitle}>
+    //             {`Casa de bombas`}
+
+    //             {/* Porta/ Predio 504/4º Hall */}
+    //           </Text>
+
+    //           <Image src={SPOLogo} style={styles.siteLogo} />
+    //         </View>
+    //       </View>
+    //     ))}
+    //   </Page>
+    // </Document>
   );
 };

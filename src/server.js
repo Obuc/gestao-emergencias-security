@@ -1,13 +1,9 @@
-const RestProxy = require("sp-rest-proxy");
+import RestProxy from "sp-rest-proxy";
 
 const settings = {
-  configPath: "./config/private.json", // Location for SharePoint instance mapping and credentials
-
-  port: 8080, // Local server port
-
-  staticRoot: "./node_modules/sp-rest-proxy/static", // Root folder for static content
+  configPath: "./config/private.json", // Local para mapeamento e credenciais de instância do SharePoint
+  port: 8080,                          // Porta do servidor local
 };
 
 const restProxy = new RestProxy(settings);
-
 restProxy.serve();
