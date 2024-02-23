@@ -74,53 +74,28 @@ interface IEqQRCodePdfProps {
 
 export const EqQRCodePdf = ({ data, qrCodeValueEquipment, qrCodeValueDescription }: IEqQRCodePdfProps) => {
   const generateQRCodeURL = (value: any) => {
-    const qrCodeValue = `${qrCodeValueEquipment};${value?.site};${value?.cod_qrcode}`; // Exintor
+    // const qrCodeValue = `${qrCodeValueEquipment};${value?.site};${value?.cod_qrcode}`; // Default
 
+    // const qrCodeValue = `Extintor;SP;São Paulo;SPO;SPO - Site São Paulo;${value.Predio};${value.Title};${value.Tipo};${value.peso_extintor};${value.LocEsp}`; // Exintor
+    // const qrCodeValue = `Hidrante;SP;São Paulo;SPO;SPO - Site São Paulo;${value.Predio};${value.numero_hidrante};null;${value.diametro};${value.comprimento};${value.Pavimento};${value.LocEsp};null;${value.Title}`; // Hidrante
     // Casa;SP;São Paulo;SPO;SPO - Site São Paulo;622
-    // const qrCodeValue = `Casa;SP;São Paulo;SPO;SPO - Site São Paulo;${value.Predio}`; // Hidrante
-    // const qrCodeValue = `Porta;SP;São Paulo;SPO;SPO - Site São Paulo;${value.Predio};${value.Pavimento};;${value.Title}`; // Porta
+
+    const qrCodeValue = `Porta;SP;São Paulo;SPO;SPO - Site São Paulo;${value.Predio};${value.Pavimento};;${value.Title}`; // Porta
 
     // return `https://chart.googleapis.com/chart?chs=95x75&cht=qr&chl=1`;
     return `https://quickchart.io/qr?text=${qrCodeValue}`;
   };
 
-  const pageSize =
-    qrCodeValueDescription === 'Teste CMI' ||
-    qrCodeValueDescription === 'Inspeção CMI' ||
-    qrCodeValueDescription === 'Valvula'
-      ? 'A4'
-      : 'A0';
+  // const pageSize =
+  //   qrCodeValueDescription === 'Teste CMI' ||
+  //   qrCodeValueDescription === 'Inspeção CMI' ||
+  //   qrCodeValueDescription === 'Valvula'
+  //     ? 'A4'
+  //     : 'A0';
 
   return (
-    <Document>
-      <Page size={pageSize} wrap style={styles.page}>
-        {data.map((value) => (
-          <View style={styles.container} key={value.Id} wrap={false}>
-            <View style={styles.header}>
-              <Text style={styles.headerTitle}>Gestão de Emergência</Text>
-              <Image src={HeaderBg} style={styles.headerBg} />
-            </View>
-
-            <View style={styles.containerQrCode}>
-              <Image src={generateQRCodeURL(value)} />
-              <Text style={styles.footerTitle}>
-                {qrCodeValueDescription === 'Hidrantes'
-                  ? `${qrCodeValueDescription}/${value?.cod_hidrante}/${value?.site}/${value?.predio}/${value?.pavimento}`
-                  : qrCodeValueDescription === 'Valvula'
-                  ? `${qrCodeValueDescription}/${value?.cod_equipamento}/${value?.site}/${value?.predio}/${value?.pavimento}`
-                  : `${qrCodeValueDescription}/${value?.site}/${value?.predio}/${value?.pavimento}`}
-              </Text>
-
-              {value.site === 'BXO' && <Image src={BXOLogo} style={styles.siteLogo} />}
-              {value.site === 'SPO' && <Image src={SPOLogo} style={styles.siteLogo} />}
-            </View>
-          </View>
-        ))}
-      </Page>
-    </Document>
-
     // <Document>
-    //   <Page size={'A4'} wrap style={styles.page}>
+    //   <Page size={pageSize} wrap style={styles.page}>
     //     {data.map((value) => (
     //       <View style={styles.container} key={value.Id} wrap={false}>
     //         <View style={styles.header}>
@@ -131,16 +106,43 @@ export const EqQRCodePdf = ({ data, qrCodeValueEquipment, qrCodeValueDescription
     //         <View style={styles.containerQrCode}>
     //           <Image src={generateQRCodeURL(value)} />
     //           <Text style={styles.footerTitle}>
-    //             {`Casa de bombas`}
-
-    //             {/* Porta/ Predio 504/4º Hall */}
+    //             {qrCodeValueDescription === 'Hidrantes'
+    //               ? `${qrCodeValueDescription}/${value?.cod_hidrante}/${value?.site}/${value?.predio}/${value?.pavimento}`
+    //               : qrCodeValueDescription === 'Valvula'
+    //               ? `${qrCodeValueDescription}/${value?.cod_equipamento}/${value?.site}/${value?.predio}/${value?.pavimento}`
+    //               : `${qrCodeValueDescription}/${value?.site}/${value?.predio}/${value?.pavimento}`}
     //           </Text>
 
-    //           <Image src={SPOLogo} style={styles.siteLogo} />
+    //           {value.site === 'BXO' && <Image src={BXOLogo} style={styles.siteLogo} />}
+    //           {value.site === 'SPO' && <Image src={SPOLogo} style={styles.siteLogo} />}
     //         </View>
     //       </View>
     //     ))}
     //   </Page>
     // </Document>
+
+    <Document>
+      <Page size={'A4'} wrap style={styles.page}>
+        {data.map((value) => (
+          <View style={styles.container} key={value.Id} wrap={false}>
+            <View style={styles.header}>
+              <Text style={styles.headerTitle}>Gestão de Emergência</Text>
+              <Image src={HeaderBg} style={styles.headerBg} />
+            </View>
+
+            <View style={styles.containerQrCode}>
+              <Image src={generateQRCodeURL(value)} />
+              <Text style={[styles.footerTitle, { paddingHorizontal: 4 }]}>
+                {/* {`Extintor/${value.Predio}/${value.Pavimento}/${value.LocEsp}/${value.Title}`} Extintor SPO */}
+                {/*{`Hidrante/${value.Predio}/${value.Pavimento}/${value.numero_hidrante}/${value.Title}`} Hidrante SPO */}
+                {`Porta/${value.Predio}/${value.Pavimento}/${value.Title}`}
+              </Text>
+
+              <Image src={SPOLogo} style={styles.siteLogo} />
+            </View>
+          </View>
+        ))}
+      </Page>
+    </Document>
   );
 };
