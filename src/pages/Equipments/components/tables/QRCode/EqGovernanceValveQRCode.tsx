@@ -70,7 +70,7 @@ const EqGovernanceValveQRCode = () => {
         <Table.Tbody className="block max-h-[28rem] overflow-y-scroll">
           {eqGovernanceValve?.length === 0 && (
             <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-              <Table.Td colSpan={4} className="text-center text-primary">
+              <Table.Td colSpan={4} className="text-center text-primary-font">
                 Nenhuma válvula de governo encontrada!
               </Table.Td>
             </Table.Tr>
@@ -78,7 +78,7 @@ const EqGovernanceValveQRCode = () => {
 
           {isErrorEqGovernanceValve && (
             <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-              <Table.Td colSpan={4} className="text-center text-primary">
+              <Table.Td colSpan={4} className="text-center text-primary-font">
                 Ops, ocorreu um erro, recarregue a página e tente novamente!
               </Table.Td>
             </Table.Tr>

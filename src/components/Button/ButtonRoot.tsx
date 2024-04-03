@@ -2,19 +2,20 @@ import { ButtonBase, ButtonBaseProps, styled } from '@mui/material';
 
 interface IButtonProps extends ButtonBaseProps {
   fill?: boolean | string;
+  bgcolor?: string;
   children: React.ReactNode;
 }
 
-const ButtonRootStyle = styled(ButtonBase)<IButtonProps>(({ fill }) => ({
+const ButtonRootStyle = styled(ButtonBase)<IButtonProps>(({ fill, bgcolor }) => ({
   position: 'relative',
   padding: '.625rem',
   maxHeight: '2.5rem',
   fontFamily: 'Montserrat',
-  backgroundColor: fill ? '#10384F' : '#FFF',
-  color: fill ? '#FFF' : '#10384F',
-  border: !fill ? '1px solid #10384F' : 'none',
+  backgroundColor: fill ? (bgcolor ? bgcolor : '#10384F') : '#FFF',
+  color: bgcolor === '#f8f9fa' ? '#10384F' : fill ? '#FFF' : '#10384F',
+  border: !fill ? (bgcolor ? `1px solid ${bgcolor} ` : '1px solid #10384F') : 'none',
   fontWeight: 500,
-  textTransform: 'uppercase',
+  // textTransform: 'uppercase',
   display: 'flex',
   gap: '0.5rem',
   boxShadow: '0px 0px 4px 0px rgba(0, 0, 0, 0.25)',
@@ -39,9 +40,9 @@ const ButtonRootStyle = styled(ButtonBase)<IButtonProps>(({ fill }) => ({
   },
 }));
 
-export const ButtonRoot = ({ fill, children, ...props }: IButtonProps) => {
+export const ButtonRoot = ({ fill, bgcolor, children, ...props }: IButtonProps) => {
   return (
-    <ButtonRootStyle fill={fill?.toString()} {...props}>
+    <ButtonRootStyle fill={fill?.toString()} bgcolor={bgcolor} {...props}>
       {children}
     </ButtonRootStyle>
   );

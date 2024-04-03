@@ -23,10 +23,10 @@ const Home = () => {
   const handleStart = () => {
     if (!site) return;
 
-    if (site === 'SPO') {
-      window.location.href = 'https://bayergroup.sharepoint.com/sites/005070/system/index_brigada.html';
-      return;
-    }
+    // if (site === 'SPO') {
+    //   window.location.href = 'https://bayergroup.sharepoint.com/sites/005070/system/index_brigada.html';
+    //   return;
+    // }
 
     localStorage.setItem('user_site', site);
     navigate('/records');

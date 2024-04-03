@@ -55,7 +55,7 @@ const EqTestCmiQRCode = () => {
         <Table.Tbody className="block max-h-[28rem] overflow-y-scroll">
           {eqTestCmi?.length === 0 && (
             <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-              <Table.Td colSpan={3} className="text-center text-primary">
+              <Table.Td colSpan={3} className="text-center text-primary-font">
                 Nenhum equipamento encontrado!
               </Table.Td>
             </Table.Tr>
@@ -63,7 +63,7 @@ const EqTestCmiQRCode = () => {
 
           {isErrorEqTestCmi && (
             <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-              <Table.Td colSpan={3} className="text-center text-primary">
+              <Table.Td colSpan={3} className="text-center text-primary-font">
                 Ops, ocorreu um erro, recarregue a página e tente novamente!
               </Table.Td>
             </Table.Tr>

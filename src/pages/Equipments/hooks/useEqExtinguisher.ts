@@ -12,7 +12,7 @@ import {
 } from '../types/EquipmentsExtinguisher';
 
 const useEqExtinguisher = (eqExtinguisherFilters?: IEqExtinguisherFiltersProps) => {
-  const { crud, crudParent } = sharepointContext();
+  const { crud } = sharepointContext();
   const params = useParams();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -207,35 +207,35 @@ const useEqExtinguisher = (eqExtinguisherFilters?: IEqExtinguisherFiltersProps) 
     enabled: location.pathname === '/equipments/extinguisher',
   });
 
-  const data = useQuery({
-    queryKey: ['eq_extinguisher_data_2', filtersQRCode],
-    queryFn: async () => {
-      // let path = `?$Select=*&$Filter=((Id ge '3699') and (Id ne '3891'))`; // Extintor SPO
-      // let path = `?$Select=*&$Filter=((Id ge '299') and (Id ne '318'))`; // Hidrante SPO
-      let path = `?$Select=*&$Filter=((Id ge '261') and (Id ne '276'))`; // Porta SPO
-      // let path = `?$Select=*&$Filter=(Id eq '260')`; // Casa de Bombas
+  // const data = useQuery({
+  //   queryKey: ['eq_extinguisher_data_2', filtersQRCode],
+  //   queryFn: async () => {
+  //     // let path = `?$Select=*&$Filter=((Id ge '3699') and (Id ne '3891'))`; // Extintor SPO
+  //     // let path = `?$Select=*&$Filter=((Id ge '299') and (Id ne '318'))`; // Hidrante SPO
+  //     let path = `?$Select=*&$Filter=((Id ge '261') and (Id ne '276'))`; // Porta SPO
+  //     // let path = `?$Select=*&$Filter=(Id eq '260')`; // Casa de Bombas
 
-      const resp = await crudParent.getListItems('Hidrantes_Equipamentos', path);
+  //     const resp = await crudParent.getListItems('Hidrantes_Equipamentos', path);
 
-      // const dataWithTransformations = await Promise.all(
-      //   resp.map(async (item: any) => {
-      //     return {
-      //       ...item,
-      //       local: item.local?.Title,
-      //       pavimento: item.pavimento?.Title,
-      //       site: item.site?.Title,
-      //       predio: item.predio?.Title,
-      //       tipo_extintor: item.tipo_extintor?.Title,
-      //     };
-      //   }),
-      // );
+  //     // const dataWithTransformations = await Promise.all(
+  //     //   resp.map(async (item: any) => {
+  //     //     return {
+  //     //       ...item,
+  //     //       local: item.local?.Title,
+  //     //       pavimento: item.pavimento?.Title,
+  //     //       site: item.site?.Title,
+  //     //       predio: item.predio?.Title,
+  //     //       tipo_extintor: item.tipo_extintor?.Title,
+  //     //     };
+  //     //   }),
+  //     // );
 
-      return resp;
-    },
-    staleTime: 5000 * 60, // 5 Minute
-    refetchOnWindowFocus: false,
-    enabled: location.pathname === '/equipments/extinguisher',
-  });
+  //     return resp;
+  //   },
+  //   staleTime: 5000 * 60, // 5 Minute
+  //   refetchOnWindowFocus: false,
+  //   enabled: location.pathname === '/equipments/extinguisher',
+  // });
 
   const { mutateAsync: mutateRemoveEquipment, isLoading: isLoadingMutateRemoveEquipment } = useMutation({
     mutationFn: async (itemId: number) => {
@@ -311,8 +311,6 @@ const useEqExtinguisher = (eqExtinguisherFilters?: IEqExtinguisherFiltersProps) 
 
     filtersQRCode,
     setFiltersQRCode,
-
-    data,
   };
 };
 

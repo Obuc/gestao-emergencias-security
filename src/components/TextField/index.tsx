@@ -40,9 +40,9 @@ const TextField = ({ label, name, placeholder = '', width, errors, touched, isLo
   };
 
   return (
-    <div className={`flex flex-col relative text-primary ${width ? width : 'w-full'}`}>
+    <div className={`flex flex-col relative text-primary-font ${width ? width : 'w-full'}`}>
       {label && (
-        <label htmlFor={name} className="pb-2">
+        <label htmlFor={name} className="pb-2 font-[500]">
           {label}
         </label>
       )}

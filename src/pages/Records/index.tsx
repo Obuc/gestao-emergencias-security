@@ -128,7 +128,7 @@ const Records = () => {
         <div className="flex h-full flex-col p-8">
           <div className="flex pb-8 items-center w-full justify-between">
             <div className="flex gap-2 flex-col">
-              <label htmlFor="state_id" className="text-lg text-primary font-medium">
+              <label htmlFor="state_id" className="text-lg text-primary-font font-medium">
                 Selecionar formulário
               </label>
 

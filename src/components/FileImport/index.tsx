@@ -22,7 +22,7 @@ import { FilteImportRoot } from './FilteImportRoot';
 //     <div className="flex flex-col gap-2">
 //       <label
 //         htmlFor="file"
-//         className={`flex rounded h-14 w-[33rem] cursor-pointer gap-4 justify-between text-primary px-6 items-center border-dashed ${
+//         className={`flex rounded h-14 w-[33rem] cursor-pointer gap-4 justify-between text-primary-font px-6 items-center border-dashed ${
 //           error ? 'border-pink' : 'border-black/10'
 //         } border-2`}
 //       >

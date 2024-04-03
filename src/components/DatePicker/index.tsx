@@ -50,7 +50,7 @@ const InputDate = forwardRef<HTMLInputElement, IInputDateProps>((props, ref) => 
         ref={ref}
       />
 
-      <span className="outline-none text-primary" onClick={onClick}>
+      <span className="outline-none text-primary-font" onClick={onClick}>
         <FontAwesomeIcon icon={faCalendar} />
       </span>
     </div>
@@ -62,8 +62,8 @@ const DatePicker = (props: IDatePickerProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   return (
-    <div className={`flex flex-col justify-center text-primary ${width ? width : 'w-full'}`}>
-      {label && <label className="pb-2">{label}</label>}
+    <div className={`flex flex-col justify-center text-primary-font ${width ? width : 'w-full'}`}>
+      {label && <label className="pb-2 font-[500]">{label}</label>}
 
       {!isLoading && (
         <DatePickerReact

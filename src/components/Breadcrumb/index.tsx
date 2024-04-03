@@ -40,14 +40,14 @@ const Breadcrumb = () => {
     <>
       <div className="w-screen h-14 px-16 py-4 flex items-center">
         <Breadcrumbs
-          separator={<FontAwesomeIcon icon={faAngleRight} className="text-primary" />}
+          separator={<FontAwesomeIcon icon={faAngleRight} className="text-primary-font" />}
           aria-label="breadcrumb"
         >
-          <span className="text-primary font-montserrat text-base">Gestão Sistema de Emergência</span>
+          <span className="text-primary-font font-montserrat text-base">Gestão Sistema de Emergência</span>
 
           {breadcrumbLinks.map((item, index) => (
             <a
-              className={`transition-all ease-in delay-75 px-1 text-primary font-montserrat text-base ${
+              className={`transition-all ease-in delay-75 px-1 text-primary-font font-montserrat text-base ${
                 breadcrumbItems.length - 1 === index && 'font-semibold'
               }`}
               key={index}

@@ -11,7 +11,7 @@ interface IAnswersRootProps {
 export const AnswersRoot = ({ className, children, label, isLoading }: IAnswersRootProps) => {
   return (
     <div className={twMerge('py-4', className)}>
-      {!isLoading && <span className="text-xl text-primary font-medium py-3">{label}</span>}
+      {!isLoading && <span className="text-xl text-primary-font font-medium py-3">{label}</span>}
       {isLoading && <Skeleton className="py-3" />}
 
       {children}

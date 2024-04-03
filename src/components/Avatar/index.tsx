@@ -11,13 +11,9 @@ const Avatar = ({ image, username }: IAvatarProps) => {
 
   return (
     <AvatarRadix.Root className="w-10 h-10 rounded-full select-none flex items-center justify-center">
-      <AvatarRadix.Image
-        className="w-full h-full object-cover rounded-full"
-        src={image}
-        alt={username}
-      />
+      <AvatarRadix.Image className="w-full h-full object-cover rounded-full" src={image} alt={username} />
       <AvatarRadix.Fallback
-        className="w-10 h-10 flex rounded-full items-center justify-center bg-white text-primary font-medium"
+        className="w-10 h-10 flex rounded-full items-center justify-center bg-white text-primary-font font-medium"
         delayMs={600}
       >
         {fallback}

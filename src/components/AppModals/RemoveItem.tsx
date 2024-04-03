@@ -21,13 +21,13 @@ const RemoveItem = ({ open, onOpenChange, isLoading, handleRemove }: IRemoveItem
             max-w-[54.625rem] translate-x-[-50%] translate-y-[-50%] bg-white shadow focus:outline-none
            "
         >
-          <Dialog.Title className="h-16 w-full flex bg-[#F1F1F1] items-center text-xl text-primary ">
+          <Dialog.Title className="h-16 w-full flex bg-[#F1F1F1] items-center text-xl text-primary-font ">
             <div className="h-full w-[4.6875rem] mr-6 polygon bg-primary" />
             Excluir
           </Dialog.Title>
 
           <div className="pt-9 pb-8 flex flex-col gap-8 justify-center items-center w-full">
-            <span className="text-primary text-xl">Você deseja realmente excluir?</span>
+            <span className="text-primary-font text-xl">Você deseja realmente excluir?</span>
             <div className="flex gap-2">
               <Button.Root onClick={() => onOpenChange(null)} className="w-[10rem] h-10">
                 <Button.Label>Cancelar</Button.Label>

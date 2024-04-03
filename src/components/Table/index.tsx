@@ -70,7 +70,7 @@ import TableFilter from './TableFilter';
 
 //   return (
 //     <>
-//       <table className="min-[1100px]:h-[35.6rem] min-[1600px]:h-[41rem] min-[1800px]:h-[32rem] w-full block overflow-hidden text-primary -mt-2 border-spacing-y-2 border-separate p-px">
+//       <table className="min-[1100px]:h-[35.6rem] min-[1600px]:h-[41rem] min-[1800px]:h-[32rem] w-full block overflow-hidden text-primary-font -mt-2 border-spacing-y-2 border-separate p-px">
 //         <thead className="h-14 text-lg shadow-xs-primary-app bg-white">
 //           <tr>
 //             <th className="font-medium w-[3%] text-start pl-8">
@@ -120,7 +120,7 @@ import TableFilter from './TableFilter';
 //                 selectedOptions.updated_at) && (
 //                 <IconButton disabled={isLoading || isFetching} onClick={handleClearFilters}>
 //                   <Tooltip label="Limpar filtros">
-//                     <FontAwesomeIcon className="text-primary text-2xl w-6 h-6" icon={faFilterCircleXmark} />
+//                     <FontAwesomeIcon className="text-primary-font text-2xl w-6 h-6" icon={faFilterCircleXmark} />
 //                   </Tooltip>
 //                 </IconButton>
 //               )}

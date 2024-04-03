@@ -61,7 +61,7 @@ const Calendar = () => {
       <div className="flex gap-8 h-full items-center w-full justify-between">
         <div className="flex w-[45.9375rem] h-full bg-white">
           <div className="flex flex-col w-full shadow-xs-primary-app">
-            <div className="flex justify-between px-4 min-h-[4.625rem] items-center text-primary bg-[#F2F3F7]">
+            <div className="flex justify-between px-4 min-h-[4.625rem] items-center text-primary-font bg-[#F2F3F7]">
               <h2 className="text-2xl font-medium">
                 {monthsList[selectedMonth].label} {selectedYear}
               </h2>
@@ -79,7 +79,7 @@ const Calendar = () => {
             <div className="flex flex-col w-full h-full px-4 pb-4">
               <table className="h-full text-center text-lg text-[#303030]">
                 <thead>
-                  <tr className="h-[6.25rem] text-xl text-primary font-medium">
+                  <tr className="h-[6.25rem] text-xl text-primary-font font-medium">
                     <th className="font-medium">Dom</th>
                     <th className="font-medium">Seg</th>
                     <th className="font-medium">Ter</th>
@@ -173,7 +173,7 @@ const Calendar = () => {
                 </tbody>
               </table>
               <div className="h-full mt-2  flex flex-col gap-2">
-                <span className="text-primary text-xl font-medium">Legenda:</span>
+                <span className="text-primary-font text-xl font-medium">Legenda:</span>
                 <div className="flex gap-4">
                   <div className="flex flex-1 gap-2 items-center">
                     <span className="w-5 h-5 rounded-full bg-[#70EC364D]" />
@@ -259,12 +259,12 @@ const Calendar = () => {
               </div>
             </div>
 
-            <h2 className="px-6 py-6 text-2xl text-primary font-medium bg-white">Proximos Eventos:</h2>
+            <h2 className="px-6 py-6 text-2xl text-primary-font font-medium bg-white">Proximos Eventos:</h2>
 
             <div className="bg-white overflow-scroll h-full w-full">
               {!filteredEvents ||
                 (filteredEvents.length === 0 && (
-                  <div className="p-6 text-xl text-primary">
+                  <div className="p-6 text-xl text-primary-font">
                     <h2>Nenhum equipamento agendado nos próximos 30 dias para esta data.</h2>
                   </div>
                 ))}
@@ -291,7 +291,7 @@ const Calendar = () => {
                 return (
                   <div className="border-b p-6 border-b-primary/10" key={index}>
                     {!isLoadingDataEquipments && (
-                      <span className="text-[1.375rem] text-primary font-semibold">
+                      <span className="text-[1.375rem] text-primary-font font-semibold">
                         {format(date, "d 'de' MMMM - EEE", { locale: ptBR })}
                       </span>
                     )}

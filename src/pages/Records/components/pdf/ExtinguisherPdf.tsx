@@ -179,7 +179,7 @@ export const ExtinguisherPdf = ({ data }: IExtinguisherPdfProps) => {
 
   return (
     <Document>
-      <Page size="A4" wrap style={styles.page}>
+      <Page size={[600, 'auto']} wrap style={styles.page}>
         <View fixed style={styles.header}>
           <BayerLogoWhitePDF />
           <View style={styles.titleContainer}>
@@ -300,7 +300,7 @@ export const ExtinguisherPdf = ({ data }: IExtinguisherPdfProps) => {
 
             {/* Observações */}
             {data?.observacao && (
-              <View wrap={false} style={[styles.containerItem, { width: '100%' }]}>
+              <View style={[styles.containerItem, { width: '100%' }]}>
                 <Text style={styles.containerItemTitle}>Observações</Text>
                 <View style={styles.containerItemInput}>
                   <Text style={[styles.containerItemTitle, { flex: 1, paddingLeft: 8 }]}>{data?.observacao}</Text>
@@ -312,7 +312,7 @@ export const ExtinguisherPdf = ({ data }: IExtinguisherPdfProps) => {
 
         {data?.respostas &&
           Object.keys(data?.respostas).map((categoria) => (
-            <View style={styles.container} key={categoria} wrap={false}>
+            <View style={styles.container} key={categoria}>
               <View style={styles.containerHeader}>
                 <Text style={styles.containerTitle}>{categoria}</Text>
               </View>
@@ -338,6 +338,8 @@ export const ExtinguisherPdf = ({ data }: IExtinguisherPdfProps) => {
               </View>
             </View>
           ))}
+
+        <View style={{ marginBottom: 24 }}></View>
 
         <View style={styles.footer} fixed>
           <View style={styles.footerItem}>

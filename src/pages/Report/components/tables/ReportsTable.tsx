@@ -140,7 +140,7 @@ const ReportsTable = () => {
         </div>
 
         <button className="flex justify-center items-center gap-2 group" onClick={handleRemoveAllFilters}>
-          <span className="text-primary font-semibold">LIMPAR FILTROS</span>
+          <span className="text-primary-font font-semibold">LIMPAR FILTROS</span>
           <FontAwesomeIcon icon={faXmark} className="text-pink group-hover:text-pink/80 duration-200" />
         </button>
       </Table.Filter>
@@ -175,7 +175,7 @@ const ReportsTable = () => {
             <Table.Tbody>
               {reports?.pages[0]?.data?.value?.length === 0 && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={7} className="text-center text-primary">
+                  <Table.Td colSpan={7} className="text-center text-primary-font">
                     Nenhum laudo encontrado!
                   </Table.Td>
                 </Table.Tr>
@@ -183,7 +183,7 @@ const ReportsTable = () => {
 
               {isError && (
                 <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                  <Table.Td colSpan={7} className="text-center text-primary">
+                  <Table.Td colSpan={7} className="text-center text-primary-font">
                     Ops, ocorreu um erro, recarregue a página e tente novamente!
                   </Table.Td>
                 </Table.Tr>

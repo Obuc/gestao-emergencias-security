@@ -23,7 +23,7 @@ const Modal = ({ open, onOpenChange, title, className, children }: IModalProps) 
             className,
           )}
         >
-          <Dialog.Title className="h-16 w-full flex bg-[#F1F1F1] items-center text-xl text-primary ">
+          <Dialog.Title className="h-16 w-full flex bg-[#F1F1F1] items-center text-xl text-primary-font ">
             <div className="h-full w-[4.6875rem] mr-6 polygon bg-primary" />
             {title}
           </Dialog.Title>

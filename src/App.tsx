@@ -5,9 +5,13 @@ import Report from './pages/Report';
 import Records from './pages/Records';
 import Schedule from './pages/Schedule';
 import Equipments from './pages/Equipments';
+import ExtinguisherBXO from './pages/Records/Extinguisher/BXO';
+import ExtinguisherSPO from './pages/Records/Extinguisher/SPO';
 
 const App = () => {
   const equipments_value = localStorage.getItem('equipments_value');
+
+  const localSite = localStorage.getItem('user_site');
 
   return (
     <Routes>
@@ -27,6 +31,14 @@ const App = () => {
 
       <Route path="/records" element={<Navigate to={`/records/${equipments_value}`} />} />
       <Route path="/equipments" element={<Navigate to={`/equipments/${equipments_value}`} />} />
+
+      {/* Extinguisher  */}
+
+      <Route path="/records/extinguisher" element={localSite === 'BXO' ? <ExtinguisherBXO /> : <ExtinguisherSPO />} />
+      <Route
+        path="/records/extinguisher/:id"
+        element={localSite === 'BXO' ? <ExtinguisherBXO /> : <ExtinguisherSPO />}
+      />
     </Routes>
   );
 };

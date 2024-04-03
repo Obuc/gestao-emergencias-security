@@ -11,6 +11,7 @@ export default {
 
       colors: {
         'primary': '#10384F',
+        'primary-font': '#212529',
         'primary-opacity': 'rgba(16, 56, 79, .18)',
         'secondary': '#89D329',
         'background': '#FDFDFD',

@@ -15,12 +15,12 @@ const EqGenerateQRCodeModal = ({ open, onOpenChange, children }: IEqGenerateQRCo
 
   return (
     <Modal
-      className="w-[72.625rem]"
+      className="min-w-[68.75rem]"
       open={open !== null}
       onOpenChange={handleOnOpenChange}
       title={`Gerar QRCodes: ${equipments_value}`}
     >
-      <div className="flex flex-col gap-2 px-8 py-6 text-primary">
+      <div className="flex flex-col gap-2 px-8 py-6 text-primary-font">
         <span className="text-lg py-4">Selecione abaixo os equipamentos que deseja gerar os QRCodes.</span>
 
         {children}
