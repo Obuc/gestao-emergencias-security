@@ -6,41 +6,41 @@ import { useEffect, useState } from 'react';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
+import { HydrantPdfSPO } from './HydrantPdfSPO';
+import Toast from '../../../../../components/Toast';
 import Modal from '../../../../../components/Modal';
-import { ExtinguisherPdfSPO } from './ExtinguisherPdfSPO';
 import { Button } from '../../../../../components/Button';
 import TextArea from '../../../../../components/TextArea';
 import TextField from '../../../../../components/TextField';
 import { Answers } from '../../../../../components/Answers';
-import useExtinguisherModalSPO from '../hooks/useExtinguisherModalSPO';
-import Toast from '../../../../../components/Toast';
+import useHydrantModalSPO from '../hooks/useHydrantModalSPO';
 
-const ExtinguisherModalSPO = () => {
+const HydrantModalSPO = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isEdit = searchParams.get('edit') === 'true' ? true : false;
 
-  const { extinguisherItem, setExtinguisherItem, extinguisherModal, mutateEdit, formik } = useExtinguisherModalSPO();
+  const { hydrantItem, setHydrantItem, hydrantModal, mutateEdit, formik } = useHydrantModalSPO();
 
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
 
   useEffect(() => {
     if (params?.id) {
-      setExtinguisherItem(true);
+      setHydrantItem(true);
     }
   }, [params.id]);
 
   const handleOnOpenChange = () => {
-    setExtinguisherItem(null);
-    navigate('/records/extinguisher');
+    setHydrantItem(null);
+    navigate('/records/hydrants');
   };
 
   const exportToPdf = async () => {
     setGeneratePdf(true);
 
-    const blob = await pdf(<ExtinguisherPdfSPO data={extinguisherModal.data} />).toBlob();
-    saveAs(blob, `Registro Extintor - ID ${params.id} - ${format(new Date(), 'dd/MM/yyyy')}.pdf`);
+    const blob = await pdf(<HydrantPdfSPO data={hydrantModal.data} />).toBlob();
+    saveAs(blob, `Registro Hidrante SPO - ID ${params.id} - ${format(new Date(), 'dd/MM/yyyy')}.pdf`);
 
     setGeneratePdf(false);
   };
@@ -49,9 +49,9 @@ const ExtinguisherModalSPO = () => {
     <>
       <Modal
         className="w-[71rem]"
-        open={extinguisherItem !== null}
+        open={hydrantItem !== null}
         onOpenChange={handleOnOpenChange}
-        title={`Registro Extintor N°${params.id}`}
+        title={`Registro Hidrante N°${params.id}`}
       >
         <form className="flex flex-col w-full gap-6" onSubmit={formik.handleSubmit}>
           <>
@@ -65,8 +65,8 @@ const ExtinguisherModalSPO = () => {
                     width="w-[10rem]"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.Id}
-                    isLoading={extinguisherModal.isLoading}
+                    value={formik.values?.Id}
+                    isLoading={hydrantModal.isLoading}
                   />
 
                   <TextField
@@ -76,7 +76,7 @@ const ExtinguisherModalSPO = () => {
                     disabled
                     onChange={formik.handleChange}
                     value={formik.values?.Created ? format(formik.values?.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}
-                    isLoading={extinguisherModal.isLoading}
+                    isLoading={hydrantModal.isLoading}
                   />
 
                   <TextField
@@ -85,31 +85,20 @@ const ExtinguisherModalSPO = () => {
                     label="Responsável"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.Responsavel1}
-                    isLoading={extinguisherModal.isLoading}
+                    value={formik.values?.Responsavel1}
+                    isLoading={hydrantModal.isLoading}
                   />
                 </div>
 
                 <div className="flex gap-2 py-2">
-                  <TextField
-                    id="codigo"
-                    name="codigo"
-                    label="Cód. Área"
-                    disabled
-                    width="w-[10rem]"
-                    onChange={formik.handleChange}
-                    value={formik.values.codigo}
-                    isLoading={extinguisherModal.isLoading}
-                  />
-
                   <TextField
                     id="UF"
                     name="UF"
                     label="UF"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.UF}
-                    isLoading={extinguisherModal.isLoading}
+                    value={formik.values?.UF}
+                    isLoading={hydrantModal.isLoading}
                   />
 
                   <TextField
@@ -118,8 +107,8 @@ const ExtinguisherModalSPO = () => {
                     label="Múnicipio"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.Municipios}
-                    isLoading={extinguisherModal.isLoading}
+                    value={formik.values?.Municipios}
+                    isLoading={hydrantModal.isLoading}
                   />
 
                   <TextField
@@ -129,8 +118,8 @@ const ExtinguisherModalSPO = () => {
                     disabled
                     width="w-[6.25rem]"
                     onChange={formik.handleChange}
-                    value={formik.values.Site}
-                    isLoading={extinguisherModal.isLoading}
+                    value={formik.values?.Site}
+                    isLoading={hydrantModal.isLoading}
                   />
                 </div>
 
@@ -141,8 +130,8 @@ const ExtinguisherModalSPO = () => {
                     label="Área"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.Area}
-                    isLoading={extinguisherModal.isLoading}
+                    value={formik.values?.Area}
+                    isLoading={hydrantModal.isLoading}
                   />
 
                   <TextField
@@ -151,8 +140,8 @@ const ExtinguisherModalSPO = () => {
                     label="Local"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.Local}
-                    isLoading={extinguisherModal.isLoading}
+                    value={formik.values?.Local}
+                    isLoading={hydrantModal.isLoading}
                   />
 
                   <TextField
@@ -161,8 +150,8 @@ const ExtinguisherModalSPO = () => {
                     label="Pavimento"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.Pavimento}
-                    isLoading={extinguisherModal.isLoading}
+                    value={formik.values?.Pavimento}
+                    isLoading={hydrantModal.isLoading}
                   />
                 </div>
 
@@ -173,175 +162,138 @@ const ExtinguisherModalSPO = () => {
                     label="Local Específico"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.LocalEsp}
-                    isLoading={extinguisherModal.isLoading}
+                    value={formik.values?.LocalEsp}
+                    isLoading={hydrantModal.isLoading}
                   />
 
                   <TextField
-                    id="DataVenc"
-                    name="DataVenc"
-                    label="Data de Vencimento"
+                    id="CodLacre"
+                    name="CodLacre"
+                    label="Código do lacre"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values?.DataVenc ? format(formik.values?.DataVenc, 'dd MMM yyyy', { locale: ptBR }) : ''}
-                    isLoading={extinguisherModal.isLoading}
+                    value={formik.values?.CodLacre ? formik.values?.CodLacre : 'N/A'}
+                    isLoading={hydrantModal.isLoading}
                   />
                 </div>
 
                 <div className="flex gap-2 py-2">
                   <TextField
-                    id="Tipo"
-                    name="Tipo"
-                    label="Tipo"
+                    id="CodMangueira"
+                    name="CodMangueira"
+                    label="Código da(s) mangueira(s)"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.Tipo}
-                    isLoading={extinguisherModal.isLoading}
+                    value={formik.values?.CodMangueira}
+                    isLoading={hydrantModal.isLoading}
                   />
 
                   <TextField
-                    id="Massa"
-                    name="Massa"
-                    label="Peso"
+                    id="Diametro"
+                    name="Diametro"
+                    label="Diâmetro"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.Massa}
-                    isLoading={extinguisherModal.isLoading}
+                    value={formik.values?.Diametro}
+                    isLoading={hydrantModal.isLoading}
                   />
 
                   <TextField
-                    id="Title"
-                    name="Title"
-                    label="Cód. Extintor"
+                    id="Comprimento"
+                    name="Comprimento"
+                    label="Comprimento"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.Title}
-                    isLoading={extinguisherModal.isLoading}
+                    value={formik.values?.Comprimento}
+                    isLoading={hydrantModal.isLoading}
                   />
                 </div>
               </div>
               <div className="w-full h-px bg-primary-opacity" />
 
               <div className="bg-[#F1F3F5] w-full py-6 px-8 text-[#474747]">
-                <Answers.Root label="Manômetro" isLoading={extinguisherModal.isLoading}>
+                <Answers.Root label="Hidrante" isLoading={hydrantModal.isLoading}>
                   <Answers.Content>
-                    <Answers.ContentItem isLoading={extinguisherModal.isLoading}>
-                      <Answers.Label label="O ponteiro está marcando na área verde?" />
+                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
+                      <Answers.Label label="O hidrante está sem avarias?" />
                       <Answers.Button
-                        id="OData__x004d_an1"
-                        name="OData__x004d_an1"
+                        id="OData__x0048_id1"
+                        name="OData__x0048_id1"
                         disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x004d_an1', !formik.values.OData__x004d_an1)}
-                        answersValue={formik.values.OData__x004d_an1}
+                        onClick={() => formik.setFieldValue('OData__x0048_id1', !formik.values.OData__x0048_id1)}
+                        answersValue={formik.values.OData__x0048_id1}
                       />
                     </Answers.ContentItem>
 
-                    <Answers.ContentItem isLoading={extinguisherModal.isLoading}>
-                      <Answers.Label label="O manômetro está sem avarias?" />
+                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
+                      <Answers.Label label="O hidrante está em bom estado de conservação?" />
                       <Answers.Button
-                        id="OData__x004d_an2"
-                        name="OData__x004d_an2"
+                        id="OData__x0048_id2"
+                        name="OData__x0048_id2"
                         disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x004d_an2', !formik.values.OData__x004d_an2)}
-                        answersValue={formik.values.OData__x004d_an2}
+                        onClick={() => formik.setFieldValue('OData__x0048_id2', !formik.values.OData__x0048_id2)}
+                        answersValue={formik.values.OData__x0048_id2}
                       />
                     </Answers.ContentItem>
                   </Answers.Content>
                 </Answers.Root>
 
-                <Answers.Root label="Carga" isLoading={extinguisherModal.isLoading}>
+                <Answers.Root label="Abrigo" isLoading={hydrantModal.isLoading}>
                   <Answers.Content>
-                    <Answers.ContentItem isLoading={extinguisherModal.isLoading}>
-                      <Answers.Label label="A carga nominal está dentro da validade normativa?" />
+                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
+                      <Answers.Label label="O abrigo de mangueira está sem avarias?" />
                       <Answers.Button
-                        id="OData__x0043_ar1"
-                        name="OData__x0043_ar1"
+                        id="OData__x0041_bg1"
+                        name="OData__x0041_bg1"
                         disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x0043_ar1', !formik.values.OData__x0043_ar1)}
-                        answersValue={formik.values.OData__x0043_ar1}
+                        onClick={() => formik.setFieldValue('OData__x0041_bg1', !formik.values.OData__x0041_bg1)}
+                        answersValue={formik.values.OData__x0041_bg1}
                       />
                     </Answers.ContentItem>
 
-                    <Answers.ContentItem isLoading={extinguisherModal.isLoading}>
-                      <Answers.Label label="O anel colorido está instalado na parte superior do cilindro?" />
+                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
+                      <Answers.Label label="O abrigo está em bom esteado de conservação?" />
                       <Answers.Button
-                        id="OData__x0043_ar2"
-                        name="OData__x0043_ar2"
+                        id="OData__x0041_bg2"
+                        name="OData__x0041_bg2"
                         disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x0043_ar2', !formik.values.OData__x0043_ar2)}
-                        answersValue={formik.values.OData__x0043_ar2}
+                        onClick={() => formik.setFieldValue('OData__x0041_bg2', !formik.values.OData__x0041_bg2)}
+                        answersValue={formik.values.OData__x0041_bg2}
                       />
                     </Answers.ContentItem>
                   </Answers.Content>
                 </Answers.Root>
 
-                <Answers.Root label="Cilindro" isLoading={extinguisherModal.isLoading}>
+                <Answers.Root label="Sinalização" isLoading={hydrantModal.isLoading}>
                   <Answers.Content>
-                    <Answers.ContentItem isLoading={extinguisherModal.isLoading}>
-                      <Answers.Label label="O cilindro está intacto?" />
+                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
+                      <Answers.Label label="A sinalização está fixada adequadamente?" />
                       <Answers.Button
-                        id="OData__x0043_il1"
-                        name="OData__x0043_il1"
+                        id="OData__x0053_nl1"
+                        name="OData__x0053_nl1"
                         disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x0043_il1', !formik.values.OData__x0043_il1)}
-                        answersValue={formik.values.OData__x0043_il1}
+                        onClick={() => formik.setFieldValue('OData__x0053_nl1', !formik.values.OData__x0053_nl1)}
+                        answersValue={formik.values.OData__x0053_nl1}
                       />
                     </Answers.ContentItem>
 
-                    <Answers.ContentItem isLoading={extinguisherModal.isLoading}>
-                      <Answers.Label label="O cilindro está em bom estado de conservação?" />
+                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
+                      <Answers.Label label="A sinalização está de acordo com as normas?" />
                       <Answers.Button
-                        id="OData__x0043_il2"
-                        name="OData__x0043_il2"
+                        id="OData__x0053_nl2"
+                        name="OData__x0053_nl2"
                         disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x0043_il2', !formik.values.OData__x0043_il2)}
-                        answersValue={formik.values.OData__x0043_il2}
-                      />
-                    </Answers.ContentItem>
-
-                    <Answers.ContentItem isLoading={extinguisherModal.isLoading}>
-                      <Answers.Label label="O cilindro está fixado na parede ou sobre um suporte de piso?" />
-                      <Answers.Button
-                        id="OData__x0043_il3"
-                        name="OData__x0043_il3"
-                        disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x0043_il3', !formik.values.OData__x0043_il3)}
-                        answersValue={formik.values.OData__x0043_il3}
+                        onClick={() => formik.setFieldValue('OData__x0053_nl2', !formik.values.OData__x0053_nl2)}
+                        answersValue={formik.values.OData__x0053_nl2}
                       />
                     </Answers.ContentItem>
                   </Answers.Content>
                 </Answers.Root>
 
-                <Answers.Root label="Sinalização" isLoading={extinguisherModal.isLoading}>
+                <Answers.Root label="Obstrução" isLoading={hydrantModal.isLoading}>
                   <Answers.Content>
-                    <Answers.ContentItem isLoading={extinguisherModal.isLoading}>
-                      <Answers.Label label="A sinalização está afixada acima do extintor?" />
-                      <Answers.Button
-                        id="OData__x0053_in1"
-                        name="OData__x0053_in1"
-                        disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x0053_in1', !formik.values.OData__x0053_in1)}
-                        answersValue={formik.values.OData__x0053_in1}
-                      />
-                    </Answers.ContentItem>
-
-                    <Answers.ContentItem isLoading={extinguisherModal.isLoading}>
-                      <Answers.Label label="A sinalização está adequada ao tipo de extintor?" />
-                      <Answers.Button
-                        id="OData__x0053_in2"
-                        name="OData__x0053_in2"
-                        disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x0053_in2', !formik.values.OData__x0053_in2)}
-                        answersValue={formik.values.OData__x0053_in2}
-                      />
-                    </Answers.ContentItem>
-                  </Answers.Content>
-                </Answers.Root>
-
-                <Answers.Root label="Obstrução" isLoading={extinguisherModal.isLoading}>
-                  <Answers.Content>
-                    <Answers.ContentItem isLoading={extinguisherModal.isLoading}>
-                      <Answers.Label label="O Extintor está desobstruído?" />
+                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
+                      <Answers.Label label="O hidrante está desobstruído?" />
                       <Answers.Button
                         id="Obst1"
                         name="Obst1"
@@ -351,8 +303,8 @@ const ExtinguisherModalSPO = () => {
                       />
                     </Answers.ContentItem>
 
-                    <Answers.ContentItem isLoading={extinguisherModal.isLoading}>
-                      <Answers.Label label="O Extintor está instalado no local adequado?" />
+                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
+                      <Answers.Label label="Está sem objetos estranhos no abrigo?" />
                       <Answers.Button
                         id="Obst2"
                         name="Obst2"
@@ -364,27 +316,53 @@ const ExtinguisherModalSPO = () => {
                   </Answers.Content>
                 </Answers.Root>
 
-                <Answers.Root label="Lacre e Trava" isLoading={extinguisherModal.isLoading}>
+                <Answers.Root label="Lacre" isLoading={hydrantModal.isLoading}>
                   <Answers.Content>
-                    <Answers.ContentItem isLoading={extinguisherModal.isLoading}>
-                      <Answers.Label label="O lacre está intacto?" />
+                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
+                      <Answers.Label label="O abrigo está lacrado corretamente?" />
                       <Answers.Button
-                        id="OData__x004c_tv1"
-                        name="OData__x004c_tv1"
+                        id="OData__x004c_cr1"
+                        name="OData__x004c_cr1"
                         disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x004c_tv1', !formik.values.OData__x004c_tv1)}
-                        answersValue={formik.values.OData__x004c_tv1}
+                        onClick={() => formik.setFieldValue('OData__x004c_cr1', !formik.values.OData__x004c_cr1)}
+                        answersValue={formik.values.OData__x004c_cr1}
                       />
                     </Answers.ContentItem>
 
-                    <Answers.ContentItem isLoading={extinguisherModal.isLoading}>
+                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
+                      <Answers.Label label="O lacre do abrigo está intacto?" />
+                      <Answers.Button
+                        id="OData__x004c_cr2"
+                        name="OData__x004c_cr2"
+                        disabled={!isEdit}
+                        onClick={() => formik.setFieldValue('OData__x004c_cr2', !formik.values.OData__x004c_cr2)}
+                        answersValue={formik.values.OData__x004c_cr2}
+                      />
+                    </Answers.ContentItem>
+                  </Answers.Content>
+                </Answers.Root>
+
+                <Answers.Root label="Inspeção" isLoading={hydrantModal.isLoading}>
+                  <Answers.Content>
+                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
+                      <Answers.Label label="A etiqueta de Inspeção está instalada?" />
+                      <Answers.Button
+                        id="Insp1"
+                        name="Insp1"
+                        disabled={!isEdit}
+                        onClick={() => formik.setFieldValue('Insp1', !formik.values.Insp1)}
+                        answersValue={formik.values.Insp1}
+                      />
+                    </Answers.ContentItem>
+
+                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
                       <Answers.Label label="A trava está fixada na alavanca de acionamento?" />
                       <Answers.Button
-                        id="OData__x004c_tv2"
-                        name="OData__x004c_tv2"
+                        id="Insp2"
+                        name="Insp2"
                         disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x004c_tv2', !formik.values.OData__x004c_tv2)}
-                        answersValue={formik.values.OData__x004c_tv2}
+                        onClick={() => formik.setFieldValue('Insp2', !formik.values.Insp2)}
+                        answersValue={formik.values.Insp2}
                       />
                     </Answers.ContentItem>
                   </Answers.Content>
@@ -398,7 +376,7 @@ const ExtinguisherModalSPO = () => {
                     disabled
                     value={formik.values.Observacao}
                     onChange={formik.handleChange}
-                    isLoading={extinguisherModal.isLoading}
+                    isLoading={hydrantModal.isLoading}
                   />
                 )}
               </div>
@@ -409,7 +387,7 @@ const ExtinguisherModalSPO = () => {
                     fill
                     onClick={exportToPdf}
                     className="min-w-[14.0625rem] h-10"
-                    disabled={extinguisherModal.isLoading || generatePdf}
+                    disabled={hydrantModal.isLoading || generatePdf}
                   >
                     {generatePdf ? (
                       <Button.Spinner />
@@ -422,12 +400,17 @@ const ExtinguisherModalSPO = () => {
                   </Button.Root>
                 )}
 
-                <Button.Root onClick={handleOnOpenChange} disabled={extinguisherModal.isLoading} className="w-[10rem] h-10">
+                <Button.Root onClick={handleOnOpenChange} disabled={hydrantModal.isLoading} className="w-[10rem] h-10">
                   <Button.Label>Fechar</Button.Label>
                 </Button.Root>
 
                 {isEdit && (
-                  <Button.Root type="submit" fill disabled={extinguisherModal.isLoading || formik.isSubmitting} className="w-[10rem] h-10">
+                  <Button.Root
+                    type="submit"
+                    fill
+                    disabled={hydrantModal.isLoading || formik.isSubmitting}
+                    className="w-[10rem] h-10"
+                  >
                     {mutateEdit.isLoading ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
                   </Button.Root>
                 )}
@@ -437,25 +420,20 @@ const ExtinguisherModalSPO = () => {
         </form>
       </Modal>
 
-      {(mutateNewRav.isError || mutateEditRav.isError) && (
-        <Toast type="error" open={mutateNewRav.isError || mutateEditRav.isError} onOpenChange={mutateNewRav.reset || mutateEditRav.reset}>
-          {(mutateEditRav.error && mutateEditRav.error.message.length > 0) || (mutateNewRav.error && mutateNewRav.error.message.length > 0)
-            ? mutateEditRav?.error?.message || mutateNewRav?.error?.message
-            : 'O sistema encontrou um erro ao tentar criar o registro. Recarregue a página e tente novamente. Se o problema persistir, entre em contato com o administrador do sistema.'}
+      {mutateEdit.isError && (
+        <Toast type="error" open={mutateEdit.isError} onOpenChange={mutateEdit.reset}>
+          O sistema encontrou um erro ao tentar atualizar o registro. Recarregue a página e tente novamente. Se o problema
+          persistir, entre em contato com o administrador do sistema.
         </Toast>
       )}
 
-      {(mutateNewRav.isSuccess || mutateEditRav.isSuccess) && (
-        <Toast
-          type="success"
-          open={mutateNewRav.isSuccess || mutateEditRav.isSuccess}
-          onOpenChange={mutateNewRav.reset || mutateEditRav.reset}
-        >
-          O registro foi {mutateEditRav.isSuccess ? 'atualizado' : 'criado'} com sucesso do sistema. Operação concluída.
+      {mutateEdit.isSuccess && (
+        <Toast type="success" open={mutateEdit.isSuccess} onOpenChange={mutateEdit.reset}>
+          O registro foi atualizado com sucesso do sistema. Operação concluída.
         </Toast>
       )}
     </>
   );
 };
 
-export default ExtinguisherModalSPO;
+export default HydrantModalSPO;

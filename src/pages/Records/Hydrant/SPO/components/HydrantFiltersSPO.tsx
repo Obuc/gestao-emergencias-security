@@ -1,25 +1,25 @@
 import { Button } from '../../../../../components/Button';
+import { IHydrantFiltersProps } from '../types/HydrantSPO';
 import { Popover } from '../../../../../components/Popover';
 import TextField from '../../../../../components/TextField';
 import DatePicker from '../../../../../components/DatePicker';
-import { IExtinguisherFiltersProps } from '../types/ExtinguisherSPO';
 import { SelectAutoComplete } from '../../../../../components/SelectAutocomplete';
 
-interface IExtinguisherFilters {
-  tempTableFilters: IExtinguisherFiltersProps;
-  setTempTableFilters: React.Dispatch<React.SetStateAction<IExtinguisherFiltersProps>>;
+interface IHydrantFilters {
+  tempTableFilters: IHydrantFiltersProps;
+  setTempTableFilters: React.Dispatch<React.SetStateAction<IHydrantFiltersProps>>;
   handleRemoveAllFilters: () => void;
   countAppliedFilters: () => number;
   handleApplyFilters: () => void;
 }
 
-const ExtinguisherFiltersSPO = ({
+const HydrantFiltersSPO = ({
   tempTableFilters,
   setTempTableFilters,
   handleRemoveAllFilters,
   countAppliedFilters,
   handleApplyFilters,
-}: IExtinguisherFilters) => {
+}: IHydrantFilters) => {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
@@ -41,17 +41,25 @@ const ExtinguisherFiltersSPO = ({
             label="Responsável"
             id="responsible"
             name="responsible"
-            placeholder="Responsável"
             value={tempTableFilters.responsible || ''}
             onChange={(event) => {
               setTempTableFilters((prev) => ({ ...prev, responsible: event.target.value }));
             }}
           />
 
+          <TextField
+            label="Hidrante"
+            id="hydrantId"
+            name="hydrantId"
+            value={tempTableFilters.hydrantId || ''}
+            onChange={(event) => {
+              setTempTableFilters((prev) => ({ ...prev, hydrantId: event.target.value }));
+            }}
+          />
+
           <DatePicker
             label="Data Inicial"
             name="startDate"
-            placeholder="Data Inicial"
             value={tempTableFilters.startDate ? new Date(tempTableFilters.startDate) : null}
             onChange={(date: any) => setTempTableFilters((prev) => ({ ...prev, startDate: date }))}
           />
@@ -60,58 +68,58 @@ const ExtinguisherFiltersSPO = ({
             <DatePicker
               label="Data Final"
               name="endDate"
-              placeholder="Data Final"
               value={tempTableFilters.endDate ? new Date(tempTableFilters.endDate) : null}
               onChange={(date: any) => setTempTableFilters((prev) => ({ ...prev, endDate: date }))}
             />
           )}
 
-          <DatePicker
-            label="Validade"
-            name="expiration"
-            placeholder="Validade"
-            value={tempTableFilters.expiration ? new Date(tempTableFilters.expiration) : null}
-            onChange={(date: any) => setTempTableFilters((prev) => ({ ...prev, expiration: date }))}
-          />
-
-          <DatePicker
-            label="Data pesagem"
-            name="weighingDate"
-            placeholder="Data pesagem"
-            value={tempTableFilters.weighingDate ? new Date(tempTableFilters.weighingDate) : null}
-            onChange={(date: any) => setTempTableFilters((prev) => ({ ...prev, weighingDate: date }))}
+          <TextField
+            label="Lacre"
+            id="seal"
+            name="seal"
+            value={tempTableFilters.seal || ''}
+            onChange={(event) => {
+              setTempTableFilters((prev) => ({ ...prev, seal: event.target.value }));
+            }}
           />
 
           <TextField
-            label="Cód. Extintor"
-            id="extinguisherId"
-            name="extinguisherId"
-            placeholder="Cód. Extintor"
-            value={tempTableFilters.extinguisherId || ''}
+            label="Mangueiras"
+            id="hoses"
+            name="hoses"
+            value={tempTableFilters.hoses || ''}
             onChange={(event) => {
-              setTempTableFilters((prev) => ({ ...prev, extinguisherId: event.target.value }));
+              setTempTableFilters((prev) => ({ ...prev, hoses: event.target.value }));
             }}
           />
 
           <TextField
             label="Local"
-            id="placeSPO"
-            name="placeSPO"
-            placeholder="Digite o nome do Local"
-            value={tempTableFilters.placeSPO || ''}
+            id="place"
+            name="place"
+            value={tempTableFilters.place || ''}
             onChange={(event) => {
-              setTempTableFilters((prev) => ({ ...prev, placeSPO: event.target.value }));
+              setTempTableFilters((prev) => ({ ...prev, place: event.target.value }));
             }}
           />
 
           <TextField
             label="Pavimento"
-            id="pavementSPO"
-            name="pavementSPO"
-            placeholder="Digite o nome do Pavimento"
-            value={tempTableFilters.pavementSPO || ''}
+            id="pavement"
+            name="pavement"
+            value={tempTableFilters.pavement || ''}
             onChange={(event) => {
-              setTempTableFilters((prev) => ({ ...prev, pavementSPO: event.target.value }));
+              setTempTableFilters((prev) => ({ ...prev, pavement: event.target.value }));
+            }}
+          />
+
+          <TextField
+            label="Local Específico"
+            id="specificLocation"
+            name="specificLocation"
+            value={tempTableFilters.specificLocation || ''}
+            onChange={(event) => {
+              setTempTableFilters((prev) => ({ ...prev, specificLocation: event.target.value }));
             }}
           />
 
@@ -152,4 +160,4 @@ const ExtinguisherFiltersSPO = ({
   );
 };
 
-export default ExtinguisherFiltersSPO;
+export default HydrantFiltersSPO;

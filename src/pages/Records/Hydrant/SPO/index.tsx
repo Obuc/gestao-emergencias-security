@@ -5,15 +5,15 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import Toast from '../../../../components/Toast';
 import years from '../../../../utils/years.mock';
 import months from '../../../../utils/month.mock';
-import LayoutBase from '../../../../layout/LayoutBase';
+import useHydrantSPO from './hooks/useHydrantSPO';
 import { Select } from '../../../../components/Select';
 import { Button } from '../../../../components/Button';
-import useExtinguisherSPO from './hooks/useExtinguisherSPO';
+import LayoutBase from '../../../../layout/LayoutBase';
+import HydrantTableSPO from './components/HydrantTableSPO';
 import { appContext } from '../../../../context/appContext';
-import ExtinguisherTableSPO from './components/ExtinguisherTableSPO';
-import ExtinguisherFiltersSPO from './components/ExtinguisherFiltersSPO';
+import HydrantFiltersSPO from './components/HydrantFiltersSPO';
 
-const ExtinguisherSPO = () => {
+const HydrantSPO = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { formularios, submenu, isLoadingFormularios } = appContext();
@@ -31,26 +31,23 @@ const ExtinguisherSPO = () => {
     setMonth,
     year,
     setYear,
-    extinguisher,
+    hydrant,
     mutateRemove,
     sortColumns,
     setSortColumns,
-  } = useExtinguisherSPO();
+  } = useHydrantSPO();
 
   const filteredForms =
     formularios &&
-    formularios.filter(
-      (form) => (form.todos_sites === true || form.site.Title === localSite) && form.Title !== 'Veículos de emergência',
-    );
+    formularios.filter((form) => (form.todos_sites === true || form.site.Title === localSite) && form.Title !== 'Veículos de emergência');
 
-  const filteredSubMenu =
-    submenu && submenu.filter((form) => form.todos_sites === true || form.site.Title === localSite);
+  const filteredSubMenu = submenu && submenu.filter((form) => form.todos_sites === true || form.site.Title === localSite);
 
-  const [formValue, setFormValue] = useState<string>(equipments_value ?? 'extinguisher');
+  const [formValue, setFormValue] = useState<string>(equipments_value ?? 'hydrants');
 
   useEffect(() => {
     if (localSite?.length && !equipments_value?.length) {
-      localStorage.setItem('equipments_value', 'extinguisher');
+      localStorage.setItem('equipments_value', 'hydrants');
     }
   }, []);
 
@@ -175,7 +172,7 @@ const ExtinguisherSPO = () => {
                   ))}
                 </Select.Component>
 
-                <ExtinguisherFiltersSPO
+                <HydrantFiltersSPO
                   countAppliedFilters={countAppliedFilters}
                   handleApplyFilters={handleApplyFilters}
                   handleRemoveAllFilters={handleRemoveAllFilters}
@@ -185,12 +182,7 @@ const ExtinguisherSPO = () => {
               </div>
             </div>
 
-            <ExtinguisherTableSPO
-              extinguisher={extinguisher}
-              mutateRemove={mutateRemove}
-              setSortColumns={setSortColumns}
-              sortColumns={sortColumns}
-            />
+            <HydrantTableSPO hydrant={hydrant} mutateRemove={mutateRemove} setSortColumns={setSortColumns} sortColumns={sortColumns} />
           </div>
         </div>
       </LayoutBase>
@@ -210,4 +202,4 @@ const ExtinguisherSPO = () => {
   );
 };
 
-export default ExtinguisherSPO;
+export default HydrantSPO;

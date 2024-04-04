@@ -1,79 +1,70 @@
-export interface Extinguisher {
+export interface Hydrant {
   Id: number;
   Created: Date;
-  DataVenc: Date;
-  DataPesagem: Date;
   Responsavel1?: string;
   Title: string;
+  CodLacre?: string;
+  CodMangueira?: string;
   Local: string;
   Pavimento: string;
   LocalEsp: string;
-  OData__x004d_an1: boolean;
-  OData__x004d_an2: boolean;
-  OData__x0043_ar1: boolean;
-  OData__x0043_ar2: boolean;
-  OData__x0043_il2: boolean;
-  OData__x0043_il1: boolean;
-  OData__x0043_il3: boolean;
-  OData__x0053_in1: boolean;
-  OData__x0053_in2: boolean;
-  OData_Obst1: boolean;
-  OData_Obst2: boolean;
-  OData__x004c_tv1: boolean;
-  OData__x004c_tv2: boolean;
+  OData__x0048_id1: boolean;
+  OData__x0048_id2: boolean;
+  OData__x0041_bg1: boolean;
+  OData__x0041_bg2: boolean;
+  OData__x0053_nl1: boolean;
+  OData__x0053_nl2: boolean;
+  Obst1: boolean;
+  Obst2: boolean;
+  OData__x004c_cr1: boolean;
+  OData__x004c_cr2: boolean;
+  OData_Insp1: boolean;
+  OData_Insp2: boolean;
+
   conforme: boolean;
 }
 
-export interface ExtinguisherModal {
+export interface HydrantModal {
   Id: number;
-  Title?: string;
-  Created: Date;
-  DataVenc: Date | null;
+  Created: Date | null;
   Responsavel1?: string;
+  Title: string;
+  CodLacre?: string;
+  CodMangueira?: string;
   Local: string;
   Pavimento: string;
   LocalEsp: string;
-  OData__x004d_an1: boolean;
-  OData__x004d_an2: boolean;
-  OData__x0043_ar1: boolean;
-  OData__x0043_ar2: boolean;
-  OData__x0043_il2: boolean;
-  OData__x0043_il1: boolean;
-  OData__x0043_il3: boolean;
-  OData__x0053_in1: boolean;
-  OData__x0053_in2: boolean;
+  OData__x0048_id1: boolean;
+  OData__x0048_id2: boolean;
+  OData__x0041_bg1: boolean;
+  OData__x0041_bg2: boolean;
+  OData__x0053_nl1: boolean;
+  OData__x0053_nl2: boolean;
   Obst1: boolean;
   Obst2: boolean;
-  OData__x004c_tv1: boolean;
-  OData__x004c_tv2: boolean;
-  Observacao?: string;
+  OData__x004c_cr1: boolean;
+  OData__x004c_cr2: boolean;
+  Insp1: boolean;
+  Insp2: boolean;
   UF: string;
   Municipios: string;
   Site: string;
   Area: string;
-  Tipo: string;
-  Massa: string;
-  codExtintor: string;
+  Diametro?: string;
+  Comprimento?: string;
   codigo: string;
+  Observacao?: string;
 }
 
-interface ISelectValue {
-  label: string;
-  value: string;
-}
-
-export interface IExtinguisherFiltersProps {
+export interface IHydrantFiltersProps {
   responsible: string | null;
+  hydrantId: string | null;
   startDate: Date | null;
   endDate: Date | null;
-  expiration: Date | null;
-  place: Array<ISelectValue> | [];
-  pavement: Array<ISelectValue> | [];
+  seal: string | null;
+  hoses: string | null;
+  place: string | null;
+  pavement: string | null;
+  specificLocation: string | null;
   conformity: string | null;
-  extinguisherId: string | null;
-
-  weighingDate: Date | null;
-  placeSPO: string | null;
-  pavementSPO: string | null;
-  specificLocationSPO: string | null;
 }
