@@ -18,7 +18,7 @@ export const ExtinguisherPdfBXO = ({ data }: IExtinguisherPdfProps) => {
   return (
     <Document>
       <Page size={[600, 'auto']} wrap style={styles.page}>
-        <PDFHeader color="#00354F" title="Registro de Análise de Vulnerabilidade - RAV" />
+        <PDFHeader color="#00354F" title="Gestão de Emergências - Extintor" />
 
         <View style={styles.container}>
           <PDFContainer.Header color="#00354F" title="Informações Extintor" />
@@ -30,7 +30,7 @@ export const ExtinguisherPdfBXO = ({ data }: IExtinguisherPdfProps) => {
               <PDFInput
                 width={150}
                 title="Data e hora"
-                value={data.Created && format(data.Created as Date, 'dd MMM yyyy HH:mm', { locale: ptBR })}
+                value={data.Created && format(data.Created as Date, 'dd MMM yyyy', { locale: ptBR })}
               />
 
               <PDFInput title="Responsável" value={data?.bombeiro} />
@@ -47,8 +47,7 @@ export const ExtinguisherPdfBXO = ({ data }: IExtinguisherPdfProps) => {
               <PDFInput
                 title="Data de Vencimento"
                 value={
-                  data?.extintor?.validade &&
-                  format(data?.extintor?.validade as Date, 'dd MMM yyyy HH:mm', { locale: ptBR })
+                  data?.extintor?.validade && format(data?.extintor?.validade as Date, 'dd MMM yyyy', { locale: ptBR })
                 }
               />
             </View>

@@ -203,7 +203,7 @@ const useExtinguisherBXO = () => {
     queryFn: fetchExtinguisher,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: pathname === '/records/extinguisher' && user_site === 'BXO',
+    enabled: pathname.includes('/records/extinguisher') && user_site === 'BXO',
   });
 
   const mutateRemove = useMutation({

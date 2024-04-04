@@ -125,6 +125,7 @@ const ExtinguisherModalSPO = () => {
                   name="Site"
                   label="Site"
                   disabled
+                  width="w-[6.25rem]"
                   onChange={formik.handleChange}
                   value={formik.values.Site}
                   isLoading={extinguisherModal.isLoading}
