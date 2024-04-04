@@ -7,13 +7,13 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import Modal from '../../../../../components/Modal';
-import Toast from '../../../../../components/Toast';
 import { ExtinguisherPdfSPO } from './ExtinguisherPdfSPO';
 import { Button } from '../../../../../components/Button';
 import TextArea from '../../../../../components/TextArea';
 import TextField from '../../../../../components/TextField';
 import { Answers } from '../../../../../components/Answers';
 import useExtinguisherModalSPO from '../hooks/useExtinguisherModalSPO';
+import Toast from '../../../../../components/Toast';
 
 const ExtinguisherModalSPO = () => {
   const params = useParams();
@@ -437,16 +437,21 @@ const ExtinguisherModalSPO = () => {
         </form>
       </Modal>
 
-      {mutateEdit.isError && (
-        <Toast type="error" open={mutateEdit.isError} onOpenChange={mutateEdit.reset}>
-          O sistema encontrou um erro ao tentar atualizar o registro. Recarregue a página e tente novamente. Se o problema persistir, entre
-          em contato com o administrador do sistema.
+      {(mutateNewRav.isError || mutateEditRav.isError) && (
+        <Toast type="error" open={mutateNewRav.isError || mutateEditRav.isError} onOpenChange={mutateNewRav.reset || mutateEditRav.reset}>
+          {(mutateEditRav.error && mutateEditRav.error.message.length > 0) || (mutateNewRav.error && mutateNewRav.error.message.length > 0)
+            ? mutateEditRav?.error?.message || mutateNewRav?.error?.message
+            : 'O sistema encontrou um erro ao tentar criar o registro. Recarregue a página e tente novamente. Se o problema persistir, entre em contato com o administrador do sistema.'}
         </Toast>
       )}
 
-      {mutateEdit.isSuccess && (
-        <Toast type="success" open={mutateEdit.isSuccess} onOpenChange={mutateEdit.reset}>
-          O registro foi atualizado com sucesso do sistema. Operação concluída.
+      {(mutateNewRav.isSuccess || mutateEditRav.isSuccess) && (
+        <Toast
+          type="success"
+          open={mutateNewRav.isSuccess || mutateEditRav.isSuccess}
+          onOpenChange={mutateNewRav.reset || mutateEditRav.reset}
+        >
+          O registro foi {mutateEditRav.isSuccess ? 'atualizado' : 'criado'} com sucesso do sistema. Operação concluída.
         </Toast>
       )}
     </>

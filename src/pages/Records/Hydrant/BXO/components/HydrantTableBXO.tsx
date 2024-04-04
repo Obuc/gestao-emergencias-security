@@ -7,33 +7,33 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UseInfiniteQueryResult, UseMutationResult } from '@tanstack/react-query';
 
-import Toast from '../../../../../components/Toast';
-import { Extinguisher } from '../types/ExtinguisherSPO';
+import { Hydrants } from '../types/HydrantBXO';
+import HydrantModalBXO from './HydrantModalBXO';
 import isAtBottom from '../../../../../utils/isAtBottom';
-import ExtinguisherModalSPO from './ExtinguisherModalSPO';
 import CustomDataGrid from '../../../../../components/DataGrid';
 import PopoverTables from '../../../../../components/PopoverTables';
 import RemoveItem from '../../../../../components/AppModals/RemoveItem';
 import DataGridLoadMore from '../../../../../components/DataGrid/DataGridLoadMore';
+import Toast from '../../../../../components/Toast';
 
-interface IExtinguisherTableProps {
-  extinguisher: UseInfiniteQueryResult<any, unknown>;
+interface IHydrantTableProps {
+  hydrant: UseInfiniteQueryResult<any, unknown>;
   mutateRemove: UseMutationResult<void, unknown, number, unknown>;
   sortColumns: readonly SortColumn[];
   setSortColumns: React.Dispatch<React.SetStateAction<readonly SortColumn[]>>;
 }
 
-const ExtinguisherTableSPO = ({ extinguisher, mutateRemove, setSortColumns, sortColumns }: IExtinguisherTableProps) => {
+const HydrantTableBXO = ({ hydrant, mutateRemove, setSortColumns, sortColumns }: IHydrantTableProps) => {
   const navigate = useNavigate();
 
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (Id: number) => {
-    navigate(`/records/extinguisher/${Id}?edit=false`);
+    navigate(`/records/hydrants/${Id}?edit=false`);
   };
 
   const handleEdit = (Id: number) => {
-    navigate(`/records/extinguisher/${Id}?edit=true`);
+    navigate(`/records/hydrants/${Id}?edit=true`);
   };
 
   const handleRemoveItem = async () => {
@@ -47,36 +47,28 @@ const ExtinguisherTableSPO = ({ extinguisher, mutateRemove, setSortColumns, sort
     }
   };
 
-  const columns: readonly Column<Extinguisher>[] = [
-    { key: 'Responsavel1', name: 'Responsável', resizable: true, width: 300 },
+  const columns: readonly Column<Hydrants>[] = [
+    { key: 'Id', name: '#', resizable: true },
+    { key: 'bombeiro', name: 'Responsável', resizable: true, width: 300 },
     { key: 'Created', name: 'Data', resizable: true },
-    { key: 'DataVenc', name: 'Validade', resizable: true },
-    { key: 'DataPesagem', name: 'Data Pesagem', resizable: true },
-    { key: 'Title', name: 'Cód Extintor', resizable: true },
-    { key: 'Local', name: 'Local', resizable: true },
-    { key: 'Pavimento', name: 'Pavimento', resizable: true },
-    { key: 'LocalEsp', name: 'Local Específico', resizable: true },
-    { key: 'conforme', name: 'conforme', resizable: true },
+    { key: 'hidrante_id/cod_hidrante', name: 'Cód Hidrante', resizable: true },
+    { key: 'local', name: 'Local', resizable: true },
+    { key: 'pavimento', name: 'Pavimento', resizable: true },
+    { key: 'conforme', name: 'Conformidade', resizable: true },
 
     { key: 'buttons', name: 'Ações', resizable: true, sortable: false },
   ];
 
   const mappedRows =
-    extinguisher.data?.pages.flatMap(
+    hydrant.data?.pages.flatMap(
       (page) =>
-        page?.data?.value?.map((item: Extinguisher) => ({
-          Responsavel1: item?.Responsavel1 ? (
-            <div className="pl-4">{item.Responsavel1}</div>
-          ) : (
-            <div className="pl-4">Sem informação responsável</div>
-          ),
-          Created: item?.Created ? format(item?.Created, 'dd MMM yyyy', { locale: ptBR }) : '',
-          DataVenc: item?.DataVenc ? format(item?.DataVenc, 'dd MMM yyyy', { locale: ptBR }) : 'N/A',
-          DataPesagem: item?.DataPesagem ? format(item?.DataPesagem, 'dd MMM yyyy', { locale: ptBR }) : 'N/A',
-          Title: item?.Title,
-          Local: item?.Local,
-          Pavimento: item?.Pavimento,
-          LocalEsp: item?.LocalEsp,
+        page?.data?.value?.map((item: Hydrants) => ({
+          Id: <div className="pl-4">{item.Id}</div>,
+          bombeiro: item?.bombeiro ? item.bombeiro : '',
+          Created: item?.Created ? format(item.Created, 'dd MMM yyyy', { locale: ptBR }) : '',
+          'hidrante_id/cod_hidrante': item?.hidrante?.cod_hidrante,
+          local: item?.hidrante?.local,
+          pavimento: item?.hidrante?.pavimento,
 
           conforme: (
             <div className="flex items-center h-full w-full">
@@ -108,7 +100,7 @@ const ExtinguisherTableSPO = ({ extinguisher, mutateRemove, setSortColumns, sort
 
   const handleScroll = async (event: React.UIEvent<HTMLDivElement>) => {
     if (!isAtBottom(event)) return;
-    extinguisher.fetchNextPage();
+    hydrant.fetchNextPage();
   };
 
   return (
@@ -117,9 +109,7 @@ const ExtinguisherTableSPO = ({ extinguisher, mutateRemove, setSortColumns, sort
         <CustomDataGrid
           columns={columns.map((column) => ({
             ...column,
-            headerCellClass: `${
-              column.key === 'Responsavel1' && 'pl-4'
-            } flex items-center text-primary-font-font font-medium text-lg bg-[#F9F9F9]`,
+            headerCellClass: `${column.key === 'Id' && 'pl-4'} flex items-center text-primary-font-font font-medium text-lg bg-[#F9F9F9]`,
           }))}
           mappedRows={mappedRows}
           handleScroll={handleScroll}
@@ -127,10 +117,10 @@ const ExtinguisherTableSPO = ({ extinguisher, mutateRemove, setSortColumns, sort
           setSortColumns={setSortColumns}
         />
 
-        {extinguisher.isFetchingNextPage && <DataGridLoadMore />}
+        {hydrant.isFetchingNextPage && <DataGridLoadMore />}
       </div>
 
-      <ExtinguisherModalSPO />
+      <HydrantModalBXO />
 
       {removeItem !== null && (
         <RemoveItem
@@ -156,4 +146,4 @@ const ExtinguisherTableSPO = ({ extinguisher, mutateRemove, setSortColumns, sort
   );
 };
 
-export default ExtinguisherTableSPO;
+export default HydrantTableBXO;

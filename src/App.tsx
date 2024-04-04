@@ -7,6 +7,7 @@ import Schedule from './pages/Schedule';
 import Equipments from './pages/Equipments';
 import ExtinguisherBXO from './pages/Records/Extinguisher/BXO';
 import ExtinguisherSPO from './pages/Records/Extinguisher/SPO';
+import HydrantBXO from './pages/Records/Hydrant/BXO';
 
 const App = () => {
   const equipments_value = localStorage.getItem('equipments_value');
@@ -33,12 +34,12 @@ const App = () => {
       <Route path="/equipments" element={<Navigate to={`/equipments/${equipments_value}`} />} />
 
       {/* Extinguisher  */}
-
       <Route path="/records/extinguisher" element={localSite === 'BXO' ? <ExtinguisherBXO /> : <ExtinguisherSPO />} />
-      <Route
-        path="/records/extinguisher/:id"
-        element={localSite === 'BXO' ? <ExtinguisherBXO /> : <ExtinguisherSPO />}
-      />
+      <Route path="/records/extinguisher/:id" element={localSite === 'BXO' ? <ExtinguisherBXO /> : <ExtinguisherSPO />} />
+
+      {/* Hydrant  */}
+      <Route path="/records/hydrants" element={localSite === 'BXO' ? <HydrantBXO /> : <ExtinguisherSPO />} />
+      <Route path="/records/hydrants/:id" element={localSite === 'BXO' ? <HydrantBXO /> : <ExtinguisherSPO />} />
     </Routes>
   );
 };

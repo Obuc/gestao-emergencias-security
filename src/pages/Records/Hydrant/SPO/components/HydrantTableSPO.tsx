@@ -7,14 +7,13 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UseInfiniteQueryResult, UseMutationResult } from '@tanstack/react-query';
 
-import Toast from '../../../../../components/Toast';
 import { Extinguisher } from '../types/ExtinguisherSPO';
 import isAtBottom from '../../../../../utils/isAtBottom';
-import ExtinguisherModalSPO from './ExtinguisherModalSPO';
 import CustomDataGrid from '../../../../../components/DataGrid';
 import PopoverTables from '../../../../../components/PopoverTables';
 import RemoveItem from '../../../../../components/AppModals/RemoveItem';
 import DataGridLoadMore from '../../../../../components/DataGrid/DataGridLoadMore';
+import ExtinguisherModalSPO from './ExtinguisherModalSPO';
 
 interface IExtinguisherTableProps {
   extinguisher: UseInfiniteQueryResult<any, unknown>;
@@ -139,18 +138,6 @@ const ExtinguisherTableSPO = ({ extinguisher, mutateRemove, setSortColumns, sort
           onOpenChange={() => setRemoveItem(null)}
           open={removeItem !== null}
         />
-      )}
-
-      {mutateRemove.isError && (
-        <Toast type="error" open={mutateRemove.isError} onOpenChange={mutateRemove.reset}>
-          O sistema encontrou um erro ao tentar excluir o registro. Por favor, contate o suporte para obter ajuda.
-        </Toast>
-      )}
-
-      {mutateRemove.isSuccess && (
-        <Toast type="success" open={mutateRemove.isSuccess} onOpenChange={mutateRemove.reset}>
-          O registro foi removido com sucesso do sistema. Operação concluída.
-        </Toast>
       )}
     </>
   );

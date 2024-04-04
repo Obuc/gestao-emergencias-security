@@ -1,5 +1,7 @@
+import { useState } from 'react';
+import { useFormik } from 'formik';
 import { parseISO } from 'date-fns';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { sharepointContext } from '../../../../../context/sharepointContext';
@@ -7,10 +9,14 @@ import { ExtinguisherAnswers, ExtinguisherDataModal } from '../types/Extinguishe
 
 const useExtinguisherModalBXO = () => {
   const params = useParams();
+  const navigate = useNavigate();
   const { pathname } = useLocation();
   const { crud } = sharepointContext();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
+  const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
+
+  const timeDelayToRedirectPage: number = import.meta.env.VITE_TIME_DELAY_TO_REDIRECT_PAGE;
 
   const fetchExtinguisherData = async () => {
     const pathModal = `?$Select=*&$filter=Id eq ${params.id}`;
@@ -62,12 +68,10 @@ const useExtinguisherModalBXO = () => {
         const extintorValidadeIsoDate = extintor.validade && parseISO(extintor.validade);
         const dataCriadoIsoDate = extinguisherData.Created && parseISO(extinguisherData.Created);
 
-        const dataCriado =
-          dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
+        const dataCriado = dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
 
         const extintorValidade =
-          extintorValidadeIsoDate &&
-          new Date(extintorValidadeIsoDate.getTime() + extintorValidadeIsoDate.getTimezoneOffset() * 60000);
+          extintorValidadeIsoDate && new Date(extintorValidadeIsoDate.getTime() + extintorValidadeIsoDate.getTimezoneOffset() * 60000);
 
         const bombeiroValue = bombeiro ? bombeiro.Title : null;
 
@@ -155,12 +159,62 @@ const useExtinguisherModalBXO = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['extinguisher_data_modal', params.id] });
       queryClient.invalidateQueries({ queryKey: ['extinguisher_data'] });
+
+      const timeoutId = setTimeout(() => {
+        setExtinguisherItem(null);
+        navigate('/records/extinguisher');
+      }, +timeDelayToRedirectPage);
+      return () => clearTimeout(timeoutId);
+    },
+    onError: () => {
+      formik.setSubmitting(false);
+    },
+  });
+
+  const initialValues: ExtinguisherDataModal = {
+    Created: extinguisherModal.data?.Created || '',
+    Id: extinguisherModal.data?.Id || 0,
+    bombeiro: extinguisherModal.data?.bombeiro ?? '',
+    data_pesagem: extinguisherModal.data?.data_pesagem || '',
+    extintor: {
+      Id: extinguisherModal.data?.extintor?.Id || '',
+      site: extinguisherModal.data?.extintor?.site || '',
+      predio: extinguisherModal.data?.extintor?.predio || '',
+      pavimento: extinguisherModal.data?.extintor?.pavimento || '',
+      local: extinguisherModal.data?.extintor?.local || '',
+      cod_extintor: extinguisherModal.data?.extintor?.cod_extintor || '',
+      validade: extinguisherModal.data?.extintor?.validade || '',
+      conforme: extinguisherModal.data?.extintor?.conforme || false,
+      massa: extinguisherModal.data?.extintor?.massa || '',
+      cod_qrcode: extinguisherModal.data?.extintor?.cod_qrcode || '',
+      tipo_extintor: extinguisherModal.data?.extintor?.tipo_extintor || '',
+    },
+    respostas: extinguisherModal.data?.respostas || {},
+    novo: extinguisherModal.data?.novo || false,
+    observacao: extinguisherModal.data?.observacao || '',
+  };
+
+  const handleSubmit = async (values: ExtinguisherDataModal) => {
+    if (values && params.id) {
+      await mutateEdit.mutateAsync(values);
+    }
+  };
+
+  const formik = useFormik({
+    validateOnMount: true,
+    enableReinitialize: true,
+    initialValues: initialValues,
+    onSubmit: (values: ExtinguisherDataModal) => {
+      handleSubmit(values);
     },
   });
 
   return {
     extinguisherModal,
     mutateEdit,
+    extinguisherItem,
+    setExtinguisherItem,
+    formik,
   };
 };
 

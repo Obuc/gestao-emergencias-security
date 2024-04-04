@@ -7,6 +7,7 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UseInfiniteQueryResult, UseMutationResult } from '@tanstack/react-query';
 
+import Toast from '../../../../../components/Toast';
 import { Extinguisher } from '../types/ExtinguisherBXO';
 import isAtBottom from '../../../../../utils/isAtBottom';
 import ExtinguisherModalBXO from './ExtinguisherModalBXO';
@@ -67,9 +68,7 @@ const ExtinguisherTableBXO = ({ extinguisher, mutateRemove, setSortColumns, sort
           Id: <div className="pl-4">{item.Id}</div>,
           'bombeiro_id/Title': item?.bombeiro ? item.bombeiro : '',
           Created: item?.Created ? format(item.Created, 'dd MMM yyyy', { locale: ptBR }) : '',
-          'extintor_id/validade': item?.extintor?.validade
-            ? format(item.extintor.validade, 'dd MMM yyyy', { locale: ptBR })
-            : 'N/A',
+          'extintor_id/validade': item?.extintor?.validade ? format(item.extintor.validade, 'dd MMM yyyy', { locale: ptBR }) : 'N/A',
           data_pesagem: item?.data_pesagem ? format(item.data_pesagem, 'dd MMM yyyy', { locale: ptBR }) : 'N/A',
           'extintor_id/cod_extintor': item?.extintor?.cod_extintor,
           local: item?.extintor?.local,
@@ -113,9 +112,7 @@ const ExtinguisherTableBXO = ({ extinguisher, mutateRemove, setSortColumns, sort
         <CustomDataGrid
           columns={columns.map((column) => ({
             ...column,
-            headerCellClass: `${
-              column.key === 'Id' && 'pl-4'
-            } flex items-center text-primary-font-font font-medium text-lg bg-[#F9F9F9]`,
+            headerCellClass: `${column.key === 'Id' && 'pl-4'} flex items-center text-primary-font-font font-medium text-lg bg-[#F9F9F9]`,
           }))}
           mappedRows={mappedRows}
           handleScroll={handleScroll}
@@ -135,6 +132,18 @@ const ExtinguisherTableBXO = ({ extinguisher, mutateRemove, setSortColumns, sort
           onOpenChange={() => setRemoveItem(null)}
           open={removeItem !== null}
         />
+      )}
+
+      {mutateRemove.isError && (
+        <Toast type="error" open={mutateRemove.isError} onOpenChange={mutateRemove.reset}>
+          O sistema encontrou um erro ao tentar excluir o registro. Por favor, contate o suporte para obter ajuda.
+        </Toast>
+      )}
+
+      {mutateRemove.isSuccess && (
+        <Toast type="success" open={mutateRemove.isSuccess} onOpenChange={mutateRemove.reset}>
+          O registro foi removido com sucesso do sistema. Operação concluída.
+        </Toast>
       )}
     </>
   );
