@@ -9,6 +9,7 @@ import ExtinguisherBXO from './pages/Records/Extinguisher/BXO';
 import ExtinguisherSPO from './pages/Records/Extinguisher/SPO';
 import HydrantBXO from './pages/Records/Hydrant/BXO';
 import HydrantSPO from './pages/Records/Hydrant/SPO';
+import GovernanceValveBXO from './pages/Records/GovernanceValve/BXO';
 
 const App = () => {
   const equipments_value = localStorage.getItem('equipments_value');
@@ -41,6 +42,10 @@ const App = () => {
       {/* Hydrant  */}
       <Route path="/records/hydrants" element={localSite === 'BXO' ? <HydrantBXO /> : <HydrantSPO />} />
       <Route path="/records/hydrants/:id" element={localSite === 'BXO' ? <HydrantBXO /> : <HydrantSPO />} />
+
+      {/* Valves  */}
+      <Route path="/records/valves" element={localSite === 'BXO' ? <GovernanceValveBXO /> : <HydrantSPO />} />
+      <Route path="/records/valves/:id" element={localSite === 'BXO' ? <GovernanceValveBXO /> : <HydrantSPO />} />
     </Routes>
   );
 };

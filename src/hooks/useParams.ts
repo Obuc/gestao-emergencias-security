@@ -25,9 +25,23 @@ const useParams = () => {
     refetchOnWindowFocus: false,
   });
 
+  const predio: UseQueryResult<Array<{ Id: string; Title: string }>> = useQuery({
+    queryKey: ['predio'],
+    queryFn: async () => {
+      const resp = await crud.getListItems(
+        'predio',
+        `?$Select=Id,Title,site/Title&$Expand=site&$orderby=Title asc&$Filter=(site/Title eq 'BXO')`,
+      );
+      return resp;
+    },
+    staleTime: 5000 * 60, // 5 Minute
+    refetchOnWindowFocus: false,
+  });
+
   return {
     local,
     pavimento,
+    predio,
   };
 };
 
