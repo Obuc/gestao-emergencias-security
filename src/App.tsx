@@ -11,6 +11,8 @@ import HydrantBXO from './pages/Records/Hydrant/BXO';
 import HydrantSPO from './pages/Records/Hydrant/SPO';
 import GovernanceValveBXO from './pages/Records/GovernanceValve/BXO';
 import GovernanceValveSPO from './pages/Records/GovernanceValve/SPO';
+import InspectionCmiBXO from './pages/Records/InspectionCmi/BXO';
+import InspectionCmiSPO from './pages/Records/InspectionCmi/SPO';
 
 const App = () => {
   const equipments_value = localStorage.getItem('equipments_value');
@@ -47,6 +49,13 @@ const App = () => {
       {/* Valves  */}
       <Route path="/records/valves" element={localSite === 'BXO' ? <GovernanceValveBXO /> : <GovernanceValveSPO />} />
       <Route path="/records/valves/:id" element={localSite === 'BXO' ? <GovernanceValveBXO /> : <GovernanceValveSPO />} />
+
+      {/* Cmi Inspection  */}
+      <Route path="/records/cmi_inspection" element={localSite === 'BXO' ? <InspectionCmiBXO /> : <InspectionCmiSPO />} />
+      <Route
+        path="/records/cmi_inspection/:id"
+        element={localSite === 'BXO' ? <InspectionCmiBXO /> : <InspectionCmiSPO />}
+      />
     </Routes>
   );
 };

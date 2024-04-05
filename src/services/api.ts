@@ -166,7 +166,12 @@ class CrudSharepoint {
       const dataToSend = {
         ...data,
         __metadata: {
-          type: list === 'Valvulas_de_Governo' ? 'SP.Data.Valvulas_x005f_de_x005f_IncendioListItem' : `SP.Data.${listName}`,
+          type:
+            list === 'Valvulas_de_Governo'
+              ? 'SP.Data.Valvulas_x005f_de_x005f_IncendioListItem'
+              : list === 'Casa_de_Bombas'
+              ? 'SP.Data.Casa_x005f_de_x005f_BombasListItem'
+              : `SP.Data.${listName}`,
         },
       };
 
@@ -198,7 +203,11 @@ class CrudSharepoint {
         .join('_x005f_');
 
       const listName =
-        list === 'Valvulas_de_Governo' ? 'Valvulas_x005f_de_x005f_IncendioListItem' : `${formattedListName}ListItem`;
+        list === 'Valvulas_de_Governo'
+          ? 'Valvulas_x005f_de_x005f_IncendioListItem'
+          : list === 'Casa_de_Bombas'
+          ? 'Casa_x005f_de_x005f_BombasListItem'
+          : `${formattedListName}ListItem`;
 
       const url = `${this.baseUrl}/_api/web/lists/GetByTitle('${list}')/items(${id})`;
 

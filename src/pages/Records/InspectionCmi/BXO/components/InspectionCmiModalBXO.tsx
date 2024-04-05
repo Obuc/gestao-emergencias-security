@@ -12,18 +12,18 @@ import TextArea from '../../../../../components/TextArea';
 import { Button } from '../../../../../components/Button';
 import { Answers } from '../../../../../components/Answers';
 import TextField from '../../../../../components/TextField';
-import { RespostaValvulas } from '../types/GovernanceValveBXO';
-import { GovernanceValvePdfBXO } from './GovernanceValvePdfBXO';
-import useGovernanceValveModalBXO from '../hooks/useGovernanceValveModalBXO';
+import { InspectionCmiPdfBXO } from './InspectionCmiPdfBXO';
+import { ResponstaInspectionCMI } from '../types/InspectionCmiBXO';
+import useInspectionCmiModalBXO from '../hooks/useInspectionCmiModalBXO';
 
-const GovernanceValveModalBXO = () => {
+const InspectionCmiModalBXO = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isEdit = searchParams.get('edit') === 'true' ? true : false;
 
-  const { governanceValveItem, setGovernanceValveItem, governaceValveModal, mutateEdit, formik } =
-    useGovernanceValveModalBXO();
+  const { governanceValveItem, setGovernanceValveItem, inspectionCmiModal, mutateEdit, formik } =
+    useInspectionCmiModalBXO();
 
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
 
@@ -35,14 +35,14 @@ const GovernanceValveModalBXO = () => {
 
   const handleOnOpenChange = () => {
     setGovernanceValveItem(null);
-    navigate('/records/valves');
+    navigate('/records/cmi_inspection');
   };
 
   const exportToPdf = async () => {
     setGeneratePdf(true);
-    const blob = await pdf(<GovernanceValvePdfBXO data={governaceValveModal.data} />).toBlob();
+    const blob = await pdf(<InspectionCmiPdfBXO data={inspectionCmiModal.data} />).toBlob();
     setGeneratePdf(false);
-    saveAs(blob, `Registro Válvula de Governo BXO - ID ${params.id} - ${format(new Date(), 'dd/MM/yyyy')}.pdf`);
+    saveAs(blob, `Registro Inspeção CMI BXO - ID ${params.id} - ${format(new Date(), 'dd/MM/yyyy')}.pdf`);
   };
 
   return (
@@ -51,7 +51,7 @@ const GovernanceValveModalBXO = () => {
         className="w-[71rem]"
         open={governanceValveItem !== null}
         onOpenChange={handleOnOpenChange}
-        title={`Registro Válvula de Governo N°${params.id}`}
+        title={`Registro Inspeção CMI N°${params.id}`}
       >
         <form className="flex flex-col w-full gap-6" onSubmit={formik.handleSubmit}>
           <>
@@ -66,18 +66,18 @@ const GovernanceValveModalBXO = () => {
                     disabled
                     onChange={formik.handleChange}
                     value={formik.values.Id}
-                    isLoading={governaceValveModal.isLoading}
+                    isLoading={inspectionCmiModal.isLoading}
                   />
 
                   <TextField
                     id="Created"
                     name="Created"
                     label="Data"
-                    width="w-[10rem]"
                     disabled
+                    width="w-[10rem]"
                     onChange={formik.handleChange}
                     value={formik.values?.Created ? format(formik.values.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}
-                    isLoading={governaceValveModal.isLoading}
+                    isLoading={inspectionCmiModal.isLoading}
                   />
 
                   <TextField
@@ -87,61 +87,29 @@ const GovernanceValveModalBXO = () => {
                     disabled
                     onChange={formik.handleChange}
                     value={formik.values.bombeiro}
-                    isLoading={governaceValveModal.isLoading}
+                    isLoading={inspectionCmiModal.isLoading}
                   />
                 </div>
 
                 <div className="flex gap-2 py-2">
                   <TextField
-                    id="valvula.site"
-                    name="valvula.site"
+                    id="extintor.site"
+                    name="extintor.site"
                     label="Site"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.valvula.site}
-                    isLoading={governaceValveModal.isLoading}
+                    value={formik.values.cmi.site}
+                    isLoading={inspectionCmiModal.isLoading}
                   />
 
                   <TextField
-                    id="valvula.predio"
-                    name="valvula.predio"
+                    id="extintor.predio"
+                    name="extintor.predio"
                     label="Prédio"
-                    width="w-[12.5rem]"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.valvula.predio}
-                    isLoading={governaceValveModal.isLoading}
-                  />
-                  <TextField
-                    id="valvula.pavimento"
-                    name="valvula.pavimento"
-                    label="Pavimento"
-                    width="w-[12.5rem]"
-                    disabled
-                    onChange={formik.handleChange}
-                    value={formik.values.valvula.pavimento}
-                    isLoading={governaceValveModal.isLoading}
-                  />
-                </div>
-
-                <div className="flex gap-2 py-2">
-                  <TextField
-                    id="valvula.local"
-                    name="valvula.local"
-                    label="Local Específico"
-                    disabled
-                    onChange={formik.handleChange}
-                    value={formik.values.valvula.local}
-                    isLoading={governaceValveModal.isLoading}
-                  />
-                  <TextField
-                    id="valvula.cod_equipamento"
-                    name="valvula.cod_equipamento"
-                    label="Cód. Válvula"
-                    disabled
-                    onChange={formik.handleChange}
-                    value={formik.values.valvula.cod_equipamento}
-                    isLoading={governaceValveModal.isLoading}
+                    value={formik.values.cmi.predio}
+                    isLoading={inspectionCmiModal.isLoading}
                   />
                 </div>
               </div>
@@ -150,12 +118,18 @@ const GovernanceValveModalBXO = () => {
               <div className="bg-[#F1F3F5] w-full py-6 px-8 text-[#474747]">
                 {formik.values.respostas &&
                   Object.keys(formik.values.respostas).map((categoria) => (
-                    <Answers.Root key={categoria} label={categoria} isLoading={governaceValveModal.isLoading}>
-                      <Answers.Content key={categoria}>
+                    <Answers.Root key={categoria} label={categoria} isLoading={inspectionCmiModal.isLoading}>
+                      <Answers.Content
+                        className={`${
+                          formik.values.respostas && formik.values.respostas[categoria].length === 1 && 'grid-cols-1'
+                        }`}
+                        key={categoria}
+                      >
                         {formik.values.respostas &&
-                          formik.values.respostas[categoria].map((pergunta: RespostaValvulas, index) => (
-                            <Answers.ContentItem key={index} isLoading={governaceValveModal.isLoading}>
+                          formik.values.respostas[categoria].map((pergunta: ResponstaInspectionCMI, index) => (
+                            <Answers.ContentItem key={index} isLoading={inspectionCmiModal.isLoading}>
                               <Answers.Label label={pergunta.pergunta_id.Title} />
+
                               <Answers.Button
                                 disabled={!isEdit}
                                 onClick={() => {
@@ -178,7 +152,7 @@ const GovernanceValveModalBXO = () => {
                     disabled
                     value={formik.values.observacao}
                     onChange={formik.handleChange}
-                    isLoading={governaceValveModal.isLoading}
+                    isLoading={inspectionCmiModal.isLoading}
                   />
                 )}
               </div>
@@ -189,7 +163,7 @@ const GovernanceValveModalBXO = () => {
                     fill
                     onClick={exportToPdf}
                     className="min-w-[14.0625rem] h-10"
-                    disabled={governaceValveModal.isLoading || generatePdf}
+                    disabled={inspectionCmiModal.isLoading || generatePdf}
                   >
                     {generatePdf ? (
                       <Button.Spinner />
@@ -204,14 +178,19 @@ const GovernanceValveModalBXO = () => {
 
                 <Button.Root
                   onClick={handleOnOpenChange}
-                  disabled={governaceValveModal.isLoading}
+                  disabled={inspectionCmiModal.isLoading}
                   className="w-[10rem] h-10"
                 >
                   <Button.Label>Fechar</Button.Label>
                 </Button.Root>
 
                 {isEdit && (
-                  <Button.Root type="submit" disabled={governaceValveModal.isLoading} fill className="w-[10rem] h-10">
+                  <Button.Root
+                    fill
+                    type="submit"
+                    className="w-[10rem] h-10"
+                    disabled={mutateEdit.isLoading || formik.isSubmitting}
+                  >
                     {mutateEdit.isLoading ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
                   </Button.Root>
                 )}
@@ -237,4 +216,4 @@ const GovernanceValveModalBXO = () => {
   );
 };
 
-export default GovernanceValveModalBXO;
+export default InspectionCmiModalBXO;
