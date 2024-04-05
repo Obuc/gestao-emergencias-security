@@ -406,10 +406,10 @@ const HydrantModalSPO = () => {
 
                 {isEdit && (
                   <Button.Root
-                    type="submit"
                     fill
-                    disabled={hydrantModal.isLoading || formik.isSubmitting}
+                    type="submit"
                     className="w-[10rem] h-10"
+                    disabled={hydrantModal.isLoading || formik.isSubmitting}
                   >
                     {mutateEdit.isLoading ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
                   </Button.Root>

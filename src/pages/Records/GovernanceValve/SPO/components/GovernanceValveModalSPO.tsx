@@ -342,10 +342,10 @@ const GovernanceValveModalSPO = () => {
 
                 {isEdit && (
                   <Button.Root
-                    type="submit"
                     fill
-                    disabled={governanceValveModal.isLoading || formik.isSubmitting}
+                    type="submit"
                     className="w-[10rem] h-10"
+                    disabled={governanceValveModal.isLoading || formik.isSubmitting}
                   >
                     {mutateEdit.isLoading ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
                   </Button.Root>

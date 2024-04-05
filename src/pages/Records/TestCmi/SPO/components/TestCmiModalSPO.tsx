@@ -577,10 +577,10 @@ const InspectionCmiModalSPO = () => {
 
                 {isEdit && (
                   <Button.Root
-                    fill
                     type="submit"
-                    className="w-[10rem] h-10"
+                    fill
                     disabled={cmiInspectionModal.isLoading || formik.isSubmitting}
+                    className="w-[10rem] h-10"
                   >
                     {mutateEdit.isLoading ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
                   </Button.Root>

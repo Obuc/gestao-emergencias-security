@@ -46,7 +46,12 @@ const HydrantModalBXO = () => {
 
   return (
     <>
-      <Modal className="w-[71rem]" open={hydrantItem !== null} onOpenChange={handleOnOpenChange} title={`Registro Hidrante N°${params.id}`}>
+      <Modal
+        className="w-[71rem]"
+        open={hydrantItem !== null}
+        onOpenChange={handleOnOpenChange}
+        title={`Registro Hidrante N°${params.id}`}
+      >
         <form className="flex flex-col w-full gap-6" onSubmit={formik.handleSubmit}>
           <>
             <div>
@@ -211,7 +216,12 @@ const HydrantModalBXO = () => {
                 </Button.Root>
 
                 {isEdit && (
-                  <Button.Root type="submit" disabled={hydrantModal.isLoading || formik.isSubmitting} fill className="w-[10rem] h-10">
+                  <Button.Root
+                    fill
+                    type="submit"
+                    className="w-[10rem] h-10"
+                    disabled={hydrantModal.isLoading || formik.isSubmitting}
+                  >
                     {mutateEdit.isLoading ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
                   </Button.Root>
                 )}
@@ -223,8 +233,8 @@ const HydrantModalBXO = () => {
 
       {mutateEdit.isError && (
         <Toast type="error" open={mutateEdit.isError} onOpenChange={mutateEdit.reset}>
-          O sistema encontrou um erro ao tentar atualizar o registro. Recarregue a página e tente novamente. Se o problema persistir, entre
-          em contato com o administrador do sistema.
+          O sistema encontrou um erro ao tentar atualizar o registro. Recarregue a página e tente novamente. Se o problema
+          persistir, entre em contato com o administrador do sistema.
         </Toast>
       )}
 

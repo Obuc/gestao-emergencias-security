@@ -139,7 +139,9 @@ const ExtinguisherModalBXO = () => {
                     disabled
                     onChange={formik.handleChange}
                     value={
-                      formik.values?.extintor?.validade ? format(formik.values?.extintor.validade, 'dd MMM yyyy', { locale: ptBR }) : ''
+                      formik.values?.extintor?.validade
+                        ? format(formik.values?.extintor.validade, 'dd MMM yyyy', { locale: ptBR })
+                        : ''
                     }
                     isLoading={extinguisherModal.isLoading}
                   />
@@ -237,7 +239,12 @@ const ExtinguisherModalBXO = () => {
                 </Button.Root>
 
                 {isEdit && (
-                  <Button.Root type="submit" fill disabled={extinguisherModal.isLoading || formik.isSubmitting} className="w-[10rem] h-10">
+                  <Button.Root
+                    fill
+                    type="submit"
+                    className="w-[10rem] h-10"
+                    disabled={extinguisherModal.isLoading || formik.isSubmitting}
+                  >
                     {mutateEdit.isLoading ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
                   </Button.Root>
                 )}
@@ -249,8 +256,8 @@ const ExtinguisherModalBXO = () => {
 
       {mutateEdit.isError && (
         <Toast type="error" open={mutateEdit.isError} onOpenChange={mutateEdit.reset}>
-          O sistema encontrou um erro ao tentar atualizar o registro. Recarregue a página e tente novamente. Se o problema persistir, entre
-          em contato com o administrador do sistema.
+          O sistema encontrou um erro ao tentar atualizar o registro. Recarregue a página e tente novamente. Se o problema
+          persistir, entre em contato com o administrador do sistema.
         </Toast>
       )}
 

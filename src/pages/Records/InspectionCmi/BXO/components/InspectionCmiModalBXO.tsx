@@ -22,19 +22,18 @@ const InspectionCmiModalBXO = () => {
   const [searchParams] = useSearchParams();
   const isEdit = searchParams.get('edit') === 'true' ? true : false;
 
-  const { governanceValveItem, setGovernanceValveItem, inspectionCmiModal, mutateEdit, formik } =
-    useInspectionCmiModalBXO();
+  const { inspectionCmi, setInspectionCmi, inspectionCmiModal, mutateEdit, formik } = useInspectionCmiModalBXO();
 
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
 
   useEffect(() => {
     if (params?.id) {
-      setGovernanceValveItem(true);
+      setInspectionCmi(true);
     }
   }, [params.id]);
 
   const handleOnOpenChange = () => {
-    setGovernanceValveItem(null);
+    setInspectionCmi(null);
     navigate('/records/cmi_inspection');
   };
 
@@ -49,7 +48,7 @@ const InspectionCmiModalBXO = () => {
     <>
       <Modal
         className="w-[71rem]"
-        open={governanceValveItem !== null}
+        open={inspectionCmi !== null}
         onOpenChange={handleOnOpenChange}
         title={`Registro Inspeção CMI N°${params.id}`}
       >

@@ -8,50 +8,49 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import Modal from '../../../../../components/Modal';
 import Toast from '../../../../../components/Toast';
+import { TestCmiCmiPdfBXO } from './TestCmiCmiPdfBXO';
+import { ResponstaTestCmi } from '../types/TestCmiBXO';
 import TextArea from '../../../../../components/TextArea';
 import { Button } from '../../../../../components/Button';
 import { Answers } from '../../../../../components/Answers';
 import TextField from '../../../../../components/TextField';
-import { RespostaValvulas } from '../types/GovernanceValveBXO';
-import { GovernanceValvePdfBXO } from './GovernanceValvePdfBXO';
-import useGovernanceValveModalBXO from '../hooks/useGovernanceValveModalBXO';
+import useTestCmiModalBXO from '../hooks/useTestCmiModalBXO';
 
-const GovernanceValveModalBXO = () => {
+const TestCmiModalBXO = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isEdit = searchParams.get('edit') === 'true' ? true : false;
 
-  const { governanceValveItem, setGovernanceValveItem, governaceValveModal, mutateEdit, formik } =
-    useGovernanceValveModalBXO();
+  const { testCmiModal, mutateEdit, testCmiItem, setTestCmiItem, formik } = useTestCmiModalBXO();
 
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
 
   useEffect(() => {
     if (params?.id) {
-      setGovernanceValveItem(true);
+      setTestCmiItem(true);
     }
   }, [params.id]);
 
   const handleOnOpenChange = () => {
-    setGovernanceValveItem(null);
-    navigate('/records/valves');
+    setTestCmiItem(null);
+    navigate('/records/cmi_test');
   };
 
   const exportToPdf = async () => {
     setGeneratePdf(true);
-    const blob = await pdf(<GovernanceValvePdfBXO data={governaceValveModal.data} />).toBlob();
+    const blob = await pdf(<TestCmiCmiPdfBXO data={testCmiModal.data} />).toBlob();
     setGeneratePdf(false);
-    saveAs(blob, `Registro Válvula de Governo BXO - ID ${params.id} - ${format(new Date(), 'dd/MM/yyyy')}.pdf`);
+    saveAs(blob, `Registro Teste CMI BXO - ID ${params.id} - ${format(new Date(), 'dd/MM/yyyy')}.pdf`);
   };
 
   return (
     <>
       <Modal
         className="w-[71rem]"
-        open={governanceValveItem !== null}
+        open={testCmiItem !== null}
         onOpenChange={handleOnOpenChange}
-        title={`Registro Válvula de Governo N°${params.id}`}
+        title={`Registro Teste CMI N°${params.id}`}
       >
         <form className="flex flex-col w-full gap-6" onSubmit={formik.handleSubmit}>
           <>
@@ -66,18 +65,17 @@ const GovernanceValveModalBXO = () => {
                     disabled
                     onChange={formik.handleChange}
                     value={formik.values.Id}
-                    isLoading={governaceValveModal.isLoading}
+                    isLoading={testCmiModal.isLoading}
                   />
 
                   <TextField
                     id="Created"
                     name="Created"
                     label="Data"
-                    width="w-[10rem]"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values?.Created ? format(formik.values.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}
-                    isLoading={governaceValveModal.isLoading}
+                    value={formik.values.Created ? format(formik.values?.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}
+                    isLoading={testCmiModal.isLoading}
                   />
 
                   <TextField
@@ -87,61 +85,29 @@ const GovernanceValveModalBXO = () => {
                     disabled
                     onChange={formik.handleChange}
                     value={formik.values.bombeiro}
-                    isLoading={governaceValveModal.isLoading}
+                    isLoading={testCmiModal.isLoading}
                   />
                 </div>
 
                 <div className="flex gap-2 py-2">
                   <TextField
-                    id="valvula.site"
-                    name="valvula.site"
+                    id="extintor.site"
+                    name="extintor.site"
                     label="Site"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.valvula.site}
-                    isLoading={governaceValveModal.isLoading}
+                    value={formik.values.cmi.site}
+                    isLoading={testCmiModal.isLoading}
                   />
 
                   <TextField
-                    id="valvula.predio"
-                    name="valvula.predio"
+                    id="extintor.predio"
+                    name="extintor.predio"
                     label="Prédio"
-                    width="w-[12.5rem]"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values.valvula.predio}
-                    isLoading={governaceValveModal.isLoading}
-                  />
-                  <TextField
-                    id="valvula.pavimento"
-                    name="valvula.pavimento"
-                    label="Pavimento"
-                    width="w-[12.5rem]"
-                    disabled
-                    onChange={formik.handleChange}
-                    value={formik.values.valvula.pavimento}
-                    isLoading={governaceValveModal.isLoading}
-                  />
-                </div>
-
-                <div className="flex gap-2 py-2">
-                  <TextField
-                    id="valvula.local"
-                    name="valvula.local"
-                    label="Local Específico"
-                    disabled
-                    onChange={formik.handleChange}
-                    value={formik.values.valvula.local}
-                    isLoading={governaceValveModal.isLoading}
-                  />
-                  <TextField
-                    id="valvula.cod_equipamento"
-                    name="valvula.cod_equipamento"
-                    label="Cód. Válvula"
-                    disabled
-                    onChange={formik.handleChange}
-                    value={formik.values.valvula.cod_equipamento}
-                    isLoading={governaceValveModal.isLoading}
+                    value={formik.values.cmi.predio}
+                    isLoading={testCmiModal.isLoading}
                   />
                 </div>
               </div>
@@ -149,13 +115,15 @@ const GovernanceValveModalBXO = () => {
 
               <div className="bg-[#F1F3F5] w-full py-6 px-8 text-[#474747]">
                 {formik.values.respostas &&
+                  formik.values.cmi.site === 'BXO' &&
                   Object.keys(formik.values.respostas).map((categoria) => (
-                    <Answers.Root key={categoria} label={categoria} isLoading={governaceValveModal.isLoading}>
-                      <Answers.Content key={categoria}>
+                    <Answers.Root key={categoria} label={categoria} isLoading={testCmiModal.isLoading}>
+                      <Answers.Content className="grid-cols-1" key={categoria}>
                         {formik.values.respostas &&
-                          formik.values.respostas[categoria].map((pergunta: RespostaValvulas, index) => (
-                            <Answers.ContentItem key={index} isLoading={governaceValveModal.isLoading}>
+                          formik.values.respostas[categoria].map((pergunta: ResponstaTestCmi, index) => (
+                            <Answers.ContentItem key={index} isLoading={testCmiModal.isLoading}>
                               <Answers.Label label={pergunta.pergunta_id.Title} />
+
                               <Answers.Button
                                 disabled={!isEdit}
                                 onClick={() => {
@@ -170,6 +138,45 @@ const GovernanceValveModalBXO = () => {
                     </Answers.Root>
                   ))}
 
+                {formik.values.respostas &&
+                  formik.values.cmi.site === 'SPO' &&
+                  Object.keys(formik.values.respostas).map((categoria) => (
+                    <Answers.Root key={categoria} label={categoria} isLoading={testCmiModal.isLoading}>
+                      <Answers.Content key={categoria}>
+                        {formik.values.respostas &&
+                          formik.values.respostas[categoria].map((pergunta: ResponstaTestCmi, index) => (
+                            <Answers.ContentItem key={index} isLoading={testCmiModal.isLoading}>
+                              <Answers.Label label={pergunta.pergunta_id.Title} />
+
+                              {pergunta.resposta_2 && (
+                                <TextField
+                                  id="pergunta.resposta_2"
+                                  name="pergunta.resposta_2"
+                                  onChange={(e) => {
+                                    formik.setFieldValue(`respostas.${categoria}[${index}].resposta_2`, e.target.value);
+                                  }}
+                                  value={pergunta.resposta_2 ?? ''}
+                                  isLoading={testCmiModal.isLoading}
+                                  disabled={!isEdit}
+                                />
+                              )}
+
+                              {!pergunta.resposta_2 && (
+                                <Answers.Button
+                                  disabled={!isEdit}
+                                  onClick={() => {
+                                    const updatedResposta = !pergunta.resposta;
+                                    formik.setFieldValue(`respostas.${categoria}[${index}].resposta`, updatedResposta);
+                                  }}
+                                  answersValue={pergunta.resposta}
+                                />
+                              )}
+                            </Answers.ContentItem>
+                          ))}
+                      </Answers.Content>
+                    </Answers.Root>
+                  ))}
+
                 {formik.values.observacao && (
                   <TextArea
                     id="observacao"
@@ -178,7 +185,7 @@ const GovernanceValveModalBXO = () => {
                     disabled
                     value={formik.values.observacao}
                     onChange={formik.handleChange}
-                    isLoading={governaceValveModal.isLoading}
+                    isLoading={testCmiModal.isLoading}
                   />
                 )}
               </div>
@@ -189,7 +196,7 @@ const GovernanceValveModalBXO = () => {
                     fill
                     onClick={exportToPdf}
                     className="min-w-[14.0625rem] h-10"
-                    disabled={governaceValveModal.isLoading || generatePdf}
+                    disabled={testCmiModal.isLoading || generatePdf}
                   >
                     {generatePdf ? (
                       <Button.Spinner />
@@ -202,11 +209,7 @@ const GovernanceValveModalBXO = () => {
                   </Button.Root>
                 )}
 
-                <Button.Root
-                  onClick={handleOnOpenChange}
-                  disabled={governaceValveModal.isLoading}
-                  className="w-[10rem] h-10"
-                >
+                <Button.Root onClick={handleOnOpenChange} disabled={testCmiModal.isLoading} className="w-[10rem] h-10">
                   <Button.Label>Fechar</Button.Label>
                 </Button.Root>
 
@@ -215,7 +218,7 @@ const GovernanceValveModalBXO = () => {
                     fill
                     type="submit"
                     className="w-[10rem] h-10"
-                    disabled={governaceValveModal.isLoading || formik.isSubmitting}
+                    disabled={testCmiModal.isLoading || formik.isSubmitting}
                   >
                     {mutateEdit.isLoading ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
                   </Button.Root>
@@ -242,4 +245,4 @@ const GovernanceValveModalBXO = () => {
   );
 };
 
-export default GovernanceValveModalBXO;
+export default TestCmiModalBXO;

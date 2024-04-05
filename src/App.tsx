@@ -5,14 +5,15 @@ import Report from './pages/Report';
 import Records from './pages/Records';
 import Schedule from './pages/Schedule';
 import Equipments from './pages/Equipments';
-import ExtinguisherBXO from './pages/Records/Extinguisher/BXO';
-import ExtinguisherSPO from './pages/Records/Extinguisher/SPO';
 import HydrantBXO from './pages/Records/Hydrant/BXO';
 import HydrantSPO from './pages/Records/Hydrant/SPO';
-import GovernanceValveBXO from './pages/Records/GovernanceValve/BXO';
-import GovernanceValveSPO from './pages/Records/GovernanceValve/SPO';
+import TestCmiBXO from './pages/Records/TestCmi/BXO';
+import ExtinguisherBXO from './pages/Records/Extinguisher/BXO';
+import ExtinguisherSPO from './pages/Records/Extinguisher/SPO';
 import InspectionCmiBXO from './pages/Records/InspectionCmi/BXO';
 import InspectionCmiSPO from './pages/Records/InspectionCmi/SPO';
+import GovernanceValveBXO from './pages/Records/GovernanceValve/BXO';
+import GovernanceValveSPO from './pages/Records/GovernanceValve/SPO';
 
 const App = () => {
   const equipments_value = localStorage.getItem('equipments_value');
@@ -56,6 +57,10 @@ const App = () => {
         path="/records/cmi_inspection/:id"
         element={localSite === 'BXO' ? <InspectionCmiBXO /> : <InspectionCmiSPO />}
       />
+
+      {/* Cmi Test  */}
+      <Route path="/records/cmi_test" element={localSite === 'BXO' ? <TestCmiBXO /> : <InspectionCmiSPO />} />
+      <Route path="/records/cmi_test/:id" element={localSite === 'BXO' ? <TestCmiBXO /> : <InspectionCmiSPO />} />
     </Routes>
   );
 };
