@@ -22,8 +22,7 @@ const useExtinguisherSPO = () => {
     months.find((option) => option.value === getMonth(new Date()).toString()),
   );
   const sessionFiltersActions = sessionStorage.getItem('session_filters_extinguisher');
-  const sessionFiltersActionsJSON: IExtinguisherFiltersProps =
-    sessionFiltersActions && JSON.parse(sessionFiltersActions);
+  const sessionFiltersActionsJSON: IExtinguisherFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
 
   const initialFiltersValues = {
     responsible: sessionFiltersActionsJSON?.responsible ? sessionFiltersActionsJSON.responsible : null,
@@ -239,7 +238,7 @@ const useExtinguisherSPO = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['extinguisher_data', user_site, tableFilters],
+        queryKey: ['extinguisher_data', user_site, tableFilters, sortColumns, year, month],
       });
     },
   });
@@ -283,7 +282,9 @@ const useExtinguisherSPO = () => {
             item.Obst1 &&
             item.Obst2 &&
             item.OData__x004c_tv1 &&
-            item.OData__x004c_tv2,
+            item.OData__x004c_tv2
+              ? 'CONFORME'
+              : 'NÃO CONFORME',
         };
       }),
     );

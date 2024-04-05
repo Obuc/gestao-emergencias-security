@@ -1,70 +1,52 @@
-export interface Hydrant {
+export interface GovernanceValve {
   Id: number;
   Created: Date;
   Responsavel1?: string;
-  Title: string;
-  CodLacre?: string;
-  CodMangueira?: string;
   Local: string;
-  Pavimento: string;
-  LocalEsp: string;
-  OData__x0048_id1: boolean;
-  OData__x0048_id2: boolean;
-  OData__x0041_bg1: boolean;
-  OData__x0041_bg2: boolean;
-  OData__x0053_nl1: boolean;
-  OData__x0053_nl2: boolean;
-  Obst1: boolean;
-  Obst2: boolean;
+  OData__x0054_mp1: boolean;
+  OData__x0054_mp2: boolean;
+  OData__x0046_cn1: boolean;
+  OData__x0046_cn2: boolean;
+  OData__x0046_cn3: boolean;
+  OData__x0046_cn4: boolean;
+  OData__x0053_in1: boolean;
   OData__x004c_cr1: boolean;
   OData__x004c_cr2: boolean;
-  OData_Insp1: boolean;
-  OData_Insp2: boolean;
-
+  OData__x004f_bs1: boolean;
+  Obst2: boolean;
   conforme: boolean;
 }
 
-export interface HydrantModal {
+export interface GovernanceValveModal {
   Id: number;
   Created: Date | null;
   Responsavel1?: string;
-  Title: string;
-  CodLacre?: string;
-  CodMangueira?: string;
-  Local: string;
-  Pavimento: string;
-  LocalEsp: string;
-  OData__x0048_id1: boolean;
-  OData__x0048_id2: boolean;
-  OData__x0041_bg1: boolean;
-  OData__x0041_bg2: boolean;
-  OData__x0053_nl1: boolean;
-  OData__x0053_nl2: boolean;
-  Obst1: boolean;
-  Obst2: boolean;
+  OData__x0054_mp1: boolean;
+  OData__x0054_mp2: boolean;
+  OData__x0046_cn1: boolean;
+  OData__x0046_cn2: boolean;
+  OData__x0046_cn3: boolean;
+  OData__x0046_cn4: boolean;
+  OData__x0053_in1: boolean;
   OData__x004c_cr1: boolean;
   OData__x004c_cr2: boolean;
-  Insp1: boolean;
-  Insp2: boolean;
+  OData__x004f_bs1: boolean;
+  Obst2: boolean;
+  Observacao?: string;
   UF: string;
   Municipios: string;
   Site: string;
+  Local: string;
   Area: string;
-  Diametro?: string;
-  Comprimento?: string;
-  codigo: string;
-  Observacao?: string;
+  codigo?: string;
+  Title: string;
 }
 
-export interface IHydrantFiltersProps {
+export interface IGovernanceValveFiltersProps {
   responsible: string | null;
-  hydrantId: string | null;
+  id: string | null;
+  place: string | null;
   startDate: Date | null;
   endDate: Date | null;
-  seal: string | null;
-  hoses: string | null;
-  place: string | null;
-  pavement: string | null;
-  specificLocation: string | null;
   conformity: string | null;
 }

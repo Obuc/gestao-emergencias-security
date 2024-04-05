@@ -39,7 +39,7 @@ export const ExtinguisherPdfSPO = ({ data }: IExtinguisherPdfProps) => {
             <View style={styles.containerContentItem}>
               <PDFInput title="Cód. Área" value={data?.codigo} />
               <PDFInput title="UF" value={data?.UF} />
-              <PDFInput title="Múnicipio" value={data?.Municipios} />
+              <PDFInput title="Município" value={data?.Municipios} />
               <PDFInput width={160} title="Site" value={data?.Site} />
             </View>
 
@@ -124,9 +124,7 @@ export const ExtinguisherPdfSPO = ({ data }: IExtinguisherPdfProps) => {
             </View>
 
             <View style={[styles.containerItem, { width: '100%' }]}>
-              <Text style={styles.containerItemTitle}>
-                O anel colorido está instalado na parte superior do cilindro?
-              </Text>
+              <Text style={styles.containerItemTitle}>O anel colorido está instalado na parte superior do cilindro?</Text>
               {!data?.OData__x0043_ar2 && (
                 <View style={styles.containerResponseFalse}>
                   <Text style={styles.containerItemTitle}>Não</Text>
@@ -177,9 +175,7 @@ export const ExtinguisherPdfSPO = ({ data }: IExtinguisherPdfProps) => {
             </View>
 
             <View style={[styles.containerItem, { width: '100%' }]}>
-              <Text style={styles.containerItemTitle}>
-                O cilindro está fixado na parede ou sobre um suporte de piso?
-              </Text>
+              <Text style={styles.containerItemTitle}>O cilindro está fixado na parede ou sobre um suporte de piso?</Text>
               {!data?.OData__x0043_il3 && (
                 <View style={styles.containerResponseFalse}>
                   <Text style={styles.containerItemTitle}>Não</Text>

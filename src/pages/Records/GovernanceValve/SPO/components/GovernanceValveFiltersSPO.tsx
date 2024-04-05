@@ -1,25 +1,25 @@
 import { Button } from '../../../../../components/Button';
-import { IHydrantFiltersProps } from '../types/HydrantSPO';
 import { Popover } from '../../../../../components/Popover';
 import TextField from '../../../../../components/TextField';
 import DatePicker from '../../../../../components/DatePicker';
+import { IGovernanceValveFiltersProps } from '../types/GovernanceValveSPO';
 import { SelectAutoComplete } from '../../../../../components/SelectAutocomplete';
 
-interface IHydrantFilters {
-  tempTableFilters: IHydrantFiltersProps;
-  setTempTableFilters: React.Dispatch<React.SetStateAction<IHydrantFiltersProps>>;
+interface IFilters {
+  tempTableFilters: IGovernanceValveFiltersProps;
+  setTempTableFilters: React.Dispatch<React.SetStateAction<IGovernanceValveFiltersProps>>;
   handleRemoveAllFilters: () => void;
   countAppliedFilters: () => number;
   handleApplyFilters: () => void;
 }
 
-const HydrantFiltersSPO = ({
+const GovernanceValveFiltersSPO = ({
   tempTableFilters,
   setTempTableFilters,
   handleRemoveAllFilters,
   countAppliedFilters,
   handleApplyFilters,
-}: IHydrantFilters) => {
+}: IFilters) => {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
@@ -48,12 +48,12 @@ const HydrantFiltersSPO = ({
           />
 
           <TextField
-            label="Hidrante"
-            id="hydrantId"
-            name="hydrantId"
-            value={tempTableFilters.hydrantId || ''}
+            label="Registro"
+            id="id"
+            name="id"
+            value={tempTableFilters.id || ''}
             onChange={(event) => {
-              setTempTableFilters((prev) => ({ ...prev, hydrantId: event.target.value }));
+              setTempTableFilters((prev) => ({ ...prev, id: event.target.value }));
             }}
           />
 
@@ -74,52 +74,12 @@ const HydrantFiltersSPO = ({
           )}
 
           <TextField
-            label="Lacre"
-            id="seal"
-            name="seal"
-            value={tempTableFilters.seal || ''}
-            onChange={(event) => {
-              setTempTableFilters((prev) => ({ ...prev, seal: event.target.value }));
-            }}
-          />
-
-          <TextField
-            label="Mangueiras"
-            id="hoses"
-            name="hoses"
-            value={tempTableFilters.hoses || ''}
-            onChange={(event) => {
-              setTempTableFilters((prev) => ({ ...prev, hoses: event.target.value }));
-            }}
-          />
-
-          <TextField
             label="Local"
             id="place"
             name="place"
             value={tempTableFilters.place || ''}
             onChange={(event) => {
               setTempTableFilters((prev) => ({ ...prev, place: event.target.value }));
-            }}
-          />
-
-          <TextField
-            label="Pavimento"
-            id="pavement"
-            name="pavement"
-            value={tempTableFilters.pavement || ''}
-            onChange={(event) => {
-              setTempTableFilters((prev) => ({ ...prev, pavement: event.target.value }));
-            }}
-          />
-
-          <TextField
-            label="Local Específico"
-            id="specificLocation"
-            name="specificLocation"
-            value={tempTableFilters.specificLocation || ''}
-            onChange={(event) => {
-              setTempTableFilters((prev) => ({ ...prev, specificLocation: event.target.value }));
             }}
           />
 
@@ -160,4 +120,4 @@ const HydrantFiltersSPO = ({
   );
 };
 
-export default HydrantFiltersSPO;
+export default GovernanceValveFiltersSPO;

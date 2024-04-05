@@ -38,7 +38,7 @@ export const HydrantPdfSPO = ({ data }: IHydrantPdfProps) => {
 
             <View style={styles.containerContentItem}>
               <PDFInput title="UF" value={data?.UF} />
-              <PDFInput title="Múnicipio" value={data?.Municipios} />
+              <PDFInput title="Município" value={data?.Municipios} />
               <PDFInput width={160} title="Site" value={data?.Site} />
             </View>
 

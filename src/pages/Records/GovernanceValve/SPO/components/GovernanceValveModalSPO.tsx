@@ -6,41 +6,42 @@ import { useEffect, useState } from 'react';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
-import { HydrantPdfSPO } from './HydrantPdfSPO';
 import Toast from '../../../../../components/Toast';
 import Modal from '../../../../../components/Modal';
 import { Button } from '../../../../../components/Button';
 import TextArea from '../../../../../components/TextArea';
 import TextField from '../../../../../components/TextField';
 import { Answers } from '../../../../../components/Answers';
-import useHydrantModalSPO from '../hooks/useHydrantModalSPO';
+import { GovernanceValvePdfSPO } from './GovernanceValvePdfSPO';
+import useGovernanceValveModalSPO from '../hooks/useGovernanceValveModalSPO';
 
-const HydrantModalSPO = () => {
+const GovernanceValveModalSPO = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isEdit = searchParams.get('edit') === 'true' ? true : false;
 
-  const { hydrantItem, setHydrantItem, hydrantModal, mutateEdit, formik } = useHydrantModalSPO();
+  const { governanceValveItem, setGovernanceValveItem, governanceValveModal, mutateEdit, formik } =
+    useGovernanceValveModalSPO();
 
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
 
   useEffect(() => {
     if (params?.id) {
-      setHydrantItem(true);
+      setGovernanceValveItem(true);
     }
   }, [params.id]);
 
   const handleOnOpenChange = () => {
-    setHydrantItem(null);
-    navigate('/records/hydrants');
+    setGovernanceValveItem(null);
+    navigate('/records/valves');
   };
 
   const exportToPdf = async () => {
     setGeneratePdf(true);
 
-    const blob = await pdf(<HydrantPdfSPO data={hydrantModal.data} />).toBlob();
-    saveAs(blob, `Registro Hidrante SPO - ID ${params.id} - ${format(new Date(), 'dd/MM/yyyy')}.pdf`);
+    const blob = await pdf(<GovernanceValvePdfSPO data={governanceValveModal.data} />).toBlob();
+    saveAs(blob, `Registro Válvula de Governo SPO - ID ${params.id} - ${format(new Date(), 'dd/MM/yyyy')}.pdf`);
 
     setGeneratePdf(false);
   };
@@ -49,7 +50,7 @@ const HydrantModalSPO = () => {
     <>
       <Modal
         className="w-[71rem]"
-        open={hydrantItem !== null}
+        open={governanceValveItem !== null}
         onOpenChange={handleOnOpenChange}
         title={`Registro Hidrante N°${params.id}`}
       >
@@ -66,7 +67,7 @@ const HydrantModalSPO = () => {
                     disabled
                     onChange={formik.handleChange}
                     value={formik.values?.Id}
-                    isLoading={hydrantModal.isLoading}
+                    isLoading={governanceValveModal.isLoading}
                   />
 
                   <TextField
@@ -76,7 +77,7 @@ const HydrantModalSPO = () => {
                     disabled
                     onChange={formik.handleChange}
                     value={formik.values?.Created ? format(formik.values?.Created, 'dd MMM yyyy', { locale: ptBR }) : ''}
-                    isLoading={hydrantModal.isLoading}
+                    isLoading={governanceValveModal.isLoading}
                   />
 
                   <TextField
@@ -86,7 +87,7 @@ const HydrantModalSPO = () => {
                     disabled
                     onChange={formik.handleChange}
                     value={formik.values?.Responsavel1}
-                    isLoading={hydrantModal.isLoading}
+                    isLoading={governanceValveModal.isLoading}
                   />
                 </div>
 
@@ -98,17 +99,17 @@ const HydrantModalSPO = () => {
                     disabled
                     onChange={formik.handleChange}
                     value={formik.values?.UF}
-                    isLoading={hydrantModal.isLoading}
+                    isLoading={governanceValveModal.isLoading}
                   />
 
                   <TextField
                     id="Municipios"
                     name="Municipios"
-                    label="Múnicipio"
+                    label="Município"
                     disabled
                     onChange={formik.handleChange}
                     value={formik.values?.Municipios}
-                    isLoading={hydrantModal.isLoading}
+                    isLoading={governanceValveModal.isLoading}
                   />
 
                   <TextField
@@ -119,7 +120,7 @@ const HydrantModalSPO = () => {
                     width="w-[6.25rem]"
                     onChange={formik.handleChange}
                     value={formik.values?.Site}
-                    isLoading={hydrantModal.isLoading}
+                    isLoading={governanceValveModal.isLoading}
                   />
                 </div>
 
@@ -131,7 +132,7 @@ const HydrantModalSPO = () => {
                     disabled
                     onChange={formik.handleChange}
                     value={formik.values?.Area}
-                    isLoading={hydrantModal.isLoading}
+                    isLoading={governanceValveModal.isLoading}
                   />
 
                   <TextField
@@ -141,170 +142,127 @@ const HydrantModalSPO = () => {
                     disabled
                     onChange={formik.handleChange}
                     value={formik.values?.Local}
-                    isLoading={hydrantModal.isLoading}
+                    isLoading={governanceValveModal.isLoading}
                   />
 
                   <TextField
-                    id="Pavimento"
-                    name="Pavimento"
-                    label="Pavimento"
+                    id="codigo"
+                    name="codigo"
+                    label="Código"
                     disabled
                     onChange={formik.handleChange}
-                    value={formik.values?.Pavimento}
-                    isLoading={hydrantModal.isLoading}
-                  />
-                </div>
-
-                <div className="flex gap-2 py-2">
-                  <TextField
-                    id="LocalEsp"
-                    name="LocalEsp"
-                    label="Local Específico"
-                    disabled
-                    onChange={formik.handleChange}
-                    value={formik.values?.LocalEsp}
-                    isLoading={hydrantModal.isLoading}
-                  />
-
-                  <TextField
-                    id="CodLacre"
-                    name="CodLacre"
-                    label="Código do lacre"
-                    disabled
-                    onChange={formik.handleChange}
-                    value={formik.values?.CodLacre ? formik.values?.CodLacre : 'N/A'}
-                    isLoading={hydrantModal.isLoading}
-                  />
-                </div>
-
-                <div className="flex gap-2 py-2">
-                  <TextField
-                    id="CodMangueira"
-                    name="CodMangueira"
-                    label="Código da(s) mangueira(s)"
-                    disabled
-                    onChange={formik.handleChange}
-                    value={formik.values?.CodMangueira}
-                    isLoading={hydrantModal.isLoading}
-                  />
-
-                  <TextField
-                    id="Diametro"
-                    name="Diametro"
-                    label="Diâmetro"
-                    disabled
-                    onChange={formik.handleChange}
-                    value={formik.values?.Diametro}
-                    isLoading={hydrantModal.isLoading}
-                  />
-
-                  <TextField
-                    id="Comprimento"
-                    name="Comprimento"
-                    label="Comprimento"
-                    disabled
-                    onChange={formik.handleChange}
-                    value={formik.values?.Comprimento}
-                    isLoading={hydrantModal.isLoading}
+                    value={formik.values?.codigo}
+                    isLoading={governanceValveModal.isLoading}
                   />
                 </div>
               </div>
               <div className="w-full h-px bg-primary-opacity" />
 
               <div className="bg-[#F1F3F5] w-full py-6 px-8 text-[#474747]">
-                <Answers.Root label="Hidrante" isLoading={hydrantModal.isLoading}>
+                <Answers.Root label="Tampa" isLoading={governanceValveModal.isLoading}>
                   <Answers.Content>
-                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
-                      <Answers.Label label="O hidrante está sem avarias?" />
+                    <Answers.ContentItem isLoading={governanceValveModal.isLoading}>
+                      <Answers.Label label="A tampa da válvula está fechada corretamente?" />
                       <Answers.Button
-                        id="OData__x0048_id1"
-                        name="OData__x0048_id1"
+                        id="OData__x0054_mp1"
+                        name="OData__x0054_mp1"
                         disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x0048_id1', !formik.values.OData__x0048_id1)}
-                        answersValue={formik.values.OData__x0048_id1}
+                        onClick={() => formik.setFieldValue('OData__x0054_mp1', !formik.values.OData__x0054_mp1)}
+                        answersValue={formik.values.OData__x0054_mp1}
                       />
                     </Answers.ContentItem>
 
-                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
-                      <Answers.Label label="O hidrante está em bom estado de conservação?" />
+                    <Answers.ContentItem isLoading={governanceValveModal.isLoading}>
+                      <Answers.Label label="A tampa da válvula está em bom estado de conservação?" />
                       <Answers.Button
-                        id="OData__x0048_id2"
-                        name="OData__x0048_id2"
+                        id="OData__x0054_mp2"
+                        name="OData__x0054_mp2"
                         disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x0048_id2', !formik.values.OData__x0048_id2)}
-                        answersValue={formik.values.OData__x0048_id2}
+                        onClick={() => formik.setFieldValue('OData__x0054_mp2', !formik.values.OData__x0054_mp2)}
+                        answersValue={formik.values.OData__x0054_mp2}
                       />
                     </Answers.ContentItem>
                   </Answers.Content>
                 </Answers.Root>
 
-                <Answers.Root label="Abrigo" isLoading={hydrantModal.isLoading}>
+                <Answers.Root label="Funcionamento" isLoading={governanceValveModal.isLoading}>
                   <Answers.Content>
-                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
-                      <Answers.Label label="O abrigo de mangueira está sem avarias?" />
+                    <Answers.ContentItem isLoading={governanceValveModal.isLoading}>
+                      <Answers.Label label="A “T” encaixou corretamente na válvula?" />
                       <Answers.Button
-                        id="OData__x0041_bg1"
-                        name="OData__x0041_bg1"
+                        id="OData__x0046_cn1"
+                        name="OData__x0046_cn1"
                         disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x0041_bg1', !formik.values.OData__x0041_bg1)}
-                        answersValue={formik.values.OData__x0041_bg1}
+                        onClick={() => formik.setFieldValue('OData__x0046_cn1', !formik.values.OData__x0046_cn1)}
+                        answersValue={formik.values.OData__x0046_cn1}
                       />
                     </Answers.ContentItem>
 
-                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
-                      <Answers.Label label="O abrigo está em bom esteado de conservação?" />
+                    <Answers.ContentItem isLoading={governanceValveModal.isLoading}>
+                      <Answers.Label label="A válvula estava aberta totalmente?" />
                       <Answers.Button
-                        id="OData__x0041_bg2"
-                        name="OData__x0041_bg2"
+                        id="OData__x0046_cn2"
+                        name="OData__x0046_cn2"
                         disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x0041_bg2', !formik.values.OData__x0041_bg2)}
-                        answersValue={formik.values.OData__x0041_bg2}
+                        onClick={() => formik.setFieldValue('OData__x0046_cn2', !formik.values.OData__x0046_cn2)}
+                        answersValue={formik.values.OData__x0046_cn2}
+                      />
+                    </Answers.ContentItem>
+
+                    <Answers.ContentItem isLoading={governanceValveModal.isLoading}>
+                      <Answers.Label label="A válvula foi fechada sem dificuldade?" />
+                      <Answers.Button
+                        id="OData__x0046_cn3"
+                        name="OData__x0046_cn3"
+                        disabled={!isEdit}
+                        onClick={() => formik.setFieldValue('OData__x0046_cn3', !formik.values.OData__x0046_cn3)}
+                        answersValue={formik.values.OData__x0046_cn3}
+                      />
+                    </Answers.ContentItem>
+
+                    <Answers.ContentItem isLoading={governanceValveModal.isLoading}>
+                      <Answers.Label label="Após o teste, a válvula permaneceu aberta novamente?" />
+                      <Answers.Button
+                        id="OData__x0046_cn4"
+                        name="OData__x0046_cn4"
+                        disabled={!isEdit}
+                        onClick={() => formik.setFieldValue('OData__x0046_cn4', !formik.values.OData__x0046_cn4)}
+                        answersValue={formik.values.OData__x0046_cn4}
                       />
                     </Answers.ContentItem>
                   </Answers.Content>
                 </Answers.Root>
 
-                <Answers.Root label="Sinalização" isLoading={hydrantModal.isLoading}>
+                <Answers.Root label="Sinalização" isLoading={governanceValveModal.isLoading}>
                   <Answers.Content>
-                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
-                      <Answers.Label label="A sinalização está fixada adequadamente?" />
+                    <Answers.ContentItem isLoading={governanceValveModal.isLoading}>
+                      <Answers.Label label="A tampa está sinalizada corretamente?" />
                       <Answers.Button
-                        id="OData__x0053_nl1"
-                        name="OData__x0053_nl1"
+                        id="OData__x0053_in1"
+                        name="OData__x0053_in1"
                         disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x0053_nl1', !formik.values.OData__x0053_nl1)}
-                        answersValue={formik.values.OData__x0053_nl1}
-                      />
-                    </Answers.ContentItem>
-
-                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
-                      <Answers.Label label="A sinalização está de acordo com as normas?" />
-                      <Answers.Button
-                        id="OData__x0053_nl2"
-                        name="OData__x0053_nl2"
-                        disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('OData__x0053_nl2', !formik.values.OData__x0053_nl2)}
-                        answersValue={formik.values.OData__x0053_nl2}
+                        onClick={() => formik.setFieldValue('OData__x0053_in1', !formik.values.OData__x0053_in1)}
+                        answersValue={formik.values.OData__x0053_in1}
                       />
                     </Answers.ContentItem>
                   </Answers.Content>
                 </Answers.Root>
 
-                <Answers.Root label="Obstrução" isLoading={hydrantModal.isLoading}>
+                <Answers.Root label="Obstrução" isLoading={governanceValveModal.isLoading}>
                   <Answers.Content>
-                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
-                      <Answers.Label label="O hidrante está desobstruído?" />
+                    <Answers.ContentItem isLoading={governanceValveModal.isLoading}>
+                      <Answers.Label label="A tampa da válvula está desobstruída?" />
                       <Answers.Button
-                        id="Obst1"
-                        name="Obst1"
+                        id="OData__x004f_bs1"
+                        name="OData__x004f_bs1"
                         disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('Obst1', !formik.values.Obst1)}
-                        answersValue={formik.values.Obst1}
+                        onClick={() => formik.setFieldValue('OData__x004f_bs1', !formik.values.OData__x004f_bs1)}
+                        answersValue={formik.values.OData__x004f_bs1}
                       />
                     </Answers.ContentItem>
 
-                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
-                      <Answers.Label label="Está sem objetos estranhos no abrigo?" />
+                    <Answers.ContentItem isLoading={governanceValveModal.isLoading}>
+                      <Answers.Label label="Está sem objetos estranhos no interior da caixa da válvula?" />
                       <Answers.Button
                         id="Obst2"
                         name="Obst2"
@@ -316,10 +274,10 @@ const HydrantModalSPO = () => {
                   </Answers.Content>
                 </Answers.Root>
 
-                <Answers.Root label="Lacre" isLoading={hydrantModal.isLoading}>
+                <Answers.Root label="Lacre" isLoading={governanceValveModal.isLoading}>
                   <Answers.Content>
-                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
-                      <Answers.Label label="O abrigo está lacrado corretamente?" />
+                    <Answers.ContentItem isLoading={governanceValveModal.isLoading}>
+                      <Answers.Label label="A válvula está lacrada corretamente?" />
                       <Answers.Button
                         id="OData__x004c_cr1"
                         name="OData__x004c_cr1"
@@ -329,40 +287,14 @@ const HydrantModalSPO = () => {
                       />
                     </Answers.ContentItem>
 
-                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
-                      <Answers.Label label="O lacre do abrigo está intacto?" />
+                    <Answers.ContentItem isLoading={governanceValveModal.isLoading}>
+                      <Answers.Label label="O lacre da válvula está intacto?" />
                       <Answers.Button
                         id="OData__x004c_cr2"
                         name="OData__x004c_cr2"
                         disabled={!isEdit}
                         onClick={() => formik.setFieldValue('OData__x004c_cr2', !formik.values.OData__x004c_cr2)}
                         answersValue={formik.values.OData__x004c_cr2}
-                      />
-                    </Answers.ContentItem>
-                  </Answers.Content>
-                </Answers.Root>
-
-                <Answers.Root label="Inspeção" isLoading={hydrantModal.isLoading}>
-                  <Answers.Content>
-                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
-                      <Answers.Label label="A etiqueta de Inspeção está instalada?" />
-                      <Answers.Button
-                        id="Insp1"
-                        name="Insp1"
-                        disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('Insp1', !formik.values.Insp1)}
-                        answersValue={formik.values.Insp1}
-                      />
-                    </Answers.ContentItem>
-
-                    <Answers.ContentItem isLoading={hydrantModal.isLoading}>
-                      <Answers.Label label="A trava está fixada na alavanca de acionamento?" />
-                      <Answers.Button
-                        id="Insp2"
-                        name="Insp2"
-                        disabled={!isEdit}
-                        onClick={() => formik.setFieldValue('Insp2', !formik.values.Insp2)}
-                        answersValue={formik.values.Insp2}
                       />
                     </Answers.ContentItem>
                   </Answers.Content>
@@ -376,7 +308,7 @@ const HydrantModalSPO = () => {
                     disabled
                     value={formik.values.Observacao}
                     onChange={formik.handleChange}
-                    isLoading={hydrantModal.isLoading}
+                    isLoading={governanceValveModal.isLoading}
                   />
                 )}
               </div>
@@ -387,7 +319,7 @@ const HydrantModalSPO = () => {
                     fill
                     onClick={exportToPdf}
                     className="min-w-[14.0625rem] h-10"
-                    disabled={hydrantModal.isLoading || generatePdf}
+                    disabled={governanceValveModal.isLoading || generatePdf}
                   >
                     {generatePdf ? (
                       <Button.Spinner />
@@ -400,7 +332,11 @@ const HydrantModalSPO = () => {
                   </Button.Root>
                 )}
 
-                <Button.Root onClick={handleOnOpenChange} disabled={hydrantModal.isLoading} className="w-[10rem] h-10">
+                <Button.Root
+                  onClick={handleOnOpenChange}
+                  disabled={governanceValveModal.isLoading}
+                  className="w-[10rem] h-10"
+                >
                   <Button.Label>Fechar</Button.Label>
                 </Button.Root>
 
@@ -408,7 +344,7 @@ const HydrantModalSPO = () => {
                   <Button.Root
                     type="submit"
                     fill
-                    disabled={hydrantModal.isLoading || formik.isSubmitting}
+                    disabled={governanceValveModal.isLoading || formik.isSubmitting}
                     className="w-[10rem] h-10"
                   >
                     {mutateEdit.isLoading ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
@@ -436,4 +372,4 @@ const HydrantModalSPO = () => {
   );
 };
 
-export default HydrantModalSPO;
+export default GovernanceValveModalSPO;

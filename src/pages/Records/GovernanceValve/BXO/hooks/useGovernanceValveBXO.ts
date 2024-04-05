@@ -2,10 +2,9 @@ import * as XLSX from 'xlsx';
 import { useState } from 'react';
 import { SortColumn } from 'react-data-grid';
 import { useLocation } from 'react-router-dom';
+import { format, getYear, parseISO } from 'date-fns';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { endOfMonth, endOfYear, format, getMonth, getYear, parseISO, startOfMonth, startOfYear } from 'date-fns';
 
-import months from '../../../../../utils/month.mock';
 import buildOrderByQuery from '../../../../../utils/buildOrderByQuery';
 import { IGovernanceValveFiltersProps } from '../types/GovernanceValveBXO';
 import { sharepointContext } from '../../../../../context/sharepointContext';
@@ -18,9 +17,9 @@ const useGovernanceValveBXO = () => {
 
   const [year, setYear] = useState(getYear(new Date()));
   const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([{ columnKey: 'Created', direction: 'DESC' }]);
-  const [month, setMonth] = useState<{ value: string; label: string } | undefined>(
-    months.find((option) => option.value === getMonth(new Date()).toString()),
-  );
+  // const [month, setMonth] = useState<{ value: string; label: string } | undefined>(
+  //   months.find((option) => option.value === getMonth(new Date()).toString()),
+  // );
   const sessionFiltersActions = sessionStorage.getItem('session_filters_governance_valve_bxo');
   const sessionFiltersActionsJSON: IGovernanceValveFiltersProps =
     sessionFiltersActions && JSON.parse(sessionFiltersActions);
@@ -75,24 +74,24 @@ const useGovernanceValveBXO = () => {
   const fetchGovernanceValve = async ({ pageParam }: { pageParam?: string }) => {
     const orderByQuery = buildOrderByQuery(sortColumns);
 
-    let path = `?$Select=Id,predio,Created,site/Title,valvula_id/cod_equipamento,valvula_id/Id,bombeiro_id/Title,conforme,observacao,data_legado&$expand=site,valvula_id,bombeiro_id&$Top=25&${orderByQuery}&$Filter=`;
+    let path = `?$Select=Id,predio,Created,site/Title,valvula_id/cod_equipamento,valvula_id/Id,bombeiro_id/Title,conforme,observacao,data_legado&$expand=site,valvula_id,bombeiro_id&$Top=25&${orderByQuery}&$Filter=(site/Title eq 'BXO')`;
 
-    if (!month?.value) {
-      const startDate = format(startOfYear(year), "yyyy-MM-dd'T'00:00:00'Z'");
-      const endDate = format(endOfYear(year), "yyyy-MM-dd'T'23:59:59'Z'");
+    if (year) {
+      const startDate = format(new Date(year, 0, 1), "yyyy-MM-dd'T'00:00:00'Z'");
+      const endDate = format(new Date(year, 11, 31), "yyyy-MM-dd'T'23:59:59'Z'");
 
-      path += `(Created ge ${startDate} and Created le ${endDate})`;
+      path += `and (Created ge datetime'${startDate}') and (Created le datetime'${endDate}')`;
     }
 
-    if (month?.value) {
-      const startOfMonthDate = startOfMonth(new Date(year, +month.value));
-      const endOfMonthDate = endOfMonth(new Date(year, +month.value));
+    // if (month?.value) {
+    //   const startOfMonthDate = startOfMonth(new Date(year, +month.value));
+    //   const endOfMonthDate = endOfMonth(new Date(year, +month.value));
 
-      path += `(Created ge datetime'${format(
-        startOfMonthDate,
-        "yyyy-MM-dd'T'HH:mm:ssxxx",
-      )}') and (Created le datetime'${format(endOfMonthDate, "yyyy-MM-dd'T'HH:mm:ssxxx")}')`;
-    }
+    //   path += `(Created ge datetime'${format(
+    //     startOfMonthDate,
+    //     "yyyy-MM-dd'T'HH:mm:ssxxx",
+    //   )}') and (Created le datetime'${format(endOfMonthDate, "yyyy-MM-dd'T'HH:mm:ssxxx")}')`;
+    // }
 
     if (tableFilters?.responsible) {
       path += ` and ( substringof('${tableFilters.responsible}', bombeiro_id/Title ))`;
@@ -167,7 +166,7 @@ const useGovernanceValveBXO = () => {
   };
 
   const governancevalve = useInfiniteQuery({
-    queryKey: ['governace_valve_data_bxo', user_site, tableFilters, sortColumns, year, month],
+    queryKey: ['governance_valve_data_bxo', user_site, tableFilters, sortColumns, year],
     queryFn: fetchGovernanceValve,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -195,7 +194,7 @@ const useGovernanceValveBXO = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['governace_valve_data_bxo', user_site, tableFilters, sortColumns, year, month],
+        queryKey: ['governance_valve_data_bxo', user_site, tableFilters, sortColumns, year],
       });
     },
   });
@@ -289,8 +288,6 @@ const useGovernanceValveBXO = () => {
     mutateExportExcel,
     sortColumns,
     setSortColumns,
-    month,
-    setMonth,
     year,
     setYear,
   };

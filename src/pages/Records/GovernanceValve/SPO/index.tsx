@@ -3,17 +3,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import Toast from '../../../../components/Toast';
-import years from '../../../../utils/years.mock';
-import months from '../../../../utils/month.mock';
-import useHydrantSPO from './hooks/useHydrantSPO';
 import { Select } from '../../../../components/Select';
 import { Button } from '../../../../components/Button';
 import LayoutBase from '../../../../layout/LayoutBase';
-import HydrantTableSPO from './components/HydrantTableSPO';
 import { appContext } from '../../../../context/appContext';
-import HydrantFiltersSPO from './components/HydrantFiltersSPO';
+import useGovernanceValveSPO from './hooks/useGovernanceValveSPO';
+import GovernanceValveTableSPO from './components/GovernanceValveTableSPO';
+import GovernanceValveFiltersSPO from './components/GovernanceValveFiltersSPO';
 
-const HydrantSPO = () => {
+const GovernanceValveSPO = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { formularios, submenu, isLoadingFormularios } = appContext();
@@ -27,27 +25,25 @@ const HydrantSPO = () => {
     handleRemoveAllFilters,
     setTempTableFilters,
     tempTableFilters,
-    month,
-    setMonth,
-    year,
-    setYear,
-    hydrant,
+    governancevalve,
     mutateRemove,
     sortColumns,
     setSortColumns,
-  } = useHydrantSPO();
+  } = useGovernanceValveSPO();
 
   const filteredForms =
     formularios &&
-    formularios.filter((form) => (form.todos_sites === true || form.site.Title === localSite) && form.Title !== 'Veículos de emergência');
+    formularios.filter(
+      (form) => (form.todos_sites === true || form.site.Title === localSite) && form.Title !== 'Veículos de emergência',
+    );
 
   const filteredSubMenu = submenu && submenu.filter((form) => form.todos_sites === true || form.site.Title === localSite);
 
-  const [formValue, setFormValue] = useState<string>(equipments_value ?? 'hydrants');
+  const [formValue, setFormValue] = useState<string>(equipments_value ?? 'valves');
 
   useEffect(() => {
     if (localSite?.length && !equipments_value?.length) {
-      localStorage.setItem('equipments_value', 'hydrants');
+      localStorage.setItem('equipments_value', 'valves');
     }
   }, []);
 
@@ -133,7 +129,7 @@ const HydrantSPO = () => {
                   )}
                 </Button.Root>
 
-                {month && (
+                {/* {month && (
                   <Select.Component
                     id="month"
                     name="month"
@@ -153,9 +149,9 @@ const HydrantSPO = () => {
                       </Select.Item>
                     ))}
                   </Select.Component>
-                )}
+                )} */}
 
-                <Select.Component
+                {/* <Select.Component
                   id="year"
                   name="year"
                   value={year.toString()}
@@ -170,9 +166,9 @@ const HydrantSPO = () => {
                       {year}
                     </Select.Item>
                   ))}
-                </Select.Component>
+                </Select.Component> */}
 
-                <HydrantFiltersSPO
+                <GovernanceValveFiltersSPO
                   countAppliedFilters={countAppliedFilters}
                   handleApplyFilters={handleApplyFilters}
                   handleRemoveAllFilters={handleRemoveAllFilters}
@@ -182,7 +178,12 @@ const HydrantSPO = () => {
               </div>
             </div>
 
-            <HydrantTableSPO hydrant={hydrant} mutateRemove={mutateRemove} setSortColumns={setSortColumns} sortColumns={sortColumns} />
+            <GovernanceValveTableSPO
+              governancevalve={governancevalve}
+              mutateRemove={mutateRemove}
+              setSortColumns={setSortColumns}
+              sortColumns={sortColumns}
+            />
           </div>
         </div>
       </LayoutBase>
@@ -202,4 +203,4 @@ const HydrantSPO = () => {
   );
 };
 
-export default HydrantSPO;
+export default GovernanceValveSPO;

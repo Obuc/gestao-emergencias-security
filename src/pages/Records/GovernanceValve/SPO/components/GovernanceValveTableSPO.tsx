@@ -1,39 +1,39 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Column, SortColumn } from 'react-data-grid';
 import { useNavigate } from 'react-router-dom';
+import { Column, SortColumn } from 'react-data-grid';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UseInfiniteQueryResult, UseMutationResult } from '@tanstack/react-query';
 
-import { Hydrant } from '../types/HydrantSPO';
-import HydrantModalSPO from './HydrantModalSPO';
 import Toast from '../../../../../components/Toast';
 import isAtBottom from '../../../../../utils/isAtBottom';
+import { GovernanceValve } from '../types/GovernanceValveSPO';
 import CustomDataGrid from '../../../../../components/DataGrid';
+import GovernanceValveModalSPO from './GovernanceValveModalSPO';
 import PopoverTables from '../../../../../components/PopoverTables';
 import RemoveItem from '../../../../../components/AppModals/RemoveItem';
 import DataGridLoadMore from '../../../../../components/DataGrid/DataGridLoadMore';
 
 interface IHydrantTableProps {
-  hydrant: UseInfiniteQueryResult<any, unknown>;
+  governancevalve: UseInfiniteQueryResult<any, unknown>;
   mutateRemove: UseMutationResult<void, unknown, number, unknown>;
   sortColumns: readonly SortColumn[];
   setSortColumns: React.Dispatch<React.SetStateAction<readonly SortColumn[]>>;
 }
 
-const HydrantTableSPO = ({ hydrant, mutateRemove, setSortColumns, sortColumns }: IHydrantTableProps) => {
+const GovernanceValveTableSPO = ({ governancevalve, mutateRemove, setSortColumns, sortColumns }: IHydrantTableProps) => {
   const navigate = useNavigate();
 
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (Id: number) => {
-    navigate(`/records/hydrants/${Id}?edit=false`);
+    navigate(`/records/valves/${Id}?edit=false`);
   };
 
   const handleEdit = (Id: number) => {
-    navigate(`/records/hydrants/${Id}?edit=true`);
+    navigate(`/records/valves/${Id}?edit=true`);
   };
 
   const handleRemoveItem = async () => {
@@ -47,36 +47,28 @@ const HydrantTableSPO = ({ hydrant, mutateRemove, setSortColumns, sortColumns }:
     }
   };
 
-  const columns: readonly Column<Hydrant>[] = [
+  const columns: readonly Column<GovernanceValve>[] = [
     { key: 'Responsavel1', name: 'Responsável', resizable: true, width: 300 },
+    { key: 'Id', name: 'N° Registro', resizable: true },
     { key: 'Created', name: 'Data', resizable: true },
-    { key: 'Title', name: 'Hidrante', resizable: true },
-    { key: 'CodLacre', name: 'Lacre', resizable: true },
-    { key: 'CodMangueira', name: 'Mangueiras', resizable: true },
     { key: 'Local', name: 'Local', resizable: true },
-    { key: 'Pavimento', name: 'Pavimento', resizable: true },
-    { key: 'LocalEsp', name: 'Local Específico', resizable: true },
     { key: 'conforme', name: 'conforme', resizable: true },
 
     { key: 'buttons', name: 'Ações', resizable: true, sortable: false },
   ];
 
   const mappedRows =
-    hydrant.data?.pages.flatMap(
+    governancevalve.data?.pages.flatMap(
       (page) =>
-        page?.data?.value?.map((item: Hydrant) => ({
+        page?.data?.value?.map((item: GovernanceValve) => ({
           Responsavel1: item?.Responsavel1 ? (
             <div className="pl-4">{item.Responsavel1}</div>
           ) : (
             <div className="pl-4">Sem informação responsável</div>
           ),
+          Id: item?.Id,
           Created: item?.Created ? format(item?.Created, 'dd MMM yyyy', { locale: ptBR }) : '',
-          Title: item?.Title,
-          CodLacre: item?.CodLacre ? item?.CodLacre : 'N/A',
-          CodMangueira: item?.CodMangueira,
           Local: item?.Local,
-          Pavimento: item?.Pavimento,
-          LocalEsp: item?.LocalEsp,
 
           conforme: (
             <div className="flex items-center h-full w-full">
@@ -108,7 +100,7 @@ const HydrantTableSPO = ({ hydrant, mutateRemove, setSortColumns, sortColumns }:
 
   const handleScroll = async (event: React.UIEvent<HTMLDivElement>) => {
     if (!isAtBottom(event)) return;
-    hydrant.fetchNextPage();
+    governancevalve.fetchNextPage();
   };
 
   return (
@@ -127,10 +119,10 @@ const HydrantTableSPO = ({ hydrant, mutateRemove, setSortColumns, sortColumns }:
           setSortColumns={setSortColumns}
         />
 
-        {hydrant.isFetchingNextPage && <DataGridLoadMore />}
+        {governancevalve.isFetchingNextPage && <DataGridLoadMore />}
       </div>
 
-      <HydrantModalSPO />
+      <GovernanceValveModalSPO />
 
       {removeItem !== null && (
         <RemoveItem
@@ -156,4 +148,4 @@ const HydrantTableSPO = ({ hydrant, mutateRemove, setSortColumns, sortColumns }:
   );
 };
 
-export default HydrantTableSPO;
+export default GovernanceValveTableSPO;

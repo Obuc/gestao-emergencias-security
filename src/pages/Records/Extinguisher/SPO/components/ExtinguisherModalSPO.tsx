@@ -115,7 +115,7 @@ const ExtinguisherModalSPO = () => {
                   <TextField
                     id="Municipios"
                     name="Municipios"
-                    label="Múnicipio"
+                    label="Município"
                     disabled
                     onChange={formik.handleChange}
                     value={formik.values.Municipios}
@@ -427,7 +427,12 @@ const ExtinguisherModalSPO = () => {
                 </Button.Root>
 
                 {isEdit && (
-                  <Button.Root type="submit" fill disabled={extinguisherModal.isLoading || formik.isSubmitting} className="w-[10rem] h-10">
+                  <Button.Root
+                    type="submit"
+                    fill
+                    disabled={extinguisherModal.isLoading || formik.isSubmitting}
+                    className="w-[10rem] h-10"
+                  >
                     {mutateEdit.isLoading ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
                   </Button.Root>
                 )}
@@ -439,8 +444,8 @@ const ExtinguisherModalSPO = () => {
 
       {mutateEdit.isError && (
         <Toast type="error" open={mutateEdit.isError} onOpenChange={mutateEdit.reset}>
-          O sistema encontrou um erro ao tentar atualizar o registro. Recarregue a página e tente novamente. Se o problema persistir, entre
-          em contato com o administrador do sistema.
+          O sistema encontrou um erro ao tentar atualizar o registro. Recarregue a página e tente novamente. Se o problema
+          persistir, entre em contato com o administrador do sistema.
         </Toast>
       )}
 

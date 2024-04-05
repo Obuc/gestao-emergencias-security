@@ -144,7 +144,7 @@ const useGovernanceValveModalBXO = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['governace_valve_modal_bxo', params.id] });
-      queryClient.invalidateQueries({ queryKey: ['governace_valve_data_bxo'] });
+      queryClient.invalidateQueries({ queryKey: ['governance_valve_data_bxo'] });
 
       const timeoutId = setTimeout(() => {
         setGovernanceValveItem(null);

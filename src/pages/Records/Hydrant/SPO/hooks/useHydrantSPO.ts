@@ -208,7 +208,7 @@ const useHydrantSPO = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['hydrant_data_spo', user_site, tableFilters],
+        queryKey: ['hydrant_data_spo', user_site, tableFilters, sortColumns, year, month],
       });
     },
   });
@@ -239,7 +239,9 @@ const useHydrantSPO = () => {
             item.Obst2 &&
             item.OData__x004c_cr1 &&
             item.OData__x004c_cr2 &&
-            item.OData_Insp1,
+            item.OData_Insp1
+              ? 'CONFORME'
+              : 'NÃO CONFORME',
         };
       }),
     );

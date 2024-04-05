@@ -4,7 +4,6 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import Toast from '../../../../components/Toast';
 import years from '../../../../utils/years.mock';
-import months from '../../../../utils/month.mock';
 import LayoutBase from '../../../../layout/LayoutBase';
 import { Select } from '../../../../components/Select';
 import { Button } from '../../../../components/Button';
@@ -27,8 +26,6 @@ const GovernanceValveBXO = () => {
     handleRemoveAllFilters,
     setTempTableFilters,
     tempTableFilters,
-    month,
-    setMonth,
     year,
     setYear,
     governancevalve,
@@ -134,28 +131,6 @@ const GovernanceValveBXO = () => {
                     </>
                   )}
                 </Button.Root>
-
-                {month && (
-                  <Select.Component
-                    id="month"
-                    name="month"
-                    value={month?.label}
-                    className="w-[10rem]"
-                    popperWidth="w-[10rem]"
-                    mode="gray"
-                    variant="outline"
-                    onValueChange={(value) => {
-                      const monthValue = months.find((option) => option.value === value);
-                      setMonth(monthValue);
-                    }}
-                  >
-                    {months.map((month) => (
-                      <Select.Item key={month.value} value={month.value}>
-                        {month.label}
-                      </Select.Item>
-                    ))}
-                  </Select.Component>
-                )}
 
                 <Select.Component
                   id="year"

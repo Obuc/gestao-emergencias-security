@@ -104,7 +104,7 @@ const HydrantModalSPO = () => {
                   <TextField
                     id="Municipios"
                     name="Municipios"
-                    label="Múnicipio"
+                    label="Município"
                     disabled
                     onChange={formik.handleChange}
                     value={formik.values?.Municipios}
