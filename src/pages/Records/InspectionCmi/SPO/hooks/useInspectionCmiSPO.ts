@@ -285,8 +285,8 @@ const useInspectionCmiSPO = () => {
         ws['!rows'] = wsrows;
         ws['!cols'] = wscols;
 
-        XLSX.utils.book_append_sheet(wb, ws, 'Inspeção CMI');
-        XLSX.writeFile(wb, `SPO - Registros - Inspeção CMI.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, 'Casa de Bombas');
+        XLSX.writeFile(wb, `SPO - Registros - Casa de Bombas.xlsx`);
       }
     },
   });

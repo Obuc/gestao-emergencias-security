@@ -3,15 +3,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import Toast from '../../../../components/Toast';
-import { Select } from '../../../../components/Select';
+import useTestCmiSPO from './hooks/useTestCmiSPO';
 import { Button } from '../../../../components/Button';
 import LayoutBase from '../../../../layout/LayoutBase';
+import { Select } from '../../../../components/Select';
+import TestCmiTableSPO from './components/TestCmiTableSPO';
 import { appContext } from '../../../../context/appContext';
-import useInspectionCmiSPO from './hooks/useInspectionCmiSPO';
-import InspectionCmiTableSPO from './components/InspectionCmiTableSPO';
-import InspectionCmiFiltersSPO from './components/InspectionCmiFiltersSPO';
+import TestCmiFiltersSPO from './components/TestCmiFiltersSPO';
 
-const InspectionCmiSPO = () => {
+const TestCmiSPO = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { formularios, submenu, isLoadingFormularios } = appContext();
@@ -25,11 +25,11 @@ const InspectionCmiSPO = () => {
     handleRemoveAllFilters,
     setTempTableFilters,
     tempTableFilters,
-    cmiInspection,
+    cmiTest,
     mutateRemove,
     sortColumns,
     setSortColumns,
-  } = useInspectionCmiSPO();
+  } = useTestCmiSPO();
 
   const filteredForms =
     formularios &&
@@ -39,11 +39,11 @@ const InspectionCmiSPO = () => {
 
   const filteredSubMenu = submenu && submenu.filter((form) => form.todos_sites === true || form.site.Title === localSite);
 
-  const [formValue, setFormValue] = useState<string>(equipments_value ?? 'cmi_inspection');
+  const [formValue, setFormValue] = useState<string>(equipments_value ?? 'cmi_test');
 
   useEffect(() => {
     if (localSite?.length && !equipments_value?.length) {
-      localStorage.setItem('equipments_value', 'cmi_inspection');
+      localStorage.setItem('equipments_value', 'cmi_test');
     }
   }, []);
 
@@ -129,7 +129,7 @@ const InspectionCmiSPO = () => {
                   )}
                 </Button.Root>
 
-                <InspectionCmiFiltersSPO
+                <TestCmiFiltersSPO
                   countAppliedFilters={countAppliedFilters}
                   handleApplyFilters={handleApplyFilters}
                   handleRemoveAllFilters={handleRemoveAllFilters}
@@ -139,8 +139,8 @@ const InspectionCmiSPO = () => {
               </div>
             </div>
 
-            <InspectionCmiTableSPO
-              cmiInspection={cmiInspection}
+            <TestCmiTableSPO
+              cmiTest={cmiTest}
               mutateRemove={mutateRemove}
               setSortColumns={setSortColumns}
               sortColumns={sortColumns}
@@ -164,4 +164,4 @@ const InspectionCmiSPO = () => {
   );
 };
 
-export default InspectionCmiSPO;
+export default TestCmiSPO;

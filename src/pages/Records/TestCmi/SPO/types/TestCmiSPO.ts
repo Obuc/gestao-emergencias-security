@@ -1,81 +1,82 @@
-export interface InspectionCmi {
+export interface TestCmi {
   Id: number;
   Created: Date;
   Responsavel1?: string;
   Local: string;
-  OData__x0050_e1: boolean;
-  OData__x0050_e2: boolean;
-  OData__x0050_e3: boolean;
-  OData__x0050_e4: boolean;
-  OData__x0050_e5: boolean;
-  OData__x0052_es1: boolean;
-  OData__x0052_es2: boolean;
-  OData__x0052_es3: boolean;
-  OData__x0052_es4: boolean;
-  OData__x0052_es5: boolean;
-  OData__x0052_es6: boolean;
-  OData__x0052_es7: boolean;
-  OData__x0042_i1: boolean;
-  OData__x0042_i2: boolean;
-  OData__x0042_i3: boolean;
-  OData__x0042_i4: boolean;
-  OData__x0042_i5: boolean;
-  OData__x0042_i6: boolean;
-  OData__x0044_iv1: boolean;
-  OData__x0044_iv2: boolean;
-  OData__x0044_iv3: boolean;
-  OData__x0044_iv4: boolean;
-  OData__x0044_iv5: boolean;
-  OData__x0044_iv6: boolean;
+  // Bomba Jockey 1
+  OData__x0042_j11: string;
+  OData__x0042_j12: string;
+  OData__x0042_j13: string;
+  OData__x0042_j14: boolean;
+  // Bomba Jockey 2
+  OData__x0042_j21: string;
+  OData__x0042_j22: string;
+  OData__x0042_j23: string;
+  OData__x0042_j24: boolean;
+  // Bomba Principal 1
+  OData__x0042_p11: string;
+  OData__x0042_p12: string;
+  OData__x0042_p13: string;
+  OData__x0042_p14: string;
+  OData__x0042_p15: string;
+  // Bomba Principal 2
+  OData__x0042_p21: string;
+  OData__x0042_p22: string;
+  OData__x0042_p23: string;
+  OData__x0042_p24: string;
+  OData__x0042_p25: string;
+  // Bomba Booster 1
+  OData__x0042_b11: string;
+  OData__x0042_b12: string;
+  OData__x0042_b13: string;
+  // Bomba Booster 2
+  OData__x0042_b21: string;
+  OData__x0042_b22: string;
+  OData__x0042_b23: string;
+  // Gerador
   OData__x0047_er1: boolean;
   OData__x0047_er2: boolean;
-  OData__x0047_er3: boolean;
-  OData__x0047_er4: boolean;
-  OData__x0043_b1: boolean;
-  OData__x0043_b2: boolean;
-  OData__x0043_b3: boolean;
-  OData__x0043_b4: boolean;
-  OData__x0043_b5: boolean;
+
   conforme: boolean;
 }
 
-export interface InspectionCmiModal {
+export interface TestCmiModal {
   Id: number;
-  Created: Date | null;
+  Created: Date;
   Responsavel1?: string;
-  OData__x0050_e1: boolean;
-  OData__x0050_e2: boolean;
-  OData__x0050_e3: boolean;
-  OData__x0050_e4: boolean;
-  OData__x0050_e5: boolean;
-  OData__x0052_es1: boolean;
-  OData__x0052_es2: boolean;
-  OData__x0052_es3: boolean;
-  OData__x0052_es4: boolean;
-  OData__x0052_es5: boolean;
-  OData__x0052_es6: boolean;
-  OData__x0052_es7: boolean;
-  OData__x0042_i1: boolean;
-  OData__x0042_i2: boolean;
-  OData__x0042_i3: boolean;
-  OData__x0042_i4: boolean;
-  OData__x0042_i5: boolean;
-  OData__x0042_i6: boolean;
-  OData__x0044_iv1: boolean;
-  OData__x0044_iv2: boolean;
-  OData__x0044_iv3: boolean;
-  OData__x0044_iv4: boolean;
-  OData__x0044_iv5: boolean;
-  OData__x0044_iv6: boolean;
+  // Bomba Jockey 1
+  OData__x0042_j11: string;
+  OData__x0042_j12: string;
+  OData__x0042_j13: string;
+  OData__x0042_j14: boolean;
+  // Bomba Jockey 2
+  OData__x0042_j21: string;
+  OData__x0042_j22: string;
+  OData__x0042_j23: string;
+  OData__x0042_j24: boolean;
+  // Bomba Principal 1
+  OData__x0042_p11: string;
+  OData__x0042_p12: string;
+  OData__x0042_p13: string;
+  OData__x0042_p14: string;
+  OData__x0042_p15: string;
+  // Bomba Principal 2
+  OData__x0042_p21: string;
+  OData__x0042_p22: string;
+  OData__x0042_p23: string;
+  OData__x0042_p24: string;
+  OData__x0042_p25: string;
+  // Bomba Booster 1
+  OData__x0042_b11: string;
+  OData__x0042_b12: string;
+  OData__x0042_b13: string;
+  // Bomba Booster 2
+  OData__x0042_b21: string;
+  OData__x0042_b22: string;
+  OData__x0042_b23: string;
+  // Gerador
   OData__x0047_er1: boolean;
   OData__x0047_er2: boolean;
-  OData__x0047_er3: boolean;
-  OData__x0047_er4: boolean;
-  OData__x0043_b1: boolean;
-  OData__x0043_b2: boolean;
-  OData__x0043_b3: boolean;
-  OData__x0043_b4: boolean;
-  OData__x0043_b5: boolean;
 
   Observacao?: string;
   UF: string;
@@ -85,7 +86,7 @@ export interface InspectionCmiModal {
   Area: string;
 }
 
-export interface IInspectionCmiFiltersProps {
+export interface ITestCmiFiltersProps {
   responsible: string | null;
   id: string | null;
   place: string | null;

@@ -8,6 +8,7 @@ import Equipments from './pages/Equipments';
 import HydrantBXO from './pages/Records/Hydrant/BXO';
 import HydrantSPO from './pages/Records/Hydrant/SPO';
 import TestCmiBXO from './pages/Records/TestCmi/BXO';
+import TestCmiSPO from './pages/Records/TestCmi/SPO';
 import ExtinguisherBXO from './pages/Records/Extinguisher/BXO';
 import ExtinguisherSPO from './pages/Records/Extinguisher/SPO';
 import InspectionCmiBXO from './pages/Records/InspectionCmi/BXO';
@@ -59,8 +60,8 @@ const App = () => {
       />
 
       {/* Cmi Test  */}
-      <Route path="/records/cmi_test" element={localSite === 'BXO' ? <TestCmiBXO /> : <InspectionCmiSPO />} />
-      <Route path="/records/cmi_test/:id" element={localSite === 'BXO' ? <TestCmiBXO /> : <InspectionCmiSPO />} />
+      <Route path="/records/cmi_test" element={localSite === 'BXO' ? <TestCmiBXO /> : <TestCmiSPO />} />
+      <Route path="/records/cmi_test/:id" element={localSite === 'BXO' ? <TestCmiBXO /> : <TestCmiSPO />} />
     </Routes>
   );
 };

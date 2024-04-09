@@ -4,10 +4,10 @@ import { parseISO } from 'date-fns';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { InspectionCmiModal } from '../types/InspectionCmiSPO';
+import { TestCmiModal } from '../types/TestCmiSPO';
 import { sharepointContext } from '../../../../../context/sharepointContext';
 
-const useInspectionCmiModalSPO = () => {
+const useTestCmiModalSPO = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -18,15 +18,15 @@ const useInspectionCmiModalSPO = () => {
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
 
-  const [inspectionCmiItem, setInspectionCmiItem] = useState<boolean | null>(null);
+  const [testCmiItem, setTestCmiItem] = useState<boolean | null>(null);
 
-  const cmiInspectionModal = useQuery({
-    queryKey: ['cmi_inspection_data_modal_spo', params.id],
+  const cmiTestModal = useQuery({
+    queryKey: ['cmi_test_data_modal_spo', params.id],
     queryFn: async () => {
       if (params.id) {
         const resp = await crudParent.getListItemsv2(
-          '	Casa_de_Bombas',
-          `?$Select=Id,Created,Responsavel1/Title,OData__x0050_e1,OData__x0050_e2,OData__x0050_e3,OData__x0050_e4,OData__x0050_e5,OData__x0052_es1,OData__x0052_es2,OData__x0052_es3,OData__x0052_es4,OData__x0052_es5,OData__x0052_es6,OData__x0052_es7,OData__x0042_i1,OData__x0042_i2,OData__x0042_i3,OData__x0042_i4,OData__x0042_i5,OData__x0042_i6,OData__x0044_iv1,OData__x0044_iv2,OData__x0044_iv3,OData__x0044_iv4,OData__x0044_iv5,OData__x0044_iv6,OData__x0047_er1,OData__x0047_er2,OData__x0047_er3,OData__x0047_er4,OData__x0043_b1,OData__x0043_b2,OData__x0043_b3,OData__x0043_b4,OData__x0043_b5,Observacao,UF,Municipios,Site,Local,Area,codigo,Title&$Expand=Responsavel1&$Filter=(Id eq ${params.id})`,
+          '	Bombas_de_Incendio',
+          `?$Select=Id,Created,Responsavel1/Title,OData__x0042_j11,OData__x0042_j12,OData__x0042_j13,OData__x0042_j14,OData__x0042_j21,OData__x0042_j22,OData__x0042_j23,OData__x0042_j24,OData__x0042_p11,OData__x0042_p12,OData__x0042_p13,OData__x0042_p14,OData__x0042_p15,OData__x0042_p21,OData__x0042_p22,OData__x0042_p23,OData__x0042_p24,OData__x0042_p25,OData__x0042_b11,OData__x0042_b12,OData__x0042_b13,OData__x0042_b21,OData__x0042_b22,OData__x0042_b23,OData__x0047_er1,OData__x0047_er2,Observacao,UF,Municipios,Site,Local,Area&$Expand=Responsavel1&$Filter=(Id eq ${params.id})`,
         );
 
         const cmiInspection = resp.results[0];
@@ -46,57 +46,50 @@ const useInspectionCmiModalSPO = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && pathname === `/records/cmi_inspection/${params.id}` && user_site === 'SPO',
+    enabled: params.id !== undefined && pathname === `/records/cmi_test/${params.id}` && user_site === 'SPO',
   });
 
   const mutateEdit = useMutation({
-    mutationFn: async (values: InspectionCmiModal) => {
+    mutationFn: async (values: TestCmiModal) => {
       const dataUpdate = {
-        OData__x0050_e1: values.OData__x0050_e1,
-        OData__x0050_e2: values.OData__x0050_e2,
-        OData__x0050_e3: values.OData__x0050_e3,
-        OData__x0050_e4: values.OData__x0050_e4,
-        OData__x0050_e5: values.OData__x0050_e5,
-        OData__x0052_es1: values.OData__x0052_es1,
-        OData__x0052_es2: values.OData__x0052_es2,
-        OData__x0052_es3: values.OData__x0052_es3,
-        OData__x0052_es4: values.OData__x0052_es4,
-        OData__x0052_es5: values.OData__x0052_es5,
-        OData__x0052_es6: values.OData__x0052_es6,
-        OData__x0052_es7: values.OData__x0052_es7,
-        OData__x0042_i1: values.OData__x0042_i1,
-        OData__x0042_i2: values.OData__x0042_i2,
-        OData__x0042_i3: values.OData__x0042_i3,
-        OData__x0042_i4: values.OData__x0042_i4,
-        OData__x0042_i5: values.OData__x0042_i5,
-        OData__x0042_i6: values.OData__x0042_i6,
-        OData__x0044_iv1: values.OData__x0044_iv1,
-        OData__x0044_iv2: values.OData__x0044_iv2,
-        OData__x0044_iv3: values.OData__x0044_iv3,
-        OData__x0044_iv4: values.OData__x0044_iv4,
-        OData__x0044_iv5: values.OData__x0044_iv5,
-        OData__x0044_iv6: values.OData__x0044_iv6,
+        OData__x0042_j11: values.OData__x0042_j11,
+        OData__x0042_j12: values.OData__x0042_j12,
+        OData__x0042_j13: values.OData__x0042_j13,
+        OData__x0042_j14: values.OData__x0042_j14,
+        OData__x0042_j21: values.OData__x0042_j21,
+        OData__x0042_j22: values.OData__x0042_j22,
+        OData__x0042_j23: values.OData__x0042_j23,
+        OData__x0042_j24: values.OData__x0042_j24,
+        OData__x0042_p11: values.OData__x0042_p11,
+        OData__x0042_p12: values.OData__x0042_p12,
+        OData__x0042_p13: values.OData__x0042_p13,
+        OData__x0042_p14: values.OData__x0042_p14,
+        OData__x0042_p15: values.OData__x0042_p15,
+        OData__x0042_p21: values.OData__x0042_p21,
+        OData__x0042_p22: values.OData__x0042_p22,
+        OData__x0042_p23: values.OData__x0042_p23,
+        OData__x0042_p24: values.OData__x0042_p24,
+        OData__x0042_p25: values.OData__x0042_p25,
+        OData__x0042_b11: values.OData__x0042_b11,
+        OData__x0042_b12: values.OData__x0042_b12,
+        OData__x0042_b13: values.OData__x0042_b13,
+        OData__x0042_b21: values.OData__x0042_b21,
+        OData__x0042_b22: values.OData__x0042_b22,
+        OData__x0042_b23: values.OData__x0042_b23,
         OData__x0047_er1: values.OData__x0047_er1,
         OData__x0047_er2: values.OData__x0047_er2,
-        OData__x0047_er3: values.OData__x0047_er3,
-        OData__x0047_er4: values.OData__x0047_er4,
-        OData__x0043_b1: values.OData__x0043_b1,
-        OData__x0043_b2: values.OData__x0043_b2,
-        OData__x0043_b3: values.OData__x0043_b3,
-        OData__x0043_b4: values.OData__x0043_b4,
-        OData__x0043_b5: values.OData__x0043_b5,
         Observacao: values.Observacao,
       };
 
-      await crudParent.updateItemList('Casa_de_Bombas', values.Id, dataUpdate);
+      await crudParent.updateItemList('Bombas_de_Incendio', values.Id, dataUpdate);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cmi_inspection_data_modal_spo', params.id] });
-      queryClient.invalidateQueries({ queryKey: ['cmi_inspection_data_spo'] });
+      queryClient.invalidateQueries({ queryKey: ['cmi_test_data_modal_spo', params.id] });
+      queryClient.invalidateQueries({ queryKey: ['cmi_test_data_spo'] });
 
       const timeoutId = setTimeout(() => {
-        setInspectionCmiItem(null);
-        navigate('/records/cmi_inspection');
+        setTestCmiItem(null);
+        navigate('/records/cmi_test');
       }, +timeDelayToRedirectPage);
       return () => clearTimeout(timeoutId);
     },
@@ -105,54 +98,45 @@ const useInspectionCmiModalSPO = () => {
     },
   });
 
-  const initialValues: InspectionCmiModal = {
-    Id: cmiInspectionModal.data?.Id || 0,
-    Created: cmiInspectionModal.data?.Created || null,
-    Responsavel1: cmiInspectionModal.data?.Responsavel1 || '',
-
-    OData__x0050_e1: cmiInspectionModal.data?.OData__x0050_e1 || false,
-    OData__x0050_e2: cmiInspectionModal.data?.OData__x0050_e2 || false,
-    OData__x0050_e3: cmiInspectionModal.data?.OData__x0050_e3 || false,
-    OData__x0050_e4: cmiInspectionModal.data?.OData__x0050_e4 || false,
-    OData__x0050_e5: cmiInspectionModal.data?.OData__x0050_e5 || false,
-    OData__x0052_es1: cmiInspectionModal.data?.OData__x0052_es1 || false,
-    OData__x0052_es2: cmiInspectionModal.data?.OData__x0052_es2 || false,
-    OData__x0052_es3: cmiInspectionModal.data?.OData__x0052_es3 || false,
-    OData__x0052_es4: cmiInspectionModal.data?.OData__x0052_es4 || false,
-    OData__x0052_es5: cmiInspectionModal.data?.OData__x0052_es5 || false,
-    OData__x0052_es6: cmiInspectionModal.data?.OData__x0052_es6 || false,
-    OData__x0052_es7: cmiInspectionModal.data?.OData__x0052_es7 || false,
-    OData__x0042_i1: cmiInspectionModal.data?.OData__x0042_i1 || false,
-    OData__x0042_i2: cmiInspectionModal.data?.OData__x0042_i2 || false,
-    OData__x0042_i3: cmiInspectionModal.data?.OData__x0042_i3 || false,
-    OData__x0042_i4: cmiInspectionModal.data?.OData__x0042_i4 || false,
-    OData__x0042_i5: cmiInspectionModal.data?.OData__x0042_i5 || false,
-    OData__x0042_i6: cmiInspectionModal.data?.OData__x0042_i6 || false,
-    OData__x0044_iv1: cmiInspectionModal.data?.OData__x0044_iv1 || false,
-    OData__x0044_iv2: cmiInspectionModal.data?.OData__x0044_iv2 || false,
-    OData__x0044_iv3: cmiInspectionModal.data?.OData__x0044_iv3 || false,
-    OData__x0044_iv4: cmiInspectionModal.data?.OData__x0044_iv4 || false,
-    OData__x0044_iv5: cmiInspectionModal.data?.OData__x0044_iv5 || false,
-    OData__x0044_iv6: cmiInspectionModal.data?.OData__x0044_iv6 || false,
-    OData__x0047_er1: cmiInspectionModal.data?.OData__x0047_er1 || false,
-    OData__x0047_er2: cmiInspectionModal.data?.OData__x0047_er2 || false,
-    OData__x0047_er3: cmiInspectionModal.data?.OData__x0047_er3 || false,
-    OData__x0047_er4: cmiInspectionModal.data?.OData__x0047_er4 || false,
-    OData__x0043_b1: cmiInspectionModal.data?.OData__x0043_b1 || false,
-    OData__x0043_b2: cmiInspectionModal.data?.OData__x0043_b2 || false,
-    OData__x0043_b3: cmiInspectionModal.data?.OData__x0043_b3 || false,
-    OData__x0043_b4: cmiInspectionModal.data?.OData__x0043_b4 || false,
-    OData__x0043_b5: cmiInspectionModal.data?.OData__x0043_b5 || false,
-
-    Observacao: cmiInspectionModal.data?.Observacao || '',
-    UF: cmiInspectionModal.data?.UF || '',
-    Municipios: cmiInspectionModal.data?.Municipios || '',
-    Site: cmiInspectionModal.data?.Site || '',
-    Local: cmiInspectionModal.data?.Local || '',
-    Area: cmiInspectionModal.data?.Area || '',
+  const initialValues: TestCmiModal = {
+    Id: cmiTestModal.data?.Id || 0,
+    Created: cmiTestModal.data?.Created || null,
+    Responsavel1: cmiTestModal.data?.Responsavel1 || '',
+    OData__x0042_j11: cmiTestModal.data?.OData__x0042_j11 || '',
+    OData__x0042_j12: cmiTestModal.data?.OData__x0042_j12 || '',
+    OData__x0042_j13: cmiTestModal.data?.OData__x0042_j13 || '',
+    OData__x0042_j14: cmiTestModal.data?.OData__x0042_j14 || false,
+    OData__x0042_j21: cmiTestModal.data?.OData__x0042_j21 || '',
+    OData__x0042_j22: cmiTestModal.data?.OData__x0042_j22 || '',
+    OData__x0042_j23: cmiTestModal.data?.OData__x0042_j23 || '',
+    OData__x0042_j24: cmiTestModal.data?.OData__x0042_j24 || false,
+    OData__x0042_p11: cmiTestModal.data?.OData__x0042_p11 || '',
+    OData__x0042_p12: cmiTestModal.data?.OData__x0042_p12 || '',
+    OData__x0042_p13: cmiTestModal.data?.OData__x0042_p13 || '',
+    OData__x0042_p14: cmiTestModal.data?.OData__x0042_p14 || '',
+    OData__x0042_p15: cmiTestModal.data?.OData__x0042_p15 || '',
+    OData__x0042_p21: cmiTestModal.data?.OData__x0042_p21 || '',
+    OData__x0042_p22: cmiTestModal.data?.OData__x0042_p22 || '',
+    OData__x0042_p23: cmiTestModal.data?.OData__x0042_p23 || '',
+    OData__x0042_p24: cmiTestModal.data?.OData__x0042_p24 || '',
+    OData__x0042_p25: cmiTestModal.data?.OData__x0042_p25 || '',
+    OData__x0042_b11: cmiTestModal.data?.OData__x0042_b11 || '',
+    OData__x0042_b12: cmiTestModal.data?.OData__x0042_b12 || '',
+    OData__x0042_b13: cmiTestModal.data?.OData__x0042_b13 || '',
+    OData__x0042_b21: cmiTestModal.data?.OData__x0042_b21 || '',
+    OData__x0042_b22: cmiTestModal.data?.OData__x0042_b22 || '',
+    OData__x0042_b23: cmiTestModal.data?.OData__x0042_b23 || '',
+    OData__x0047_er1: cmiTestModal.data?.OData__x0047_er1 || false,
+    OData__x0047_er2: cmiTestModal.data?.OData__x0047_er2 || false,
+    Observacao: cmiTestModal.data?.Observacao || '',
+    UF: cmiTestModal.data?.UF || '',
+    Municipios: cmiTestModal.data?.Municipios || '',
+    Site: cmiTestModal.data?.Site || '',
+    Local: cmiTestModal.data?.Local || '',
+    Area: cmiTestModal.data?.Area || '',
   };
 
-  const handleSubmit = async (values: InspectionCmiModal) => {
+  const handleSubmit = async (values: TestCmiModal) => {
     if (values && params.id) {
       await mutateEdit.mutateAsync(values);
     }
@@ -162,18 +146,18 @@ const useInspectionCmiModalSPO = () => {
     validateOnMount: true,
     enableReinitialize: true,
     initialValues: initialValues,
-    onSubmit: (values: InspectionCmiModal) => {
+    onSubmit: (values: TestCmiModal) => {
       handleSubmit(values);
     },
   });
 
   return {
-    inspectionCmiItem,
-    setInspectionCmiItem,
-    cmiInspectionModal,
+    testCmiItem,
+    setTestCmiItem,
+    cmiTestModal,
     mutateEdit,
     formik,
   };
 };
 
-export default useInspectionCmiModalSPO;
+export default useTestCmiModalSPO;

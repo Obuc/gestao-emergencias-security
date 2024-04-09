@@ -1,19 +1,19 @@
 import { Button } from '../../../../../components/Button';
+import { ITestCmiFiltersProps } from '../types/TestCmiSPO';
 import { Popover } from '../../../../../components/Popover';
 import TextField from '../../../../../components/TextField';
 import DatePicker from '../../../../../components/DatePicker';
-import { IInspectionCmiFiltersProps } from '../types/InspectionCmiSPO';
 import { SelectAutoComplete } from '../../../../../components/SelectAutocomplete';
 
 interface IFilters {
-  tempTableFilters: IInspectionCmiFiltersProps;
-  setTempTableFilters: React.Dispatch<React.SetStateAction<IInspectionCmiFiltersProps>>;
+  tempTableFilters: ITestCmiFiltersProps;
+  setTempTableFilters: React.Dispatch<React.SetStateAction<ITestCmiFiltersProps>>;
   handleRemoveAllFilters: () => void;
   countAppliedFilters: () => number;
   handleApplyFilters: () => void;
 }
 
-const InspectionCmiFiltersSPO = ({
+const TestCmiFiltersSPO = ({
   tempTableFilters,
   setTempTableFilters,
   handleRemoveAllFilters,
@@ -120,4 +120,4 @@ const InspectionCmiFiltersSPO = ({
   );
 };
 
-export default InspectionCmiFiltersSPO;
+export default TestCmiFiltersSPO;

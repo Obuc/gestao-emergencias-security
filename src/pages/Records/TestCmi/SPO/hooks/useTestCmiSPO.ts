@@ -5,11 +5,11 @@ import { useLocation } from 'react-router-dom';
 import { format, getYear, parseISO } from 'date-fns';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { ITestCmiFiltersProps } from '../types/TestCmiSPO';
 import buildOrderByQuery from '../../../../../utils/buildOrderByQuery';
-import { IInspectionCmiFiltersProps } from '../types/InspectionCmiSPO';
 import { sharepointContext } from '../../../../../context/sharepointContext';
 
-const useInspectionCmiSPO = () => {
+const useTestCmiSPO = () => {
   const { pathname } = useLocation();
   const { crud, crudParent } = sharepointContext();
   const queryClient = useQueryClient();
@@ -18,8 +18,8 @@ const useInspectionCmiSPO = () => {
   const [year, setYear] = useState(getYear(new Date()));
   const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([{ columnKey: 'Created', direction: 'DESC' }]);
 
-  const sessionFiltersActions = sessionStorage.getItem('session_filters_inspection_cmi_spo');
-  const sessionFiltersActionsJSON: IInspectionCmiFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
+  const sessionFiltersActions = sessionStorage.getItem('session_filters_test_cmi_spo');
+  const sessionFiltersActionsJSON: ITestCmiFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
 
   const initialFiltersValues = {
     responsible: sessionFiltersActionsJSON?.responsible ? sessionFiltersActionsJSON.responsible : null,
@@ -30,8 +30,8 @@ const useInspectionCmiSPO = () => {
     conformity: sessionFiltersActionsJSON?.conformity ? sessionFiltersActionsJSON.conformity : null,
   };
 
-  const [tableFilters, setTableFilters] = useState<IInspectionCmiFiltersProps>(initialFiltersValues);
-  const [tempTableFilters, setTempTableFilters] = useState<IInspectionCmiFiltersProps>(initialFiltersValues);
+  const [tableFilters, setTableFilters] = useState<ITestCmiFiltersProps>(initialFiltersValues);
+  const [tempTableFilters, setTempTableFilters] = useState<ITestCmiFiltersProps>(initialFiltersValues);
 
   const handleRemoveAllFilters = () => {
     const filters = {
@@ -45,7 +45,7 @@ const useInspectionCmiSPO = () => {
 
     setTableFilters(filters);
     setTempTableFilters(filters);
-    sessionStorage.removeItem('session_filters_inspection_cmi_spo');
+    sessionStorage.removeItem('session_filters_test_cmi_spo');
   };
 
   const countAppliedFilters = () => {
@@ -62,13 +62,13 @@ const useInspectionCmiSPO = () => {
 
   const handleApplyFilters = () => {
     setTableFilters(tempTableFilters);
-    sessionStorage.setItem('session_filters_inspection_cmi_spo', JSON.stringify(tempTableFilters));
+    sessionStorage.setItem('session_filters_test_cmi_spo', JSON.stringify(tempTableFilters));
   };
 
   const fetch = async ({ pageParam }: { pageParam?: string }) => {
     const orderByQuery = buildOrderByQuery(sortColumns);
 
-    let path = `?$Select=Id,Created,Responsavel1/Title,Local,OData__x0050_e1,OData__x0050_e2,OData__x0050_e3,OData__x0050_e4,OData__x0050_e5,OData__x0052_es1,OData__x0052_es2,OData__x0052_es3,OData__x0052_es4,OData__x0052_es5,OData__x0052_es6,OData__x0052_es7,OData__x0042_i1,OData__x0042_i2,OData__x0042_i3,OData__x0042_i4,OData__x0042_i5,OData__x0042_i6,OData__x0044_iv1,OData__x0044_iv2,OData__x0044_iv3,OData__x0044_iv4,OData__x0044_iv5,OData__x0044_iv6,OData__x0047_er1,OData__x0047_er2,OData__x0047_er3,OData__x0047_er4,OData__x0043_b1,OData__x0043_b2,OData__x0043_b3,OData__x0043_b4,OData__x0043_b5&$Expand=Responsavel1&$Top=25&${orderByQuery}&$Filter=(Id ge 0)`;
+    let path = `?$Select=Id,Created,Responsavel1/Title,Local,OData__x0042_j14,OData__x0042_j24,OData__x0047_er1,OData__x0047_er2&$Expand=Responsavel1&$Top=25&${orderByQuery}&$Filter=(Id ge 0)`;
 
     if (year) {
       const startDate = format(new Date(year, 0, 1), "yyyy-MM-dd'T'00:00:00'Z'");
@@ -113,7 +113,7 @@ const useInspectionCmiSPO = () => {
     //   path += ` and (OData__x004d_an1 eq 'true') or (OData__x004d_an2 eq 'true') or (OData__x0043_ar1 eq 'true') or (OData__x0043_ar2 eq 'true') or (OData__x0043_il2 eq 'true') or (OData__x0043_il1 eq 'true') or (OData__x0043_il3 eq 'true') or (OData__x0053_in1 eq 'true') or (OData__x0053_in2 eq 'true') or (OData__x004c_tv1 eq 'true') or (OData__x004c_tv2 eq 'true') or (Obst1 eq 'true') or (Obst2 eq 'true'))`;
     // }
 
-    const response = await crudParent.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'Casa_de_Bombas', path });
+    const response = await crudParent.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'Bombas_de_Incendio', path });
 
     const dataWithTransformations = await Promise.all(
       response?.data?.value?.map(async (item: any) => {
@@ -125,40 +125,7 @@ const useInspectionCmiSPO = () => {
           ...item,
           Created: dataCriado,
           Responsavel1: item?.Responsavel1?.Title,
-          conforme:
-            item.OData__x0050_e1 &&
-            item.OData__x0050_e2 &&
-            item.OData__x0050_e3 &&
-            item.OData__x0050_e4 &&
-            item.OData__x0050_e5 &&
-            item.OData__x0052_es1 &&
-            item.OData__x0052_es2 &&
-            item.OData__x0052_es3 &&
-            item.OData__x0052_es4 &&
-            item.OData__x0052_es5 &&
-            item.OData__x0052_es6 &&
-            item.OData__x0052_es7 &&
-            item.OData__x0042_i1 &&
-            item.OData__x0042_i2 &&
-            item.OData__x0042_i3 &&
-            item.OData__x0042_i4 &&
-            item.OData__x0042_i5 &&
-            item.OData__x0042_i6 &&
-            item.OData__x0044_iv1 &&
-            item.OData__x0044_iv2 &&
-            item.OData__x0044_iv3 &&
-            item.OData__x0044_iv4 &&
-            item.OData__x0044_iv5 &&
-            item.OData__x0044_iv6 &&
-            item.OData__x0047_er1 &&
-            item.OData__x0047_er2 &&
-            item.OData__x0047_er3 &&
-            item.OData__x0047_er4 &&
-            item.OData__x0043_b1 &&
-            item.OData__x0043_b2 &&
-            item.OData__x0043_b3 &&
-            item.OData__x0043_b4 &&
-            item.OData__x0043_b5,
+          conforme: item.OData__x0042_j14 && item.OData__x0042_j24 && item.OData__x0047_er1 && item.OData__x0047_er2,
         };
       }),
     );
@@ -172,31 +139,31 @@ const useInspectionCmiSPO = () => {
     };
   };
 
-  const cmiInspection = useInfiniteQuery({
-    queryKey: ['cmi_inspection_data_spo', user_site, tableFilters, sortColumns, year],
+  const cmiTest = useInfiniteQuery({
+    queryKey: ['cmi_test_data_spo', user_site, tableFilters, sortColumns, year],
     queryFn: fetch,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: pathname.includes('/records/cmi_inspection') && user_site === 'SPO',
+    enabled: pathname.includes('/records/cmi_test') && user_site === 'SPO',
   });
 
   const mutateRemove = useMutation({
     mutationFn: async (itemId: number) => {
       if (itemId) {
-        await crud.deleteItemList('Casa_de_Bombas', itemId);
+        await crud.deleteItemList('Bombas_de_Incendio', itemId);
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['cmi_inspection_data_spo', user_site, tableFilters, sortColumns, year],
+        queryKey: ['cmi_test_data_spo', user_site, tableFilters, sortColumns, year],
       });
     },
   });
 
   const fetchAllRecords = async () => {
-    const path = `?$Select=Id,Created,Responsavel1/Title,Local,OData__x0050_e1,OData__x0050_e2,OData__x0050_e3,OData__x0050_e4,OData__x0050_e5,OData__x0052_es1,OData__x0052_es2,OData__x0052_es3,OData__x0052_es4,OData__x0052_es5,OData__x0052_es6,OData__x0052_es7,OData__x0042_i1,OData__x0042_i2,OData__x0042_i3,OData__x0042_i4,OData__x0042_i5,OData__x0042_i6,OData__x0044_iv1,OData__x0044_iv2,OData__x0044_iv3,OData__x0044_iv4,OData__x0044_iv5,OData__x0044_iv6,OData__x0047_er1,OData__x0047_er2,OData__x0047_er3,OData__x0047_er4,OData__x0043_b1,OData__x0043_b2,OData__x0043_b3,OData__x0043_b4,OData__x0043_b5&$Expand=Responsavel1&$Orderby=Created desc`;
+    const path = `?$Select=Id,Created,Responsavel1/Title,Local,OData__x0042_j14,OData__x0042_j24,OData__x0047_er1,OData__x0047_er2&$Expand=Responsavel1&$Orderby=Created desc`;
 
-    const response = await crudParent.getListItems('Casa_de_Bombas', path);
+    const response = await crudParent.getListItems('Bombas_de_Incendio', path);
 
     const dataWithTransformations = await Promise.all(
       response.map(async (item: any) => {
@@ -209,39 +176,7 @@ const useInspectionCmiSPO = () => {
           Created: dataCriado,
           Responsavel1: item?.Responsavel1?.Title,
           conforme:
-            item.OData__x0050_e1 &&
-            item.OData__x0050_e2 &&
-            item.OData__x0050_e3 &&
-            item.OData__x0050_e4 &&
-            item.OData__x0050_e5 &&
-            item.OData__x0052_es1 &&
-            item.OData__x0052_es2 &&
-            item.OData__x0052_es3 &&
-            item.OData__x0052_es4 &&
-            item.OData__x0052_es5 &&
-            item.OData__x0052_es6 &&
-            item.OData__x0052_es7 &&
-            item.OData__x0042_i1 &&
-            item.OData__x0042_i2 &&
-            item.OData__x0042_i3 &&
-            item.OData__x0042_i4 &&
-            item.OData__x0042_i5 &&
-            item.OData__x0042_i6 &&
-            item.OData__x0044_iv1 &&
-            item.OData__x0044_iv2 &&
-            item.OData__x0044_iv3 &&
-            item.OData__x0044_iv4 &&
-            item.OData__x0044_iv5 &&
-            item.OData__x0044_iv6 &&
-            item.OData__x0047_er1 &&
-            item.OData__x0047_er2 &&
-            item.OData__x0047_er3 &&
-            item.OData__x0047_er4 &&
-            item.OData__x0043_b1 &&
-            item.OData__x0043_b2 &&
-            item.OData__x0043_b3 &&
-            item.OData__x0043_b4 &&
-            item.OData__x0043_b5
+            item.OData__x0042_j14 && item.OData__x0042_j24 && item.OData__x0047_er1 && item.OData__x0047_er2
               ? 'CONFORME'
               : 'NÃO CONFORME',
         };
@@ -285,14 +220,14 @@ const useInspectionCmiSPO = () => {
         ws['!rows'] = wsrows;
         ws['!cols'] = wscols;
 
-        XLSX.utils.book_append_sheet(wb, ws, 'Inspeção CMI');
-        XLSX.writeFile(wb, `SPO - Registros - Inspeção CMI.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, 'Bombas de Incêndio');
+        XLSX.writeFile(wb, `SPO - Registros - Bombas de Incêndio.xlsx`);
       }
     },
   });
 
   return {
-    cmiInspection,
+    cmiTest,
     mutateRemove,
     tempTableFilters,
     setTempTableFilters,
@@ -307,4 +242,4 @@ const useInspectionCmiSPO = () => {
   };
 };
 
-export default useInspectionCmiSPO;
+export default useTestCmiSPO;

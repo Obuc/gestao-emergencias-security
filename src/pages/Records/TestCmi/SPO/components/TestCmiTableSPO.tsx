@@ -7,33 +7,33 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UseInfiniteQueryResult, UseMutationResult } from '@tanstack/react-query';
 
+import { TestCmi } from '../types/TestCmiSPO';
+import TestCmiModalSPO from './TestCmiModalSPO';
 import Toast from '../../../../../components/Toast';
 import isAtBottom from '../../../../../utils/isAtBottom';
-import { InspectionCmi } from '../types/InspectionCmiSPO';
-import InspectionCmiModalSPO from './InspectionCmiModalSPO';
 import CustomDataGrid from '../../../../../components/DataGrid';
 import PopoverTables from '../../../../../components/PopoverTables';
 import RemoveItem from '../../../../../components/AppModals/RemoveItem';
 import DataGridLoadMore from '../../../../../components/DataGrid/DataGridLoadMore';
 
 interface ITableProps {
-  cmiInspection: UseInfiniteQueryResult<any, unknown>;
+  cmiTest: UseInfiniteQueryResult<any, unknown>;
   mutateRemove: UseMutationResult<void, unknown, number, unknown>;
   sortColumns: readonly SortColumn[];
   setSortColumns: React.Dispatch<React.SetStateAction<readonly SortColumn[]>>;
 }
 
-const InspectionCmiTableSPO = ({ cmiInspection, mutateRemove, setSortColumns, sortColumns }: ITableProps) => {
+const TestCmiTableSPO = ({ cmiTest, mutateRemove, setSortColumns, sortColumns }: ITableProps) => {
   const navigate = useNavigate();
 
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (Id: number) => {
-    navigate(`/records/cmi_inspection/${Id}?edit=false`);
+    navigate(`/records/cmi_test/${Id}?edit=false`);
   };
 
   const handleEdit = (Id: number) => {
-    navigate(`/records/cmi_inspection/${Id}?edit=true`);
+    navigate(`/records/cmi_test/${Id}?edit=true`);
   };
 
   const handleRemoveItem = async () => {
@@ -47,7 +47,7 @@ const InspectionCmiTableSPO = ({ cmiInspection, mutateRemove, setSortColumns, so
     }
   };
 
-  const columns: readonly Column<InspectionCmi>[] = [
+  const columns: readonly Column<TestCmi>[] = [
     { key: 'Responsavel1', name: 'Responsável', resizable: true, width: 300 },
     { key: 'Id', name: 'N° Registro', resizable: true },
     { key: 'Created', name: 'Data', resizable: true },
@@ -58,9 +58,9 @@ const InspectionCmiTableSPO = ({ cmiInspection, mutateRemove, setSortColumns, so
   ];
 
   const mappedRows =
-    cmiInspection.data?.pages.flatMap(
+    cmiTest.data?.pages.flatMap(
       (page) =>
-        page?.data?.value?.map((item: InspectionCmi) => ({
+        page?.data?.value?.map((item: TestCmi) => ({
           Responsavel1: item?.Responsavel1 ? (
             <div className="pl-4">{item.Responsavel1}</div>
           ) : (
@@ -100,7 +100,7 @@ const InspectionCmiTableSPO = ({ cmiInspection, mutateRemove, setSortColumns, so
 
   const handleScroll = async (event: React.UIEvent<HTMLDivElement>) => {
     if (!isAtBottom(event)) return;
-    cmiInspection.fetchNextPage();
+    cmiTest.fetchNextPage();
   };
 
   return (
@@ -119,10 +119,10 @@ const InspectionCmiTableSPO = ({ cmiInspection, mutateRemove, setSortColumns, so
           setSortColumns={setSortColumns}
         />
 
-        {cmiInspection.isFetchingNextPage && <DataGridLoadMore />}
+        {cmiTest.isFetchingNextPage && <DataGridLoadMore />}
       </div>
 
-      <InspectionCmiModalSPO />
+      <TestCmiModalSPO />
 
       {removeItem !== null && (
         <RemoveItem
@@ -148,4 +148,4 @@ const InspectionCmiTableSPO = ({ cmiInspection, mutateRemove, setSortColumns, so
   );
 };
 
-export default InspectionCmiTableSPO;
+export default TestCmiTableSPO;
