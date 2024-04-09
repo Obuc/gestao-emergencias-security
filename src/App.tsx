@@ -13,6 +13,7 @@ import ExtinguisherBXO from './pages/Records/Extinguisher/BXO';
 import ExtinguisherSPO from './pages/Records/Extinguisher/SPO';
 import InspectionCmiBXO from './pages/Records/InspectionCmi/BXO';
 import InspectionCmiSPO from './pages/Records/InspectionCmi/SPO';
+import GeneralChecklist from './pages/Records/GeneralChecklist/BXO';
 import GovernanceValveBXO from './pages/Records/GovernanceValve/BXO';
 import GovernanceValveSPO from './pages/Records/GovernanceValve/SPO';
 
@@ -61,6 +62,10 @@ const App = () => {
       {/* LoadRatio  */}
       <Route path={`/records/:form`} element={localSite === 'BXO' && <LoadRatio />} />
       <Route path={`/records/:form/:id`} element={localSite === 'BXO' && <LoadRatio />} />
+
+      {/* GeneralChecklist  */}
+      <Route path={`/records/general_checklist`} element={localSite === 'BXO' && <GeneralChecklist />} />
+      <Route path={`/records/general_checklist/:id`} element={localSite === 'BXO' && <GeneralChecklist />} />
     </Routes>
   );
 };

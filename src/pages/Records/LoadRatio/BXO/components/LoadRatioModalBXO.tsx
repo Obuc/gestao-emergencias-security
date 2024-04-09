@@ -23,18 +23,18 @@ const LoadRatioModalBXO = () => {
   const isEdit = searchParams.get('edit') === 'true' ? true : false;
   const equipments_value = localStorage.getItem('equipments_value');
 
-  const { loadRatioModal, mutateEdit, testCmiItem, setTestCmiItem, formik } = useLoadRatioModalBXO();
+  const { loadRatioModal, mutateEdit, loadRatioItem ,setLoadRatioItem, formik } = useLoadRatioModalBXO();
 
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
 
   useEffect(() => {
     if (params?.id) {
-      setTestCmiItem(true);
+      setLoadRatioItem(true);
     }
   }, [params.id]);
 
   const handleOnOpenChange = () => {
-    setTestCmiItem(null);
+    setLoadRatioItem(null);
     navigate(`/records/${equipments_value}`);
   };
 
@@ -52,7 +52,7 @@ const LoadRatioModalBXO = () => {
     <>
       <Modal
         className="w-[71rem]"
-        open={testCmiItem !== null}
+        open={loadRatioItem !== null}
         onOpenChange={handleOnOpenChange}
         title={`Registro Relação de Carga N°${params.id}`}
       >

@@ -4,25 +4,23 @@ import { parseISO } from 'date-fns';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { ILoadRatioModal, IRespostaLoadRatio } from '../types/LoadRatioBXO';
 import { sharepointContext } from '../../../../../context/sharepointContext';
+import { IGeneralChecklistModal, IRespostaGeneralChecklist } from '../types/GeneralChecklistBXO';
 
-const useLoadRatioModalBXO = () => {
+const useGeneralChecklistModalBXO = () => {
   const params = useParams();
-  const navigate = useNavigate();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { crud } = sharepointContext();
   const queryClient = useQueryClient();
-  const user_site = localStorage.getItem('user_site');
-  const equipments_value = localStorage.getItem('equipments_value');
 
-  const [loadRatioItem, setLoadRatioItem] = useState<boolean | null>(null);
+  const [generalChecklistItem, setGeneralChecklistItem] = useState<boolean | null>(null);
 
   const timeDelayToRedirectPage: number = import.meta.env.VITE_TIME_DELAY_TO_REDIRECT_PAGE;
 
-  const fetchLoadRatioData = async () => {
+  const fetchGeneralChecklistData = async () => {
     const pathModal = `?$Select=*,site/Title,bombeiro/Title&$expand=bombeiro,site&$filter=Id eq ${params.id}`;
-    const resp = await crud.getListItemsv2('registros_relacao_carga', pathModal);
+    const resp = await crud.getListItemsv2('registros_veiculos_emergencia', pathModal);
     return resp.results[0];
   };
 
@@ -34,13 +32,13 @@ const useLoadRatioModalBXO = () => {
     return vehicleResponse.results[0] || null;
   };
 
-  const fetchResponseLoadRatio = async () => {
+  const fetchResponseGeneralChecklist = async () => {
     const response = await crud.getListItemsv2(
-      'respostas_relacao_carga',
+      'respostas_veiculos_emergencia',
       `?$Select=Id,veiculo_idId,pergunta_idId,registro_idId,resposta,pergunta_id/Title,pergunta_id/categoria&$expand=pergunta_id&$filter=(registro_idId eq ${params.id})`,
     );
 
-    const respostasPorCategoria: Record<string, Array<IRespostaLoadRatio>> = {};
+    const respostasPorCategoria: Record<string, Array<IRespostaGeneralChecklist>> = {};
     response.results.forEach((resposta: any) => {
       const categoria = resposta.pergunta_id.categoria;
       if (!respostasPorCategoria[categoria]) {
@@ -52,13 +50,13 @@ const useLoadRatioModalBXO = () => {
     return respostasPorCategoria;
   };
 
-  const loadRatioModal = useQuery({
-    queryKey: ['load_ratio_data_modal_bxo', params.id, params.form, user_site],
+  const generalChecklistModal = useQuery({
+    queryKey: ['general_checklist_data_modal_bxo', params.id],
     queryFn: async () => {
       if (params.id) {
-        const generalChecklistData = await fetchLoadRatioData();
+        const generalChecklistData = await fetchGeneralChecklistData();
         const vehicle = await fetchVehicleData(generalChecklistData.veiculo_idId);
-        const respostas = await fetchResponseLoadRatio();
+        const respostas = await fetchResponseGeneralChecklist();
 
         const createdIsoDate = parseISO(generalChecklistData.Created);
 
@@ -85,27 +83,20 @@ const useLoadRatioModalBXO = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled:
-      params.id !== undefined &&
-      (pathname.includes('/records/scania') ||
-        pathname.includes('/records/s10') ||
-        pathname.includes('/records/mercedes') ||
-        pathname.includes('/records/van') ||
-        pathname.includes('/records/iveco') ||
-        pathname.includes('/records/sprinter')) &&
-      user_site === 'BXO',
+    enabled: params.id !== undefined && pathname.includes('general_checklist'),
   });
+
   const mutateEdit = useMutation({
-    mutationFn: async (values: ILoadRatioModal) => {
-      const idRecordLoadRatio = values.Id;
+    mutationFn: async (values: IGeneralChecklistModal) => {
+      const idRecordGeneralChecklist = values.Id;
       const idVehicle = values.veiculo.Id && +values.veiculo.Id;
 
       let hasAccording = [];
 
-      if (values.Id && values.respostas && loadRatioModal.data.respostas) {
+      if (values.Id && values.respostas && generalChecklistModal.data.respostas) {
         for (const categoria in values.respostas) {
           const perguntasRespostas = values.respostas[categoria];
-          const perguntasRespostasOriginais = loadRatioModal.data.respostas[categoria];
+          const perguntasRespostasOriginais = generalChecklistModal.data.respostas[categoria];
 
           for (let i = 0; i < perguntasRespostas.length; i++) {
             const item = perguntasRespostas[i];
@@ -118,7 +109,7 @@ const useLoadRatioModalBXO = () => {
                 resposta: item.resposta,
               };
 
-              await crud.updateItemList('respostas_relacao_carga', item.Id, postData);
+              await crud.updateItemList('respostas_veiculos_emergencia', item.Id, postData);
             }
           }
         }
@@ -127,7 +118,7 @@ const useLoadRatioModalBXO = () => {
       const hasFalseAccording = hasAccording.some((item) => item === false);
 
       if (hasFalseAccording) {
-        await crud.updateItemList('registros_relacao_carga', idRecordLoadRatio, {
+        await crud.updateItemList('registros_veiculos_emergencia', idRecordGeneralChecklist, {
           conforme: false,
         });
         if (idVehicle) {
@@ -138,7 +129,7 @@ const useLoadRatioModalBXO = () => {
       }
 
       if (!hasFalseAccording) {
-        await crud.updateItemList('registros_relacao_carga', idRecordLoadRatio, {
+        await crud.updateItemList('registros_veiculos_emergencia', idRecordGeneralChecklist, {
           conforme: true,
         });
         if (idVehicle) {
@@ -149,12 +140,12 @@ const useLoadRatioModalBXO = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['load_ratio_data_modal_bxo', params.id, params.form, user_site] });
-      queryClient.invalidateQueries({ queryKey: ['load_ratio_data_bxo'] });
+      queryClient.invalidateQueries({ queryKey: ['general_checklist_data_modal_bxo', params.id] });
+      queryClient.invalidateQueries({ queryKey: ['general_checklist_data_bxo'] });
 
       const timeoutId = setTimeout(() => {
-        setLoadRatioItem(null);
-        navigate(`/records/${equipments_value}`);
+        setGeneralChecklistItem(null);
+        navigate(`/records/general_checklist`);
       }, +timeDelayToRedirectPage);
       return () => clearTimeout(timeoutId);
     },
@@ -163,26 +154,26 @@ const useLoadRatioModalBXO = () => {
     },
   });
 
-  const initialValues: ILoadRatioModal = {
-    Created: loadRatioModal.data?.Created || '',
-    Id: loadRatioModal.data?.Id || '',
-    bombeiro: loadRatioModal.data?.bombeiro || '',
-    bombeiroId: loadRatioModal.data?.bombeiroId || null,
-    conforme: loadRatioModal.data?.conforme || null,
-    observacao: loadRatioModal.data?.observacao || '',
-    site: loadRatioModal.data?.site || '',
-    siteId: loadRatioModal.data?.siteId || null,
+  const initialValues: IGeneralChecklistModal = {
+    Created: generalChecklistModal.data?.Created || '',
+    Id: generalChecklistModal.data?.Id || '',
+    bombeiro: generalChecklistModal.data?.bombeiro || '',
+    bombeiroId: generalChecklistModal.data?.bombeiroId || null,
+    conforme: generalChecklistModal.data?.conforme || null,
+    observacao: generalChecklistModal.data?.observacao || '',
+    site: generalChecklistModal.data?.site || '',
+    siteId: generalChecklistModal.data?.siteId || null,
     veiculo: {
-      Id: loadRatioModal.data?.veiculo?.Id || null,
-      placa: loadRatioModal.data?.veiculo?.placa || '',
-      site: loadRatioModal.data?.veiculo?.site || '',
-      tipo_veiculo: loadRatioModal.data?.veiculo?.tipo_veiculo || '',
+      Id: generalChecklistModal.data?.veiculo?.Id || null,
+      placa: generalChecklistModal.data?.veiculo?.placa || '',
+      site: generalChecklistModal.data?.veiculo?.site || '',
+      tipo_veiculo: generalChecklistModal.data?.veiculo?.tipo_veiculo || '',
     },
-    veiculo_idId: loadRatioModal.data?.tipo_veiculo || null,
-    respostas: loadRatioModal.data?.respostas || {},
+    veiculo_idId: generalChecklistModal.data?.tipo_veiculo || null,
+    respostas: generalChecklistModal.data?.respostas || {},
   };
 
-  const handleSubmit = async (values: ILoadRatioModal) => {
+  const handleSubmit = async (values: IGeneralChecklistModal) => {
     if (values) {
       await mutateEdit.mutateAsync(values);
     }
@@ -192,18 +183,18 @@ const useLoadRatioModalBXO = () => {
     validateOnMount: true,
     enableReinitialize: true,
     initialValues: initialValues,
-    onSubmit: (values: ILoadRatioModal) => {
+    onSubmit: (values: IGeneralChecklistModal) => {
       handleSubmit(values);
     },
   });
 
   return {
-    loadRatioModal,
+    generalChecklistModal,
     mutateEdit,
-    loadRatioItem,
-    setLoadRatioItem,
+    generalChecklistItem,
+    setGeneralChecklistItem,
     formik,
   };
 };
 
-export default useLoadRatioModalBXO;
+export default useGeneralChecklistModalBXO;

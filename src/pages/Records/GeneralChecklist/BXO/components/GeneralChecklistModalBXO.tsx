@@ -3,31 +3,29 @@ import { saveAs } from 'file-saver';
 import { ptBR } from 'date-fns/locale';
 import { pdf } from '@react-pdf/renderer';
 import { useEffect, useState } from 'react';
-import { Formik, FormikProps } from 'formik';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import Modal from '../../../../../components/Modal';
-import { LoadRatioPdf } from '../../pdf/LoadRatioPdf';
-import { Button } from '../../../../../components/Button';
+import Toast from '../../../../../components/Toast';
 import TextArea from '../../../../../components/TextArea';
+import { Button } from '../../../../../components/Button';
 import { Answers } from '../../../../../components/Answers';
 import TextField from '../../../../../components/TextField';
-import useLoadRatio from '../../../hooks/EmergencyVehicles/useLoadRatio';
-import { ILoadRatioModal } from '../../../types/EmergencyVehicles/LoadRatio';
-import { IRespostaGeneralChecklist } from '../../../types/EmergencyVehicles/GeneralChecklist';
+import { GeneralChecklistPdfBXO } from './GeneralChecklistPdfBXO';
+import { IRespostaGeneralChecklist } from '../types/GeneralChecklistBXO';
+import useGeneralChecklistModalBXO from '../hooks/useGeneralChecklistModalBXO';
 
-const LoadRatioModal = () => {
+const GeneralChecklistModalBXO = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isEdit = searchParams.get('edit') === 'true' ? true : false;
   const equipments_value = localStorage.getItem('equipments_value');
 
-  const { loadRatioDataModal, isLoadingLoadRatioDataModal, mutateEditLoadRatio, isLoadingMutateEditLoadRatio } =
-    useLoadRatio();
+  const { generalChecklistModal, generalChecklistItem, setGeneralChecklistItem, mutateEdit, formik } =
+    useGeneralChecklistModalBXO();
 
-  const [generalChecklistItem, setGeneralChecklistItem] = useState<boolean | null>(null);
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
 
   useEffect(() => {
@@ -43,56 +41,20 @@ const LoadRatioModal = () => {
 
   const exportToPdf = async () => {
     setGeneratePdf(true);
-    const blob = await pdf(<LoadRatioPdf data={loadRatioDataModal} />).toBlob();
+    const blob = await pdf(<GeneralChecklistPdfBXO data={generalChecklistModal.data} />).toBlob();
     setGeneratePdf(false);
-    saveAs(
-      blob,
-      `Registro ${loadRatioDataModal?.veiculo?.tipo_veiculo} - ID${params.id} - ${format(
-        new Date(),
-        'dd/MM/yyyy',
-      )}.pdf`,
-    );
-  };
-
-  const initialRequestBadgeValues: ILoadRatioModal = {
-    Created: loadRatioDataModal?.Created || '',
-    Id: loadRatioDataModal?.Id || '',
-    bombeiro: loadRatioDataModal?.bombeiro || '',
-    bombeiroId: loadRatioDataModal?.bombeiroId || null,
-    conforme: loadRatioDataModal?.conforme || null,
-    observacao: loadRatioDataModal?.observacao || '',
-    site: loadRatioDataModal?.site || '',
-    siteId: loadRatioDataModal?.siteId || null,
-    veiculo: {
-      Id: loadRatioDataModal?.veiculo?.Id || null,
-      placa: loadRatioDataModal?.veiculo?.placa || '',
-      site: loadRatioDataModal?.veiculo?.site || '',
-      tipo_veiculo: loadRatioDataModal?.veiculo?.tipo_veiculo || '',
-    },
-    veiculo_idId: loadRatioDataModal?.tipo_veiculo || null,
-    respostas: loadRatioDataModal?.respostas || {},
-  };
-
-  const handleSubmit = async (values: ILoadRatioModal) => {
-    if (values) {
-      await mutateEditLoadRatio(values);
-      handleOnOpenChange();
-    }
+    saveAs(blob, `Registro Checklist Geral - ID${params.id} - ${format(new Date(), 'dd/MM/yyyy')}.pdf`);
   };
 
   return (
-    <Modal
-      className="w-[71rem]"
-      open={generalChecklistItem !== null}
-      onOpenChange={handleOnOpenChange}
-      title={`Registro Relação de Carga N°${params.id}`}
-    >
-      <Formik
-        enableReinitialize={true}
-        initialValues={initialRequestBadgeValues}
-        onSubmit={(values: ILoadRatioModal) => handleSubmit(values)}
+    <>
+      <Modal
+        className="w-[71rem]"
+        open={generalChecklistItem !== null}
+        onOpenChange={handleOnOpenChange}
+        title={`Registro Checklist Geral N°${params.id}`}
       >
-        {(props: FormikProps<ILoadRatioModal>) => (
+        <form className="flex flex-col w-full gap-6" onSubmit={formik.handleSubmit}>
           <>
             <div>
               <div className="py-6 px-8">
@@ -103,9 +65,9 @@ const LoadRatioModal = () => {
                     label="Número"
                     width="w-[6.25rem]"
                     disabled
-                    onChange={props.handleChange}
-                    value={props.values.Id}
-                    isLoading={isLoadingLoadRatioDataModal}
+                    onChange={formik.handleChange}
+                    value={formik.values.Id}
+                    isLoading={generalChecklistModal.isLoading}
                   />
 
                   <TextField
@@ -113,9 +75,9 @@ const LoadRatioModal = () => {
                     name="Created"
                     label="Data"
                     disabled
-                    onChange={props.handleChange}
-                    value={props.values?.Created && format(props.values?.Created, 'dd MMM yyyy', { locale: ptBR })}
-                    isLoading={isLoadingLoadRatioDataModal}
+                    onChange={formik.handleChange}
+                    value={formik.values?.Created && format(formik.values?.Created, 'dd MMM yyyy', { locale: ptBR })}
+                    isLoading={generalChecklistModal.isLoading}
                   />
 
                   <TextField
@@ -124,9 +86,9 @@ const LoadRatioModal = () => {
                     label="Responsável"
                     width="w-[25rem]"
                     disabled
-                    onChange={props.handleChange}
-                    value={props.values.bombeiro}
-                    isLoading={isLoadingLoadRatioDataModal}
+                    onChange={formik.handleChange}
+                    value={formik.values.bombeiro}
+                    isLoading={generalChecklistModal.isLoading}
                   />
                 </div>
 
@@ -136,19 +98,19 @@ const LoadRatioModal = () => {
                     name="veiculo.tipo_veiculo"
                     label="Tipo Veículo"
                     disabled
-                    onChange={props.handleChange}
-                    value={props.values.veiculo.tipo_veiculo}
-                    isLoading={isLoadingLoadRatioDataModal}
+                    onChange={formik.handleChange}
+                    value={formik.values.veiculo.tipo_veiculo}
+                    isLoading={generalChecklistModal.isLoading}
                   />
 
                   <TextField
                     id="veiculo.placa"
                     name="veiculo.placa"
-                    label="Tipo Veículo"
+                    label="Placa"
                     disabled
-                    onChange={props.handleChange}
-                    value={props.values.veiculo.placa}
-                    isLoading={isLoadingLoadRatioDataModal}
+                    onChange={formik.handleChange}
+                    value={formik.values.veiculo.placa}
+                    isLoading={generalChecklistModal.isLoading}
                   />
                 </div>
               </div>
@@ -156,19 +118,19 @@ const LoadRatioModal = () => {
               <div className="w-full h-px bg-primary-opacity" />
 
               <div className="bg-[#F1F3F5] w-full py-6 px-8 text-[#474747]">
-                {props.values.respostas &&
-                  Object.keys(props.values.respostas).map((categoria) => (
-                    <Answers.Root key={categoria} label={categoria} isLoading={isLoadingLoadRatioDataModal}>
+                {formik.values.respostas &&
+                  Object.keys(formik.values.respostas).map((categoria) => (
+                    <Answers.Root key={categoria} label={categoria} isLoading={generalChecklistModal.isLoading}>
                       <Answers.Content key={categoria}>
-                        {props.values.respostas &&
-                          props.values.respostas[categoria].map((pergunta: IRespostaGeneralChecklist, index) => (
-                            <Answers.ContentItem key={index} isLoading={isLoadingLoadRatioDataModal}>
+                        {formik.values.respostas &&
+                          formik.values.respostas[categoria].map((pergunta: IRespostaGeneralChecklist, index) => (
+                            <Answers.ContentItem key={index} isLoading={generalChecklistModal.isLoading}>
                               <Answers.Label label={pergunta.pergunta_id.Title} />
                               <Answers.Button
                                 disabled={!isEdit}
                                 onClick={() => {
                                   const updatedResposta = !pergunta.resposta;
-                                  props.setFieldValue(`respostas.${categoria}[${index}].resposta`, updatedResposta);
+                                  formik.setFieldValue(`respostas.${categoria}[${index}].resposta`, updatedResposta);
                                 }}
                                 answersValue={pergunta.resposta}
                               />
@@ -178,15 +140,15 @@ const LoadRatioModal = () => {
                     </Answers.Root>
                   ))}
 
-                {props.values.observacao && (
+                {formik.values.observacao && (
                   <TextArea
                     id="observacao"
                     name="observacao"
                     label="Observações"
                     disabled
-                    value={props.values.observacao}
-                    onChange={props.handleChange}
-                    isLoading={isLoadingLoadRatioDataModal}
+                    value={formik.values.observacao}
+                    onChange={formik.handleChange}
+                    isLoading={generalChecklistModal.isLoading}
                   />
                 )}
               </div>
@@ -197,7 +159,7 @@ const LoadRatioModal = () => {
                     fill
                     onClick={exportToPdf}
                     className="min-w-[14.0625rem] h-10"
-                    disabled={isLoadingLoadRatioDataModal || generatePdf}
+                    disabled={generalChecklistModal.isLoading || generatePdf}
                   >
                     {generatePdf ? (
                       <Button.Spinner />
@@ -212,7 +174,7 @@ const LoadRatioModal = () => {
 
                 <Button.Root
                   onClick={handleOnOpenChange}
-                  disabled={isLoadingLoadRatioDataModal || isLoadingMutateEditLoadRatio}
+                  disabled={generalChecklistModal.isLoading || mutateEdit.isLoading}
                   className="w-[10rem] h-10"
                 >
                   <Button.Label>Fechar</Button.Label>
@@ -220,21 +182,34 @@ const LoadRatioModal = () => {
 
                 {isEdit && (
                   <Button.Root
-                    onClick={() => handleSubmit(props.values)}
-                    disabled={isLoadingLoadRatioDataModal || isLoadingMutateEditLoadRatio}
                     fill
+                    type="submit"
                     className="w-[10rem] h-10"
+                    disabled={generalChecklistModal.isLoading || mutateEdit.isLoading}
                   >
-                    {isLoadingMutateEditLoadRatio ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
+                    {mutateEdit.isLoading ? <Button.Spinner /> : <Button.Label>Atualizar</Button.Label>}
                   </Button.Root>
                 )}
               </div>
             </div>
           </>
-        )}
-      </Formik>
-    </Modal>
+        </form>
+      </Modal>
+
+      {mutateEdit.isError && (
+        <Toast type="error" open={mutateEdit.isError} onOpenChange={mutateEdit.reset}>
+          O sistema encontrou um erro ao tentar atualizar o registro. Recarregue a página e tente novamente. Se o problema
+          persistir, entre em contato com o administrador do sistema.
+        </Toast>
+      )}
+
+      {mutateEdit.isSuccess && (
+        <Toast type="success" open={mutateEdit.isSuccess} onOpenChange={mutateEdit.reset}>
+          O registro foi atualizado com sucesso do sistema. Operação concluída.
+        </Toast>
+      )}
+    </>
   );
 };
 
-export default LoadRatioModal;
+export default GeneralChecklistModalBXO;
