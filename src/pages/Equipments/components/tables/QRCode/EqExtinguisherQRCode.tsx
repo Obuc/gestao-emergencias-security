@@ -15,7 +15,7 @@ import { IEqExtinguisher } from '../../../types/EquipmentsExtinguisher';
 
 const EqExtinguisherQRCode = () => {
   const site_value = localStorage.getItem('user_site');
-  const { eqExtinguisher, isLoadingEqExtinguisher, isErrorEqExtinguisher, filtersQRCode, setFiltersQRCode, data } =
+  const { eqExtinguisher, isLoadingEqExtinguisher, isErrorEqExtinguisher, filtersQRCode, setFiltersQRCode } =
     useEqExtinguisher();
 
   const [selectAll, setSelectAll] = useState(false);
@@ -47,7 +47,11 @@ const EqExtinguisherQRCode = () => {
   const exportToPdf = async () => {
     setGeneratePdf(true);
     const blob = await pdf(
-      <EqQRCodePdf data={data.data as any} qrCodeValueEquipment="Extintor" qrCodeValueDescription="Extintor" />,
+      <EqQRCodePdf
+        data={selectedItemsExtinguisher}
+        qrCodeValueEquipment="Extintor"
+        qrCodeValueDescription="Extintor"
+      />,
     ).toBlob();
     saveAs(blob, `QRCode Extintores - ${site_value}.pdf`);
     setGeneratePdf(false);

@@ -84,7 +84,7 @@ export const EqVehiclesQRCodePdf = ({
 }: IEqVehiclesQRCodePdfProps) => {
   const generateQRCodeURL = (value: any) => {
     const qrCodeValue = `${qrCodeValueEquipment};${value?.site};${value?.cod_qrcode};${value?.tipo_veiculo}`;
-    return `https://chart.googleapis.com/chart?chs=190x190&cht=qr&chl=${qrCodeValue}`;
+    return `https://quickchart.io/qr?text=${qrCodeValue}`;
   };
 
   return (
