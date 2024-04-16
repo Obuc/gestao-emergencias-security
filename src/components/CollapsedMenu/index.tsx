@@ -6,21 +6,20 @@ import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
 
 import { CollapsedMenuRoot } from './CollapsedMenuRoot';
 import { CollapsedMenuItemRoot } from './CollapsedMenuItemRoot';
-import { CollapsedMenuItemIcon } from './CollapsedMenuItemIcon';
 import { CollapsedMenuItemLabel } from './CollapsedMenuItemLabel';
 import { CollapsedMenuItemAction } from './CollapsedMenuItemAction';
 
 export interface SubItem {
   label: string;
   path: string;
-  icon: React.ElementType;
+  icon?: React.ElementType;
 }
 
 export interface MenuItem {
   label: string;
   path?: string;
   subitems?: SubItem[];
-  icon: React.ElementType;
+  icon?: React.ElementType;
 }
 
 const CollapsedMenu = ({ items }: { items: Array<MenuItem> }) => {
@@ -58,7 +57,8 @@ const CollapsedMenu = ({ items }: { items: Array<MenuItem> }) => {
   return (
     <CollapsedMenuRoot>
       {items.map((item, index) => {
-        const isLocationActivePartial = localtion.pathname.split('/')[1] === item.path?.split('/')[1];
+        const isLocationActivePartial =
+          item.path?.split('/')[1] && localtion.pathname.split('/')[1].includes(item.path?.split('/')[1]); //localtion.pathname.split('/')[1] === item.path?.split('/')[1];
 
         const handleCollapsedMenuItemAction = () => {
           if (item.path) return handleNavigate(item.path);
@@ -72,33 +72,29 @@ const CollapsedMenu = ({ items }: { items: Array<MenuItem> }) => {
                 active={isLocationActivePartial ? 'true' : 'false'}
                 onClick={handleCollapsedMenuItemAction}
               >
-                <CollapsedMenuItemIcon active={isLocationActivePartial} icon={item.icon} />
-                <CollapsedMenuItemLabel active={isLocationActivePartial}>{item.label}</CollapsedMenuItemLabel>
+                <CollapsedMenuItemLabel>{item.label}</CollapsedMenuItemLabel>
 
-                {!openMenus[index] && item?.subitems && item.subitems[index] && (
-                  <FontAwesomeIcon className="pr-4" icon={faAngleDown} />
-                )}
-                {openMenus[index] && item?.subitems && item.subitems[index] && (
-                  <FontAwesomeIcon className="pr-4" icon={faAngleUp} />
+                {item.subitems && (
+                  <>
+                    {!openMenus[index] && <FontAwesomeIcon className="pr-4" icon={faAngleDown} />}
+                    {openMenus[index] && <FontAwesomeIcon className="pr-4" icon={faAngleUp} />}
+                  </>
                 )}
               </CollapsedMenuItemAction>
             </CollapsedMenuItemRoot>
 
             {item.subitems && (
               <Collapse in={openMenus[index]} timeout="auto" unmountOnExit>
-                {item.subitems.map((item) => {
-                  const collpseLocationActivePartial = localtion.pathname.split('/')[1] === item.path.split('/')[1];
+                {item.subitems.map((subitem) => {
+                  const collpseLocationActivePartial = localtion.pathname.split('/')[2] === subitem.path.split('/')[2];
 
                   return (
-                    <CollapsedMenuItemRoot isSub key={item.path} label={item.label}>
+                    <CollapsedMenuItemRoot isSub key={subitem.path} label={subitem.label}>
                       <CollapsedMenuItemAction
                         active={collpseLocationActivePartial ? 'true' : 'false'}
-                        onClick={() => handleNavigate(item.path)}
+                        onClick={() => handleNavigate(subitem.path)}
                       >
-                        <CollapsedMenuItemIcon active={collpseLocationActivePartial} icon={item.icon} />
-                        <CollapsedMenuItemLabel active={collpseLocationActivePartial}>
-                          {item.label}
-                        </CollapsedMenuItemLabel>
+                        <CollapsedMenuItemLabel>{subitem.label}</CollapsedMenuItemLabel>
                       </CollapsedMenuItemAction>
                     </CollapsedMenuItemRoot>
                   );

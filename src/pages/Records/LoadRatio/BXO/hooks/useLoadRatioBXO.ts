@@ -14,7 +14,7 @@ const useLoadRatioBXO = () => {
   const { crud } = sharepointContext();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
-  const equipments_value = localStorage.getItem('equipments_value');
+  const equipments_value = pathname.split('/')[2];
 
   const [year, setYear] = useState(getYear(new Date()));
   const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([{ columnKey: 'Created', direction: 'DESC' }]);

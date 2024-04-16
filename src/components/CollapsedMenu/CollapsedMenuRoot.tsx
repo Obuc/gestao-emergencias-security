@@ -4,7 +4,7 @@ interface ICollapsedMenuRootProps {
 
 export const CollapsedMenuRoot = ({ children }: ICollapsedMenuRootProps) => {
   return (
-    <div className="min-w-[17.5rem] h-full bg-primary text-white">
+    <div className="min-w-[20rem] h-full overflow-y-scroll overflow-x-hidden bg-primary text-white">
       <div className="pt-8 ml-1">{children}</div>
     </div>
   );

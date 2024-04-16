@@ -2,14 +2,14 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
+import useDeaSPO from './hooks/dea-spo.hook';
 import Toast from '../../../../components/Toast';
-import useTestCmiSPO from './hooks/useTestCmiSPO';
+import DeaTableSPO from './components/dea-table-spo';
 import { Button } from '../../../../components/Button';
 import LayoutBase from '../../../../layout/LayoutBase';
-import TestCmiTableSPO from './components/TestCmiTableSPO';
-import TestCmiFiltersSPO from './components/TestCmiFiltersSPO';
+import DeaFiltersSPO from './components/dea-filters-spo';
 
-const TestCmiSPO = () => {
+const DeaSPO = () => {
   const navigate = useNavigate();
   const localSite = localStorage.getItem('user_site');
 
@@ -20,11 +20,11 @@ const TestCmiSPO = () => {
     handleRemoveAllFilters,
     setTempTableFilters,
     tempTableFilters,
-    cmiTest,
+    dea,
     mutateRemove,
     sortColumns,
     setSortColumns,
-  } = useTestCmiSPO();
+  } = useDeaSPO();
 
   useEffect(() => {
     if (localSite === null) {
@@ -41,11 +41,16 @@ const TestCmiSPO = () => {
       <LayoutBase showMenu>
         <div className="flex flex-col h-full w-full justify-between bg-[#F1F1F1]">
           <div className="flex h-full flex-col p-8">
-            <div className="flex pb-8 items-center w-full justify-end">
+            <div className="flex pb-8 items-center w-full justify-between">
+              <div className="flex w-full items-center gap-2 text-2xl text-primary-font font-semibold">
+                <div className="w-3 h-3 rounded-full bg-primary" />
+                <h2>Desfibrilador de Emergência Automático - DEA</h2>
+              </div>
+
               <div className="flex gap-2">
                 <Button.Root
                   fill
-                  className="min-w-[10rem] h-10"
+                  className="min-w-[12rem] h-10"
                   disabled={mutateExportExcel.isLoading}
                   onClick={() => mutateExportExcel.mutate()}
                 >
@@ -59,7 +64,7 @@ const TestCmiSPO = () => {
                   )}
                 </Button.Root>
 
-                <TestCmiFiltersSPO
+                <DeaFiltersSPO
                   countAppliedFilters={countAppliedFilters}
                   handleApplyFilters={handleApplyFilters}
                   handleRemoveAllFilters={handleRemoveAllFilters}
@@ -69,12 +74,7 @@ const TestCmiSPO = () => {
               </div>
             </div>
 
-            <TestCmiTableSPO
-              cmiTest={cmiTest}
-              mutateRemove={mutateRemove}
-              setSortColumns={setSortColumns}
-              sortColumns={sortColumns}
-            />
+            <DeaTableSPO dea={dea} mutateRemove={mutateRemove} setSortColumns={setSortColumns} sortColumns={sortColumns} />
           </div>
         </div>
       </LayoutBase>
@@ -94,4 +94,4 @@ const TestCmiSPO = () => {
   );
 };
 
-export default TestCmiSPO;
+export default DeaSPO;

@@ -2,10 +2,9 @@ import * as XLSX from 'xlsx';
 import { useState } from 'react';
 import { SortColumn } from 'react-data-grid';
 import { useLocation } from 'react-router-dom';
+import { format, getYear, parseISO } from 'date-fns';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { endOfMonth, endOfYear, format, getMonth, getYear, parseISO, startOfMonth, startOfYear } from 'date-fns';
 
-import months from '../../../../../utils/month.mock';
 import { IHydrantsFiltersProps } from '../types/HydrantBXO';
 import buildOrderByQuery from '../../../../../utils/buildOrderByQuery';
 import { sharepointContext } from '../../../../../context/sharepointContext';
@@ -18,9 +17,7 @@ const useHydrantBXO = () => {
 
   const [year, setYear] = useState(getYear(new Date()));
   const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([{ columnKey: 'Created', direction: 'DESC' }]);
-  const [month, setMonth] = useState<{ value: string; label: string } | undefined>(
-    months.find((option) => option.value === getMonth(new Date()).toString()),
-  );
+
   const sessionFiltersActions = sessionStorage.getItem('session_filters_hydrant_bxo');
   const sessionFiltersActionsJSON: IHydrantsFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
 
@@ -77,36 +74,14 @@ const useHydrantBXO = () => {
   const fetchHydrants = async ({ pageParam }: { pageParam?: string }) => {
     const orderByQuery = buildOrderByQuery(sortColumns);
 
-    let path = `?$Select=Id,local,pavimento,site/Title,hidrante_id/Id,hidrante_id/cod_hidrante,bombeiro/Title,conforme,observacao,Created&$expand=site,hidrante_id,bombeiro&$Top=25&${orderByQuery}&$Filter=`;
+    let path = `?$Select=Id,local,pavimento,site/Title,hidrante_id/Id,hidrante_id/cod_hidrante,bombeiro/Title,conforme,observacao,Created&$expand=site,hidrante_id,bombeiro&$Top=25&${orderByQuery}&$Filter=(site/Title eq 'BXO')`;
 
-    if (!month?.value) {
-      const startDate = format(startOfYear(year), "yyyy-MM-dd'T'00:00:00'Z'");
-      const endDate = format(endOfYear(year), "yyyy-MM-dd'T'23:59:59'Z'");
+    if (year) {
+      const startDate = format(new Date(year, 0, 1), "yyyy-MM-dd'T'00:00:00'Z'");
+      const endDate = format(new Date(year, 11, 31), "yyyy-MM-dd'T'23:59:59'Z'");
 
-      path += `(Created ge ${startDate} and Created le ${endDate})`;
+      path += `and (Created ge datetime'${startDate}') and (Created le datetime'${endDate}')`;
     }
-
-    if (month?.value) {
-      const startOfMonthDate = startOfMonth(new Date(year, +month.value));
-      const endOfMonthDate = endOfMonth(new Date(year, +month.value));
-
-      path += `(Created ge datetime'${format(startOfMonthDate, "yyyy-MM-dd'T'HH:mm:ssxxx")}') and (Created le datetime'${format(
-        endOfMonthDate,
-        "yyyy-MM-dd'T'HH:mm:ssxxx",
-      )}')`;
-    }
-
-    // if (tableFilters?.place) {
-    //   for (let i = 0; i < tableFilters.place.length; i++) {
-    //     path += `${i === 0 ? ' and' : ' or'} (local eq '${tableFilters.place[i].label}')`;
-    //   }
-    // }
-
-    // if (tableFilters?.pavement.length > 0) {
-    //   for (let i = 0; i < tableFilters.pavement.length; i++) {
-    //     path += `${i === 0 ? ' and' : ' or'} (pavimento eq '${tableFilters.pavement[i].label}')`;
-    //   }
-    // }
 
     if (tableFilters?.place) {
       path += ` and ( substringof('${tableFilters.place.label}', local ))`;
@@ -158,7 +133,8 @@ const useHydrantBXO = () => {
       response?.data?.value?.map(async (item: any) => {
         const dataCriadoIsoDate = item.Created && parseISO(item.Created);
 
-        const dataCriado = dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
+        const dataCriado =
+          dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
 
         const hidranteValues = {
           cod_hidrante: item?.hidrante_id?.cod_hidrante,
@@ -185,7 +161,7 @@ const useHydrantBXO = () => {
   };
 
   const hydrant = useInfiniteQuery({
-    queryKey: ['hydrants_data_bxo', user_site, tableFilters, sortColumns, year, month],
+    queryKey: ['hydrants_data_bxo', user_site, tableFilters, sortColumns, year],
     queryFn: fetchHydrants,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
@@ -213,7 +189,7 @@ const useHydrantBXO = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['hydrants_data_bxo', user_site, tableFilters, sortColumns, year, month],
+        queryKey: ['hydrants_data_bxo', user_site, tableFilters, sortColumns, year],
       });
     },
   });
@@ -322,8 +298,6 @@ const useHydrantBXO = () => {
     mutateExportExcel,
     sortColumns,
     setSortColumns,
-    month,
-    setMonth,
     year,
     setYear,
   };

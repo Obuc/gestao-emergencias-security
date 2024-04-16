@@ -5,74 +5,73 @@ import { useLocation } from 'react-router-dom';
 import { format, getYear, parseISO } from 'date-fns';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { DeaFilters } from '../types/dea.types';
 import buildOrderByQuery from '../../../../../utils/buildOrderByQuery';
 import { sharepointContext } from '../../../../../context/sharepointContext';
-import { IGeneralChecklistFiltersProps } from '../types/GeneralChecklistBXO';
 
-const useGeneralChecklistBXO = () => {
+const useDeaSPO = () => {
   const { pathname } = useLocation();
-  const { crud } = sharepointContext();
+  const { crud, crudParent } = sharepointContext();
   const queryClient = useQueryClient();
   const user_site = localStorage.getItem('user_site');
 
   const [year, setYear] = useState(getYear(new Date()));
   const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([{ columnKey: 'Created', direction: 'DESC' }]);
 
-  const sessionFiltersActions = sessionStorage.getItem('session_filters_general_checklist_bxo');
-  const sessionFiltersActionsJSON: IGeneralChecklistFiltersProps =
-    sessionFiltersActions && JSON.parse(sessionFiltersActions);
+  const sessionFiltersActions = sessionStorage.getItem('session_filters_dea_spo');
+  const sessionFiltersActionsJSON: DeaFilters = sessionFiltersActions && JSON.parse(sessionFiltersActions);
 
   const initialFiltersValues = {
-    recordId: sessionFiltersActionsJSON?.recordId ? sessionFiltersActionsJSON.recordId : null,
-    plate: sessionFiltersActionsJSON?.plate ? sessionFiltersActionsJSON.plate : null,
     responsible: sessionFiltersActionsJSON?.responsible ? sessionFiltersActionsJSON.responsible : null,
+    cod: sessionFiltersActionsJSON?.responsible ? sessionFiltersActionsJSON.responsible : null,
+    id: sessionFiltersActionsJSON?.id ? sessionFiltersActionsJSON.id : null,
     startDate: sessionFiltersActionsJSON?.startDate ? sessionFiltersActionsJSON.startDate : null,
     endDate: sessionFiltersActionsJSON?.endDate ? sessionFiltersActionsJSON.endDate : null,
+    place: sessionFiltersActionsJSON?.place ? sessionFiltersActionsJSON.place : null,
     conformity: sessionFiltersActionsJSON?.conformity ? sessionFiltersActionsJSON.conformity : null,
-    vehicle_type: sessionFiltersActionsJSON?.vehicle_type ? sessionFiltersActionsJSON.vehicle_type : [],
   };
 
-  const [tableFilters, setTableFilters] = useState<IGeneralChecklistFiltersProps>(initialFiltersValues);
-  const [tempTableFilters, setTempTableFilters] = useState<IGeneralChecklistFiltersProps>(initialFiltersValues);
+  const [tableFilters, setTableFilters] = useState<DeaFilters>(initialFiltersValues);
+  const [tempTableFilters, setTempTableFilters] = useState<DeaFilters>(initialFiltersValues);
 
   const handleRemoveAllFilters = () => {
     const filters = {
-      recordId: null,
-      plate: null,
       responsible: null,
+      cod: null,
+      id: null,
       startDate: null,
       endDate: null,
+      place: null,
       conformity: null,
-      vehicle_type: [],
     };
 
     setTableFilters(filters);
     setTempTableFilters(filters);
-    sessionStorage.removeItem('session_filters_general_checklist_bxo');
+    sessionStorage.removeItem('session_filters_dea_spo');
   };
 
   const countAppliedFilters = () => {
     let count = 0;
-    if (tableFilters.recordId) count++;
-    if (tableFilters.plate) count++;
     if (tableFilters.responsible) count++;
+    if (tableFilters.cod) count++;
+    if (tableFilters.id) count++;
     if (tableFilters.startDate) count++;
     if (tableFilters.endDate) count++;
+    if (tableFilters.place) count++;
     if (tableFilters.conformity) count++;
-    if (tableFilters.vehicle_type.length > 0) count++;
 
     return count;
   };
 
   const handleApplyFilters = () => {
     setTableFilters(tempTableFilters);
-    sessionStorage.setItem('session_filters_general_checklist_bxo', JSON.stringify(tempTableFilters));
+    sessionStorage.setItem('session_filters_dea_spo', JSON.stringify(tempTableFilters));
   };
 
   const fetch = async ({ pageParam }: { pageParam?: string }) => {
     const orderByQuery = buildOrderByQuery(sortColumns);
 
-    let path = `?$Select=Id,veiculo_idId,veiculo_id/placa,tipo_veiculo,site/Title,bombeiro/Title,Created,conforme&$expand=site,bombeiro,veiculo_id&$Top=25&${orderByQuery}&$Filter=(site/Title eq '${user_site}')`;
+    let path = `?$Select=Id,Responsavel/Title,CodDea,Local,Site,Area,Created,Sin,Int,Obst,Clb,Val,Pas&$Expand=Responsavel&$Top=25&${orderByQuery}&$Filter=(Id ge 0)`;
 
     if (year) {
       const startDate = format(new Date(year, 0, 1), "yyyy-MM-dd'T'00:00:00'Z'");
@@ -80,12 +79,13 @@ const useGeneralChecklistBXO = () => {
 
       path += `and (Created ge datetime'${startDate}') and (Created le datetime'${endDate}')`;
     }
-    if (tableFilters?.conformity && tableFilters?.conformity === 'Conforme') {
-      path += ` and (conforme ne 'false')`;
+
+    if (tableFilters?.responsible) {
+      path += ` and ( substringof('${tableFilters.responsible}', Responsavel/Title ))`;
     }
 
-    if (tableFilters?.conformity && tableFilters?.conformity !== 'Conforme') {
-      path += ` and (conforme eq 'false')`;
+    if (tableFilters?.id) {
+      path += ` and ( substringof('${tableFilters.id}', Id ))`;
     }
 
     if (tableFilters?.startDate || tableFilters?.endDate) {
@@ -104,27 +104,19 @@ const useGeneralChecklistBXO = () => {
       }
     }
 
-    if (tableFilters?.responsible) {
-      path += ` and ( substringof('${tableFilters.responsible}', bombeiro/Title ))`;
+    if (tableFilters?.place) {
+      path += ` and ( substringof('${tableFilters.place}', Local ))`;
     }
 
-    if (tableFilters?.recordId) {
-      path += ` and ( Id eq '${tableFilters.recordId}')`;
-    }
+    // if (tableFilters?.conformity && tableFilters?.conformity === 'Conforme') {
+    //   path += ` or ((OData__x004d_an1 eq true) and (OData__x004d_an2 eq true) and (OData__x0043_ar1 eq true) and (OData__x0043_ar2 eq true) and (OData__x0043_il2 eq true) and (OData__x0043_il1 eq true) and (OData__x0043_il3 eq true) and (OData__x0053_in1 eq true) and (OData__x0053_in2 eq true) and (OData__x004c_tv1 eq true) and (OData__x004c_tv2 eq true) and (Obst1 eq true) and (Obst2 eq true))`;
+    // }
 
-    if (tableFilters?.plate) {
-      path += ` and ( substringof('${tableFilters.plate}', veiculo_id/placa ))`;
-    }
+    // if (tableFilters?.conformity && tableFilters?.conformity !== 'Conforme') {
+    //   path += ` and (OData__x004d_an1 eq 'true') or (OData__x004d_an2 eq 'true') or (OData__x0043_ar1 eq 'true') or (OData__x0043_ar2 eq 'true') or (OData__x0043_il2 eq 'true') or (OData__x0043_il1 eq 'true') or (OData__x0043_il3 eq 'true') or (OData__x0053_in1 eq 'true') or (OData__x0053_in2 eq 'true') or (OData__x004c_tv1 eq 'true') or (OData__x004c_tv2 eq 'true') or (Obst1 eq 'true') or (Obst2 eq 'true'))`;
+    // }
 
-    if (tableFilters?.vehicle_type) {
-      for (let i = 0; i < tableFilters?.vehicle_type.length; i++) {
-        path += `${i === 0 ? ' and' : ' or'} (tipo_veiculo eq '${tableFilters?.vehicle_type[i]}')`;
-      }
-    }
-
-    const response = await crud.getPaged(
-      pageParam ? { nextUrl: pageParam } : { list: 'registros_veiculos_emergencia', path },
-    );
+    const response = await crudParent.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'Dea', path });
 
     const dataWithTransformations = await Promise.all(
       response?.data?.value?.map(async (item: any) => {
@@ -132,16 +124,11 @@ const useGeneralChecklistBXO = () => {
         const dataCriado =
           dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
 
-        const vehicleValues = {
-          placa: item?.veiculo_id?.placa,
-          tipo_veiculo: item?.tipo_veiculo,
-        };
-
         return {
           ...item,
           Created: dataCriado,
-          bombeiro: item.bombeiro?.Title,
-          veiculo: vehicleValues,
+          Responsavel: item?.Responsavel?.Title,
+          conforme: item.Sin && item.Int && item.Obst && item.Clb && item.Val && item.Pas,
         };
       }),
     );
@@ -155,62 +142,43 @@ const useGeneralChecklistBXO = () => {
     };
   };
 
-  const generalChecklist = useInfiniteQuery({
-    queryKey: ['general_checklist_data_bxo', user_site, tableFilters, sortColumns, year],
+  const dea = useInfiniteQuery({
+    queryKey: ['dea_data_spo', user_site, tableFilters, sortColumns, year],
     queryFn: fetch,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: pathname.includes('general_checklist') && user_site === 'BXO',
+    enabled: pathname.includes('/records/dea') && user_site === 'SPO',
   });
 
   const mutateRemove = useMutation({
     mutationFn: async (itemId: number) => {
       if (itemId) {
-        const itemResponse = await crud.getListItemsv2(
-          'respostas_veiculos_emergencia',
-          `?$Select=Id,registro_id/Id&$expand=registro_id&$Filter=(registro_id/Id eq ${itemId})`,
-        );
-
-        if (itemResponse.results.length > 0) {
-          for (const item of itemResponse.results) {
-            const itemIdToDelete = item.Id;
-            await crud.deleteItemList('respostas_veiculos_emergencia', itemIdToDelete);
-          }
-        } else {
-          console.log('Nenhum item encontrado para excluir.');
-        }
+        await crud.deleteItemList('Dea', itemId);
       }
-      await crud.deleteItemList('registros_veiculos_emergencia', itemId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['general_checklist_data_bxo', user_site, tableFilters, sortColumns, year],
+        queryKey: ['dea_data_spo', user_site, tableFilters, sortColumns, year],
       });
     },
   });
 
   const fetchAllRecords = async () => {
-    const path = `?$Select=Id,site/Title,veiculo_idId,bombeiro/Title,conforme,observacao&$expand=site,bombeiro&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+    const path = `?$Select=Id,Responsavel/Title,CodDea,Site,Area,Created,Sin,Int,Obst,Clb,Val,Pas&$Expand=Responsavel&$Orderby=Created desc`;
 
-    const response = await crud.getListItems('registros_veiculos_emergencia', path);
+    const response = await crudParent.getListItems('Dea', path);
 
     const dataWithTransformations = await Promise.all(
       response.map(async (item: any) => {
-        const vehicleResponse = await crud.getListItemsv2(
-          'veiculos_emergencia',
-          `?$Select=Id,site/Title,tipo_veiculo/Title,placa,ultima_inspecao&$expand=site,tipo_veiculo&$Filter=(Id eq ${item.veiculo_idId})`,
-        );
-
-        const vehicle = vehicleResponse.results[0] || null;
+        const dataCriadoIsoDate = item.Created && parseISO(item.Created);
+        const dataCriado =
+          dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
 
         return {
           ...item,
-          bombeiro: item.bombeiro?.Title,
-          placa: vehicle?.placa,
-          site: vehicle?.site?.Title,
-          tipo_veiculo: vehicle?.tipo_veiculo?.Title,
-          conforme: item?.conforme ? 'CONFORME' : 'NÃO CONFORME',
-          ultima_inspecao: vehicle?.ultima_inspecao ? format(new Date(vehicle?.ultima_inspecao), 'dd/MM/yyyy') : '',
+          Created: dataCriado,
+          Responsavel: item?.Responsavel?.Title,
+          conforme: item.Sin && item.Int && item.Obst && item.Clb && item.Val && item.Pas ? 'CONFORME' : 'NÃO CONFORME',
         };
       }),
     );
@@ -222,7 +190,7 @@ const useGeneralChecklistBXO = () => {
     mutationFn: async () => {
       const data = await fetchAllRecords();
 
-      const columns = ['Id', 'bombeiro', 'tipo_veiculo', 'placa', 'ultima_inspecao', 'conforme', 'observacao'];
+      const columns = ['Responsavel', 'Id', 'Area', 'Created', 'conforme'];
 
       const headerRow = columns.map((column) => column.toString());
 
@@ -240,35 +208,26 @@ const useGeneralChecklistBXO = () => {
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-        const wscols = [
-          { wch: 10 },
-          { wch: 30 },
-          { wch: 15 },
-          { wch: 15 },
-          { wch: 15 },
-          { wch: 15 },
-          { wch: 15 },
-          { wch: 30 },
-        ];
+        const wscols = [{ wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
 
         dataArray[0][0] = { t: 's', v: 'Texto com\nQuebra de Linha' };
 
         const firstRowHeight = 30;
         const wsrows = [{ hpx: firstRowHeight }];
-        const filterRange = { ref: `A1:G1` };
+        const filterRange = { ref: `A1:E1` };
 
         ws['!autofilter'] = filterRange;
         ws['!rows'] = wsrows;
         ws['!cols'] = wscols;
 
-        XLSX.utils.book_append_sheet(wb, ws, 'Registros Checklist Geral');
-        XLSX.writeFile(wb, `Registros - Veiculos Emergencia Checklist Geral.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, 'Dea');
+        XLSX.writeFile(wb, `SPO - Registros - Dea.xlsx`);
       }
     },
   });
 
   return {
-    generalChecklist,
+    dea,
     mutateRemove,
     tempTableFilters,
     setTempTableFilters,
@@ -283,4 +242,4 @@ const useGeneralChecklistBXO = () => {
   };
 };
 
-export default useGeneralChecklistBXO;
+export default useDeaSPO;

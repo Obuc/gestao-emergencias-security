@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Report from './pages/Report';
 import Schedule from './pages/Schedule';
 import Equipments from './pages/Equipments';
+import DeaSPO from './pages/Records/Dea/SPO';
 import HydrantBXO from './pages/Records/Hydrant/BXO';
 import HydrantSPO from './pages/Records/Hydrant/SPO';
 import TestCmiBXO from './pages/Records/TestCmi/BXO';
@@ -66,6 +67,10 @@ const App = () => {
       {/* GeneralChecklist  */}
       <Route path={`/records/general_checklist`} element={localSite === 'BXO' && <GeneralChecklist />} />
       <Route path={`/records/general_checklist/:id`} element={localSite === 'BXO' && <GeneralChecklist />} />
+
+      {/* DEA */}
+      <Route path={`/records/dea`} element={localSite === 'SPO' && <DeaSPO />} />
+      <Route path={`/records/dea/:id`} element={localSite === 'SPO' && <DeaSPO />} />
     </Routes>
   );
 };
