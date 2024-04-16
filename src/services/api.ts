@@ -173,6 +173,8 @@ class CrudSharepoint {
               ? 'SP.Data.Casa_x005f_de_x005f_BombasListItem'
               : list === 'Bombas_de_Incendio'
               ? 'SP.Data.Bombas_x005f_de_x005f_IncendioListItem'
+              : list === 'Alarmes_de_Incendio'
+              ? 'SP.Data.Alarmes_x005f_de_x005f_IncendioListItem'
               : `SP.Data.${listName}`,
         },
       };
@@ -211,6 +213,8 @@ class CrudSharepoint {
           ? 'Casa_x005f_de_x005f_BombasListItem'
           : list === 'Bombas_de_Incendio'
           ? 'Bombas_x005f_de_x005f_IncendioListItem'
+          : list === 'Alarmes_de_Incendio'
+          ? 'Alarmes_x005f_de_x005f_IncendioListItem'
           : `${formattedListName}ListItem`;
 
       const url = `${this.baseUrl}/_api/web/lists/GetByTitle('${list}')/items(${id})`;

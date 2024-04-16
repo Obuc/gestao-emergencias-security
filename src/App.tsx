@@ -17,6 +17,7 @@ import InspectionCmiSPO from './pages/Records/InspectionCmi/SPO';
 import GeneralChecklist from './pages/Records/GeneralChecklist/BXO';
 import GovernanceValveBXO from './pages/Records/GovernanceValve/BXO';
 import GovernanceValveSPO from './pages/Records/GovernanceValve/SPO';
+import AlarmsSPO from './pages/Records/Alarms/SPO';
 
 const App = () => {
   const localSite = localStorage.getItem('user_site');
@@ -71,6 +72,10 @@ const App = () => {
       {/* DEA */}
       <Route path={`/records/dea`} element={localSite === 'SPO' && <DeaSPO />} />
       <Route path={`/records/dea/:id`} element={localSite === 'SPO' && <DeaSPO />} />
+
+      {/* Alarms */}
+      <Route path={`/records/fire_alarms`} element={localSite === 'SPO' && <AlarmsSPO />} />
+      <Route path={`/records/fire_alarms/:id`} element={localSite === 'SPO' && <AlarmsSPO />} />
     </Routes>
   );
 };
