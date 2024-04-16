@@ -5,6 +5,8 @@ import Report from './pages/Report';
 import Schedule from './pages/Schedule';
 import Equipments from './pages/Equipments';
 import DeaSPO from './pages/Records/Dea/SPO';
+import OeiSPO from './pages/Records/Oei/SPO';
+import AlarmsSPO from './pages/Records/Alarms/SPO';
 import HydrantBXO from './pages/Records/Hydrant/BXO';
 import HydrantSPO from './pages/Records/Hydrant/SPO';
 import TestCmiBXO from './pages/Records/TestCmi/BXO';
@@ -17,7 +19,6 @@ import InspectionCmiSPO from './pages/Records/InspectionCmi/SPO';
 import GeneralChecklist from './pages/Records/GeneralChecklist/BXO';
 import GovernanceValveBXO from './pages/Records/GovernanceValve/BXO';
 import GovernanceValveSPO from './pages/Records/GovernanceValve/SPO';
-import AlarmsSPO from './pages/Records/Alarms/SPO';
 
 const App = () => {
   const localSite = localStorage.getItem('user_site');
@@ -76,6 +77,10 @@ const App = () => {
       {/* Alarms */}
       <Route path={`/records/fire_alarms`} element={localSite === 'SPO' && <AlarmsSPO />} />
       <Route path={`/records/fire_alarms/:id`} element={localSite === 'SPO' && <AlarmsSPO />} />
+
+      {/* OEI */}
+      <Route path={`/records/oei_operation`} element={localSite === 'SPO' && <OeiSPO />} />
+      <Route path={`/records/oei_operation/:id`} element={localSite === 'SPO' && <OeiSPO />} />
     </Routes>
   );
 };
