@@ -22,8 +22,7 @@ const useExtinguisherBXO = () => {
     months.find((option) => option.value === getMonth(new Date()).toString()),
   );
   const sessionFiltersActions = sessionStorage.getItem('session_filters_extinguisher');
-  const sessionFiltersActionsJSON: IExtinguisherFiltersProps =
-    sessionFiltersActions && JSON.parse(sessionFiltersActions);
+  const sessionFiltersActionsJSON: IExtinguisherFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
 
   const initialFiltersValues = {
     responsible: sessionFiltersActionsJSON?.responsible ? sessionFiltersActionsJSON.responsible : null,
@@ -234,6 +233,7 @@ const useExtinguisherBXO = () => {
 
   const fetchExtinguisherAllRecords = async () => {
     const path = `?$Select=Id,local,extintor_idId,data_pesagem,observacao,novo,pavimento,conforme,bombeiro_id/Title,site/Title&$expand=site,bombeiro_id&$Orderby=Created desc&$Filter=(site/Title eq '${user_site}')`;
+
     const response = await crud.getListItems('registros_extintor', path);
 
     const dataWithTransformations = await Promise.all(

@@ -7,6 +7,7 @@ import { useDebounce } from '../../hooks/useDebounce';
 interface ITextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   name: string;
+  icon?: React.ReactNode;
   placeholder?: string;
   width?: string;
   errors?: string;
@@ -14,7 +15,17 @@ interface ITextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   isLoading?: boolean;
 }
 
-const TextField = ({ label, name, placeholder = '', width, errors, touched, isLoading, ...props }: ITextFieldProps) => {
+const TextField = ({
+  label,
+  name,
+  icon,
+  placeholder = '',
+  width,
+  errors,
+  touched,
+  isLoading,
+  ...props
+}: ITextFieldProps) => {
   const [displayValue, setDisplayValue] = useState(props.value ? props.value : '');
 
   useEffect(() => {
@@ -61,6 +72,8 @@ const TextField = ({ label, name, placeholder = '', width, errors, touched, isLo
           )}
         />
       )}
+
+      {icon && <div className="absolute right-2 top-2">{icon}</div>}
 
       {isLoading && <Skeleton className={twMerge('p-2', props.className)} />}
     </div>
