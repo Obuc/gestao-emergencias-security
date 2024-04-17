@@ -177,6 +177,8 @@ class CrudSharepoint {
               ? 'SP.Data.Alarmes_x005f_de_x005f_IncendioListItem'
               : list === 'Operacao_OEI'
               ? 'SP.Data.Operacao_x005f_OEIListItem'
+              : list === 'Portas_de_Emergencia'
+              ? 'SP.Data.Portas_x005f_de_x005f_EmergenciaListItem'
               : `SP.Data.${listName}`,
         },
       };
@@ -219,6 +221,8 @@ class CrudSharepoint {
           ? 'Alarmes_x005f_de_x005f_IncendioListItem'
           : list === 'Operacao_OEI'
           ? 'Operacao_x005f_OEIListItem'
+          : list === 'Portas_de_Emergencia'
+          ? 'Portas_x005f_de_x005f_EmergenciaListItem'
           : `${formattedListName}ListItem`;
 
       const url = `${this.baseUrl}/_api/web/lists/GetByTitle('${list}')/items(${id})`;

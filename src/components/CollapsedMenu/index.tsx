@@ -86,7 +86,7 @@ const CollapsedMenu = ({ items }: { items: Array<MenuItem> }) => {
             {item.subitems && (
               <Collapse in={openMenus[index]} timeout="auto" unmountOnExit>
                 {item.subitems.map((subitem) => {
-                  const collpseLocationActivePartial = localtion.pathname.split('/')[2] === subitem.path.split('/')[2];
+                  const collpseLocationActivePartial = localtion.pathname.includes(subitem.path);
 
                   return (
                     <CollapsedMenuItemRoot isSub key={subitem.path} label={subitem.label}>

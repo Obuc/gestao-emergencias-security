@@ -16,6 +16,7 @@ import ExtinguisherBXO from './pages/Records/Extinguisher/BXO';
 import ExtinguisherSPO from './pages/Records/Extinguisher/SPO';
 import InspectionCmiBXO from './pages/Records/InspectionCmi/BXO';
 import InspectionCmiSPO from './pages/Records/InspectionCmi/SPO';
+import EmergencyDoorSPO from './pages/Records/EmergencyDoor/SPO';
 import GeneralChecklist from './pages/Records/GeneralChecklist/BXO';
 import GovernanceValveBXO from './pages/Records/GovernanceValve/BXO';
 import GovernanceValveSPO from './pages/Records/GovernanceValve/SPO';
@@ -81,6 +82,10 @@ const App = () => {
       {/* OEI */}
       <Route path={`/records/oei_operation`} element={localSite === 'SPO' && <OeiSPO />} />
       <Route path={`/records/oei_operation/:id`} element={localSite === 'SPO' && <OeiSPO />} />
+
+      {/* Emergency Door */}
+      <Route path={`/records/emergency_doors`} element={localSite === 'SPO' && <EmergencyDoorSPO />} />
+      <Route path={`/records/emergency_doors/:id`} element={localSite === 'SPO' && <EmergencyDoorSPO />} />
     </Routes>
   );
 };
