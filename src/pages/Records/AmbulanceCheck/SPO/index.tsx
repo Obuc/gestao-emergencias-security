@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import Toast from '../../../../components/Toast';
-import useTestCmiSPO from './hooks/useTestCmiSPO';
 import { Button } from '../../../../components/Button';
 import LayoutBase from '../../../../layout/LayoutBase';
-import TestCmiTableSPO from './components/TestCmiTableSPO';
-import TestCmiFiltersSPO from './components/TestCmiFiltersSPO';
+import useAmbulanceCheckSPO from './hooks/ambulance-check-spo.hook';
+import AmbulanceCheckTableSPO from './components/ambulance-check-table-spo';
+import AmbulanceCheckFiltersSPO from './components/ambulance-check-filters-spo';
 
-const TestCmiSPO = () => {
+const AmbulanceCheckSPO = () => {
   const navigate = useNavigate();
   const localSite = localStorage.getItem('user_site');
 
@@ -20,11 +20,11 @@ const TestCmiSPO = () => {
     handleRemoveAllFilters,
     setTempTableFilters,
     tempTableFilters,
-    cmiTest,
+    ambulanceCheck,
     mutateRemove,
     sortColumns,
     setSortColumns,
-  } = useTestCmiSPO();
+  } = useAmbulanceCheckSPO();
 
   useEffect(() => {
     if (localSite === null) {
@@ -44,7 +44,7 @@ const TestCmiSPO = () => {
             <div className="flex pb-8 items-center w-full justify-between">
               <div className="flex w-full items-center gap-2 text-2xl text-primary-font font-semibold">
                 <div className="w-3 h-3 rounded-full bg-primary" />
-                <h2>Teste CMI</h2>
+                <h2>Verificação de Ambulância</h2>
               </div>
 
               <div className="flex gap-2">
@@ -64,7 +64,7 @@ const TestCmiSPO = () => {
                   )}
                 </Button.Root>
 
-                <TestCmiFiltersSPO
+                <AmbulanceCheckFiltersSPO
                   countAppliedFilters={countAppliedFilters}
                   handleApplyFilters={handleApplyFilters}
                   handleRemoveAllFilters={handleRemoveAllFilters}
@@ -74,8 +74,8 @@ const TestCmiSPO = () => {
               </div>
             </div>
 
-            <TestCmiTableSPO
-              cmiTest={cmiTest}
+            <AmbulanceCheckTableSPO
+              ambulanceCheck={ambulanceCheck}
               mutateRemove={mutateRemove}
               setSortColumns={setSortColumns}
               sortColumns={sortColumns}
@@ -99,4 +99,4 @@ const TestCmiSPO = () => {
   );
 };
 
-export default TestCmiSPO;
+export default AmbulanceCheckSPO;

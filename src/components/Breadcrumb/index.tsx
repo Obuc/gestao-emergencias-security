@@ -34,6 +34,12 @@ const Breadcrumb = () => {
     van: 'Furgão',
     sprinter: 'Ambulância Sprinter',
     iveco: 'Ambulância Iveco',
+
+    emergency_doors: 'Portas de Emergência',
+    oei_operation: 'Operação OEI',
+    fire_alarms: 'Alarmes de Incêndio',
+    ambulance_check: 'Verificação de Ambulância',
+    dea: 'DEA',
   };
 
   return (

@@ -41,11 +41,16 @@ const InspectionCmiSPO = () => {
       <LayoutBase showMenu>
         <div className="flex flex-col h-full w-full justify-between bg-[#F1F1F1]">
           <div className="flex h-full flex-col p-8">
-            <div className="flex pb-8 items-center w-full justify-end">
+            <div className="flex pb-8 items-center w-full justify-between">
+              <div className="flex w-full items-center gap-2 text-2xl text-primary-font font-semibold">
+                <div className="w-3 h-3 rounded-full bg-primary" />
+                <h2>Inspeção CMI</h2>
+              </div>
+
               <div className="flex gap-2">
                 <Button.Root
                   fill
-                  className="min-w-[10rem] h-10"
+                  className="min-w-[12rem] h-10"
                   disabled={mutateExportExcel.isLoading}
                   onClick={() => mutateExportExcel.mutate()}
                 >
