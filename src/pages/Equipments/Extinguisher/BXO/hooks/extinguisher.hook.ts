@@ -1,14 +1,14 @@
 import * as XLSX from 'xlsx';
 import { useState } from 'react';
+import { SortColumn } from 'react-data-grid';
 import { useLocation } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { SortColumn } from 'react-data-grid';
-import buildOrderByQuery from '../../../../../utils/buildOrderByQuery';
-import { sharepointContext } from '../../../../../context/sharepointContext';
-import { EquipmentsExtinguisherFiltersProps, EquipmentsExtinguisherProps } from '../types/equipments-extinguisher.types';
+import buildOrderByQuery from '@/utils/buildOrderByQuery';
+import { sharepointContext } from '@/context/sharepointContext';
+import { ExtinguisherFiltersProps, ExtinguisherProps } from '../types/extinguisher.types';
 
-const useEquipmentsExtinguisher = () => {
+const useExtinguisher = () => {
   const { crud } = sharepointContext();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -17,27 +17,26 @@ const useEquipmentsExtinguisher = () => {
   const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([{ columnKey: 'Modified', direction: 'DESC' }]);
 
   const sessionFiltersActions = sessionStorage.getItem('session_filters_equipments_extinguisher');
-  const sessionFiltersActionsJSON: EquipmentsExtinguisherFiltersProps =
-    sessionFiltersActions && JSON.parse(sessionFiltersActions);
+  const sessionFiltersActionsJSON: ExtinguisherFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
 
   const initialFiltersValues = {
     id: sessionFiltersActionsJSON?.id ? sessionFiltersActionsJSON.id : null,
-    pavement: sessionFiltersActionsJSON?.pavement ? sessionFiltersActionsJSON.pavement : [],
+    pavement: sessionFiltersActionsJSON?.pavement ? sessionFiltersActionsJSON.pavement : null,
     place: sessionFiltersActionsJSON?.place ? sessionFiltersActionsJSON.place : [],
-    extinguisherType: sessionFiltersActionsJSON?.extinguisherType ? sessionFiltersActionsJSON.extinguisherType : [],
+    extinguisherType: sessionFiltersActionsJSON?.extinguisherType ? sessionFiltersActionsJSON.extinguisherType : null,
     extinguisherId: sessionFiltersActionsJSON?.extinguisherId ? sessionFiltersActionsJSON.extinguisherId : null,
     conformity: sessionFiltersActionsJSON?.conformity ? sessionFiltersActionsJSON.conformity : null,
   };
 
-  const [tableFilters, setTableFilters] = useState<EquipmentsExtinguisherFiltersProps>(initialFiltersValues);
-  const [tempTableFilters, setTempTableFilters] = useState<EquipmentsExtinguisherFiltersProps>(initialFiltersValues);
+  const [tableFilters, setTableFilters] = useState<ExtinguisherFiltersProps>(initialFiltersValues);
+  const [tempTableFilters, setTempTableFilters] = useState<ExtinguisherFiltersProps>(initialFiltersValues);
 
   const handleRemoveAllFilters = () => {
     const filters = {
       id: null,
-      pavement: [],
+      pavement: null,
       place: [],
-      extinguisherType: [],
+      extinguisherType: null,
       extinguisherId: null,
       conformity: null,
     };
@@ -50,9 +49,9 @@ const useEquipmentsExtinguisher = () => {
   const countAppliedFilters = () => {
     let count = 0;
     if (tableFilters.id) count++;
-    if (tableFilters.pavement.length > 0) count++;
+    if (tableFilters.pavement) count++;
     if (tableFilters.place.length > 0) count++;
-    if (tableFilters.extinguisherType.length > 0) count++;
+    if (tableFilters.extinguisherType) count++;
     if (tableFilters.extinguisherId) count++;
     if (tableFilters.conformity) count++;
 
@@ -69,22 +68,26 @@ const useEquipmentsExtinguisher = () => {
 
     let path = `?$Select=Id,cod_qrcode,cod_extintor,excluido,Modified,conforme,site/Title,pavimento/Title,local/Title,tipo_extintor/Title&$expand=site,pavimento,tipo_extintor,local&$Top=25&${orderByQuery}&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
 
-    if (tableFilters?.place) {
-      for (let i = 0; i < tableFilters.place.length; i++) {
-        path += `${i === 0 ? ' and' : ' or'} (local/Title eq '${tableFilters.place[i]}')`;
-      }
+    if (tableFilters?.id) {
+      path += ` and ( Id eq '${tableFilters?.id}')`;
+    }
+
+    if (tableFilters?.extinguisherId) {
+      path += ` and ( substringof('${tableFilters?.extinguisherId}', cod_extintor ))`;
     }
 
     if (tableFilters?.pavement) {
-      for (let i = 0; i < tableFilters.pavement.length; i++) {
-        path += `${i === 0 ? ' and' : ' or'} (pavimento/Title eq '${tableFilters.pavement[i]}')`;
+      path += ` and (pavimento/Title eq '${tableFilters?.pavement.label}')`;
+    }
+
+    if (tableFilters?.place.length > 0) {
+      for (let i = 0; i < tableFilters.place.length; i++) {
+        path += `${i === 0 ? ' and' : ' or'} (local/Title eq '${tableFilters.place[i].label}')`;
       }
     }
 
     if (tableFilters?.extinguisherType) {
-      for (let i = 0; i < tableFilters?.extinguisherType.length; i++) {
-        path += `${i === 0 ? ' and' : ' or'} (tipo_extintor/Title eq '${tableFilters?.extinguisherType[i]}')`;
-      }
+      path += ` and (tipo_extintor/Title eq '${tableFilters?.extinguisherType?.label}')`;
     }
 
     if (tableFilters?.conformity && tableFilters?.conformity === 'Conforme') {
@@ -93,14 +96,6 @@ const useEquipmentsExtinguisher = () => {
 
     if (tableFilters?.conformity && tableFilters?.conformity !== 'Conforme') {
       path += ` and (conforme eq 'false')`;
-    }
-
-    if (tableFilters?.extinguisherId) {
-      path += ` and ( substringof('${tableFilters?.extinguisherId}', cod_extintor ))`;
-    }
-
-    if (tableFilters?.id) {
-      path += ` and ( Id eq '${tableFilters?.id}')`;
     }
 
     const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'extintores', path });
@@ -125,7 +120,7 @@ const useEquipmentsExtinguisher = () => {
     };
   };
 
-  const equipmentsExtinguisher = useInfiniteQuery({
+  const extinguisherData = useInfiniteQuery({
     queryKey: ['equipments_extinguisher_data', user_site, tableFilters, sortColumns],
 
     queryFn: fetchEquipments,
@@ -170,7 +165,7 @@ const useEquipmentsExtinguisher = () => {
     mutationFn: async () => {
       const data = await fetchAllEquipments();
 
-      const columns: (keyof EquipmentsExtinguisherProps)[] = [
+      const columns: (keyof ExtinguisherProps)[] = [
         'Id',
         'pavimento',
         'local',
@@ -204,7 +199,7 @@ const useEquipmentsExtinguisher = () => {
   });
 
   return {
-    equipmentsExtinguisher,
+    extinguisherData,
     tempTableFilters,
     setTempTableFilters,
     handleRemoveAllFilters,
@@ -217,4 +212,4 @@ const useEquipmentsExtinguisher = () => {
   };
 };
 
-export default useEquipmentsExtinguisher;
+export default useExtinguisher;

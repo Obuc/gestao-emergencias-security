@@ -8,6 +8,7 @@ import { CollapsedMenuRoot } from './CollapsedMenuRoot';
 import { CollapsedMenuItemRoot } from './CollapsedMenuItemRoot';
 import { CollapsedMenuItemLabel } from './CollapsedMenuItemLabel';
 import { CollapsedMenuItemAction } from './CollapsedMenuItemAction';
+import { CollapsedMenuItemIcon } from './CollapsedMenuItemIcon';
 
 export interface SubItem {
   label: string;
@@ -72,6 +73,7 @@ const CollapsedMenu = ({ items }: { items: Array<MenuItem> }) => {
                 active={isLocationActivePartial ? 'true' : 'false'}
                 onClick={handleCollapsedMenuItemAction}
               >
+                {item.icon && <CollapsedMenuItemIcon active={isLocationActivePartial as boolean} icon={item.icon} />}
                 <CollapsedMenuItemLabel>{item.label}</CollapsedMenuItemLabel>
 
                 {item.subitems && (

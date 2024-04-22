@@ -1,10 +1,10 @@
 import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
-import { sharepointContext } from '../../../../../context/sharepointContext';
-import { EquipmentsExtinguisherModalProps } from '../types/equipments-extinguisher.types';
+import { sharepointContext } from '@/context/sharepointContext';
+import { ExtinguisherModalProps } from '../types/extinguisher.types';
 
-const useEquipmentsExtinguisherModal = () => {
+const useExtinguisherModal = () => {
   const params = useParams();
   const location = useLocation();
   const { crud } = sharepointContext();
@@ -23,7 +23,7 @@ const useEquipmentsExtinguisherModal = () => {
     return resp.results || null;
   };
 
-  const equipmentsExtinguisherModal: UseQueryResult<EquipmentsExtinguisherModalProps> = useQuery({
+  const extinguisherModalData: UseQueryResult<ExtinguisherModalProps> = useQuery({
     queryKey: ['equipments_extinguisher_data_modal', params.id, params.form],
     queryFn: async () => {
       if (params.id) {
@@ -50,12 +50,12 @@ const useEquipmentsExtinguisherModal = () => {
     enabled: params.id !== undefined && location.pathname.includes('/equipments/extinguisher'),
   });
 
-  const qrCodeExtinguisherValue = `Extintor;${equipmentsExtinguisherModal.data?.site};${equipmentsExtinguisherModal.data?.cod_qrcode};${equipmentsExtinguisherModal.data?.tipo_extintor}`;
+  const qrCodeExtinguisherValue = `Extintor;${extinguisherModalData.data?.site};${extinguisherModalData.data?.cod_qrcode};${extinguisherModalData.data?.tipo_extintor}`;
 
   return {
-    equipmentsExtinguisherModal,
+    extinguisherModalData,
     qrCodeExtinguisherValue,
   };
 };
 
-export default useEquipmentsExtinguisherModal;
+export default useExtinguisherModal;

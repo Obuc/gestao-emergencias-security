@@ -5,7 +5,6 @@ export interface Alarms {
   Created: Date;
   Sirene: boolean;
   Luminoso: boolean;
-
   conforme: boolean;
 }
 
@@ -13,7 +12,6 @@ export interface AlarmsModal {
   Id: number;
   Created: Date;
   Responsavel1?: string;
-
   UF: string;
   Municipios: string;
   Site: string;
@@ -21,7 +19,6 @@ export interface AlarmsModal {
   Local: string;
   Sirene: boolean;
   Luminoso: boolean;
-
   Observacao?: string;
 }
 

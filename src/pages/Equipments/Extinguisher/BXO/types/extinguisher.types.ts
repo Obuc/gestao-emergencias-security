@@ -1,4 +1,4 @@
-export interface EquipmentsExtinguisherProps {
+export interface ExtinguisherProps {
   Id: number;
   cod_qrcode: string;
   site?: string;
@@ -10,7 +10,7 @@ export interface EquipmentsExtinguisherProps {
   conforme: boolean;
 }
 
-export interface EquipmentsExtinguisherModalProps {
+export interface ExtinguisherModalProps {
   cod_extintor: string;
   cod_qrcode: string;
   conforme: boolean;
@@ -37,16 +37,30 @@ export interface EquipmentsExtinguisherModalProps {
   }>;
 }
 
-export interface EquipmentsExtinguisherFiltersProps {
+export interface ExtinguisherFormProps {
+  siteId: number | null;
+  predioId: number | null;
+  pavimentoId: number | null;
+  localId: number | null;
+  tipo_extintorId: number | null;
+  massaId: number | null;
+}
+
+interface ISelectValue {
+  label: string;
+  value: string;
+}
+
+export interface ExtinguisherFiltersProps {
   id: string | null;
-  pavement: Array<string> | [];
-  place: Array<string> | [];
-  extinguisherType: Array<string> | [];
+  pavement: ISelectValue | null;
+  place: Array<ISelectValue> | [];
+  extinguisherType: ISelectValue | null;
   extinguisherId: string | null;
   conformity: string | null;
 }
 
-export interface EquipmentsExtinguisherFiltersQRCodeProps {
+export interface ExtinguisherFiltersQRCodeProps {
   id: string | null;
   cod_equipamento: string | null;
   predio: string | null;

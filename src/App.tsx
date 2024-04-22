@@ -1,9 +1,8 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import Home from './pages/Home';
 import Report from './pages/Report';
 import Schedule from './pages/Schedule';
-import Equipments from './pages/Equipments';
 import DeaSPO from './pages/Records/Dea/SPO';
 import OeiSPO from './pages/Records/Oei/SPO';
 import AlarmsSPO from './pages/Records/Alarms/SPO';
@@ -25,7 +24,6 @@ import EquipmentsExtinguisher from './pages/Equipments/Extinguisher/BXO';
 
 const App = () => {
   const localSite = localStorage.getItem('user_site');
-  const equipments_value = localStorage.getItem('equipments_value');
 
   return (
     <Routes>
@@ -36,8 +34,6 @@ const App = () => {
 
       <Route path="/schedule" element={<Schedule />} />
       <Route path="/schedule/:id" element={<Schedule />} />
-
-      <Route path="/equipments" element={<Navigate to={`/equipments/${equipments_value}`} />} />
 
       {/* Extinguisher  */}
       <Route path="/records/extinguisher" element={localSite === 'BXO' ? <ExtinguisherBXO /> : <ExtinguisherSPO />} />
@@ -93,6 +89,9 @@ const App = () => {
       {/* Equipments - Extinguisher */}
       <Route path="/equipments/extinguisher" element={<EquipmentsExtinguisher />} />
       <Route path="/equipments/extinguisher/:id" element={<EquipmentsExtinguisher />} />
+
+      {/* <Route path="/equipments/:form" element={<Equipments />} />
+      <Route path="/equipments/:form/:id" element={<Equipments />} /> */}
     </Routes>
   );
 };

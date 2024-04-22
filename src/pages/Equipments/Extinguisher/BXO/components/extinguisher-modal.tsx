@@ -3,18 +3,18 @@ import { ptBR } from 'date-fns/locale';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import Modal from '../../../../../components/Modal';
+import Modal from '@/components/Modal';
+import TextField from '@/components/TextField';
 import CardEmpy from '../../../components/ui/CardEmpy';
 import { EquipmentCard } from '../../../components/ui/Card';
-import TextField from '../../../../../components/TextField';
 import CardSkeleton from '../../../components/ui/CardSkeleton';
-import useEquipmentsExtinguisherModal from '../hooks/equipments-extinguisher-modal.hook';
+import useextinguisherModalData from '../hooks/extinguisher-modal.hook';
 
-const EquipmentsExtinguisherModal = () => {
+const ExtinguisherModal = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  const { equipmentsExtinguisherModal } = useEquipmentsExtinguisherModal();
+  const { extinguisherModalData } = useextinguisherModalData();
   const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -43,8 +43,8 @@ const EquipmentsExtinguisherModal = () => {
               id="cod_extintor"
               name="cod_extintor"
               label="N° Extintor"
-              value={equipmentsExtinguisherModal.data?.cod_extintor ?? ''}
-              isLoading={equipmentsExtinguisherModal.isLoading}
+              value={extinguisherModalData.data?.cod_extintor ?? ''}
+              isLoading={extinguisherModalData.isLoading}
             />
 
             <TextField
@@ -53,8 +53,8 @@ const EquipmentsExtinguisherModal = () => {
               name="site"
               label="Site"
               width="w-[10rem]"
-              value={equipmentsExtinguisherModal.data?.site ?? ''}
-              isLoading={equipmentsExtinguisherModal.isLoading}
+              value={extinguisherModalData.data?.site ?? ''}
+              isLoading={extinguisherModalData.isLoading}
             />
 
             <TextField
@@ -63,8 +63,8 @@ const EquipmentsExtinguisherModal = () => {
               name="predio"
               label="Prédio"
               width="w-[10rem]"
-              value={equipmentsExtinguisherModal.data?.predio ?? ''}
-              isLoading={equipmentsExtinguisherModal.isLoading}
+              value={extinguisherModalData.data?.predio ?? ''}
+              isLoading={extinguisherModalData.isLoading}
             />
 
             <TextField
@@ -73,8 +73,8 @@ const EquipmentsExtinguisherModal = () => {
               name="tipo_extintor"
               label="Tipo Extintor"
               width="w-[12rem]"
-              value={equipmentsExtinguisherModal.data?.tipo_extintor ?? ''}
-              isLoading={equipmentsExtinguisherModal.isLoading}
+              value={extinguisherModalData.data?.tipo_extintor ?? ''}
+              isLoading={extinguisherModalData.isLoading}
             />
           </div>
 
@@ -84,8 +84,8 @@ const EquipmentsExtinguisherModal = () => {
               id="pavimento"
               name="pavimento"
               label="Pavimento"
-              value={equipmentsExtinguisherModal.data?.pavimento ?? ''}
-              isLoading={equipmentsExtinguisherModal.isLoading}
+              value={extinguisherModalData.data?.pavimento ?? ''}
+              isLoading={extinguisherModalData.isLoading}
             />
 
             <TextField
@@ -93,8 +93,8 @@ const EquipmentsExtinguisherModal = () => {
               id="local"
               name="local"
               label="Local"
-              value={equipmentsExtinguisherModal.data?.local ?? ''}
-              isLoading={equipmentsExtinguisherModal.isLoading}
+              value={extinguisherModalData.data?.local ?? ''}
+              isLoading={extinguisherModalData.isLoading}
             />
 
             <TextField
@@ -103,18 +103,18 @@ const EquipmentsExtinguisherModal = () => {
               name="massa"
               label="Massa"
               width="w-[8rem]"
-              value={equipmentsExtinguisherModal.data?.massa ?? ''}
-              isLoading={equipmentsExtinguisherModal.isLoading}
+              value={extinguisherModalData.data?.massa ?? ''}
+              isLoading={extinguisherModalData.isLoading}
             />
           </div>
         </div>
 
         <div className="py-4 px-8">
-          {!equipmentsExtinguisherModal.data?.history?.length && !equipmentsExtinguisherModal.isLoading && <CardEmpy />}
-          {equipmentsExtinguisherModal.isLoading && <CardSkeleton />}
+          {!extinguisherModalData.data?.history?.length && !extinguisherModalData.isLoading && <CardEmpy />}
+          {extinguisherModalData.isLoading && <CardSkeleton />}
 
-          {equipmentsExtinguisherModal.data?.history &&
-            equipmentsExtinguisherModal.data?.history.map((item) => {
+          {extinguisherModalData.data?.history &&
+            extinguisherModalData.data?.history.map((item) => {
               const cardVariant =
                 item.conforme && !item.novo ? 'new' : item.conforme && item.novo ? 'modification' : 'noncompliant';
 
@@ -145,4 +145,4 @@ const EquipmentsExtinguisherModal = () => {
   );
 };
 
-export default EquipmentsExtinguisherModal;
+export default ExtinguisherModal;

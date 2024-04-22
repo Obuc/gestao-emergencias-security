@@ -15,7 +15,6 @@ interface ILayoutBaseProps {
 
 const LayoutBase = ({ children, showMenu }: ILayoutBaseProps) => {
   const localSite = localStorage.getItem('user_site');
-  const equipments_value = localStorage.getItem('equipments_value');
 
   const recordsItems: SubItem[] = [
     { label: 'Extintores', path: '/records/extinguisher' },
@@ -47,6 +46,36 @@ const LayoutBase = ({ children, showMenu }: ILayoutBaseProps) => {
     );
   }
 
+  const equipmentsItems: SubItem[] = [
+    { label: 'Extintores', path: '/equipments/extinguisher' },
+    { label: 'Hidrantes', path: '/equipments/hydrants' },
+    { label: 'Válvulas de Governo', path: '/equipments/valves' },
+    { label: 'Teste CMI', path: '/equipments/cmi_test' },
+    { label: 'Inspeção CMI', path: '/equipments/cmi_inspection' },
+  ];
+
+  if (localSite === 'SPO') {
+    equipmentsItems.push(
+      { label: 'Portas de Emergência', path: '/equipments/emergency_doors' },
+      { label: 'Operação OEI', path: '/equipments/oei_operation' },
+      { label: 'Alarmes de Incêndio', path: '/equipments/fire_alarms' },
+      { label: 'Verificação de Ambulância', path: '/equipments/ambulance_check' },
+      { label: 'DEA', path: '/equipments/dea' },
+    );
+  }
+
+  if (localSite === 'BXO') {
+    equipmentsItems.push(
+      { label: 'Checklist Geral', path: '/equipments/general_checklist' },
+      { label: 'Scania', path: '/equipments/scania' },
+      { label: 'S10', path: '/equipments/s10' },
+      { label: 'Mercedes', path: '/equipments/mercedes' },
+      { label: 'Furgão', path: '/equipments/van' },
+      { label: 'Ambulância Sprinter', path: '/equipments/sprinter' },
+      { label: 'Ambulância Iveco', path: '/equipments/iveco' },
+    );
+  }
+
   const menuItems: MenuItem[] = [
     {
       icon: FileText,
@@ -55,8 +84,8 @@ const LayoutBase = ({ children, showMenu }: ILayoutBaseProps) => {
     },
     {
       icon: Extinguisher,
-      path: `/equipments/${equipments_value ? equipments_value : 'extinguisher'}`,
       label: 'Mapa de Equipamentos',
+      subitems: equipmentsItems,
     },
     {
       icon: Calendar,

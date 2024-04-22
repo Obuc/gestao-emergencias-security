@@ -8,7 +8,10 @@ const useParams = () => {
   const local: UseQueryResult<Array<{ Id: string; Title: string }>> = useQuery({
     queryKey: ['local'],
     queryFn: async () => {
-      const resp = await crud.getListItems('local', `?$Select=Id,Title&$orderby=Title asc`);
+      const resp = await crud.getListItems(
+        'local',
+        `?$Select=Id,Title,site/Title&$orderby=Title asc&$Expand=site&$Filter=(site/Title eq 'BXO')`,
+      );
       return resp;
     },
     staleTime: 5000 * 60, // 5 Minute
@@ -38,10 +41,21 @@ const useParams = () => {
     refetchOnWindowFocus: false,
   });
 
+  const tipo_extintor: UseQueryResult<Array<{ Id: string; Title: string }>> = useQuery({
+    queryKey: ['tipo_extintor'],
+    queryFn: async () => {
+      const resp = await crud.getListItems('tipo_extintor', `?$Select=Id,Title&$orderby=Title asc`);
+      return resp;
+    },
+    staleTime: 5000 * 60, // 5 Minute
+    refetchOnWindowFocus: false,
+  });
+
   return {
     local,
     pavimento,
     predio,
+    tipo_extintor,
   };
 };
 

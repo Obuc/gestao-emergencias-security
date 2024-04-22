@@ -2,16 +2,21 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
-import { sharepointContext } from '../../../../../context/sharepointContext';
-import { EquipmentsExtinguisherProps } from '../types/equipments-extinguisher.types';
+import { sharepointContext } from '@/context/sharepointContext';
+import { ExtinguisherProps } from '../types/extinguisher.types';
 
-const useEquipmentsExtinguisherQrCode = () => {
+const useExtinguisherQrCode = () => {
   const location = useLocation();
   const { crud } = sharepointContext();
 
   const [filterValue, setFilterValue] = useState<string | undefined>('');
+  const [pageSize, setPageSize] = useState<{ label: string; value: string } | null>({ label: 'A4', value: 'A4' });
 
-  const equipmentsExtinguisherQrCode: UseQueryResult<Array<EquipmentsExtinguisherProps>> = useQuery({
+  const [selectAll, setSelectAll] = useState(false);
+  const [generatePdf, setGeneratePdf] = useState<boolean>(false);
+  const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<ExtinguisherProps[]>([]);
+
+  const extinguisherQrCodeData: UseQueryResult<Array<ExtinguisherProps>> = useQuery({
     queryKey: ['equipments_extinguisher_data_qrcode', filterValue],
     queryFn: async () => {
       let path = `?$Select=Id,cod_qrcode,predio/Title,tipo_extintor/Title,pavimento/Title,local/Title,site/Title,cod_extintor,conforme&$expand=tipo_extintor,predio,site,pavimento,local&$Filter=(site/Title eq 'BXO')`;
@@ -42,11 +47,39 @@ const useEquipmentsExtinguisherQrCode = () => {
     enabled: location.pathname.includes('/equipments/extinguisher'),
   });
 
+  const toggleSelectAll = () => {
+    setSelectAll(!selectAll);
+    if (!selectAll && extinguisherQrCodeData.data) {
+      setSelectedItemsExtinguisher(extinguisherQrCodeData.data);
+    } else {
+      setSelectedItemsExtinguisher([]);
+    }
+  };
+
+  const toggleSelectItem = (item: ExtinguisherProps) => {
+    setSelectedItemsExtinguisher((prevSelected) => {
+      if (prevSelected.some((selectedItem) => selectedItem.Id === item.Id)) {
+        return prevSelected.filter((selectedItem) => selectedItem.Id !== item.Id);
+      } else if (prevSelected.length < 10) {
+        return [...prevSelected, item];
+      }
+      return prevSelected;
+    });
+  };
+
   return {
     filterValue,
     setFilterValue,
-    equipmentsExtinguisherQrCode,
+    pageSize,
+    setPageSize,
+    generatePdf,
+    setGeneratePdf,
+    selectedItemsExtinguisher,
+    extinguisherQrCodeData,
+    toggleSelectAll,
+    toggleSelectItem,
+    selectAll,
   };
 };
 
-export default useEquipmentsExtinguisherQrCode;
+export default useExtinguisherQrCode;

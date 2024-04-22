@@ -1,57 +1,49 @@
-import { useState } from 'react';
 import { saveAs } from 'file-saver';
 import { Skeleton } from '@mui/material';
 import { pdf } from '@react-pdf/renderer';
+import { StandardPageSize } from '@react-pdf/types/page';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload, faSearch } from '@fortawesome/free-solid-svg-icons';
 
-import Modal from '../../../../../components/Modal';
-import { Table } from '../../../../../components/Table';
-import Checkbox from '../../../../../components/Checkbox';
-import { Button } from '../../../../../components/Button';
-import TextField from '../../../../../components/TextField';
-import { IEqExtinguisher } from '../../../types/EquipmentsExtinguisher';
-import EquipmentsExtinguisherQrcodePdf from './equipments-extinguisher-qrcode-pdf';
-import { EquipmentsExtinguisherProps } from '../types/equipments-extinguisher.types';
-import useEquipmentsExtinguisherQrCode from '../hooks/equipments-extinguisher-qrcode.hook';
+import Modal from '@/components/Modal';
+import { Table } from '@/components/Table';
+import Checkbox from '@/components/Checkbox';
+import { Button } from '@/components/Button';
+import TextField from '@/components/TextField';
+import { pageSizeData } from '@/utils/pageData.mock';
+import ExtinguisherQrcodePdf from './extinguisher-qrcode-pdf';
+import { SelectAutoComplete } from '@/components/SelectAutocomplete';
+import useextinguisherQrCodeData from '../hooks/extinguisher-qrcode.hook';
 
-interface EquipmentsExtinguisherQrcodeModalProps {
+interface ExtinguisherQrcodeModalProps {
   open: boolean | null;
   onOpenChange: () => void;
 }
 
-const EquipmentsExtinguisherQrcodeModal = ({ open, onOpenChange }: EquipmentsExtinguisherQrcodeModalProps) => {
+const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModalProps) => {
   const site_value = localStorage.getItem('user_site');
 
-  const { equipmentsExtinguisherQrCode, filterValue, setFilterValue } = useEquipmentsExtinguisherQrCode();
-
-  const [selectAll, setSelectAll] = useState(false);
-  const [generatePdf, setGeneratePdf] = useState<boolean>(false);
-  const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<EquipmentsExtinguisherProps[]>([]);
-
-  const toggleSelectAll = () => {
-    setSelectAll(!selectAll);
-    if (!selectAll && equipmentsExtinguisherQrCode.data) {
-      setSelectedItemsExtinguisher(equipmentsExtinguisherQrCode.data);
-    } else {
-      setSelectedItemsExtinguisher([]);
-    }
-  };
-
-  const toggleSelectItem = (item: IEqExtinguisher) => {
-    setSelectedItemsExtinguisher((prevSelected) => {
-      if (prevSelected.some((selectedItem) => selectedItem.Id === item.Id)) {
-        return prevSelected.filter((selectedItem) => selectedItem.Id !== item.Id);
-      } else if (prevSelected.length < 10) {
-        return [...prevSelected, item];
-      }
-      return prevSelected;
-    });
-  };
+  const {
+    filterValue,
+    setFilterValue,
+    pageSize,
+    setPageSize,
+    generatePdf,
+    setGeneratePdf,
+    selectedItemsExtinguisher,
+    extinguisherQrCodeData,
+    toggleSelectAll,
+    toggleSelectItem,
+    selectAll,
+  } = useextinguisherQrCodeData();
 
   const exportToPdf = async () => {
+    if (!pageSize) return;
+
     setGeneratePdf(true);
-    const blob = await pdf(<EquipmentsExtinguisherQrcodePdf data={selectedItemsExtinguisher} />).toBlob();
+    const blob = await pdf(
+      <ExtinguisherQrcodePdf data={selectedItemsExtinguisher} pageSize={pageSize.value as StandardPageSize} />,
+    ).toBlob();
     saveAs(blob, `QRCode Extintores - ${site_value}.pdf`);
     setGeneratePdf(false);
   };
@@ -61,15 +53,26 @@ const EquipmentsExtinguisherQrcodeModal = ({ open, onOpenChange }: EquipmentsExt
       <div className="flex flex-col gap-2 px-8 py-6 text-primary-font">
         <span className="text-lg py-4">Selecione abaixo os equipamentos que deseja gerar os QRCodes.</span>
 
-        <div className="mb-4">
+        <div className="mb-4 flex gap-3">
           <TextField
-            id="id"
-            name="id"
+            id="search_box"
+            name="search_box"
             value={filterValue}
             placeholder="Pesquisar"
-            width="max-w-[37.5rem]"
             onChange={(event) => setFilterValue(event.target.value)}
             icon={<FontAwesomeIcon icon={faSearch} />}
+          />
+
+          <SelectAutoComplete.Fixed
+            id="pageSize"
+            name="pageSize"
+            placeholder="Selecione o tamanho da folha"
+            isSearchable
+            value={pageSize ? pageSize : null}
+            options={pageSizeData}
+            onChange={(value: any) => {
+              setPageSize(value);
+            }}
           />
         </div>
 
@@ -89,7 +92,7 @@ const EquipmentsExtinguisherQrcodeModal = ({ open, onOpenChange }: EquipmentsExt
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody className="overflow-y-scroll">
-                {equipmentsExtinguisherQrCode.data?.length === 0 && (
+                {extinguisherQrCodeData.data?.length === 0 && (
                   <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
                     <Table.Td colSpan={6} className="text-center text-primary-font">
                       Nenhum extintor encontrado!
@@ -97,7 +100,7 @@ const EquipmentsExtinguisherQrcodeModal = ({ open, onOpenChange }: EquipmentsExt
                   </Table.Tr>
                 )}
 
-                {equipmentsExtinguisherQrCode.isError && (
+                {extinguisherQrCodeData.isError && (
                   <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
                     <Table.Td colSpan={6} className="text-center text-primary-font">
                       Ops, ocorreu um erro, recarregue a página e tente novamente!
@@ -105,7 +108,7 @@ const EquipmentsExtinguisherQrcodeModal = ({ open, onOpenChange }: EquipmentsExt
                   </Table.Tr>
                 )}
 
-                {equipmentsExtinguisherQrCode.isLoading && (
+                {extinguisherQrCodeData.isLoading && (
                   <>
                     {Array.from({ length: 15 }).map((_, index) => (
                       <Table.Tr key={index}>
@@ -117,8 +120,8 @@ const EquipmentsExtinguisherQrcodeModal = ({ open, onOpenChange }: EquipmentsExt
                   </>
                 )}
 
-                {equipmentsExtinguisherQrCode.data &&
-                  equipmentsExtinguisherQrCode.data.map((item) => (
+                {extinguisherQrCodeData.data &&
+                  extinguisherQrCodeData.data.map((item) => (
                     <Table.Tr key={item.Id}>
                       <Table.Td className="pl-8">
                         <Checkbox
@@ -141,8 +144,8 @@ const EquipmentsExtinguisherQrcodeModal = ({ open, onOpenChange }: EquipmentsExt
             <Button.Root
               fill
               onClick={exportToPdf}
-              className="min-w-[14.0625rem] h-10"
-              disabled={generatePdf || !selectedItemsExtinguisher.length}
+              className="min-w-[12rem] h-10"
+              disabled={generatePdf || !selectedItemsExtinguisher.length || pageSize === null}
             >
               {generatePdf ? (
                 <Button.Spinner />
@@ -160,4 +163,4 @@ const EquipmentsExtinguisherQrcodeModal = ({ open, onOpenChange }: EquipmentsExt
   );
 };
 
-export default EquipmentsExtinguisherQrcodeModal;
+export default ExtinguisherQrcodeModal;
