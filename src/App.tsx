@@ -20,7 +20,8 @@ import AmbulanceCheckSPO from './pages/Records/AmbulanceCheck/SPO';
 import GeneralChecklist from './pages/Records/GeneralChecklist/BXO';
 import GovernanceValveBXO from './pages/Records/GovernanceValve/BXO';
 import GovernanceValveSPO from './pages/Records/GovernanceValve/SPO';
-import EquipmentsExtinguisher from './pages/Equipments/Extinguisher/BXO';
+import EquipmentsExtinguisherBXO from './pages/Equipments/Extinguisher/BXO';
+import EquipmentsExtinguisherSPO from './pages/Equipments/Extinguisher/SPO';
 
 const App = () => {
   const localSite = localStorage.getItem('user_site');
@@ -87,8 +88,14 @@ const App = () => {
       <Route path={`/records/ambulance_check/:id`} element={localSite === 'SPO' && <AmbulanceCheckSPO />} />
 
       {/* Equipments - Extinguisher */}
-      <Route path="/equipments/extinguisher" element={<EquipmentsExtinguisher />} />
-      <Route path="/equipments/extinguisher/:id" element={<EquipmentsExtinguisher />} />
+      <Route
+        path="/equipments/extinguisher"
+        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsExtinguisherSPO />}
+      />
+      <Route
+        path="/equipments/extinguisher/:id"
+        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsExtinguisherSPO />}
+      />
 
       {/* <Route path="/equipments/:form" element={<Equipments />} />
       <Route path="/equipments/:form/:id" element={<Equipments />} /> */}

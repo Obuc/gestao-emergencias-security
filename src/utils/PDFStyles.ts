@@ -92,6 +92,7 @@ export const stylesQRCode = StyleSheet.create({
     textTransform: 'uppercase',
     fontWeight: 600,
     color: '#FFF',
+    textAlign: 'center',
   },
   headerBg: {
     position: 'absolute',

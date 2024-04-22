@@ -10,7 +10,7 @@ import ExtinguisherTable from './components/extinguisher-table';
 import ExtinguisherFilters from './components/extinguisher-filters';
 import EquipmentsExtinguisherQrcodeModal from './components/extinguisher-qrcode-modal';
 
-const EquipmentsExtinguisherBXO = () => {
+const EquipmentsExtinguisherSPO = () => {
   const navigate = useNavigate();
   const localSite = localStorage.getItem('user_site');
   const [openModalGenerateQRCode, setOpenModalGenerateQRCode] = useState<boolean | null>(null);
@@ -108,4 +108,4 @@ const EquipmentsExtinguisherBXO = () => {
   );
 };
 
-export default EquipmentsExtinguisherBXO;
+export default EquipmentsExtinguisherSPO;
