@@ -6,9 +6,9 @@ import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-q
 
 import buildOrderByQuery from '@/utils/buildOrderByQuery';
 import { sharepointContext } from '@/context/sharepointContext';
-import { ExtinguisherFiltersProps, ExtinguisherProps } from '../types/extinguisher.types';
+import { HydrantsFiltersProps, HydrantsProps } from '../types/hydrants.types';
 
-const useExtinguisher = () => {
+const useHydrant = () => {
   const { crudParent } = sharepointContext();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -16,48 +16,45 @@ const useExtinguisher = () => {
 
   const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([{ columnKey: 'Modified', direction: 'DESC' }]);
 
-  const sessionFiltersActions = sessionStorage.getItem('session_filters_equipments_extinguisher_spo');
-  const sessionFiltersActionsJSON: ExtinguisherFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
+  const sessionFiltersActions = sessionStorage.getItem('session_filters_equipments_hydrants_spo');
+  const sessionFiltersActionsJSON: HydrantsFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
 
   const initialFiltersValues = {
     id: sessionFiltersActionsJSON?.id ? sessionFiltersActionsJSON.id : null,
-    codExtintor: sessionFiltersActionsJSON?.codExtintor ? sessionFiltersActionsJSON.codExtintor : null,
+    numero_hidrante: sessionFiltersActionsJSON?.numero_hidrante ? sessionFiltersActionsJSON.numero_hidrante : null,
     predio: sessionFiltersActionsJSON?.predio ? sessionFiltersActionsJSON.predio : null,
     pavimento: sessionFiltersActionsJSON?.pavimento ? sessionFiltersActionsJSON.pavimento : null,
     local: sessionFiltersActionsJSON?.local ? sessionFiltersActionsJSON.local : null,
-    tipo: sessionFiltersActionsJSON?.tipo ? sessionFiltersActionsJSON.tipo : null,
     conforme: sessionFiltersActionsJSON?.conforme ? sessionFiltersActionsJSON.conforme : null,
     cod_local: sessionFiltersActionsJSON?.cod_local ? sessionFiltersActionsJSON.cod_local : null,
   };
 
-  const [tableFilters, setTableFilters] = useState<ExtinguisherFiltersProps>(initialFiltersValues);
-  const [tempTableFilters, setTempTableFilters] = useState<ExtinguisherFiltersProps>(initialFiltersValues);
+  const [tableFilters, setTableFilters] = useState<HydrantsFiltersProps>(initialFiltersValues);
+  const [tempTableFilters, setTempTableFilters] = useState<HydrantsFiltersProps>(initialFiltersValues);
 
   const handleRemoveAllFilters = () => {
     const filters = {
       id: null,
-      codExtintor: null,
+      numero_hidrante: null,
       predio: null,
       pavimento: null,
       local: null,
-      tipo: null,
       conforme: null,
       cod_local: null,
     };
 
     setTableFilters(filters);
     setTempTableFilters(filters);
-    sessionStorage.removeItem('session_filters_equipments_extinguisher_spo');
+    sessionStorage.removeItem('session_filters_equipments_hydrants_spo');
   };
 
   const countAppliedFilters = () => {
     let count = 0;
     if (tableFilters.id) count++;
-    if (tableFilters.codExtintor) count++;
+    if (tableFilters.numero_hidrante) count++;
     if (tableFilters.predio) count++;
     if (tableFilters.pavimento) count++;
     if (tableFilters.local) count++;
-    if (tableFilters.tipo) count++;
     if (tableFilters.conforme) count++;
     if (tableFilters.cod_local) count++;
 
@@ -66,20 +63,20 @@ const useExtinguisher = () => {
 
   const handleApplyFilters = () => {
     setTableFilters(tempTableFilters);
-    sessionStorage.setItem('session_filters_equipments_extinguisher_spo', JSON.stringify(tempTableFilters));
+    sessionStorage.setItem('session_filters_equipments_hydrants_spo', JSON.stringify(tempTableFilters));
   };
 
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
     const orderByQuery = buildOrderByQuery(sortColumns);
 
-    let path = `?$Select=Id,Created,Modified,codExtintor,Predio,Pavimento,LocEsp,Tipo,Conforme,Title,Excluido&$Top=25&${orderByQuery}&$Filter=(Excluido eq 'Não' or Excluido eq null)`;
+    let path = `?$Select=Id,Title,Modified,ultimaInsp,numero_hidrante,NumMangueiras,NumLacre,Predio,Pavimento,LocEsp,Conforme,Excluido&$Top=25&${orderByQuery}&$Filter=(Excluido eq 'Não' or Excluido eq null)`;
 
     if (tableFilters?.id) {
       path += ` and ( Id eq '${tableFilters?.id}')`;
     }
 
-    if (tableFilters?.codExtintor) {
-      path += ` and ( codExtintor eq '${tableFilters?.codExtintor}')`;
+    if (tableFilters?.numero_hidrante) {
+      path += ` and ( numero_hidrante eq '${tableFilters?.numero_hidrante}')`;
     }
 
     if (tableFilters?.predio) {
@@ -92,10 +89,6 @@ const useExtinguisher = () => {
 
     if (tableFilters?.local) {
       path += ` and ( LocEsp eq '${tableFilters?.local}')`;
-    }
-
-    if (tableFilters?.tipo) {
-      path += ` and ( Tipo eq '${tableFilters?.tipo}')`;
     }
 
     if (tableFilters?.conforme?.value === 'Sim') {
@@ -111,7 +104,7 @@ const useExtinguisher = () => {
     }
 
     const response = await crudParent.getPaged(
-      pageParam ? { nextUrl: pageParam } : { list: 'Extintores_Equipamentos', path },
+      pageParam ? { nextUrl: pageParam } : { list: 'Hidrantes_Equipamentos', path },
     );
     const dataWithTransformations = await Promise.all(
       response?.data?.value?.map(async (item: any) => {
@@ -131,30 +124,30 @@ const useExtinguisher = () => {
     };
   };
 
-  const extinguisherData = useInfiniteQuery({
-    queryKey: ['equipments_extinguisher_data_spo', user_site, tableFilters, sortColumns],
+  const hydrantsData = useInfiniteQuery({
+    queryKey: ['equipments_hydrants_data_spo', user_site, tableFilters, sortColumns],
 
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/extinguisher'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/hydrant'),
   });
 
   const mutateRemove = useMutation({
     mutationFn: async (itemId: number) => {
-      await crudParent.updateItemList('Extintores_Equipamentos', itemId, { excluido: true });
+      await crudParent.updateItemList('Hidrantes_Equipamentos', itemId, { excluido: true });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['equipments_extinguisher_data_spo', user_site, tableFilters, sortColumns],
+        queryKey: ['equipments_hydrants_data_spo', user_site, tableFilters, sortColumns],
       });
     },
   });
 
   const fetchAllEquipments = async () => {
-    let path = `?$Select=Id,Created,Modified,codExtintor,Predio,Pavimento,LocEsp,Tipo,Conforme,Title,Excluido&$Filter=(Excluido eq 'Não' or Excluido eq null)`;
+    let path = `?$Select=Id,Title,ultimaInsp,numero_hidrante,NumMangueiras,NumLacre,Predio,Pavimento,LocEsp,Conforme,Excluido&$Filter=(Excluido eq 'Não' or Excluido eq null)`;
 
-    const response = await crudParent.getListItems('Extintores_Equipamentos', path);
+    const response = await crudParent.getListItems('Hidrantes_Equipamentos', path);
 
     const dataWithTransformations = await Promise.all(
       response.map(async (item: any) => {
@@ -172,13 +165,12 @@ const useExtinguisher = () => {
     mutationFn: async () => {
       const data = await fetchAllEquipments();
 
-      const columns: (keyof ExtinguisherProps)[] = [
+      const columns: (keyof HydrantsProps)[] = [
         'Id',
-        'codExtintor',
+        'numero_hidrante',
         'Predio',
         'Pavimento',
         'LocEsp',
-        'Tipo',
         'Conforme',
         'Title',
       ];
@@ -199,14 +191,14 @@ const useExtinguisher = () => {
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-        XLSX.utils.book_append_sheet(wb, ws, 'Extintores');
-        XLSX.writeFile(wb, `Equipamentos - Extintores.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, 'Hidrantes');
+        XLSX.writeFile(wb, `Equipamentos - Hidrantes.xlsx`);
       }
     },
   });
 
   return {
-    extinguisherData,
+    hydrantsData,
     tempTableFilters,
     setTempTableFilters,
     handleRemoveAllFilters,
@@ -219,4 +211,4 @@ const useExtinguisher = () => {
   };
 };
 
-export default useExtinguisher;
+export default useHydrant;

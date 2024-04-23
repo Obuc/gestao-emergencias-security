@@ -17,6 +17,7 @@ import InspectionCmiBXO from './pages/Records/InspectionCmi/BXO';
 import InspectionCmiSPO from './pages/Records/InspectionCmi/SPO';
 import EmergencyDoorSPO from './pages/Records/EmergencyDoor/SPO';
 import AmbulanceCheckSPO from './pages/Records/AmbulanceCheck/SPO';
+import EquipmentsHydrantSPO from './pages/Equipments/Hydrants/SPO';
 import GeneralChecklist from './pages/Records/GeneralChecklist/BXO';
 import GovernanceValveBXO from './pages/Records/GovernanceValve/BXO';
 import GovernanceValveSPO from './pages/Records/GovernanceValve/SPO';
@@ -97,8 +98,15 @@ const App = () => {
         element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsExtinguisherSPO />}
       />
 
-      {/* <Route path="/equipments/:form" element={<Equipments />} />
-      <Route path="/equipments/:form/:id" element={<Equipments />} /> */}
+      {/* Equipments - Hydrant */}
+      <Route
+        path="/equipments/hydrant"
+        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsHydrantSPO />}
+      />
+      <Route
+        path="/equipments/hydrant/:id"
+        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsHydrantSPO />}
+      />
     </Routes>
   );
 };

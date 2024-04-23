@@ -13,7 +13,7 @@ import TextField from '@/components/TextField';
 import { pageSizeData } from '@/utils/pageData.mock';
 import ExtinguisherQrcodePdf from './extinguisher-qrcode-pdf';
 import { SelectAutoComplete } from '@/components/SelectAutocomplete';
-import useExtinguisherQrCodeData from '../hooks/extinguisher-qrcode.hook';
+import useextinguisherQrCodeData from '../hooks/extinguisher-qrcode.hook';
 
 interface ExtinguisherQrcodeModalProps {
   open: boolean | null;
@@ -35,7 +35,7 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
     toggleSelectAll,
     toggleSelectItem,
     selectAll,
-  } = useExtinguisherQrCodeData();
+  } = useextinguisherQrCodeData();
 
   const exportToPdf = async () => {
     if (!pageSize) return;
@@ -122,7 +122,7 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
 
                 {extinguisherQrCodeData.data &&
                   extinguisherQrCodeData.data.map((item) => (
-                    <Table.Tr key={item.Id + item.codExtintor}>
+                    <Table.Tr key={item.Id}>
                       <Table.Td className="pl-8">
                         <Checkbox
                           checked={selectedItemsExtinguisher.some((selectedItem) => selectedItem.Id === item.Id)}
@@ -130,10 +130,10 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
                         />
                       </Table.Td>
                       <Table.Td>{item.Id}</Table.Td>
-                      <Table.Td>{item.Title ?? '-'}</Table.Td>
-                      <Table.Td>{item.Predio}</Table.Td>
-                      <Table.Td>{item.LocEsp}</Table.Td>
-                      <Table.Td>{item.Pavimento}</Table.Td>
+                      <Table.Td>{item.cod_extintor ?? '-'}</Table.Td>
+                      <Table.Td>{item.predio}</Table.Td>
+                      <Table.Td>{item.local}</Table.Td>
+                      <Table.Td>{item.pavimento}</Table.Td>
                     </Table.Tr>
                   ))}
               </Table.Tbody>
