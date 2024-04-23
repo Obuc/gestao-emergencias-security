@@ -23,7 +23,7 @@ const useGovernanceValveModalSPO = () => {
   const governanceValveModal = useQuery({
     queryKey: ['governance_valve_data_modal_spo', params.id],
     queryFn: async () => {
-      if (params.id && pathname === `/records/valves/${params.id}` && user_site === 'SPO') {
+      if (params.id && pathname === `/records/valve/${params.id}` && user_site === 'SPO') {
         const resp = await crudParent.getListItemsv2(
           'Valvulas_de_Governo',
           `?$Select=Id,Created,Responsavel1/Title,OData__x0054_mp1,OData__x0054_mp2,OData__x0046_cn1,OData__x0046_cn2,OData__x0046_cn3,OData__x0046_cn4,OData__x004c_cr1,OData__x0053_in1,OData__x004c_cr2,OData__x004f_bs1,Obst2,Observacao,UF,Municipios,Site,Local,Area,codigo,Title&$Expand=Responsavel1&$Filter=(Id eq ${params.id})`,
@@ -46,7 +46,7 @@ const useGovernanceValveModalSPO = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && pathname === `/records/valves/${params.id}` && user_site === 'SPO',
+    enabled: params.id !== undefined && pathname === `/records/valve/${params.id}` && user_site === 'SPO',
   });
 
   const mutateEdit = useMutation({

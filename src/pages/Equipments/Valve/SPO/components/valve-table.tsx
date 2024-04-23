@@ -1,81 +1,65 @@
 import { useState } from 'react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { Column, SortColumn } from 'react-data-grid';
 import { useNavigate } from 'react-router-dom';
+import { Column, SortColumn } from 'react-data-grid';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UseInfiniteQueryResult, UseMutationResult } from '@tanstack/react-query';
 
-import Toast from '../../../../../components/Toast';
-import isAtBottom from '../../../../../utils/isAtBottom';
-import { GovernanceValve } from '../types/GovernanceValveBXO';
-import CustomDataGrid from '../../../../../components/DataGrid';
-import GovernanceValveModalBXO from './GovernanceValveModalBXO';
-import PopoverTables from '../../../../../components/PopoverTables';
-import RemoveItem from '../../../../../components/AppModals/RemoveItem';
-import DataGridLoadMore from '../../../../../components/DataGrid/DataGridLoadMore';
+import Toast from '@/components/Toast';
+import ValveModal from './valve-modal';
+import isAtBottom from '@/utils/isAtBottom';
+import { ValveProps } from '../types/valve.types';
+import CustomDataGrid from '@/components/DataGrid';
+import PopoverTables from '@/components/PopoverTables';
+import RemoveItem from '@/components/AppModals/RemoveItem';
+import DataGridLoadMore from '@/components/DataGrid/DataGridLoadMore';
 
-interface IGovernanceValveTableProps {
-  governancevalve: UseInfiniteQueryResult<any, unknown>;
+interface ValveTableProps {
+  valveData: UseInfiniteQueryResult<any, unknown>;
   mutateRemove: UseMutationResult<void, unknown, number, unknown>;
   sortColumns: readonly SortColumn[];
   setSortColumns: React.Dispatch<React.SetStateAction<readonly SortColumn[]>>;
 }
 
-const GovernanceValveTableBXO = ({
-  governancevalve,
-  mutateRemove,
-  setSortColumns,
-  sortColumns,
-}: IGovernanceValveTableProps) => {
+const ValveTable = ({ valveData, mutateRemove, setSortColumns, sortColumns }: ValveTableProps) => {
   const navigate = useNavigate();
-
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
-  const handleView = (Id: number) => {
-    navigate(`/records/valve/${Id}?edit=false`);
+  const handleView = (id: number) => {
+    navigate(`/equipments/valve/${id}`);
   };
 
-  const handleEdit = (Id: number) => {
-    navigate(`/records/valve/${Id}?edit=true`);
-  };
-
-  const handleRemoveItem = async () => {
-    try {
-      if (removeItem) {
-        await mutateRemove.mutateAsync(removeItem);
-      }
-    } catch (error) {
-    } finally {
+  const handleRemove = async () => {
+    if (removeItem) {
+      await mutateRemove.mutateAsync(removeItem);
       setRemoveItem(null);
     }
   };
 
-  const columns: readonly Column<GovernanceValve>[] = [
+  const columns: readonly Column<ValveProps>[] = [
     { key: 'Id', name: '#', resizable: true },
-    { key: 'bombeiro', name: 'Responsável', resizable: true, width: 300 },
-    { key: 'valvula_id/cod_equipamento', name: 'N° Válvula', resizable: true },
-    { key: 'predio', name: 'Prédio', resizable: true },
-    { key: 'Created', name: 'Data', resizable: true },
-    { key: 'conforme', name: 'Conformidade', resizable: true },
+    { key: 'Codigo', name: 'Código', resizable: true },
+    { key: 'Predio', name: 'Prédio', resizable: true },
+    { key: 'LocEsp', name: 'Local', resizable: true, width: 260 },
+    { key: 'Title', name: 'Código Local', resizable: true },
+    { key: 'Conforme', name: 'Conformidade', resizable: true },
 
     { key: 'buttons', name: 'Ações', resizable: true, sortable: false },
   ];
 
   const mappedRows =
-    governancevalve.data?.pages.flatMap(
+    valveData.data?.pages.flatMap(
       (page) =>
-        page?.data?.value?.map((item: GovernanceValve) => ({
+        page?.data?.value?.map((item: ValveProps) => ({
           Id: <div className="pl-4">{item.Id}</div>,
-          bombeiro: item?.bombeiro ? item.bombeiro : '',
-          'valvula_id/cod_equipamento': item?.valvula.cod_equipamento ? item?.valvula.cod_equipamento : '',
-          predio: item?.valvula?.predio,
-          Created: item?.Created ? format(item.Created, 'dd MMM yyyy', { locale: ptBR }) : '',
+          Codigo: item?.Codigo ? item.Codigo : '',
+          Predio: item?.Predio ? item.Predio : '',
+          LocEsp: item?.LocEsp ? item.LocEsp : '',
+          Title: item?.Title ? item.Title : '',
 
-          conforme: (
+          Conforme: (
             <div className="flex items-center h-full w-full">
-              {item?.conforme ? (
+              {item?.Conforme ? (
                 <div className="flex justify-center items-center gap-2 px-4 py-1 rounded-full bg-[#EBFFE2] h-10 max-w-[8.4375rem]">
                   <div className="w-3 h-3 rounded-full bg-[#70EC36]" />
                   <span>Conforme</span>
@@ -91,11 +75,7 @@ const GovernanceValveTableBXO = ({
 
           buttons: (
             <div className="w-full flex justify-center items-center h-full">
-              <PopoverTables
-                onView={() => handleView(item.Id)}
-                onEdit={() => handleEdit(item.Id)}
-                onDelete={() => setRemoveItem(item.Id)}
-              />
+              <PopoverTables onView={() => handleView(item.Id)} onDelete={() => setRemoveItem(item.Id)} />
             </div>
           ),
         })),
@@ -103,7 +83,7 @@ const GovernanceValveTableBXO = ({
 
   const handleScroll = async (event: React.UIEvent<HTMLDivElement>) => {
     if (!isAtBottom(event)) return;
-    governancevalve.fetchNextPage();
+    valveData.fetchNextPage();
   };
 
   return (
@@ -122,14 +102,14 @@ const GovernanceValveTableBXO = ({
           setSortColumns={setSortColumns}
         />
 
-        {governancevalve.isFetchingNextPage && <DataGridLoadMore />}
+        {valveData.isFetchingNextPage && <DataGridLoadMore />}
       </div>
 
-      <GovernanceValveModalBXO />
+      <ValveModal />
 
       {removeItem !== null && (
         <RemoveItem
-          handleRemove={handleRemoveItem}
+          handleRemove={handleRemove}
           isLoading={mutateRemove.isLoading}
           onOpenChange={() => setRemoveItem(null)}
           open={removeItem !== null}
@@ -151,4 +131,4 @@ const GovernanceValveTableBXO = ({
   );
 };
 
-export default GovernanceValveTableBXO;
+export default ValveTable;

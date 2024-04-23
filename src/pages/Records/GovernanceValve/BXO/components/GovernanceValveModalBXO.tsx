@@ -35,7 +35,7 @@ const GovernanceValveModalBXO = () => {
 
   const handleOnOpenChange = () => {
     setGovernanceValveItem(null);
-    navigate('/records/valves');
+    navigate('/records/valve');
   };
 
   const exportToPdf = async () => {

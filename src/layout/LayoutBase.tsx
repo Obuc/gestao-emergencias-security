@@ -19,7 +19,7 @@ const LayoutBase = ({ children, showMenu }: ILayoutBaseProps) => {
   const recordsItems: SubItem[] = [
     { label: 'Extintores', path: '/records/extinguisher' },
     { label: 'Hidrantes', path: '/records/hydrant' },
-    { label: 'Válvulas de Governo', path: '/records/valves' },
+    { label: 'Válvulas de Governo', path: '/records/valve' },
     { label: 'Teste CMI', path: '/records/cmi_test' },
     { label: 'Inspeção CMI', path: '/records/cmi_inspection' },
   ];
@@ -49,7 +49,7 @@ const LayoutBase = ({ children, showMenu }: ILayoutBaseProps) => {
   const equipmentsItems: SubItem[] = [
     { label: 'Extintores', path: '/equipments/extinguisher' },
     { label: 'Hidrantes', path: '/equipments/hydrant' },
-    { label: 'Válvulas de Governo', path: '/equipments/valves' },
+    { label: 'Válvulas de Governo', path: '/equipments/valve' },
     { label: 'Teste CMI', path: '/equipments/cmi_test' },
     { label: 'Inspeção CMI', path: '/equipments/cmi_inspection' },
   ];

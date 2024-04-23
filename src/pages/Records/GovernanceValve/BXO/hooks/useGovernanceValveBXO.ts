@@ -170,7 +170,7 @@ const useGovernanceValveBXO = () => {
     queryFn: fetchGovernanceValve,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: pathname.includes('/records/valves') && user_site === 'BXO',
+    enabled: pathname.includes('/records/valve') && user_site === 'BXO',
   });
 
   const mutateRemove = useMutation({

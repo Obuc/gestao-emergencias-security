@@ -34,7 +34,7 @@ const GovernanceValveModalSPO = () => {
 
   const handleOnOpenChange = () => {
     setGovernanceValveItem(null);
-    navigate('/records/valves');
+    navigate('/records/valve');
   };
 
   const exportToPdf = async () => {
@@ -52,7 +52,7 @@ const GovernanceValveModalSPO = () => {
         className="w-[71rem]"
         open={governanceValveItem !== null}
         onOpenChange={handleOnOpenChange}
-        title={`Registro Hidrante N°${params.id}`}
+        title={`Registro Válvula de Governo N°${params.id}`}
       >
         <form className="flex flex-col w-full gap-6" onSubmit={formik.handleSubmit}>
           <>

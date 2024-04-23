@@ -29,11 +29,11 @@ const GovernanceValveTableSPO = ({ governancevalve, mutateRemove, setSortColumns
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (Id: number) => {
-    navigate(`/records/valves/${Id}?edit=false`);
+    navigate(`/records/valve/${Id}?edit=false`);
   };
 
   const handleEdit = (Id: number) => {
-    navigate(`/records/valves/${Id}?edit=true`);
+    navigate(`/records/valve/${Id}?edit=true`);
   };
 
   const handleRemoveItem = async () => {

@@ -1,77 +1,63 @@
 import { useState } from 'react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { Column, SortColumn } from 'react-data-grid';
 import { useNavigate } from 'react-router-dom';
+import { Column, SortColumn } from 'react-data-grid';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import Toast from '@/components/Toast';
+import isAtBottom from '@/utils/isAtBottom';
+import CustomDataGrid from '@/components/DataGrid';
+import ExtinguisherModal from './extinguisher-modal';
+import PopoverTables from '@/components/PopoverTables';
+import RemoveItem from '@/components/AppModals/RemoveItem';
+import { ExtinguisherProps } from '../types/extinguisher.types';
+import DataGridLoadMore from '@/components/DataGrid/DataGridLoadMore';
 import { UseInfiniteQueryResult, UseMutationResult } from '@tanstack/react-query';
 
-import Toast from '../../../../../components/Toast';
-import isAtBottom from '../../../../../utils/isAtBottom';
-import { GovernanceValve } from '../types/GovernanceValveBXO';
-import CustomDataGrid from '../../../../../components/DataGrid';
-import GovernanceValveModalBXO from './GovernanceValveModalBXO';
-import PopoverTables from '../../../../../components/PopoverTables';
-import RemoveItem from '../../../../../components/AppModals/RemoveItem';
-import DataGridLoadMore from '../../../../../components/DataGrid/DataGridLoadMore';
-
-interface IGovernanceValveTableProps {
-  governancevalve: UseInfiniteQueryResult<any, unknown>;
+interface ExtinguisherTableProps {
+  extinguisherData: UseInfiniteQueryResult<any, unknown>;
   mutateRemove: UseMutationResult<void, unknown, number, unknown>;
   sortColumns: readonly SortColumn[];
   setSortColumns: React.Dispatch<React.SetStateAction<readonly SortColumn[]>>;
 }
 
-const GovernanceValveTableBXO = ({
-  governancevalve,
-  mutateRemove,
-  setSortColumns,
-  sortColumns,
-}: IGovernanceValveTableProps) => {
+const ExtinguisherTable = ({ extinguisherData, mutateRemove, setSortColumns, sortColumns }: ExtinguisherTableProps) => {
   const navigate = useNavigate();
-
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
-  const handleView = (Id: number) => {
-    navigate(`/records/valve/${Id}?edit=false`);
+  const handleView = (id: number) => {
+    navigate(`/equipments/extinguisher/${id}`);
   };
 
-  const handleEdit = (Id: number) => {
-    navigate(`/records/valve/${Id}?edit=true`);
-  };
-
-  const handleRemoveItem = async () => {
-    try {
-      if (removeItem) {
-        await mutateRemove.mutateAsync(removeItem);
-      }
-    } catch (error) {
-    } finally {
+  const handleRemove = async () => {
+    if (removeItem) {
+      await mutateRemove.mutateAsync(removeItem);
       setRemoveItem(null);
     }
   };
 
-  const columns: readonly Column<GovernanceValve>[] = [
+  const columns: readonly Column<ExtinguisherProps>[] = [
     { key: 'Id', name: '#', resizable: true },
-    { key: 'bombeiro', name: 'Responsável', resizable: true, width: 300 },
-    { key: 'valvula_id/cod_equipamento', name: 'N° Válvula', resizable: true },
-    { key: 'predio', name: 'Prédio', resizable: true },
-    { key: 'Created', name: 'Data', resizable: true },
+    { key: 'site/Title', name: 'Site', resizable: true },
+    { key: 'pavimento/Title', name: 'Pavimento', resizable: true },
+    { key: 'local/Title', name: 'Local', resizable: true, width: 200 },
+    { key: 'tipo_extintor/Title', name: 'Tipo Extintor', resizable: true },
+    { key: 'cod_extintor', name: 'N° Extintor', resizable: true },
     { key: 'conforme', name: 'Conformidade', resizable: true },
 
     { key: 'buttons', name: 'Ações', resizable: true, sortable: false },
   ];
 
   const mappedRows =
-    governancevalve.data?.pages.flatMap(
+    extinguisherData.data?.pages.flatMap(
       (page) =>
-        page?.data?.value?.map((item: GovernanceValve) => ({
+        page?.data?.value?.map((item: ExtinguisherProps) => ({
           Id: <div className="pl-4">{item.Id}</div>,
-          bombeiro: item?.bombeiro ? item.bombeiro : '',
-          'valvula_id/cod_equipamento': item?.valvula.cod_equipamento ? item?.valvula.cod_equipamento : '',
-          predio: item?.valvula?.predio,
-          Created: item?.Created ? format(item.Created, 'dd MMM yyyy', { locale: ptBR }) : '',
+          'site/Title': item?.site ? item.site : '',
+          'pavimento/Title': item?.pavimento ? item.pavimento : '',
+          'local/Title': item?.local ? item.local : '',
+          'tipo_extintor/Title': item?.tipo_extintor ? item.tipo_extintor : '',
+          cod_extintor: item?.cod_extintor ? item.cod_extintor : '',
 
           conforme: (
             <div className="flex items-center h-full w-full">
@@ -91,11 +77,7 @@ const GovernanceValveTableBXO = ({
 
           buttons: (
             <div className="w-full flex justify-center items-center h-full">
-              <PopoverTables
-                onView={() => handleView(item.Id)}
-                onEdit={() => handleEdit(item.Id)}
-                onDelete={() => setRemoveItem(item.Id)}
-              />
+              <PopoverTables onView={() => handleView(item.Id)} onDelete={() => setRemoveItem(item.Id)} />
             </div>
           ),
         })),
@@ -103,7 +85,7 @@ const GovernanceValveTableBXO = ({
 
   const handleScroll = async (event: React.UIEvent<HTMLDivElement>) => {
     if (!isAtBottom(event)) return;
-    governancevalve.fetchNextPage();
+    extinguisherData.fetchNextPage();
   };
 
   return (
@@ -122,14 +104,14 @@ const GovernanceValveTableBXO = ({
           setSortColumns={setSortColumns}
         />
 
-        {governancevalve.isFetchingNextPage && <DataGridLoadMore />}
+        {extinguisherData.isFetchingNextPage && <DataGridLoadMore />}
       </div>
 
-      <GovernanceValveModalBXO />
+      <ExtinguisherModal />
 
       {removeItem !== null && (
         <RemoveItem
-          handleRemove={handleRemoveItem}
+          handleRemove={handleRemove}
           isLoading={mutateRemove.isLoading}
           onOpenChange={() => setRemoveItem(null)}
           open={removeItem !== null}
@@ -151,4 +133,4 @@ const GovernanceValveTableBXO = ({
   );
 };
 
-export default GovernanceValveTableBXO;
+export default ExtinguisherTable;

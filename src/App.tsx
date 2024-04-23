@@ -11,6 +11,7 @@ import HydrantSPO from './pages/Records/Hydrant/SPO';
 import TestCmiBXO from './pages/Records/TestCmi/BXO';
 import TestCmiSPO from './pages/Records/TestCmi/SPO';
 import LoadRatio from './pages/Records/LoadRatio/BXO';
+import EquipmentsValveSPO from './pages/Equipments/Valve/SPO';
 import ExtinguisherBXO from './pages/Records/Extinguisher/BXO';
 import ExtinguisherSPO from './pages/Records/Extinguisher/SPO';
 import InspectionCmiBXO from './pages/Records/InspectionCmi/BXO';
@@ -46,8 +47,8 @@ const App = () => {
       <Route path="/records/hydrants/:id" element={localSite === 'BXO' ? <HydrantBXO /> : <HydrantSPO />} />
 
       {/* Valves  */}
-      <Route path="/records/valves" element={localSite === 'BXO' ? <GovernanceValveBXO /> : <GovernanceValveSPO />} />
-      <Route path="/records/valves/:id" element={localSite === 'BXO' ? <GovernanceValveBXO /> : <GovernanceValveSPO />} />
+      <Route path="/records/valve" element={localSite === 'BXO' ? <GovernanceValveBXO /> : <GovernanceValveSPO />} />
+      <Route path="/records/valve/:id" element={localSite === 'BXO' ? <GovernanceValveBXO /> : <GovernanceValveSPO />} />
 
       {/* Cmi Inspection  */}
       <Route path="/records/cmi_inspection" element={localSite === 'BXO' ? <InspectionCmiBXO /> : <InspectionCmiSPO />} />
@@ -106,6 +107,16 @@ const App = () => {
       <Route
         path="/equipments/hydrant/:id"
         element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsHydrantSPO />}
+      />
+
+      {/* Equipments - Valve */}
+      <Route
+        path="/equipments/valve"
+        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsValveSPO />}
+      />
+      <Route
+        path="/equipments/valve/:id"
+        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsValveSPO />}
       />
     </Routes>
   );

@@ -90,7 +90,7 @@ const useGovernanceValveModalBXO = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && pathname === `/records/valves/${params.id}` && user_site === 'BXO',
+    enabled: params.id !== undefined && pathname === `/records/valve/${params.id}` && user_site === 'BXO',
   });
 
   const mutateEdit = useMutation({
@@ -148,7 +148,7 @@ const useGovernanceValveModalBXO = () => {
 
       const timeoutId = setTimeout(() => {
         setGovernanceValveItem(null);
-        navigate('/records/valves');
+        navigate('/records/valve');
       }, +timeDelayToRedirectPage);
       return () => clearTimeout(timeoutId);
     },

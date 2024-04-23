@@ -24,7 +24,7 @@ const Breadcrumb = () => {
     new: 'Novo Laudo',
     extinguisher: 'Extintores',
     hydrants: 'Hidrantes',
-    valves: 'Válvulas de Governo',
+    valve: 'Válvulas de Governo',
     cmi_test: 'Teste CMI',
     cmi_inspection: 'Inspeção CMI',
     general_checklist: 'Checklist Geral',
