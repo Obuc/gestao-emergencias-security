@@ -20,10 +20,10 @@ export const useCmiTestQrCode = () => {
   const cmiTestQrCodeData: UseQueryResult<Array<CmiTestProps>> = useQuery({
     queryKey: ['equipments_cmi_test_data_qrcode_spo', filterValue],
     queryFn: async () => {
-      let path = `?$Select=Id,Tipo,Predio,LocEsp,Title,Conforme,Excluido&$orderby=Modified desc&$Filter=(Excluido eq 'false') and (Tipo eq 'Bomba')`;
+      let path = `?$Select=Id,Tipo,Predio,Title,Conforme,Excluido&$orderby=Modified desc&$Filter=(Excluido eq 'false') and (Tipo eq 'Bomba')`;
 
       if (filterValue) {
-        path += ` and (substringof('${filterValue}', Title) or substringof('${filterValue}', Predio) or substringof('${filterValue}', LocEsp))`;
+        path += ` and (substringof('${filterValue}', Title) or substringof('${filterValue}', Predio))`;
       }
 
       const resp = await crudParent.getListItems('Diversos_Equipamentos', path);

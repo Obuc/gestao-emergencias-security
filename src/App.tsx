@@ -26,6 +26,7 @@ import GovernanceValveSPO from './pages/Records/GovernanceValve/SPO';
 import EquipmentsExtinguisherBXO from './pages/Equipments/Extinguisher/BXO';
 import EquipmentsExtinguisherSPO from './pages/Equipments/Extinguisher/SPO';
 import EquipmentsCmiInspectionSPO from './pages/Equipments/CmiInspection/SPO';
+import EquipmentsEmergencyDoorsSPO from './pages/Equipments/EmergencyDoors/SPO';
 
 const App = () => {
   const localSite = localStorage.getItem('user_site');
@@ -120,6 +121,16 @@ const App = () => {
       <Route
         path="/equipments/cmi_inspection/:id"
         element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsCmiInspectionSPO />}
+      />
+
+      {/* Equipments - Emergency Doors */}
+      <Route
+        path="/equipments/emergency_doors"
+        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsEmergencyDoorsSPO />}
+      />
+      <Route
+        path="/equipments/emergency_doors/:id"
+        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsEmergencyDoorsSPO />}
       />
     </Routes>
   );

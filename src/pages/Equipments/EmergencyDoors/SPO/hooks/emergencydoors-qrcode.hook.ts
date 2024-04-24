@@ -3,9 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
 import { sharepointContext } from '@/context/sharepointContext';
-import { CmiInspectionProps } from '../types/cmiInspection.types';
+import { EmergencyDoorsProps } from '../types/emergencydoors.types';
 
-export const useCmiInspectionQrCode = () => {
+export const useEmergencyDoorsQrCode = () => {
   const location = useLocation();
   const { crudParent } = sharepointContext();
 
@@ -15,15 +15,15 @@ export const useCmiInspectionQrCode = () => {
 
   const [selectAll, setSelectAll] = useState(false);
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
-  const [selectedItemsCmiInspection, setSelectedItemsCmiInspection] = useState<CmiInspectionProps[]>([]);
+  const [selectedItemsEmergencyDoors, setSelectedItemsEmergencyDoors] = useState<EmergencyDoorsProps[]>([]);
 
-  const cmiInspectionQrCodeData: UseQueryResult<Array<CmiInspectionProps>> = useQuery({
-    queryKey: ['equipments_cmi_inspection_data_qrcode_spo', filterValue],
+  const emergencyDoorsQrCodeData: UseQueryResult<Array<EmergencyDoorsProps>> = useQuery({
+    queryKey: ['equipments_emergencydoors_data_qrcode_spo', filterValue],
     queryFn: async () => {
-      let path = `?$Select=Id,Tipo,Predio,Title,Conforme,Excluido&$orderby=Modified desc&$Filter=(Excluido eq 'false') and (Tipo eq 'Casa')`;
+      let path = `?$Select=Id,Tipo,Predio,Pavimento,Title,Conforme,Excluido&$orderby=Modified desc&$Filter=(Excluido eq 'false') and (Tipo eq 'Porta')`;
 
       if (filterValue) {
-        path += ` and (substringof('${filterValue}', Title) or substringof('${filterValue}', Predio))`;
+        path += ` and (Id eq ${filterValue}) or (substringof('${filterValue}', Title) or substringof('${filterValue}', Predio) or substringof('${filterValue}', Pavimento))`;
       }
 
       const resp = await crudParent.getListItems('Diversos_Equipamentos', path);
@@ -40,20 +40,20 @@ export const useCmiInspectionQrCode = () => {
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/cmi_inspection'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/emergency_doors'),
   });
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
-    if (!selectAll && cmiInspectionQrCodeData.data) {
-      setSelectedItemsCmiInspection(cmiInspectionQrCodeData.data);
+    if (!selectAll && emergencyDoorsQrCodeData.data) {
+      setSelectedItemsEmergencyDoors(emergencyDoorsQrCodeData.data);
     } else {
-      setSelectedItemsCmiInspection([]);
+      setSelectedItemsEmergencyDoors([]);
     }
   };
 
-  const toggleSelectItem = (item: CmiInspectionProps) => {
-    setSelectedItemsCmiInspection((prevSelected) => {
+  const toggleSelectItem = (item: EmergencyDoorsProps) => {
+    setSelectedItemsEmergencyDoors((prevSelected) => {
       if (prevSelected.some((selectedItem) => selectedItem.Id === item.Id)) {
         return prevSelected.filter((selectedItem) => selectedItem.Id !== item.Id);
       } else if (prevSelected.length < 10) {
@@ -70,8 +70,8 @@ export const useCmiInspectionQrCode = () => {
     setPageSize,
     generatePdf,
     setGeneratePdf,
-    selectedItemsCmiInspection,
-    cmiInspectionQrCodeData,
+    selectedItemsEmergencyDoors,
+    emergencyDoorsQrCodeData,
     toggleSelectAll,
     toggleSelectItem,
     selectAll,
