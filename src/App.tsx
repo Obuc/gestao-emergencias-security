@@ -11,6 +11,7 @@ import HydrantSPO from './pages/Records/Hydrant/SPO';
 import TestCmiBXO from './pages/Records/TestCmi/BXO';
 import TestCmiSPO from './pages/Records/TestCmi/SPO';
 import LoadRatio from './pages/Records/LoadRatio/BXO';
+import EquipmentsOeiSPO from './pages/Equipments/Oei/SPO';
 import EquipmentsValveSPO from './pages/Equipments/Valve/SPO';
 import ExtinguisherBXO from './pages/Records/Extinguisher/BXO';
 import ExtinguisherSPO from './pages/Records/Extinguisher/SPO';
@@ -131,6 +132,16 @@ const App = () => {
       <Route
         path="/equipments/emergency_doors/:id"
         element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsEmergencyDoorsSPO />}
+      />
+
+      {/* Equipments - OEI Operations */}
+      <Route
+        path="/equipments/oei_operation"
+        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsOeiSPO />}
+      />
+      <Route
+        path="/equipments/oei_operation/:id"
+        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsOeiSPO />}
       />
     </Routes>
   );
