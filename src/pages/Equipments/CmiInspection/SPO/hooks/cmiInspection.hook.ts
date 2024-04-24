@@ -6,9 +6,9 @@ import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-q
 
 import buildOrderByQuery from '@/utils/buildOrderByQuery';
 import { sharepointContext } from '@/context/sharepointContext';
-import { CmiTestFiltersProps, CmiTestProps } from '../types/cmitest.types';
+import { CmiInspectionFiltersProps, CmiInspectionProps } from '../types/cmiInspection.types';
 
-export const useCmiTest = () => {
+export const useCmiInspection = () => {
   const { crudParent } = sharepointContext();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -16,8 +16,8 @@ export const useCmiTest = () => {
 
   const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([{ columnKey: 'Modified', direction: 'DESC' }]);
 
-  const sessionFiltersActions = sessionStorage.getItem('session_filters_equipments_cmi_test_spo');
-  const sessionFiltersActionsJSON: CmiTestFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
+  const sessionFiltersActions = sessionStorage.getItem('session_filters_equipments_cmi_inspection_spo');
+  const sessionFiltersActionsJSON: CmiInspectionFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
 
   const initialFiltersValues = {
     Id: sessionFiltersActionsJSON?.Id ? sessionFiltersActionsJSON.Id : null,
@@ -26,8 +26,8 @@ export const useCmiTest = () => {
     Conforme: sessionFiltersActionsJSON?.Conforme ? sessionFiltersActionsJSON.Conforme : null,
   };
 
-  const [tableFilters, setTableFilters] = useState<CmiTestFiltersProps>(initialFiltersValues);
-  const [tempTableFilters, setTempTableFilters] = useState<CmiTestFiltersProps>(initialFiltersValues);
+  const [tableFilters, setTableFilters] = useState<CmiInspectionFiltersProps>(initialFiltersValues);
+  const [tempTableFilters, setTempTableFilters] = useState<CmiInspectionFiltersProps>(initialFiltersValues);
 
   const handleRemoveAllFilters = () => {
     const filters = {
@@ -39,7 +39,7 @@ export const useCmiTest = () => {
 
     setTableFilters(filters);
     setTempTableFilters(filters);
-    sessionStorage.removeItem('session_filters_equipments_cmi_test_spo');
+    sessionStorage.removeItem('session_filters_equipments_cmi_inspection_spo');
   };
 
   const countAppliedFilters = () => {
@@ -54,13 +54,13 @@ export const useCmiTest = () => {
 
   const handleApplyFilters = () => {
     setTableFilters(tempTableFilters);
-    sessionStorage.setItem('session_filters_equipments_cmi_test_spo', JSON.stringify(tempTableFilters));
+    sessionStorage.setItem('session_filters_equipments_cmi_inspection_spo', JSON.stringify(tempTableFilters));
   };
 
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
     const orderByQuery = buildOrderByQuery(sortColumns);
 
-    let path = `?$Select=Id,Modified,Tipo,Predio,LocEsp,Title,Conforme,Excluido&$Top=25&${orderByQuery}&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Bomba')`;
+    let path = `?$Select=Id,Modified,Tipo,Predio,Title,Conforme,Excluido&$Top=25&${orderByQuery}&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Casa')`;
 
     if (tableFilters?.Id) {
       path += ` and ( Id eq '${tableFilters?.Id}')`;
@@ -104,12 +104,12 @@ export const useCmiTest = () => {
     };
   };
 
-  const cmiTestData = useInfiniteQuery({
-    queryKey: ['equipments_cmi_test_data_spo', user_site, tableFilters, sortColumns],
+  const cmiInspectionData = useInfiniteQuery({
+    queryKey: ['equipments_cmi_inspection_data_spo', user_site, tableFilters, sortColumns],
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/cmi_test'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/cmi_inspection'),
   });
 
   const mutateRemove = useMutation({
@@ -118,13 +118,13 @@ export const useCmiTest = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['equipments_cmi_test_data_spo', user_site, tableFilters, sortColumns],
+        queryKey: ['equipments_cmi_inspection_data_spo', user_site, tableFilters, sortColumns],
       });
     },
   });
 
   const fetchAllEquipments = async () => {
-    let path = `?$Select=Id,Tipo,Predio,LocEsp,Title,Conforme,Excluido&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Bomba')`;
+    let path = `?$Select=Id,Tipo,Predio,Title,Conforme,Excluido&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Casa')`;
 
     const response = await crudParent.getListItems('Diversos_Equipamentos', path);
 
@@ -144,7 +144,7 @@ export const useCmiTest = () => {
     mutationFn: async () => {
       const data = await fetchAllEquipments();
 
-      const columns: (keyof CmiTestProps)[] = ['Id', 'Predio', 'Conforme', 'Title'];
+      const columns: (keyof CmiInspectionProps)[] = ['Id', 'Predio', 'Conforme', 'Title'];
 
       const headerRow = columns.map((column) => column.toString());
 
@@ -162,14 +162,14 @@ export const useCmiTest = () => {
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-        XLSX.utils.book_append_sheet(wb, ws, 'Teste das Bombas de Incêndio');
-        XLSX.writeFile(wb, `Equipamentos - Teste das Bombas de Incêndio.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, 'Casa das Bombas');
+        XLSX.writeFile(wb, `Equipamentos - Casa das Bombas.xlsx`);
       }
     },
   });
 
   return {
-    cmiTestData,
+    cmiInspectionData,
     tempTableFilters,
     setTempTableFilters,
     handleRemoveAllFilters,
