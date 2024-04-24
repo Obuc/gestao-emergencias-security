@@ -24,6 +24,7 @@ import EquipmentsHydrantSPO from './pages/Equipments/Hydrants/SPO';
 import GeneralChecklist from './pages/Records/GeneralChecklist/BXO';
 import GovernanceValveBXO from './pages/Records/GovernanceValve/BXO';
 import GovernanceValveSPO from './pages/Records/GovernanceValve/SPO';
+import EquipmentsFireAlarmsSPO from './pages/Equipments/FireAlarms/SPO';
 import EquipmentsExtinguisherBXO from './pages/Equipments/Extinguisher/BXO';
 import EquipmentsExtinguisherSPO from './pages/Equipments/Extinguisher/SPO';
 import EquipmentsCmiInspectionSPO from './pages/Equipments/CmiInspection/SPO';
@@ -142,6 +143,16 @@ const App = () => {
       <Route
         path="/equipments/oei_operation/:id"
         element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsOeiSPO />}
+      />
+
+      {/* Equipments - Fire Alarms */}
+      <Route
+        path="/equipments/fire_alarms"
+        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsFireAlarmsSPO />}
+      />
+      <Route
+        path="/equipments/fire_alarms/:id"
+        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsFireAlarmsSPO />}
       />
     </Routes>
   );
