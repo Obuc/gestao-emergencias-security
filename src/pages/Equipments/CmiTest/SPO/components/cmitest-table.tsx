@@ -6,27 +6,27 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UseInfiniteQueryResult, UseMutationResult } from '@tanstack/react-query';
 
 import Toast from '@/components/Toast';
-import ValveModal from './valve-modal';
 import isAtBottom from '@/utils/isAtBottom';
-import { ValveProps } from '../types/valve.types';
+import { CmiTestModal } from './cmitest-modal';
 import CustomDataGrid from '@/components/DataGrid';
+import { CmiTestProps } from '../types/cmitest.types';
 import PopoverTables from '@/components/PopoverTables';
 import RemoveItem from '@/components/AppModals/RemoveItem';
 import DataGridLoadMore from '@/components/DataGrid/DataGridLoadMore';
 
-interface ValveTableProps {
-  valveData: UseInfiniteQueryResult<any, unknown>;
+interface CmiTestTableProps {
+  cmiTestData: UseInfiniteQueryResult<any, unknown>;
   mutateRemove: UseMutationResult<void, unknown, number, unknown>;
   sortColumns: readonly SortColumn[];
   setSortColumns: React.Dispatch<React.SetStateAction<readonly SortColumn[]>>;
 }
 
-const ValveTable = ({ valveData, mutateRemove, setSortColumns, sortColumns }: ValveTableProps) => {
+export const CmiTestTable = ({ cmiTestData, mutateRemove, setSortColumns, sortColumns }: CmiTestTableProps) => {
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/valve/${id}`);
+    navigate(`/equipments/cmi_test/${id}`);
   };
 
   const handleRemove = async () => {
@@ -36,11 +36,9 @@ const ValveTable = ({ valveData, mutateRemove, setSortColumns, sortColumns }: Va
     }
   };
 
-  const columns: readonly Column<ValveProps>[] = [
+  const columns: readonly Column<CmiTestProps>[] = [
     { key: 'Id', name: '#', resizable: true },
-    { key: 'Codigo', name: 'Código', resizable: true },
     { key: 'Predio', name: 'Prédio', resizable: true },
-    { key: 'LocEsp', name: 'Local', resizable: true, width: 260 },
     { key: 'Title', name: 'Código Local', resizable: true },
     { key: 'Conforme', name: 'Conformidade', resizable: true },
 
@@ -48,13 +46,11 @@ const ValveTable = ({ valveData, mutateRemove, setSortColumns, sortColumns }: Va
   ];
 
   const mappedRows =
-    valveData.data?.pages.flatMap(
+    cmiTestData.data?.pages.flatMap(
       (page) =>
-        page?.data?.value?.map((item: ValveProps) => ({
+        page?.data?.value?.map((item: CmiTestProps) => ({
           Id: <div className="pl-4">{item.Id}</div>,
-          Codigo: item?.Codigo ? item.Codigo : '',
           Predio: item?.Predio ? item.Predio : '',
-          LocEsp: item?.LocEsp ? item.LocEsp : '',
           Title: item?.Title ? item.Title : '',
 
           Conforme: (
@@ -83,7 +79,7 @@ const ValveTable = ({ valveData, mutateRemove, setSortColumns, sortColumns }: Va
 
   const handleScroll = async (event: React.UIEvent<HTMLDivElement>) => {
     if (!isAtBottom(event)) return;
-    valveData.fetchNextPage();
+    cmiTestData.fetchNextPage();
   };
 
   return (
@@ -102,10 +98,10 @@ const ValveTable = ({ valveData, mutateRemove, setSortColumns, sortColumns }: Va
           setSortColumns={setSortColumns}
         />
 
-        {valveData.isFetchingNextPage && <DataGridLoadMore />}
+        {cmiTestData.isFetchingNextPage && <DataGridLoadMore />}
       </div>
 
-      <ValveModal />
+      <CmiTestModal />
 
       {removeItem !== null && (
         <RemoveItem
@@ -130,5 +126,3 @@ const ValveTable = ({ valveData, mutateRemove, setSortColumns, sortColumns }: Va
     </>
   );
 };
-
-export default ValveTable;

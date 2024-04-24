@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
-import { ValveProps } from '../types/valve.types';
+import { CmiTestProps } from '../types/cmitest.types';
 import { sharepointContext } from '@/context/sharepointContext';
 
-const useValveQrCode = () => {
+export const useCmiTestQrCode = () => {
   const location = useLocation();
   const { crudParent } = sharepointContext();
 
@@ -15,15 +15,15 @@ const useValveQrCode = () => {
 
   const [selectAll, setSelectAll] = useState(false);
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
-  const [selectedItemsValve, setSelectedItemsValve] = useState<ValveProps[]>([]);
+  const [selectedItemsCmiTest, setSelectedItemsCmiTest] = useState<CmiTestProps[]>([]);
 
-  const valveQrCodeData: UseQueryResult<Array<ValveProps>> = useQuery({
-    queryKey: ['equipments_valve_data_qrcode_spo', filterValue],
+  const cmiTestQrCodeData: UseQueryResult<Array<CmiTestProps>> = useQuery({
+    queryKey: ['equipments_cmi_test_data_qrcode_spo', filterValue],
     queryFn: async () => {
-      let path = `?$Select=Id,Tipo,Codigo,Predio,LocEsp,Title,Conforme,Excluido&$orderby=Modified desc&$Filter=(Excluido eq 'false') and (Tipo eq 'Valvula')`;
+      let path = `?$Select=Id,Tipo,Predio,LocEsp,Title,Conforme,Excluido&$orderby=Modified desc&$Filter=(Excluido eq 'false') and (Tipo eq 'Bomba')`;
 
       if (filterValue) {
-        path += ` and (substringof('${filterValue}', Title) or substringof('${filterValue}', Codigo) or substringof('${filterValue}', Predio) or substringof('${filterValue}', LocEsp))`;
+        path += ` and (substringof('${filterValue}', Title) or substringof('${filterValue}', Predio) or substringof('${filterValue}', LocEsp))`;
       }
 
       const resp = await crudParent.getListItems('Diversos_Equipamentos', path);
@@ -40,20 +40,20 @@ const useValveQrCode = () => {
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/valve'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/cmi_test'),
   });
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
-    if (!selectAll && valveQrCodeData.data) {
-      setSelectedItemsValve(valveQrCodeData.data);
+    if (!selectAll && cmiTestQrCodeData.data) {
+      setSelectedItemsCmiTest(cmiTestQrCodeData.data);
     } else {
-      setSelectedItemsValve([]);
+      setSelectedItemsCmiTest([]);
     }
   };
 
-  const toggleSelectItem = (item: ValveProps) => {
-    setSelectedItemsValve((prevSelected) => {
+  const toggleSelectItem = (item: CmiTestProps) => {
+    setSelectedItemsCmiTest((prevSelected) => {
       if (prevSelected.some((selectedItem) => selectedItem.Id === item.Id)) {
         return prevSelected.filter((selectedItem) => selectedItem.Id !== item.Id);
       } else if (prevSelected.length < 10) {
@@ -70,12 +70,10 @@ const useValveQrCode = () => {
     setPageSize,
     generatePdf,
     setGeneratePdf,
-    selectedItemsValve,
-    valveQrCodeData,
+    selectedItemsCmiTest,
+    cmiTestQrCodeData,
     toggleSelectAll,
     toggleSelectItem,
     selectAll,
   };
 };
-
-export default useValveQrCode;

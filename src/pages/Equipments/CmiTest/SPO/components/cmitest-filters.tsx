@@ -1,18 +1,18 @@
 import { Button } from '@/components/Button';
 import TextField from '@/components/TextField';
 import { Popover } from '@/components/Popover';
-import { ValveFiltersProps } from '../types/valve.types';
+import { CmiTestFiltersProps } from '../types/cmitest.types';
 import { SelectAutoComplete } from '@/components/SelectAutocomplete';
 
 interface IFilters {
-  tempTableFilters: ValveFiltersProps;
-  setTempTableFilters: React.Dispatch<React.SetStateAction<ValveFiltersProps>>;
+  tempTableFilters: CmiTestFiltersProps;
+  setTempTableFilters: React.Dispatch<React.SetStateAction<CmiTestFiltersProps>>;
   handleRemoveAllFilters: () => void;
   countAppliedFilters: () => number;
   handleApplyFilters: () => void;
 }
 
-const ValveFilters = ({
+export const CmiTestFilters = ({
   tempTableFilters,
   setTempTableFilters,
   handleRemoveAllFilters,
@@ -47,32 +47,12 @@ const ValveFilters = ({
           />
 
           <TextField
-            label="Cód. Válvula"
-            id="Codigo"
-            name="Codigo"
-            value={tempTableFilters.Codigo || ''}
-            onChange={(event) => {
-              setTempTableFilters((prev) => ({ ...prev, Codigo: event.target.value }));
-            }}
-          />
-
-          <TextField
             label="Prédio"
             id="Predio"
             name="Predio"
             value={tempTableFilters.Predio || ''}
             onChange={(event) => {
               setTempTableFilters((prev) => ({ ...prev, Predio: event.target.value }));
-            }}
-          />
-
-          <TextField
-            label="Local"
-            id="LocEsp"
-            name="LocEsp"
-            value={tempTableFilters.LocEsp || ''}
-            onChange={(event) => {
-              setTempTableFilters((prev) => ({ ...prev, LocEsp: event.target.value }));
             }}
           />
 
@@ -115,5 +95,3 @@ const ValveFilters = ({
     </Popover.Root>
   );
 };
-
-export default ValveFilters;

@@ -3,20 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { faDownload, faExpand } from '@fortawesome/free-solid-svg-icons';
 
 import Toast from '@/components/Toast';
-import useValve from './hooks/valve.hook';
 import LayoutBase from '@/layout/LayoutBase';
 import { Button } from '@/components/Button';
-import ValveTable from './components/valve-table';
-import ValveFilters from './components/valve-filters';
-import ValveQrcodeModal from './components/valve-qrcode-modal';
+import { useCmiTest } from './hooks/cmitest.hook';
+import { CmiTestTable } from './components/cmitest-table';
+import { CmiTestFilters } from './components/cmitest-filters';
+import { CmiTestQrcodeModal } from './components/cmitest-qrcode-modal';
 
-const EquipmentsValveSPO = () => {
+const EquipmentsCmiTestSPO = () => {
   const navigate = useNavigate();
   const localSite = localStorage.getItem('user_site');
   const [openModalGenerateQRCode, setOpenModalGenerateQRCode] = useState<boolean | null>(null);
 
   const {
-    valveData,
+    cmiTestData,
     mutateRemove,
     sortColumns,
     setSortColumns,
@@ -26,7 +26,7 @@ const EquipmentsValveSPO = () => {
     handleRemoveAllFilters,
     setTempTableFilters,
     tempTableFilters,
-  } = useValve();
+  } = useCmiTest();
 
   useEffect(() => {
     if (localSite === null) {
@@ -42,7 +42,7 @@ const EquipmentsValveSPO = () => {
             <div className="flex pb-8 items-center w-full justify-between">
               <div className="flex w-full items-center gap-2 text-2xl text-primary-font font-semibold">
                 <div className="w-3 h-3 rounded-full bg-primary" />
-                <h2>Válvulas de Governo</h2>
+                <h2>Teste das Bombas de Incêndio</h2>
               </div>
 
               <div className="flex gap-2">
@@ -66,7 +66,7 @@ const EquipmentsValveSPO = () => {
                   <Button.Icon icon={faExpand} />
                 </Button.Root>
 
-                <ValveFilters
+                <CmiTestFilters
                   countAppliedFilters={countAppliedFilters}
                   handleApplyFilters={handleApplyFilters}
                   handleRemoveAllFilters={handleRemoveAllFilters}
@@ -76,8 +76,8 @@ const EquipmentsValveSPO = () => {
               </div>
             </div>
 
-            <ValveTable
-              valveData={valveData}
+            <CmiTestTable
+              cmiTestData={cmiTestData}
               mutateRemove={mutateRemove}
               sortColumns={sortColumns}
               setSortColumns={setSortColumns}
@@ -86,7 +86,7 @@ const EquipmentsValveSPO = () => {
         </div>
 
         {openModalGenerateQRCode && (
-          <ValveQrcodeModal open={openModalGenerateQRCode} onOpenChange={() => setOpenModalGenerateQRCode(null)} />
+          <CmiTestQrcodeModal open={openModalGenerateQRCode} onOpenChange={() => setOpenModalGenerateQRCode(null)} />
         )}
       </LayoutBase>
 
@@ -105,4 +105,4 @@ const EquipmentsValveSPO = () => {
   );
 };
 
-export default EquipmentsValveSPO;
+export default EquipmentsCmiTestSPO;

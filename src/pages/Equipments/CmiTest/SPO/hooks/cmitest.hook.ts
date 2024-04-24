@@ -6,9 +6,9 @@ import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-q
 
 import buildOrderByQuery from '@/utils/buildOrderByQuery';
 import { sharepointContext } from '@/context/sharepointContext';
-import { ValveFiltersProps, ValveProps } from '../types/valve.types';
+import { CmiTestFiltersProps, CmiTestProps } from '../types/cmitest.types';
 
-const useValve = () => {
+export const useCmiTest = () => {
   const { crudParent } = sharepointContext();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -16,42 +16,36 @@ const useValve = () => {
 
   const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([{ columnKey: 'Modified', direction: 'DESC' }]);
 
-  const sessionFiltersActions = sessionStorage.getItem('session_filters_equipments_valve_spo');
-  const sessionFiltersActionsJSON: ValveFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
+  const sessionFiltersActions = sessionStorage.getItem('session_filters_equipments_cmi_test_spo');
+  const sessionFiltersActionsJSON: CmiTestFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
 
   const initialFiltersValues = {
     Id: sessionFiltersActionsJSON?.Id ? sessionFiltersActionsJSON.Id : null,
-    Codigo: sessionFiltersActionsJSON?.Codigo ? sessionFiltersActionsJSON.Codigo : null,
     Predio: sessionFiltersActionsJSON?.Predio ? sessionFiltersActionsJSON.Predio : null,
-    LocEsp: sessionFiltersActionsJSON?.LocEsp ? sessionFiltersActionsJSON.LocEsp : null,
     numero_etiqueta: sessionFiltersActionsJSON?.numero_etiqueta ? sessionFiltersActionsJSON.numero_etiqueta : null,
     Conforme: sessionFiltersActionsJSON?.Conforme ? sessionFiltersActionsJSON.Conforme : null,
   };
 
-  const [tableFilters, setTableFilters] = useState<ValveFiltersProps>(initialFiltersValues);
-  const [tempTableFilters, setTempTableFilters] = useState<ValveFiltersProps>(initialFiltersValues);
+  const [tableFilters, setTableFilters] = useState<CmiTestFiltersProps>(initialFiltersValues);
+  const [tempTableFilters, setTempTableFilters] = useState<CmiTestFiltersProps>(initialFiltersValues);
 
   const handleRemoveAllFilters = () => {
     const filters = {
       Id: null,
-      Codigo: null,
       Predio: null,
-      LocEsp: null,
       numero_etiqueta: null,
       Conforme: null,
     };
 
     setTableFilters(filters);
     setTempTableFilters(filters);
-    sessionStorage.removeItem('session_filters_equipments_valve_spo');
+    sessionStorage.removeItem('session_filters_equipments_cmi_test_spo');
   };
 
   const countAppliedFilters = () => {
     let count = 0;
     if (tableFilters.Id) count++;
-    if (tableFilters.Codigo) count++;
     if (tableFilters.Predio) count++;
-    if (tableFilters.LocEsp) count++;
     if (tableFilters.numero_etiqueta) count++;
     if (tableFilters.Conforme) count++;
 
@@ -60,28 +54,20 @@ const useValve = () => {
 
   const handleApplyFilters = () => {
     setTableFilters(tempTableFilters);
-    sessionStorage.setItem('session_filters_equipments_valve_spo', JSON.stringify(tempTableFilters));
+    sessionStorage.setItem('session_filters_equipments_cmi_test_spo', JSON.stringify(tempTableFilters));
   };
 
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
     const orderByQuery = buildOrderByQuery(sortColumns);
 
-    let path = `?$Select=Id,Modified,Tipo,Codigo,Predio,LocEsp,Title,Conforme,Excluido&$Top=25&${orderByQuery}&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Valvula')`;
+    let path = `?$Select=Id,Modified,Tipo,Predio,LocEsp,Title,Conforme,Excluido&$Top=25&${orderByQuery}&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Bomba')`;
 
     if (tableFilters?.Id) {
       path += ` and ( Id eq '${tableFilters?.Id}')`;
     }
 
-    if (tableFilters?.Codigo) {
-      path += ` and ( Codigo eq '${tableFilters?.Codigo}')`;
-    }
-
     if (tableFilters?.Predio) {
       path += ` and ( Predio eq '${tableFilters?.Predio}')`;
-    }
-
-    if (tableFilters?.LocEsp) {
-      path += ` and ( LocEsp eq '${tableFilters?.LocEsp}')`;
     }
 
     if (tableFilters?.numero_etiqueta) {
@@ -118,12 +104,12 @@ const useValve = () => {
     };
   };
 
-  const valveData = useInfiniteQuery({
-    queryKey: ['equipments_valve_data_spo', user_site, tableFilters, sortColumns],
+  const cmiTestData = useInfiniteQuery({
+    queryKey: ['equipments_cmi_test_data_spo', user_site, tableFilters, sortColumns],
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/valve'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/cmi_test'),
   });
 
   const mutateRemove = useMutation({
@@ -132,7 +118,7 @@ const useValve = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['equipments_valve_data_spo', user_site, tableFilters, sortColumns],
+        queryKey: ['equipments_cmi_test_data_spo', user_site, tableFilters, sortColumns],
       });
     },
   });
@@ -158,7 +144,7 @@ const useValve = () => {
     mutationFn: async () => {
       const data = await fetchAllEquipments();
 
-      const columns: (keyof ValveProps)[] = ['Id', 'Codigo', 'Predio', 'LocEsp', 'Conforme', 'Title'];
+      const columns: (keyof CmiTestProps)[] = ['Id', 'Predio', 'Conforme', 'Title'];
 
       const headerRow = columns.map((column) => column.toString());
 
@@ -176,14 +162,14 @@ const useValve = () => {
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-        XLSX.utils.book_append_sheet(wb, ws, 'Válvula de Governo');
-        XLSX.writeFile(wb, `Equipamentos - Válvula de Governo.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, 'Teste das Bombas de Incêndio');
+        XLSX.writeFile(wb, `Equipamentos - Teste das Bombas de Incêndio.xlsx`);
       }
     },
   });
 
   return {
-    valveData,
+    cmiTestData,
     tempTableFilters,
     setTempTableFilters,
     handleRemoveAllFilters,
@@ -195,5 +181,3 @@ const useValve = () => {
     mutateExportExcel,
   };
 };
-
-export default useValve;

@@ -4,11 +4,11 @@ import { Page, Text, View, Document, Image } from '@react-pdf/renderer';
 import SPOLogo from '@/assets/SPO.png';
 import HeaderBg from '@/assets/Caminho 3692.png';
 import { stylesQRCode } from '@/utils/PDFStyles';
-import { ValveProps } from '../types/valve.types';
+import { CmiTestProps } from '../types/cmitest.types';
 
-const ValveQrcodePdf = ({ data, pageSize }: { data: Array<ValveProps>; pageSize: StandardPageSize }) => {
+export const CmiTestQrcodePdf = ({ data, pageSize }: { data: Array<CmiTestProps>; pageSize: StandardPageSize }) => {
   const generateQRCodeURL = (value: any) => {
-    const qrCodeValue = `Valvula;SP;São Paulo;SPO - Site São Paulo;${value?.Predio};${value?.Codigo};${value?.LocEsp};${value?.Title}`;
+    const qrCodeValue = `Bomba;SP;São Paulo;SPO - Site São Paulo;${value?.Predio}`;
 
     return `https://quickchart.io/qr?text=${qrCodeValue}`;
   };
@@ -25,9 +25,7 @@ const ValveQrcodePdf = ({ data, pageSize }: { data: Array<ValveProps>; pageSize:
 
             <View style={stylesQRCode.containerQrCode}>
               <Image src={generateQRCodeURL(value)} />
-              <Text style={stylesQRCode.footerTitle}>{`Valvula/${value?.Predio || ''}/${value?.Codigo || ''}/${
-                value?.Title || ''
-              }/${value?.LocEsp || ''}`}</Text>
+              <Text style={stylesQRCode.footerTitle}>{`Bomba/${value?.Predio || ''}/${value?.Title || ''}`}</Text>
 
               <Image src={SPOLogo} style={stylesQRCode.siteLogo} />
             </View>
@@ -37,5 +35,3 @@ const ValveQrcodePdf = ({ data, pageSize }: { data: Array<ValveProps>; pageSize:
     </Document>
   );
 };
-
-export default ValveQrcodePdf;

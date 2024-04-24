@@ -5,16 +5,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import Modal from '@/components/Modal';
 import TextField from '@/components/TextField';
-import useValveModal from '../hooks/valve-modal.hook';
 import CardEmpy from '../../../components/ui/CardEmpy';
 import { EquipmentCard } from '../../../components/ui/Card';
+import { useCmiTestModal } from '../hooks/cmitest-modal.hook';
 import CardSkeleton from '../../../components/ui/CardSkeleton';
 
-const ValveModal = () => {
+export const CmiTestModal = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  const { valveModalData } = useValveModal();
+  const { cmiTestModalData } = useCmiTestModal();
   const [valveItem, setValveItem] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const ValveModal = () => {
 
   const handleOnOpenChange = () => {
     setValveItem(null);
-    navigate('/equipments/valve');
+    navigate('/equipments/cmi_test');
   };
 
   return (
@@ -33,7 +33,7 @@ const ValveModal = () => {
       className="w-[65.125rem]"
       open={valveItem !== null}
       onOpenChange={handleOnOpenChange}
-      title={`Registro Válvula de Governo N°${params.id}`}
+      title={`Registro Teste das Bombas de Incêndio N°${params.id}`}
     >
       <>
         <div className="pt-6 px-8">
@@ -43,47 +43,27 @@ const ValveModal = () => {
               id="Title"
               name="Title"
               label="Código do setor"
-              value={valveModalData.data?.Title ?? ''}
-              isLoading={valveModalData.isLoading}
+              value={cmiTestModalData.data?.Title ?? ''}
+              isLoading={cmiTestModalData.isLoading}
             />
 
-            <TextField
-              disabled
-              id="Codigo"
-              name="Codigo"
-              label="Cód. do equipamento atual"
-              value={valveModalData.data?.Codigo ?? ''}
-              isLoading={valveModalData.isLoading}
-            />
-          </div>
-
-          <div className="flex gap-2 py-2">
             <TextField
               disabled
               id="Predio"
               name="Predio"
               label="Prédio"
-              value={valveModalData.data?.Predio ?? ''}
-              isLoading={valveModalData.isLoading}
-            />
-
-            <TextField
-              disabled
-              id="LocEsp"
-              name="LocEsp"
-              label="Localização"
-              value={valveModalData.data?.LocEsp ?? 'Localização não cadastrada'}
-              isLoading={valveModalData.isLoading}
+              value={cmiTestModalData.data?.Predio ?? ''}
+              isLoading={cmiTestModalData.isLoading}
             />
           </div>
         </div>
 
         <div className="py-4 px-8">
-          {!valveModalData.data?.history?.length && !valveModalData.isLoading && <CardEmpy />}
-          {valveModalData.isLoading && <CardSkeleton />}
+          {!cmiTestModalData.data?.history?.length && !cmiTestModalData.isLoading && <CardEmpy />}
+          {cmiTestModalData.isLoading && <CardSkeleton />}
 
-          {valveModalData.data?.history &&
-            valveModalData.data?.history.map((item) => {
+          {cmiTestModalData.data?.history &&
+            cmiTestModalData.data?.history.map((item) => {
               const cardVariant = item.tipo === 'Normal' ? 'new' : item.tipo === 'Novo' ? 'modification' : 'noncompliant';
 
               const cardTitle =
@@ -97,7 +77,7 @@ const ValveModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/valve/${item.idRegistro}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/records/cmi_test/${item.idRegistro}`} />
                   <EquipmentCard.Content
                     date={cardDate}
                     responsible={item.responsavel}
@@ -113,5 +93,3 @@ const ValveModal = () => {
     </Modal>
   );
 };
-
-export default ValveModal;

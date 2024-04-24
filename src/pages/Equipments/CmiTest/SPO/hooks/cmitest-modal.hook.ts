@@ -2,23 +2,23 @@ import { parseISO } from 'date-fns';
 import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
-import { ValveModalProps } from '../types/valve.types';
+import { CmiTestModalProps } from '../types/cmitest.types';
 import { sharepointContext } from '@/context/sharepointContext';
 
-const useValveModal = () => {
+export const useCmiTestModal = () => {
   const params = useParams();
   const location = useLocation();
   const { crudParent } = sharepointContext();
   const user_site = localStorage.getItem('user_site');
 
   const fetchEquipments = async () => {
-    const pathModal = `?$Select=Id,Codigo,Predio,LocEsp,Title&$filter=(Id eq ${params.id}) and (Tipo eq 'Valvula')`;
+    const pathModal = `?$Select=Id,Predio,LocEsp,Title&$filter=(Id eq ${params.id}) and (Tipo eq 'Bomba')`;
     const resp = await crudParent.getListItemsv2('Diversos_Equipamentos', pathModal);
     return resp.results[0];
   };
 
   const fetchHistory = async (codigo: string) => {
-    const pathModal = `?$Select=Id,Created,tipo,idEquipamento,responsavel,item,idRegistro,novoCodigo,novaValidade&$filter=(idEquipamento eq ${codigo}) and (item eq 'Valvula')`;
+    const pathModal = `?$Select=Id,Created,tipo,idEquipamento,responsavel,item,idRegistro,novoCodigo,novaValidade&$filter=(idEquipamento eq ${codigo}) and (item eq 'Bomba')`;
 
     const resp = await crudParent.getListItemsv2('Historico_Equipamentos', pathModal);
 
@@ -45,8 +45,8 @@ const useValveModal = () => {
     return dataWithTransformations;
   };
 
-  const valveModalData: UseQueryResult<ValveModalProps> = useQuery({
-    queryKey: ['equipments_valve_data_modal', params.id],
+  const cmiTestModalData: UseQueryResult<CmiTestModalProps> = useQuery({
+    queryKey: ['equipments_cmi_test_data_modal', params.id],
     queryFn: async () => {
       if (params.id) {
         const valveData = await fetchEquipments();
@@ -62,16 +62,14 @@ const useValveModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/equipments/valve'),
+    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/equipments/cmi_test'),
   });
 
-  const qrCodeValue = `Valvula;SP;São Paulo;SPO - Site São Paulo;${valveModalData.data?.Predio};${valveModalData.data?.Codigo};${valveModalData.data?.LocEsp};${valveModalData.data?.Title}`;
-  // Valvula;SP;São Paulo;SPO;SPO - Covestro;301;20;escada - falta alavanca;30019
+  const qrCodeValue = `Bomba;SP;São Paulo;SPO - Site São Paulo;${cmiTestModalData.data?.Predio}`;
+  // Bomba;SP;São Paulo;SPO;SPO - Site São Paulo;622
 
   return {
-    valveModalData,
+    cmiTestModalData,
     qrCodeValue,
   };
 };
-
-export default useValveModal;

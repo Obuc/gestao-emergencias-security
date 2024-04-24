@@ -10,17 +10,17 @@ import { Table } from '@/components/Table';
 import Checkbox from '@/components/Checkbox';
 import { Button } from '@/components/Button';
 import TextField from '@/components/TextField';
-import ValveQrcodePdf from './valve-qrcode-pdf';
 import { pageSizeData } from '@/utils/pageData.mock';
-import useValveQrCode from '../hooks/valve-qrcode.hook';
+import { CmiTestQrcodePdf } from './cmitest-qrcode-pdf';
+import { useCmiTestQrCode } from '../hooks/cmitest-qrcode.hook';
 import { SelectAutoComplete } from '@/components/SelectAutocomplete';
 
-interface ValveQrcodeModalProps {
+interface CmiTestQrcodeModalProps {
   open: boolean | null;
   onOpenChange: () => void;
 }
 
-const ValveQrcodeModal = ({ open, onOpenChange }: ValveQrcodeModalProps) => {
+export const CmiTestQrcodeModal = ({ open, onOpenChange }: CmiTestQrcodeModalProps) => {
   const site_value = localStorage.getItem('user_site');
 
   const {
@@ -30,21 +30,21 @@ const ValveQrcodeModal = ({ open, onOpenChange }: ValveQrcodeModalProps) => {
     setPageSize,
     generatePdf,
     setGeneratePdf,
-    selectedItemsValve,
-    valveQrCodeData,
+    selectedItemsCmiTest,
+    cmiTestQrCodeData,
     toggleSelectAll,
     toggleSelectItem,
     selectAll,
-  } = useValveQrCode();
+  } = useCmiTestQrCode();
 
   const exportToPdf = async () => {
     if (!pageSize) return;
 
     setGeneratePdf(true);
     const blob = await pdf(
-      <ValveQrcodePdf data={selectedItemsValve} pageSize={pageSize.value as StandardPageSize} />,
+      <CmiTestQrcodePdf data={selectedItemsCmiTest} pageSize={pageSize.value as StandardPageSize} />,
     ).toBlob();
-    saveAs(blob, `QRCode Válvula de Governo - ${site_value}.pdf`);
+    saveAs(blob, `QRCode Bombas de Incêndio - ${site_value}.pdf`);
     setGeneratePdf(false);
   };
 
@@ -53,7 +53,7 @@ const ValveQrcodeModal = ({ open, onOpenChange }: ValveQrcodeModalProps) => {
       className="min-w-[68.75rem]"
       open={open !== null}
       onOpenChange={onOpenChange}
-      title={`Gerar QRCodes: Válvula de Governo`}
+      title={`Gerar QRCodes: Bombas de Incêndio`}
     >
       <div className="flex flex-col gap-2 px-8 py-6 text-primary-font">
         <span className="text-lg py-4">Selecione abaixo os equipamentos que deseja gerar os QRCodes.</span>
@@ -90,33 +90,32 @@ const ValveQrcodeModal = ({ open, onOpenChange }: ValveQrcodeModalProps) => {
                     <Checkbox checked={selectAll} onClick={toggleSelectAll} />
                   </Table.Th>
                   <Table.Th>#</Table.Th>
-                  <Table.Th>Cód. Válvula</Table.Th>
+                  <Table.Th>Código</Table.Th>
                   <Table.Th>Predio</Table.Th>
-                  <Table.Th>Local</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody className="overflow-y-scroll">
-                {valveQrCodeData.data?.length === 0 && (
+                {cmiTestQrCodeData.data?.length === 0 && (
                   <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                    <Table.Td colSpan={5} className="text-center text-primary-font">
+                    <Table.Td colSpan={4} className="text-center text-primary-font">
                       Nenhum extintor encontrado!
                     </Table.Td>
                   </Table.Tr>
                 )}
 
-                {valveQrCodeData.isError && (
+                {cmiTestQrCodeData.isError && (
                   <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                    <Table.Td colSpan={5} className="text-center text-primary-font">
+                    <Table.Td colSpan={4} className="text-center text-primary-font">
                       Ops, ocorreu um erro, recarregue a página e tente novamente!
                     </Table.Td>
                   </Table.Tr>
                 )}
 
-                {valveQrCodeData.isLoading && (
+                {cmiTestQrCodeData.isLoading && (
                   <>
                     {Array.from({ length: 15 }).map((_, index) => (
                       <Table.Tr key={index}>
-                        <Table.Td className="h-14 px-4" colSpan={5}>
+                        <Table.Td className="h-14 px-4" colSpan={4}>
                           <Skeleton height="3.5rem" animation="wave" />
                         </Table.Td>
                       </Table.Tr>
@@ -124,19 +123,18 @@ const ValveQrcodeModal = ({ open, onOpenChange }: ValveQrcodeModalProps) => {
                   </>
                 )}
 
-                {valveQrCodeData.data &&
-                  valveQrCodeData.data.map((item) => (
+                {cmiTestQrCodeData.data &&
+                  cmiTestQrCodeData.data.map((item) => (
                     <Table.Tr key={item.Id + (item.Title ? item.Title : '0')}>
                       <Table.Td className="pl-8">
                         <Checkbox
-                          checked={selectedItemsValve.some((selectedItem) => selectedItem.Id === item.Id)}
+                          checked={selectedItemsCmiTest.some((selectedItem) => selectedItem.Id === item.Id)}
                           onClick={() => toggleSelectItem(item)}
                         />
                       </Table.Td>
                       <Table.Td>{item.Id}</Table.Td>
                       <Table.Td>{item.Title ?? '-'}</Table.Td>
                       <Table.Td>{item.Predio ?? '-'}</Table.Td>
-                      <Table.Td>{item.LocEsp ?? '-'}</Table.Td>
                     </Table.Tr>
                   ))}
               </Table.Tbody>
@@ -148,7 +146,7 @@ const ValveQrcodeModal = ({ open, onOpenChange }: ValveQrcodeModalProps) => {
               fill
               onClick={exportToPdf}
               className="min-w-[12rem] h-10"
-              disabled={generatePdf || !selectedItemsValve.length || pageSize === null}
+              disabled={generatePdf || !selectedItemsCmiTest.length || pageSize === null}
             >
               {generatePdf ? (
                 <Button.Spinner />
@@ -165,5 +163,3 @@ const ValveQrcodeModal = ({ open, onOpenChange }: ValveQrcodeModalProps) => {
     </Modal>
   );
 };
-
-export default ValveQrcodeModal;

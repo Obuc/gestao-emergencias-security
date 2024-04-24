@@ -1,13 +1,11 @@
-export interface ValveProps {
+export interface CmiTestProps {
   Id: number;
-  Codigo: string;
   Predio: string;
-  LocEsp?: string;
   Title: string;
   Conforme: boolean;
 }
 
-interface ValveHistoryProps {
+interface CmiTestHistoryProps {
   Id: number;
   Created: Date;
   tipo: string;
@@ -19,21 +17,17 @@ interface ValveHistoryProps {
   novaValidade: Date;
 }
 
-export interface ValveModalProps {
+export interface CmiTestModalProps {
   Id: number;
-  Codigo: string;
   Predio: string;
-  LocEsp?: string;
   Title: string;
 
-  history: Array<ValveHistoryProps>;
+  history: Array<CmiTestHistoryProps>;
 }
 
-export interface ValveFiltersProps {
+export interface CmiTestFiltersProps {
   Id: string | null;
-  Codigo: string | null;
   Predio: string | null;
-  LocEsp: string | null;
   numero_etiqueta: string | null;
   Conforme: { value: string; label: string } | null;
 }

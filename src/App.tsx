@@ -24,6 +24,7 @@ import GovernanceValveBXO from './pages/Records/GovernanceValve/BXO';
 import GovernanceValveSPO from './pages/Records/GovernanceValve/SPO';
 import EquipmentsExtinguisherBXO from './pages/Equipments/Extinguisher/BXO';
 import EquipmentsExtinguisherSPO from './pages/Equipments/Extinguisher/SPO';
+import EquipmentsCmiTestSPO from './pages/Equipments/CmiTest/SPO';
 
 const App = () => {
   const localSite = localStorage.getItem('user_site');
@@ -117,6 +118,16 @@ const App = () => {
       <Route
         path="/equipments/valve/:id"
         element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsValveSPO />}
+      />
+
+      {/* Equipments - Cmi Test */}
+      <Route
+        path="/equipments/cmi_test"
+        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsCmiTestSPO />}
+      />
+      <Route
+        path="/equipments/cmi_test/:id"
+        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsCmiTestSPO />}
       />
     </Routes>
   );
