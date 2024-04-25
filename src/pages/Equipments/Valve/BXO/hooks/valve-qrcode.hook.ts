@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
+import { ValveProps } from '../types/valve.types';
 import { sharepointContext } from '@/context/sharepointContext';
-import { ExtinguisherProps } from '../types/extinguisher.types';
 
-const useExtinguisherQrCode = () => {
+export const useValveQrCode = () => {
   const location = useLocation();
   const { crud } = sharepointContext();
 
@@ -14,18 +14,18 @@ const useExtinguisherQrCode = () => {
 
   const [selectAll, setSelectAll] = useState(false);
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
-  const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<ExtinguisherProps[]>([]);
+  const [selectedItemsValve, setSelectedItemsValve] = useState<ValveProps[]>([]);
 
-  const extinguisherQrCodeData: UseQueryResult<Array<ExtinguisherProps>> = useQuery({
-    queryKey: ['equipments_extinguisher_data_qrcode', filterValue],
+  const valveQrCodeData: UseQueryResult<Array<ValveProps>> = useQuery({
+    queryKey: ['equipments_valve_data_qrcode_bxo', filterValue],
     queryFn: async () => {
-      let path = `?$Select=Id,cod_qrcode,predio/Title,tipo_extintor/Title,pavimento/Title,local/Title,site/Title,cod_extintor,conforme&$expand=tipo_extintor,predio,site,pavimento,local&$Filter=(site/Title eq 'BXO')`;
+      let path = `?$Select=Id,cod_qrcode,predio/Title,cod_equipamento,Modified,excluido,tipo_equipamento/Title,conforme,site/Title,pavimento/Title,local/Title&$expand=site,tipo_equipamento,pavimento,local,predio&$Filter=((tipo_equipamento/Title eq 'Válvulas de Governo') and (site/Title eq 'BXO') and (excluido eq false))`;
 
       if (filterValue) {
-        path += ` and (substringof('${filterValue}', Id) or substringof('${filterValue}', cod_extintor) or substringof('${filterValue}', predio/Title) or substringof('${filterValue}', local/Title) or substringof('${filterValue}', pavimento/Title))`;
+        path += ` and (Id eq ${filterValue}) or substringof('${filterValue}', cod_qrcode) or substringof('${filterValue}', predio/Title) or substringof('${filterValue}', cod_equipamento) or substringof('${filterValue}', pavimento/Title) or substringof('${filterValue}', local/Title)`;
       }
 
-      const resp = await crud.getListItems('extintores', path);
+      const resp = await crud.getListItems('equipamentos_diversos', path);
 
       const dataWithTransformations = await Promise.all(
         resp.map(async (item: any) => {
@@ -35,7 +35,6 @@ const useExtinguisherQrCode = () => {
             pavimento: item.pavimento?.Title,
             site: item.site?.Title,
             predio: item.predio?.Title,
-            tipo_extintor: item.tipo_extintor?.Title,
           };
         }),
       );
@@ -44,20 +43,20 @@ const useExtinguisherQrCode = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: location.pathname.includes('/equipments/extinguisher'),
+    enabled: location.pathname.includes('/equipments/valve'),
   });
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
-    if (!selectAll && extinguisherQrCodeData.data) {
-      setSelectedItemsExtinguisher(extinguisherQrCodeData.data);
+    if (!selectAll && valveQrCodeData.data) {
+      setSelectedItemsValve(valveQrCodeData.data);
     } else {
-      setSelectedItemsExtinguisher([]);
+      setSelectedItemsValve([]);
     }
   };
 
-  const toggleSelectItem = (item: ExtinguisherProps) => {
-    setSelectedItemsExtinguisher((prevSelected) => {
+  const toggleSelectItem = (item: ValveProps) => {
+    setSelectedItemsValve((prevSelected) => {
       if (prevSelected.some((selectedItem) => selectedItem.Id === item.Id)) {
         return prevSelected.filter((selectedItem) => selectedItem.Id !== item.Id);
       } else if (prevSelected.length < 10) {
@@ -74,12 +73,10 @@ const useExtinguisherQrCode = () => {
     setPageSize,
     generatePdf,
     setGeneratePdf,
-    selectedItemsExtinguisher,
-    extinguisherQrCodeData,
+    selectedItemsValve,
+    valveQrCodeData,
     toggleSelectAll,
     toggleSelectItem,
     selectAll,
   };
 };
-
-export default useExtinguisherQrCode;

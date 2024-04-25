@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Toast from '@/components/Toast';
 import isAtBottom from '@/utils/isAtBottom';
 import CustomDataGrid from '@/components/DataGrid';
-import ExtinguisherModal from './extinguisher-modal';
+import { ExtinguisherModal } from './extinguisher-modal';
 import PopoverTables from '@/components/PopoverTables';
 import RemoveItem from '@/components/AppModals/RemoveItem';
 import { ExtinguisherProps } from '../types/extinguisher.types';
@@ -21,7 +21,12 @@ interface ExtinguisherTableProps {
   setSortColumns: React.Dispatch<React.SetStateAction<readonly SortColumn[]>>;
 }
 
-const ExtinguisherTable = ({ extinguisherData, mutateRemove, setSortColumns, sortColumns }: ExtinguisherTableProps) => {
+export const ExtinguisherTable = ({
+  extinguisherData,
+  mutateRemove,
+  setSortColumns,
+  sortColumns,
+}: ExtinguisherTableProps) => {
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
@@ -134,5 +139,3 @@ const ExtinguisherTable = ({ extinguisherData, mutateRemove, setSortColumns, sor
     </>
   );
 };
-
-export default ExtinguisherTable;

@@ -8,7 +8,7 @@ import buildOrderByQuery from '@/utils/buildOrderByQuery';
 import { sharepointContext } from '@/context/sharepointContext';
 import { ExtinguisherFiltersProps, ExtinguisherProps } from '../types/extinguisher.types';
 
-const useExtinguisher = () => {
+export const useExtinguisher = () => {
   const { crudParent } = sharepointContext();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -218,5 +218,3 @@ const useExtinguisher = () => {
     mutateExportExcel,
   };
 };
-
-export default useExtinguisher;

@@ -11,16 +11,16 @@ import Checkbox from '@/components/Checkbox';
 import { Button } from '@/components/Button';
 import TextField from '@/components/TextField';
 import { pageSizeData } from '@/utils/pageData.mock';
-import ExtinguisherQrcodePdf from './extinguisher-qrcode-pdf';
+import { ExtinguisherQrcodePdf } from './extinguisher-qrcode-pdf';
 import { SelectAutoComplete } from '@/components/SelectAutocomplete';
-import useExtinguisherQrCodeData from '../hooks/extinguisher-qrcode.hook';
+import { useExtinguisherQrCode } from '../hooks/extinguisher-qrcode.hook';
 
 interface ExtinguisherQrcodeModalProps {
   open: boolean | null;
   onOpenChange: () => void;
 }
 
-const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModalProps) => {
+export const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModalProps) => {
   const site_value = localStorage.getItem('user_site');
 
   const {
@@ -35,7 +35,7 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
     toggleSelectAll,
     toggleSelectItem,
     selectAll,
-  } = useExtinguisherQrCodeData();
+  } = useExtinguisherQrCode();
 
   const exportToPdf = async () => {
     if (!pageSize) return;
@@ -162,5 +162,3 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
     </Modal>
   );
 };
-
-export default ExtinguisherQrcodeModal;

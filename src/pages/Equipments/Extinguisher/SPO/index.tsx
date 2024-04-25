@@ -5,10 +5,10 @@ import { faDownload, faExpand } from '@fortawesome/free-solid-svg-icons';
 import Toast from '@/components/Toast';
 import LayoutBase from '@/layout/LayoutBase';
 import { Button } from '@/components/Button';
-import useExtinguisher from './hooks/extinguisher.hook';
-import ExtinguisherTable from './components/extinguisher-table';
-import ExtinguisherFilters from './components/extinguisher-filters';
-import EquipmentsExtinguisherQrcodeModal from './components/extinguisher-qrcode-modal';
+import { useExtinguisher } from './hooks/extinguisher.hook';
+import { ExtinguisherTable } from './components/extinguisher-table';
+import { ExtinguisherFilters } from './components/extinguisher-filters';
+import { ExtinguisherQrcodeModal } from './components/extinguisher-qrcode-modal';
 
 const EquipmentsExtinguisherSPO = () => {
   const navigate = useNavigate();
@@ -86,10 +86,7 @@ const EquipmentsExtinguisherSPO = () => {
         </div>
 
         {openModalGenerateQRCode && (
-          <EquipmentsExtinguisherQrcodeModal
-            open={openModalGenerateQRCode}
-            onOpenChange={() => setOpenModalGenerateQRCode(null)}
-          />
+          <ExtinguisherQrcodeModal open={openModalGenerateQRCode} onOpenChange={() => setOpenModalGenerateQRCode(null)} />
         )}
       </LayoutBase>
 

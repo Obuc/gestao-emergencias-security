@@ -8,46 +8,46 @@ import years from '@/utils/years.mock';
 import { Select } from '@/components/Select';
 import TextField from '@/components/TextField';
 import CardEmpy from '../../../components/ui/CardEmpy';
+import { useValveModal } from '../hooks/valve-modal.hook';
 import { EquipmentCard } from '../../../components/ui/Card';
 import CardSkeleton from '../../../components/ui/CardSkeleton';
-import { useHydrantModal } from '../hooks/hydrants-modal.hook';
 
-export const HydrantModal = () => {
+export const ValveModal = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  const { hydrantModalData, historyModalData, year, setYear } = useHydrantModal();
-  const [hydrantItem, setHydrantItem] = useState<boolean | null>(null);
+  const { valveModalData, historyModalData, year, setYear } = useValveModal();
+  const [valveItem, setValveItem] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (params?.id) {
-      setHydrantItem(true);
+      setValveItem(true);
     }
   }, [params.id]);
 
   const handleOnOpenChange = () => {
-    setHydrantItem(null);
-    navigate('/equipments/hydrant');
+    setValveItem(null);
+    navigate('/equipments/valve');
   };
 
   return (
     <Modal
       className="w-[65.125rem]"
-      open={hydrantItem !== null}
+      open={valveItem !== null}
       onOpenChange={handleOnOpenChange}
-      title={`Equipamento Hidrante N°${params.id}`}
+      title={`Equipamento Válvula de Governo N°${params.id}`}
     >
       <>
         <div className="pt-6 px-8">
           <div className="flex gap-2 py-2">
             <TextField
               disabled
-              id="cod_hidrante"
-              name="cod_hidrante"
-              label="N° Hidrante"
+              id="cod_equipamento"
+              name="cod_equipamento"
+              label="N° Válvula"
               width="w-[10rem]"
-              value={hydrantModalData.data?.cod_hidrante ?? ''}
-              isLoading={hydrantModalData.isLoading}
+              value={valveModalData.data?.cod_equipamento ?? ''}
+              isLoading={valveModalData.isLoading}
             />
 
             <TextField
@@ -56,8 +56,8 @@ export const HydrantModal = () => {
               name="site"
               label="Site"
               width="w-[10rem]"
-              value={hydrantModalData.data?.site ?? ''}
-              isLoading={hydrantModalData.isLoading}
+              value={valveModalData.data?.site ?? ''}
+              isLoading={valveModalData.isLoading}
             />
 
             <TextField
@@ -66,8 +66,8 @@ export const HydrantModal = () => {
               name="predio"
               label="Prédio"
               width="w-[10rem]"
-              value={hydrantModalData.data?.predio ?? ''}
-              isLoading={hydrantModalData.isLoading}
+              value={valveModalData.data?.predio ?? ''}
+              isLoading={valveModalData.isLoading}
             />
 
             <TextField
@@ -75,8 +75,8 @@ export const HydrantModal = () => {
               id="pavimento"
               name="pavimento"
               label="Pavimento"
-              value={hydrantModalData.data?.pavimento ?? ''}
-              isLoading={hydrantModalData.isLoading}
+              value={valveModalData.data?.pavimento ?? ''}
+              isLoading={valveModalData.isLoading}
             />
           </div>
 
@@ -86,18 +86,8 @@ export const HydrantModal = () => {
               id="local"
               name="local"
               label="Local"
-              value={hydrantModalData.data?.local ?? ''}
-              isLoading={hydrantModalData.isLoading}
-            />
-
-            <TextField
-              disabled
-              id="possui_abrigo"
-              name="possui_abrigo"
-              label="Possui Abrigo ?"
-              width="w-[10rem]"
-              value={hydrantModalData.data?.possui_abrigo ? 'Sim' : 'Não' ?? ''}
-              isLoading={hydrantModalData.isLoading}
+              value={valveModalData.data?.local ?? ''}
+              isLoading={valveModalData.isLoading}
             />
           </div>
         </div>
@@ -141,8 +131,8 @@ export const HydrantModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/hydrant/${item.Id}`} />
-                  <EquipmentCard.Content date={cardDate} responsible={item.bombeiro.Title} action={item.observacao} />
+                  <EquipmentCard.Header title={cardTitle} link={`/records/valve/${item.Id}`} />
+                  <EquipmentCard.Content date={cardDate} responsible={item.bombeiro_id.Title} action={item.observacao} />
                 </EquipmentCard.Root>
               );
             })}

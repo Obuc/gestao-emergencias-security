@@ -7,6 +7,7 @@ import Equipments from '../pages/Equipments';
 import TestCmiBXO from '../pages/Records/TestCmi/BXO';
 import HydrantBXO from '../pages/Records/Hydrant/BXO';
 import LoadRatio from '../pages/Records/LoadRatio/BXO';
+import EquipmentsValveBXO from '../pages/Equipments/Valve/BXO';
 import ExtinguisherBXO from '../pages/Records/Extinguisher/BXO';
 import InspectionCmiBXO from '../pages/Records/InspectionCmi/BXO';
 import EquipmentsHydrantBXO from '../pages/Equipments/Hydrants/BXO';
@@ -64,6 +65,10 @@ export const BxoRoutes = () => {
       {/* Equipments - Hydrant */}
       <Route path="/equipments/hydrant" element={<EquipmentsHydrantBXO />} />
       <Route path="/equipments/hydrant/:id" element={<EquipmentsHydrantBXO />} />
+
+      {/* Equipments - Valve */}
+      <Route path="/equipments/valve" element={<EquipmentsValveBXO />} />
+      <Route path="/equipments/valve/:id" element={<EquipmentsValveBXO />} />
     </Routes>
   );
 };

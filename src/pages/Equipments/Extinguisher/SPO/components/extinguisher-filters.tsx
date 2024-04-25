@@ -12,7 +12,7 @@ interface IFilters {
   handleApplyFilters: () => void;
 }
 
-const ExtinguisherFilters = ({
+export const ExtinguisherFilters = ({
   tempTableFilters,
   setTempTableFilters,
   handleRemoveAllFilters,
@@ -135,5 +135,3 @@ const ExtinguisherFilters = ({
     </Popover.Root>
   );
 };
-
-export default ExtinguisherFilters;

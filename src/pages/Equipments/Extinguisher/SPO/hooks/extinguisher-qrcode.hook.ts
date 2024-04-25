@@ -5,7 +5,7 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { sharepointContext } from '@/context/sharepointContext';
 import { ExtinguisherProps } from '../types/extinguisher.types';
 
-const useExtinguisherQrCode = () => {
+export const useExtinguisherQrCode = () => {
   const location = useLocation();
   const { crudParent } = sharepointContext();
 
@@ -77,5 +77,3 @@ const useExtinguisherQrCode = () => {
     selectAll,
   };
 };
-
-export default useExtinguisherQrCode;

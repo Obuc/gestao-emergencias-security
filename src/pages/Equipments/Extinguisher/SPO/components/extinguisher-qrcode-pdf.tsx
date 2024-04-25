@@ -6,7 +6,13 @@ import HeaderBg from '@/assets/Caminho 3692.png';
 import { stylesQRCode } from '@/utils/PDFStyles';
 import { ExtinguisherProps } from '../types/extinguisher.types';
 
-const ExtinguisherQrcodePdf = ({ data, pageSize }: { data: Array<ExtinguisherProps>; pageSize: StandardPageSize }) => {
+export const ExtinguisherQrcodePdf = ({
+  data,
+  pageSize,
+}: {
+  data: Array<ExtinguisherProps>;
+  pageSize: StandardPageSize;
+}) => {
   const generateQRCodeURL = (value: any) => {
     const qrCodeValue = `Extintor;SP;São Paulo;SPO - Site São Paulo;${value?.Predio};${value?.Title};${value?.Tipo};${value?.peso_extintor};${value?.Pavimento};${value?.LocEsp}`;
 
@@ -37,5 +43,3 @@ const ExtinguisherQrcodePdf = ({ data, pageSize }: { data: Array<ExtinguisherPro
     </Document>
   );
 };
-
-export default ExtinguisherQrcodePdf;

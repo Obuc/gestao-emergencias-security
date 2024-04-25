@@ -2,25 +2,25 @@ import useParams from '@/hooks/useParams';
 import { Button } from '@/components/Button';
 import TextField from '@/components/TextField';
 import { Popover } from '@/components/Popover';
+import { ValveFiltersProps } from '../types/valve.types';
 import { SelectAutoComplete } from '@/components/SelectAutocomplete';
-import { ExtinguisherFiltersProps } from '../types/extinguisher.types';
 
 interface IFilters {
-  tempTableFilters: ExtinguisherFiltersProps;
-  setTempTableFilters: React.Dispatch<React.SetStateAction<ExtinguisherFiltersProps>>;
+  tempTableFilters: ValveFiltersProps;
+  setTempTableFilters: React.Dispatch<React.SetStateAction<ValveFiltersProps>>;
   handleRemoveAllFilters: () => void;
   countAppliedFilters: () => number;
   handleApplyFilters: () => void;
 }
 
-const ExtinguisherFilters = ({
+export const ValveFilters = ({
   tempTableFilters,
   setTempTableFilters,
   handleRemoveAllFilters,
   countAppliedFilters,
   handleApplyFilters,
 }: IFilters) => {
-  const { pavimento, local, tipo_extintor } = useParams();
+  const { pavimento, local } = useParams();
 
   return (
     <Popover.Root>
@@ -50,12 +50,12 @@ const ExtinguisherFilters = ({
           />
 
           <TextField
-            label="Cód. Extintor"
-            id="extinguisherId"
-            name="extinguisherId"
-            value={tempTableFilters.extinguisherId || ''}
+            label="Cód. Válvula"
+            id="valveId"
+            name="valveId"
+            value={tempTableFilters.valveId || ''}
             onChange={(event) => {
-              setTempTableFilters((prev) => ({ ...prev, extinguisherId: event.target.value }));
+              setTempTableFilters((prev) => ({ ...prev, valveId: event.target.value }));
             }}
           />
 
@@ -90,18 +90,13 @@ const ExtinguisherFilters = ({
             }}
           />
 
-          <SelectAutoComplete.Fixed
-            id="extinguisherType"
-            name="extinguisherType"
-            label="Tipo de extintor"
-            isSearchable
-            value={tempTableFilters.extinguisherType}
-            options={tipo_extintor.data?.map((item) => ({
-              value: item.Id,
-              label: item.Title,
-            }))}
-            onChange={(value: any) => {
-              setTempTableFilters((prev) => ({ ...prev, extinguisherType: value }));
+          <TextField
+            label="Prédio"
+            id="predio"
+            name="predio"
+            value={tempTableFilters.predio || ''}
+            onChange={(event) => {
+              setTempTableFilters((prev) => ({ ...prev, predio: event.target.value }));
             }}
           />
 
@@ -141,5 +136,3 @@ const ExtinguisherFilters = ({
     </Popover.Root>
   );
 };
-
-export default ExtinguisherFilters;

@@ -85,7 +85,7 @@ export const HydrantQrcodeModal = ({ open, onOpenChange }: HydrantQrcodeModalPro
                     <Checkbox checked={selectAll} onClick={toggleSelectAll} />
                   </Table.Th>
                   <Table.Th>#</Table.Th>
-                  <Table.Th>Cód. Hidrant</Table.Th>
+                  <Table.Th>Cód. Hidrante</Table.Th>
                   <Table.Th>Predio</Table.Th>
                   <Table.Th>Local</Table.Th>
                   <Table.Th>Pavimento</Table.Th>

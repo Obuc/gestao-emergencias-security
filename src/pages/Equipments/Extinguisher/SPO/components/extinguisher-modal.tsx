@@ -10,9 +10,9 @@ import TextField from '@/components/TextField';
 import CardEmpy from '../../../components/ui/CardEmpy';
 import { EquipmentCard } from '../../../components/ui/Card';
 import CardSkeleton from '../../../components/ui/CardSkeleton';
-import useExtinguisherModal from '../hooks/extinguisher-modal.hook';
+import { useExtinguisherModal } from '../hooks/extinguisher-modal.hook';
 
-const ExtinguisherModal = () => {
+export const ExtinguisherModal = () => {
   const params = useParams();
   const navigate = useNavigate();
 
@@ -164,5 +164,3 @@ const ExtinguisherModal = () => {
     </Modal>
   );
 };
-
-export default ExtinguisherModal;

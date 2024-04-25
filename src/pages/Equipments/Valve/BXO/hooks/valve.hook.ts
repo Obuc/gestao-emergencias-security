@@ -6,9 +6,9 @@ import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-q
 
 import buildOrderByQuery from '@/utils/buildOrderByQuery';
 import { sharepointContext } from '@/context/sharepointContext';
-import { ExtinguisherFiltersProps, ExtinguisherProps } from '../types/extinguisher.types';
+import { ValveFiltersProps, ValveProps } from '../types/valve.types';
 
-const useExtinguisher = () => {
+export const useValve = () => {
   const { crud } = sharepointContext();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -16,34 +16,34 @@ const useExtinguisher = () => {
 
   const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([{ columnKey: 'Modified', direction: 'DESC' }]);
 
-  const sessionFiltersActions = sessionStorage.getItem('session_filters_equipments_extinguisher');
-  const sessionFiltersActionsJSON: ExtinguisherFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
+  const sessionFiltersActions = sessionStorage.getItem('session_filters_equipments_valve_bxo');
+  const sessionFiltersActionsJSON: ValveFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
 
   const initialFiltersValues = {
     id: sessionFiltersActionsJSON?.id ? sessionFiltersActionsJSON.id : null,
     pavement: sessionFiltersActionsJSON?.pavement ? sessionFiltersActionsJSON.pavement : null,
     place: sessionFiltersActionsJSON?.place ? sessionFiltersActionsJSON.place : [],
-    extinguisherType: sessionFiltersActionsJSON?.extinguisherType ? sessionFiltersActionsJSON.extinguisherType : null,
-    extinguisherId: sessionFiltersActionsJSON?.extinguisherId ? sessionFiltersActionsJSON.extinguisherId : null,
+    valveId: sessionFiltersActionsJSON?.valveId ? sessionFiltersActionsJSON.valveId : null,
     conformity: sessionFiltersActionsJSON?.conformity ? sessionFiltersActionsJSON.conformity : null,
+    predio: sessionFiltersActionsJSON?.predio ? sessionFiltersActionsJSON.predio : null,
   };
 
-  const [tableFilters, setTableFilters] = useState<ExtinguisherFiltersProps>(initialFiltersValues);
-  const [tempTableFilters, setTempTableFilters] = useState<ExtinguisherFiltersProps>(initialFiltersValues);
+  const [tableFilters, setTableFilters] = useState<ValveFiltersProps>(initialFiltersValues);
+  const [tempTableFilters, setTempTableFilters] = useState<ValveFiltersProps>(initialFiltersValues);
 
   const handleRemoveAllFilters = () => {
     const filters = {
       id: null,
       pavement: null,
       place: [],
-      extinguisherType: null,
-      extinguisherId: null,
+      valveId: null,
       conformity: null,
+      predio: null,
     };
 
     setTableFilters(filters);
     setTempTableFilters(filters);
-    sessionStorage.removeItem('session_filters_equipments_extinguisher');
+    sessionStorage.removeItem('session_filters_equipments_valve_bxo');
   };
 
   const countAppliedFilters = () => {
@@ -51,43 +51,30 @@ const useExtinguisher = () => {
     if (tableFilters.id) count++;
     if (tableFilters.pavement) count++;
     if (tableFilters.place.length > 0) count++;
-    if (tableFilters.extinguisherType) count++;
-    if (tableFilters.extinguisherId) count++;
+    if (tableFilters.valveId) count++;
     if (tableFilters.conformity) count++;
+    if (tableFilters.predio) count++;
 
     return count;
   };
 
   const handleApplyFilters = () => {
     setTableFilters(tempTableFilters);
-    sessionStorage.setItem('session_filters_equipments_extinguisher', JSON.stringify(tempTableFilters));
+    sessionStorage.setItem('session_filters_equipments_valve_bxo', JSON.stringify(tempTableFilters));
   };
 
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
     const orderByQuery = buildOrderByQuery(sortColumns);
 
-    let path = `?$Select=Id,cod_qrcode,cod_extintor,excluido,Modified,conforme,site/Title,pavimento/Title,local/Title,tipo_extintor/Title&$expand=site,pavimento,tipo_extintor,local&$Top=25&${orderByQuery}&$Filter=(site/Title eq '${user_site}') and (excluido eq 'false')`;
+    let path = `?$Select=Id,cod_qrcode,predio/Title,cod_equipamento,Modified,excluido,tipo_equipamento/Title,conforme,site/Title,pavimento/Title,local/Title&$expand=site,tipo_equipamento,pavimento,local,predio&$Orderby=Modified desc&$Top=25&${orderByQuery}&$Filter=(site/Title eq '${user_site}') and (tipo_equipamento/Title eq 'Válvulas de Governo') and (excluido eq 'false')`;
 
-    if (tableFilters?.id) {
-      path += ` and ( Id eq '${tableFilters?.id}')`;
-    }
-
-    if (tableFilters?.extinguisherId) {
-      path += ` and ( substringof('${tableFilters?.extinguisherId}', cod_extintor ))`;
-    }
-
-    if (tableFilters?.pavement) {
-      path += ` and (pavimento/Title eq '${tableFilters?.pavement.label}')`;
-    }
-
-    if (tableFilters?.place.length > 0) {
+    if (tableFilters?.place) {
       for (let i = 0; i < tableFilters.place.length; i++) {
-        path += `${i === 0 ? ' and' : ' or'} (local/Title eq '${tableFilters.place[i].label}')`;
+        path += `${i === 0 ? ' and' : ' or'} (local/Title eq '${tableFilters.place[i]}')`;
       }
     }
-
-    if (tableFilters?.extinguisherType) {
-      path += ` and (tipo_extintor/Title eq '${tableFilters?.extinguisherType?.label}')`;
+    if (tableFilters?.pavement?.value) {
+      path += ` and (pavimento/Title eq '${tableFilters?.pavement?.label}')`;
     }
 
     if (tableFilters?.conformity && tableFilters?.conformity === 'Conforme') {
@@ -98,15 +85,33 @@ const useExtinguisher = () => {
       path += ` and (conforme eq 'false')`;
     }
 
-    const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'extintores', path });
+    if (tableFilters?.valveId) {
+      path += ` and ( substringof('${tableFilters?.valveId}', cod_equipamento ))`;
+    }
+
+    if (tableFilters?.predio) {
+      path += ` and ( substringof('${tableFilters?.predio}', predio/Title ))`;
+    }
+
+    if (tableFilters?.id) {
+      path += ` and ( Id eq '${tableFilters?.id}')`;
+    }
+
+    if (tableFilters?.place) {
+      for (let i = 0; i < tableFilters.place.length; i++) {
+        path += `${i === 0 ? ' and' : ' or'} (local/Title eq '${tableFilters.place[i]}')`;
+      }
+    }
+
+    const response = await crud.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'equipamentos_diversos', path });
     const dataWithTransformations = await Promise.all(
       response?.data?.value?.map(async (item: any) => {
         return {
           ...item,
           local: item.local?.Title,
           pavimento: item.pavimento?.Title,
-          tipo_extintor: item.tipo_extintor?.Title,
           site: item.site?.Title,
+          predio: item.predio?.Title,
         };
       }),
     );
@@ -120,30 +125,29 @@ const useExtinguisher = () => {
     };
   };
 
-  const extinguisherData = useInfiniteQuery({
-    queryKey: ['equipments_extinguisher_data', user_site, tableFilters, sortColumns],
-
+  const valveData = useInfiniteQuery({
+    queryKey: ['equipments_valve_data_bxo', user_site, tableFilters, sortColumns],
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: user_site === 'BXO' && location.pathname.includes('/equipments/extinguisher'),
+    enabled: user_site === 'BXO' && location.pathname.includes('/equipments/valve'),
   });
 
   const mutateRemove = useMutation({
     mutationFn: async (itemId: number) => {
-      await crud.updateItemList('extintores', itemId, { excluido: true });
+      await crud.updateItemList('equipamentos_diversos', itemId, { excluido: true });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['equipments_extinguisher_data', user_site, tableFilters, sortColumns],
+        queryKey: ['equipments_valve_data_bxo', user_site, tableFilters, sortColumns],
       });
     },
   });
 
   const fetchAllEquipments = async () => {
-    let path = `?$Select=Id,cod_qrcode,predio/Title,tipo_extintor/Title,pavimento/Title,local/Title,site/Title,cod_extintor,conforme&$expand=tipo_extintor,predio,site,pavimento,local&$Filter=(site/Title eq 'BXO')`;
+    let path = `?$Select=Id,cod_qrcode,predio/Title,cod_equipamento,Modified,excluido,tipo_equipamento/Title,conforme,site/Title,pavimento/Title,local/Title&$expand=site,tipo_equipamento,pavimento,local,predio&$Filter=((tipo_equipamento/Title eq 'Válvulas de Governo') and (site/Title eq 'BXO') and (excluido eq false))`;
 
-    const response = await crud.getListItems('extintores', path);
+    const response = await crud.getListItems('equipamentos_diversos', path);
 
     const dataWithTransformations = await Promise.all(
       response.map(async (item: any) => {
@@ -153,7 +157,6 @@ const useExtinguisher = () => {
           pavimento: item.pavimento?.Title,
           site: item.site?.Title,
           predio: item.predio?.Title,
-          tipo_extintor: item.tipo_extintor?.Title,
         };
       }),
     );
@@ -165,16 +168,7 @@ const useExtinguisher = () => {
     mutationFn: async () => {
       const data = await fetchAllEquipments();
 
-      const columns: (keyof ExtinguisherProps)[] = [
-        'Id',
-        'pavimento',
-        'local',
-        'predio',
-        'cod_extintor',
-        'tipo_extintor',
-        'conforme',
-        'site',
-      ];
+      const columns: (keyof ValveProps)[] = ['Id', 'site', 'predio', 'pavimento', 'local', 'cod_equipamento', 'conforme'];
 
       const headerRow = columns.map((column) => column.toString());
 
@@ -192,14 +186,14 @@ const useExtinguisher = () => {
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-        XLSX.utils.book_append_sheet(wb, ws, 'Extintores');
-        XLSX.writeFile(wb, `Equipamentos - Extintores.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, '');
+        XLSX.writeFile(wb, `Equipamentos - Valvula de Governo.xlsx`);
       }
     },
   });
 
   return {
-    extinguisherData,
+    valveData,
     tempTableFilters,
     setTempTableFilters,
     handleRemoveAllFilters,
@@ -211,5 +205,3 @@ const useExtinguisher = () => {
     mutateExportExcel,
   };
 };
-
-export default useExtinguisher;
