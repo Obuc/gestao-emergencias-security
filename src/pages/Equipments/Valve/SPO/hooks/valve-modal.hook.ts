@@ -18,7 +18,7 @@ const useValveModal = () => {
   };
 
   const fetchHistory = async (codigo: string) => {
-    const pathModal = `?$Select=Id,Created,tipo,idEquipamento,responsavel,item,idRegistro,novoCodigo,novaValidade&$filter=(idEquipamento eq ${codigo}) and (item eq 'Valvula')`;
+    const pathModal = `?$Select=Id,Created,tipo,idEquipamento,responsavel,item,idRegistro,novoCodigo,novaValidade&$orderby=Created desc&$filter=(idEquipamento eq ${codigo}) and (item eq 'Valvula')`;
 
     const resp = await crudParent.getListItemsv2('Historico_Equipamentos', pathModal);
 

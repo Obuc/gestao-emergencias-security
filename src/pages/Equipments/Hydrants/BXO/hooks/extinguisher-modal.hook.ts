@@ -18,7 +18,7 @@ const useExtinguisherModal = () => {
   const fechRecords = async (extinguisherId: number) => {
     const resp = await crud.getListItemsv2(
       'registros_extintor',
-      `?$Select=Id,extintor_id/Id,bombeiro_id/Title,cod_extintor,data_pesagem,novo,observacao,status,conforme,Created&$expand=bombeiro_id,extintor_id&$Filter=(extintor_id/Id eq '${extinguisherId}')`,
+      `?$Select=Id,extintor_id/Id,bombeiro_id/Title,cod_extintor,data_pesagem,novo,observacao,status,conforme,Created&$orderby=Created desc&$expand=bombeiro_id,extintor_id&$Filter=(extintor_id/Id eq '${extinguisherId}')`,
     );
     return resp.results || null;
   };

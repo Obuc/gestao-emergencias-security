@@ -2,23 +2,23 @@ import { parseISO } from 'date-fns';
 import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
-import { OeiModalProps } from '../types/oei.types';
 import { sharepointContext } from '@/context/sharepointContext';
+import { AmbulanceCheckModalProps } from '../types/ambulancecheck.types';
 
-export const useOeiModal = () => {
+export const useAmbulanceCheckModal = () => {
   const params = useParams();
   const location = useLocation();
   const { crudParent } = sharepointContext();
   const user_site = localStorage.getItem('user_site');
 
   const fetchEquipments = async () => {
-    const pathModal = `?$Select=Id,Predio,LocEsp,Title&$filter=(Id eq ${params.id}) and (Tipo eq 'OEI')`;
+    const pathModal = `?$Select=Id,Title&$filter=(Id eq ${params.id}) and (Tipo eq 'Ambulancia')`;
     const resp = await crudParent.getListItemsv2('Diversos_Equipamentos', pathModal);
     return resp.results[0];
   };
 
   const fetchHistory = async (codigo: string) => {
-    const pathModal = `?$Select=Id,Created,tipo,idEquipamento,responsavel,item,idRegistro,novoCodigo,novaValidade&$orderby=Created desc&$filter=(idEquipamento eq ${codigo}) and (item eq 'Oei')`;
+    const pathModal = `?$Select=Id,Created,tipo,idEquipamento,responsavel,item,idRegistro,novoCodigo,novaValidade&$orderby=Created desc&$filter=(idEquipamento eq ${codigo}) and (item eq 'Ambulancia')`;
 
     const resp = await crudParent.getListItemsv2('Historico_Equipamentos', pathModal);
 
@@ -47,15 +47,15 @@ export const useOeiModal = () => {
     return dataWithTransformations;
   };
 
-  const oeiModalData: UseQueryResult<OeiModalProps> = useQuery({
-    queryKey: ['equipments_oei_data_modal', params.id],
+  const ambulanceCheckModalData: UseQueryResult<AmbulanceCheckModalProps> = useQuery({
+    queryKey: ['equipments_ambulancecheck_data_modal', params.id],
     queryFn: async () => {
       if (params.id) {
-        const emergencyDoor = await fetchEquipments();
-        const history = emergencyDoor && (await fetchHistory(emergencyDoor.Id));
+        const ambulanceCheck = await fetchEquipments();
+        const history = ambulanceCheck && (await fetchHistory(ambulanceCheck.Id));
 
         return {
-          ...emergencyDoor,
+          ...ambulanceCheck,
           history: history,
         };
       } else {
@@ -64,14 +64,13 @@ export const useOeiModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/equipments/oei_operation'),
+    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/equipments/ambulance_check'),
   });
 
-  const qrCodeValue = `OEI;SP;São Paulo;SPO - Site São Paulo;${oeiModalData.data?.Predio};${oeiModalData.data?.LocEsp};${oeiModalData.data?.Title}`;
-  // OEI;SP;São Paulo;SP;SPO - Site São Paulo;104;1;30509
+  const qrCodeValue = `Ambulancia;SP;São Paulo;SPO - Site São Paulo;${ambulanceCheckModalData.data?.Title}`;
 
   return {
-    oeiModalData,
+    ambulanceCheckModalData,
     qrCodeValue,
   };
 };

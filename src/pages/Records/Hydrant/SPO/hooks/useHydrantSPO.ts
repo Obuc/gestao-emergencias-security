@@ -197,7 +197,7 @@ const useHydrantSPO = () => {
     queryFn: fetchHydrant,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: pathname.includes('/records/hydrants') && user_site === 'SPO',
+    enabled: pathname.includes('/records/hydrant') && user_site === 'SPO',
   });
 
   const mutateRemove = useMutation({

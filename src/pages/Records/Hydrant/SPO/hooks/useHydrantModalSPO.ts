@@ -23,7 +23,7 @@ const useHydrantModalSPO = () => {
   const hydrantModal = useQuery({
     queryKey: ['hydrant_data_modal_spo', params.id],
     queryFn: async () => {
-      if (params.id && pathname === `/records/hydrants/${params.id}` && user_site === 'SPO') {
+      if (params.id && pathname === `/records/hydrant/${params.id}` && user_site === 'SPO') {
         const resp = await crudParent.getListItemsv2(
           'Hidrantes',
           `?$Select=Id,Created,Responsavel1/Title,Title,CodLacre,CodMangueira,Local,Pavimento,LocalEsp,OData__x0048_id1,OData__x0048_id2,OData__x0041_bg1,OData__x0041_bg2,OData__x0053_nl1,OData__x0053_nl2,Obst1,Obst2,OData__x004c_cr1,OData__x004c_cr2,Insp1,Insp2,UF,Municipios,Site,Area,Diametro,Comprimento,codigo,Observacao&$Expand=Responsavel1&$Filter=(Id eq ${params.id})`,
@@ -46,7 +46,7 @@ const useHydrantModalSPO = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && pathname === `/records/hydrants/${params.id}` && user_site === 'SPO',
+    enabled: params.id !== undefined && pathname === `/records/hydrant/${params.id}` && user_site === 'SPO',
   });
 
   const mutateEdit = useMutation({
