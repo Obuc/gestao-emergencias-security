@@ -3,9 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
 import { sharepointContext } from '@/context/sharepointContext';
-import { ExtinguisherProps } from '../types/extinguisher.types';
+import { CmiInspectionProps } from '../types/cmiInspection.types';
 
-const useExtinguisherQrCode = () => {
+export const useCmiInspectionQrCode = () => {
   const location = useLocation();
   const { crud } = sharepointContext();
 
@@ -14,28 +14,26 @@ const useExtinguisherQrCode = () => {
 
   const [selectAll, setSelectAll] = useState(false);
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
-  const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<ExtinguisherProps[]>([]);
+  const [selectedItemsCmiInspection, setSelectedItemsCmiInspection] = useState<CmiInspectionProps[]>([]);
 
-  const extinguisherQrCodeData: UseQueryResult<Array<ExtinguisherProps>> = useQuery({
-    queryKey: ['equipments_extinguisher_data_qrcode', filterValue],
+  const cmiInspectionQrCodeData: UseQueryResult<Array<CmiInspectionProps>> = useQuery({
+    queryKey: ['equipments_cmi_test_data_qrcode_bxo', filterValue],
     queryFn: async () => {
-      let path = `?$Select=Id,cod_qrcode,predio/Title,tipo_extintor/Title,pavimento/Title,local/Title,site/Title,cod_extintor,conforme&$expand=tipo_extintor,predio,site,pavimento,local&$Filter=(site/Title eq 'BXO')`;
+      let path = `?$Select=Id,cod_qrcode,conforme,Modified,predio/Title,excluido,site/Title,pavimento/Title,tipo_equipamento/Title&$expand=site,pavimento,tipo_equipamento,predio&$Orderby=Modified desc&$Filter=(tipo_equipamento/Title eq 'Inspeção CMI') and (site/Title eq 'BXO') and (excluido eq 'false')`;
 
       if (filterValue) {
-        path += ` and (substringof('${filterValue}', Id) or substringof('${filterValue}', cod_extintor) or substringof('${filterValue}', predio/Title) or substringof('${filterValue}', local/Title) or substringof('${filterValue}', pavimento/Title))`;
+        path += ` and (substringof('${filterValue}', Id) or substringof('${filterValue}', cod_qrcode) or substringof('${filterValue}', predio/Title) or substringof('${filterValue}', pavimento/Title))`;
       }
 
-      const resp = await crud.getListItems('extintores', path);
+      const resp = await crud.getListItems('equipamentos_diversos', path);
 
       const dataWithTransformations = await Promise.all(
         resp.map(async (item: any) => {
           return {
             ...item,
-            local: item.local?.Title,
             pavimento: item.pavimento?.Title,
             site: item.site?.Title,
             predio: item.predio?.Title,
-            tipo_extintor: item.tipo_extintor?.Title,
           };
         }),
       );
@@ -44,20 +42,20 @@ const useExtinguisherQrCode = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: location.pathname.includes('/equipments/extinguisher'),
+    enabled: location.pathname.includes('/equipments/cmi_inspection'),
   });
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
-    if (!selectAll && extinguisherQrCodeData.data) {
-      setSelectedItemsExtinguisher(extinguisherQrCodeData.data);
+    if (!selectAll && cmiInspectionQrCodeData.data) {
+      setSelectedItemsCmiInspection(cmiInspectionQrCodeData.data);
     } else {
-      setSelectedItemsExtinguisher([]);
+      setSelectedItemsCmiInspection([]);
     }
   };
 
-  const toggleSelectItem = (item: ExtinguisherProps) => {
-    setSelectedItemsExtinguisher((prevSelected) => {
+  const toggleSelectItem = (item: CmiInspectionProps) => {
+    setSelectedItemsCmiInspection((prevSelected) => {
       if (prevSelected.some((selectedItem) => selectedItem.Id === item.Id)) {
         return prevSelected.filter((selectedItem) => selectedItem.Id !== item.Id);
       } else if (prevSelected.length < 10) {
@@ -74,12 +72,10 @@ const useExtinguisherQrCode = () => {
     setPageSize,
     generatePdf,
     setGeneratePdf,
-    selectedItemsExtinguisher,
-    extinguisherQrCodeData,
+    selectedItemsCmiInspection,
+    cmiInspectionQrCodeData,
     toggleSelectAll,
     toggleSelectItem,
     selectAll,
   };
 };
-
-export default useExtinguisherQrCode;
