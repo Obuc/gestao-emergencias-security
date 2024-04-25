@@ -9,104 +9,81 @@ import { Select } from '@/components/Select';
 import TextField from '@/components/TextField';
 import CardEmpy from '../../../components/ui/CardEmpy';
 import { EquipmentCard } from '../../../components/ui/Card';
+import { useCmiTestModal } from '../hooks/cmitest-modal.hook';
 import CardSkeleton from '../../../components/ui/CardSkeleton';
-import useextinguisherModalData from '../hooks/extinguisher-modal.hook';
 
-const ExtinguisherModal = () => {
+export const CmiTestModal = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  const { extinguisherModalData, historyModalData, year, setYear } = useextinguisherModalData();
-  const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
+  const { cmiTestModalData, historyModalData, year, setYear } = useCmiTestModal();
+  const [cmiTestItem, setCmiTestItem] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (params?.id) {
-      setExtinguisherItem(true);
+      setCmiTestItem(true);
     }
   }, [params.id]);
 
   const handleOnOpenChange = () => {
-    setExtinguisherItem(null);
-    navigate('/equipments/extinguisher');
+    setCmiTestItem(null);
+    navigate('/equipments/cmi_test');
   };
 
   return (
     <Modal
       className="w-[65.125rem]"
-      open={extinguisherItem !== null}
+      open={cmiTestItem !== null}
       onOpenChange={handleOnOpenChange}
-      title={`Registro Extintor N°${params.id}`}
+      title={`Equipamento Teste CMI N°${params.id}`}
     >
       <>
-        <div className="pt-6 px-8">
+        <div className="py-6 px-8">
           <div className="flex gap-2 py-2">
             <TextField
+              id="Id"
+              name="Id"
+              label="Número"
+              width="w-[6.25rem]"
               disabled
-              id="cod_extintor"
-              name="cod_extintor"
-              label="N° Extintor"
-              value={extinguisherModalData.data?.cod_extintor ?? ''}
-              isLoading={extinguisherModalData.isLoading}
+              value={cmiTestModalData.data?.Id || ''}
+              isLoading={cmiTestModalData.isLoading}
+            />
+            <TextField
+              id="cod_qrcode"
+              name="cod_qrcode"
+              label="Pavimento"
+              disabled
+              value={cmiTestModalData.data?.pavimento || ''}
+              isLoading={cmiTestModalData.isLoading}
             />
 
             <TextField
-              disabled
-              id="site"
-              name="site"
-              label="Site"
-              width="w-[10rem]"
-              value={extinguisherModalData.data?.site ?? ''}
-              isLoading={extinguisherModalData.isLoading}
-            />
-
-            <TextField
-              disabled
               id="predio"
               name="predio"
               label="Prédio"
-              width="w-[10rem]"
-              value={extinguisherModalData.data?.predio ?? ''}
-              isLoading={extinguisherModalData.isLoading}
-            />
-
-            <TextField
               disabled
-              id="tipo_extintor"
-              name="tipo_extintor"
-              label="Tipo Extintor"
-              width="w-[12rem]"
-              value={extinguisherModalData.data?.tipo_extintor ?? ''}
-              isLoading={extinguisherModalData.isLoading}
+              value={cmiTestModalData.data?.predio || ''}
+              isLoading={cmiTestModalData.isLoading}
             />
           </div>
 
           <div className="flex gap-2 py-2">
             <TextField
+              id="site"
+              name="site"
+              label="Site"
               disabled
-              id="pavimento"
-              name="pavimento"
-              label="Pavimento"
-              value={extinguisherModalData.data?.pavimento ?? ''}
-              isLoading={extinguisherModalData.isLoading}
+              value={cmiTestModalData.data?.site || ''}
+              isLoading={cmiTestModalData.isLoading}
             />
-
             <TextField
+              id="tipo_equipamento"
+              name="tipo_equipamento"
+              label="Tipo Equipamento"
               disabled
-              id="local"
-              name="local"
-              label="Local"
-              value={extinguisherModalData.data?.local ?? ''}
-              isLoading={extinguisherModalData.isLoading}
-            />
-
-            <TextField
-              disabled
-              id="massa"
-              name="massa"
-              label="Massa"
-              width="w-[8rem]"
-              value={extinguisherModalData.data?.massa ?? ''}
-              isLoading={extinguisherModalData.isLoading}
+              value={cmiTestModalData.data?.tipo_equipamento || ''}
+              isLoading={cmiTestModalData.isLoading}
             />
           </div>
         </div>
@@ -142,28 +119,19 @@ const ExtinguisherModal = () => {
           {!historyModalData.data?.length && !historyModalData.isLoading && <CardEmpy />}
           {historyModalData.isLoading && <CardSkeleton />}
 
-          {historyModalData.data &&
+          {historyModalData &&
             historyModalData.data?.map((item) => {
-              const cardVariant =
-                item.conforme && !item.novo ? 'new' : item.conforme && item.novo ? 'modification' : 'noncompliant';
-
-              const cardTitle =
-                item.conforme && !item.novo
-                  ? 'Nova Verificação'
-                  : item.conforme && item.novo
-                  ? 'Alteração do Equipamento'
-                  : 'Verificação Inconforme';
-
+              const cardVariant = item.conforme ? 'new' : 'noncompliant';
+              const cardTitle = item.conforme ? 'Nova Verificação' : 'Verificação Inconforme';
               const cardDate = format(new Date(item.Created), 'dd MMM yyyy', { locale: ptBR });
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/extinguisher/${item.Id}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/records/cmi_test/${item.Id}`} />
                   <EquipmentCard.Content
                     date={cardDate}
                     responsible={item.bombeiro_id.Title}
                     observation={item.observacao}
-                    cod={item?.cod_extintor}
                   />
                 </EquipmentCard.Root>
               );
@@ -173,5 +141,3 @@ const ExtinguisherModal = () => {
     </Modal>
   );
 };
-
-export default ExtinguisherModal;

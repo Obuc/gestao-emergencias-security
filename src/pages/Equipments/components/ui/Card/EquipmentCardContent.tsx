@@ -5,9 +5,18 @@ interface IEquipmentCardContentProps {
   cod?: string;
   newCod?: string;
   newDate?: string;
+  observation?: string;
 }
 
-export const EquipmentCardContent = ({ responsible, date, action, cod, newCod, newDate }: IEquipmentCardContentProps) => {
+export const EquipmentCardContent = ({
+  responsible,
+  date,
+  action,
+  cod,
+  newCod,
+  newDate,
+  observation,
+}: IEquipmentCardContentProps) => {
   return (
     <div className="flex gap-4 flex-col mt-4">
       <div className="flex w-full justify-between">
@@ -18,6 +27,13 @@ export const EquipmentCardContent = ({ responsible, date, action, cod, newCod, n
           <strong className="text-[#282828]">Data:</strong> {date}
         </span>
       </div>
+
+      {observation && (
+        <span>
+          <strong className="text-[#282828]">Observações:</strong> {observation}
+        </span>
+      )}
+
       {action && (
         <span>
           <strong className="text-[#282828]">Ação:</strong> Verificação de {action}

@@ -11,16 +11,16 @@ import Checkbox from '@/components/Checkbox';
 import { Button } from '@/components/Button';
 import TextField from '@/components/TextField';
 import { pageSizeData } from '@/utils/pageData.mock';
-import ExtinguisherQrcodePdf from './extinguisher-qrcode-pdf';
+import { CmiTestQrcodePdf } from './cmitest-qrcode-pdf';
+import { useCmiTestQrCode } from '../hooks/cmitest-qrcode.hook';
 import { SelectAutoComplete } from '@/components/SelectAutocomplete';
-import useextinguisherQrCodeData from '../hooks/extinguisher-qrcode.hook';
 
-interface ExtinguisherQrcodeModalProps {
+interface CmiTestQrcodeModalProps {
   open: boolean | null;
   onOpenChange: () => void;
 }
 
-const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModalProps) => {
+export const CmiTestQrcodeModal = ({ open, onOpenChange }: CmiTestQrcodeModalProps) => {
   const site_value = localStorage.getItem('user_site');
 
   const {
@@ -30,26 +30,26 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
     setPageSize,
     generatePdf,
     setGeneratePdf,
-    selectedItemsExtinguisher,
-    extinguisherQrCodeData,
+    selectedItemsCmiTest,
+    cmiTestQrCodeData,
     toggleSelectAll,
     toggleSelectItem,
     selectAll,
-  } = useextinguisherQrCodeData();
+  } = useCmiTestQrCode();
 
   const exportToPdf = async () => {
     if (!pageSize) return;
 
     setGeneratePdf(true);
     const blob = await pdf(
-      <ExtinguisherQrcodePdf data={selectedItemsExtinguisher} pageSize={pageSize.value as StandardPageSize} />,
+      <CmiTestQrcodePdf data={selectedItemsCmiTest} pageSize={pageSize.value as StandardPageSize} />,
     ).toBlob();
-    saveAs(blob, `QRCode Extintores - ${site_value}.pdf`);
+    saveAs(blob, `QRCode Teste CMI - ${site_value}.pdf`);
     setGeneratePdf(false);
   };
 
   return (
-    <Modal className="min-w-[68.75rem]" open={open !== null} onOpenChange={onOpenChange} title={`Gerar QRCodes: Exintor`}>
+    <Modal className="min-w-[68.75rem]" open={open !== null} onOpenChange={onOpenChange} title={`Gerar QRCodes: Teste CMI`}>
       <div className="flex flex-col gap-2 px-8 py-6 text-primary-font">
         <span className="text-lg py-4">Selecione abaixo os equipamentos que deseja gerar os QRCodes.</span>
 
@@ -85,34 +85,33 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
                     <Checkbox checked={selectAll} onClick={toggleSelectAll} />
                   </Table.Th>
                   <Table.Th>#</Table.Th>
-                  <Table.Th>Cód. Extintor</Table.Th>
+                  <Table.Th>Código</Table.Th>
                   <Table.Th>Predio</Table.Th>
-                  <Table.Th>Local</Table.Th>
                   <Table.Th>Pavimento</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody className="overflow-y-scroll">
-                {extinguisherQrCodeData.data?.length === 0 && (
+                {cmiTestQrCodeData.data?.length === 0 && (
                   <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                    <Table.Td colSpan={6} className="text-center text-primary-font">
+                    <Table.Td colSpan={5} className="text-center text-primary-font">
                       Nenhum extintor encontrado!
                     </Table.Td>
                   </Table.Tr>
                 )}
 
-                {extinguisherQrCodeData.isError && (
+                {cmiTestQrCodeData.isError && (
                   <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                    <Table.Td colSpan={6} className="text-center text-primary-font">
+                    <Table.Td colSpan={5} className="text-center text-primary-font">
                       Ops, ocorreu um erro, recarregue a página e tente novamente!
                     </Table.Td>
                   </Table.Tr>
                 )}
 
-                {extinguisherQrCodeData.isLoading && (
+                {cmiTestQrCodeData.isLoading && (
                   <>
                     {Array.from({ length: 15 }).map((_, index) => (
                       <Table.Tr key={index}>
-                        <Table.Td className="h-14 px-4" colSpan={6}>
+                        <Table.Td className="h-14 px-4" colSpan={5}>
                           <Skeleton height="3.5rem" animation="wave" />
                         </Table.Td>
                       </Table.Tr>
@@ -120,19 +119,18 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
                   </>
                 )}
 
-                {extinguisherQrCodeData.data &&
-                  extinguisherQrCodeData.data.map((item) => (
+                {cmiTestQrCodeData.data &&
+                  cmiTestQrCodeData.data.map((item) => (
                     <Table.Tr key={item.Id}>
                       <Table.Td className="pl-8">
                         <Checkbox
-                          checked={selectedItemsExtinguisher.some((selectedItem) => selectedItem.Id === item.Id)}
+                          checked={selectedItemsCmiTest.some((selectedItem) => selectedItem.Id === item.Id)}
                           onClick={() => toggleSelectItem(item)}
                         />
                       </Table.Td>
                       <Table.Td>{item.Id}</Table.Td>
-                      <Table.Td>{item.cod_extintor ?? '-'}</Table.Td>
+                      <Table.Td>{item.cod_qrcode ?? '-'}</Table.Td>
                       <Table.Td>{item.predio}</Table.Td>
-                      <Table.Td>{item.local}</Table.Td>
                       <Table.Td>{item.pavimento}</Table.Td>
                     </Table.Tr>
                   ))}
@@ -145,7 +143,7 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
               fill
               onClick={exportToPdf}
               className="min-w-[12rem] h-10"
-              disabled={generatePdf || !selectedItemsExtinguisher.length || pageSize === null}
+              disabled={generatePdf || !selectedItemsCmiTest.length || pageSize === null}
             >
               {generatePdf ? (
                 <Button.Spinner />
@@ -162,5 +160,3 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
     </Modal>
   );
 };
-
-export default ExtinguisherQrcodeModal;

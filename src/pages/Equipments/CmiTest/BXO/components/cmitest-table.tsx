@@ -6,27 +6,27 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Toast from '@/components/Toast';
 import isAtBottom from '@/utils/isAtBottom';
+import { CmiTestModal } from './cmitest-modal';
 import CustomDataGrid from '@/components/DataGrid';
-import ExtinguisherModal from './extinguisher-modal';
 import PopoverTables from '@/components/PopoverTables';
+import { CmiTestProps } from '../types/cmitest.types';
 import RemoveItem from '@/components/AppModals/RemoveItem';
-import { ExtinguisherProps } from '../types/extinguisher.types';
 import DataGridLoadMore from '@/components/DataGrid/DataGridLoadMore';
 import { UseInfiniteQueryResult, UseMutationResult } from '@tanstack/react-query';
 
-interface ExtinguisherTableProps {
-  extinguisherData: UseInfiniteQueryResult<any, unknown>;
+interface CmiTestTableProps {
+  cmiTestData: UseInfiniteQueryResult<any, unknown>;
   mutateRemove: UseMutationResult<void, unknown, number, unknown>;
   sortColumns: readonly SortColumn[];
   setSortColumns: React.Dispatch<React.SetStateAction<readonly SortColumn[]>>;
 }
 
-const ExtinguisherTable = ({ extinguisherData, mutateRemove, setSortColumns, sortColumns }: ExtinguisherTableProps) => {
+export const CmiTestTable = ({ cmiTestData, mutateRemove, setSortColumns, sortColumns }: CmiTestTableProps) => {
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/extinguisher/${id}`);
+    navigate(`/equipments/cmi_test/${id}`);
   };
 
   const handleRemove = async () => {
@@ -36,28 +36,24 @@ const ExtinguisherTable = ({ extinguisherData, mutateRemove, setSortColumns, sor
     }
   };
 
-  const columns: readonly Column<ExtinguisherProps>[] = [
+  const columns: readonly Column<CmiTestProps>[] = [
     { key: 'Id', name: '#', resizable: true },
     { key: 'site/Title', name: 'Site', resizable: true },
+    { key: 'predio/Title', name: 'Prédio', resizable: true },
     { key: 'pavimento/Title', name: 'Pavimento', resizable: true },
-    { key: 'local/Title', name: 'Local', resizable: true, width: 200 },
-    { key: 'tipo_extintor/Title', name: 'Tipo Extintor', resizable: true },
-    { key: 'cod_extintor', name: 'N° Extintor', resizable: true },
     { key: 'conforme', name: 'Conformidade', resizable: true },
 
     { key: 'buttons', name: 'Ações', resizable: true, sortable: false },
   ];
 
   const mappedRows =
-    extinguisherData.data?.pages.flatMap(
+    cmiTestData.data?.pages.flatMap(
       (page) =>
-        page?.data?.value?.map((item: ExtinguisherProps) => ({
+        page?.data?.value?.map((item: CmiTestProps) => ({
           Id: <div className="pl-4">{item.Id}</div>,
           'site/Title': item?.site ? item.site : '',
+          'predio/Title': item?.predio ? item.predio : '',
           'pavimento/Title': item?.pavimento ? item.pavimento : '',
-          'local/Title': item?.local ? item.local : '',
-          'tipo_extintor/Title': item?.tipo_extintor ? item.tipo_extintor : '',
-          cod_extintor: item?.cod_extintor ? item.cod_extintor : '',
 
           conforme: (
             <div className="flex items-center h-full w-full">
@@ -85,7 +81,7 @@ const ExtinguisherTable = ({ extinguisherData, mutateRemove, setSortColumns, sor
 
   const handleScroll = async (event: React.UIEvent<HTMLDivElement>) => {
     if (!isAtBottom(event)) return;
-    extinguisherData.fetchNextPage();
+    cmiTestData.fetchNextPage();
   };
 
   return (
@@ -104,10 +100,10 @@ const ExtinguisherTable = ({ extinguisherData, mutateRemove, setSortColumns, sor
           setSortColumns={setSortColumns}
         />
 
-        {extinguisherData.isFetchingNextPage && <DataGridLoadMore />}
+        {cmiTestData.isFetchingNextPage && <DataGridLoadMore />}
       </div>
 
-      <ExtinguisherModal />
+      <CmiTestModal />
 
       {removeItem !== null && (
         <RemoveItem
@@ -132,5 +128,3 @@ const ExtinguisherTable = ({ extinguisherData, mutateRemove, setSortColumns, sor
     </>
   );
 };
-
-export default ExtinguisherTable;

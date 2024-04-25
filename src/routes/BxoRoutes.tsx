@@ -10,6 +10,7 @@ import LoadRatio from '../pages/Records/LoadRatio/BXO';
 import EquipmentsValveBXO from '../pages/Equipments/Valve/BXO';
 import ExtinguisherBXO from '../pages/Records/Extinguisher/BXO';
 import InspectionCmiBXO from '../pages/Records/InspectionCmi/BXO';
+import EquipmentsCmiTestBXO from '../pages/Equipments/CmiTest/BXO';
 import EquipmentsHydrantBXO from '../pages/Equipments/Hydrants/BXO';
 import GeneralChecklist from '../pages/Records/GeneralChecklist/BXO';
 import GovernanceValveBXO from '../pages/Records/GovernanceValve/BXO';
@@ -69,6 +70,10 @@ export const BxoRoutes = () => {
       {/* Equipments - Valve */}
       <Route path="/equipments/valve" element={<EquipmentsValveBXO />} />
       <Route path="/equipments/valve/:id" element={<EquipmentsValveBXO />} />
+
+      {/* Equipments - Cmi Test */}
+      <Route path="/equipments/cmi_test" element={<EquipmentsCmiTestBXO />} />
+      <Route path="/equipments/cmi_test/:id" element={<EquipmentsCmiTestBXO />} />
     </Routes>
   );
 };

@@ -142,7 +142,7 @@ export const HydrantModal = () => {
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
                   <EquipmentCard.Header title={cardTitle} link={`/records/hydrant/${item.Id}`} />
-                  <EquipmentCard.Content date={cardDate} responsible={item.bombeiro.Title} action={item.observacao} />
+                  <EquipmentCard.Content date={cardDate} responsible={item.bombeiro.Title} observation={item.observacao} />
                 </EquipmentCard.Root>
               );
             })}

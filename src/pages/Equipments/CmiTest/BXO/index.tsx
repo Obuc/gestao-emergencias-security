@@ -5,18 +5,18 @@ import { faDownload, faExpand } from '@fortawesome/free-solid-svg-icons';
 import Toast from '@/components/Toast';
 import LayoutBase from '@/layout/LayoutBase';
 import { Button } from '@/components/Button';
-import useExtinguisher from './hooks/extinguisher.hook';
-import ExtinguisherTable from './components/extinguisher-table';
-import ExtinguisherFilters from './components/extinguisher-filters';
-import EquipmentsExtinguisherQrcodeModal from './components/extinguisher-qrcode-modal';
+import { useCmiTest } from './hooks/cmitest.hook';
+import { CmiTestTable } from './components/cmitest-table';
+import { CmiTestFilters } from './components/cmitest-filters';
+import { CmiTestQrcodeModal } from './components/cmitest-qrcode-modal';
 
-const EquipmentsExtinguisherBXO = () => {
+const EquipmentsCmiTestBXO = () => {
   const navigate = useNavigate();
   const localSite = localStorage.getItem('user_site');
   const [openModalGenerateQRCode, setOpenModalGenerateQRCode] = useState<boolean | null>(null);
 
   const {
-    extinguisherData,
+    cmiTestData,
     mutateRemove,
     sortColumns,
     setSortColumns,
@@ -26,7 +26,7 @@ const EquipmentsExtinguisherBXO = () => {
     handleRemoveAllFilters,
     setTempTableFilters,
     tempTableFilters,
-  } = useExtinguisher();
+  } = useCmiTest();
 
   useEffect(() => {
     if (localSite === null) {
@@ -42,7 +42,7 @@ const EquipmentsExtinguisherBXO = () => {
             <div className="flex pb-8 items-center w-full justify-between">
               <div className="flex w-full items-center gap-2 text-2xl text-primary-font font-semibold">
                 <div className="w-3 h-3 rounded-full bg-primary" />
-                <h2>Extintores</h2>
+                <h2>Teste CMI</h2>
               </div>
 
               <div className="flex gap-2">
@@ -66,7 +66,7 @@ const EquipmentsExtinguisherBXO = () => {
                   <Button.Icon icon={faExpand} />
                 </Button.Root>
 
-                <ExtinguisherFilters
+                <CmiTestFilters
                   countAppliedFilters={countAppliedFilters}
                   handleApplyFilters={handleApplyFilters}
                   handleRemoveAllFilters={handleRemoveAllFilters}
@@ -76,8 +76,8 @@ const EquipmentsExtinguisherBXO = () => {
               </div>
             </div>
 
-            <ExtinguisherTable
-              extinguisherData={extinguisherData}
+            <CmiTestTable
+              cmiTestData={cmiTestData}
               mutateRemove={mutateRemove}
               sortColumns={sortColumns}
               setSortColumns={setSortColumns}
@@ -86,10 +86,7 @@ const EquipmentsExtinguisherBXO = () => {
         </div>
 
         {openModalGenerateQRCode && (
-          <EquipmentsExtinguisherQrcodeModal
-            open={openModalGenerateQRCode}
-            onOpenChange={() => setOpenModalGenerateQRCode(null)}
-          />
+          <CmiTestQrcodeModal open={openModalGenerateQRCode} onOpenChange={() => setOpenModalGenerateQRCode(null)} />
         )}
       </LayoutBase>
 
@@ -108,4 +105,4 @@ const EquipmentsExtinguisherBXO = () => {
   );
 };
 
-export default EquipmentsExtinguisherBXO;
+export default EquipmentsCmiTestBXO;

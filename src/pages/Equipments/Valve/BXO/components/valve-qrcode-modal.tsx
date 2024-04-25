@@ -49,7 +49,12 @@ export const ValveQrcodeModal = ({ open, onOpenChange }: ValveQrcodeModalProps) 
   };
 
   return (
-    <Modal className="min-w-[68.75rem]" open={open !== null} onOpenChange={onOpenChange} title={`Gerar QRCodes: Exintor`}>
+    <Modal
+      className="min-w-[68.75rem]"
+      open={open !== null}
+      onOpenChange={onOpenChange}
+      title={`Gerar QRCodes: Válvula de Governo`}
+    >
       <div className="flex flex-col gap-2 px-8 py-6 text-primary-font">
         <span className="text-lg py-4">Selecione abaixo os equipamentos que deseja gerar os QRCodes.</span>
 
