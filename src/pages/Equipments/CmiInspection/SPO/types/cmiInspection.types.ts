@@ -5,7 +5,13 @@ export interface CmiInspectionProps {
   Conforme: boolean;
 }
 
-interface CmiInspectionHistoryProps {
+export interface CmiInspectionModalProps {
+  Id: number;
+  Predio: string;
+  Title: string;
+}
+
+export interface CmiInspectionHistoryProps {
   Id: number;
   Created: Date;
   tipo: string;
@@ -15,14 +21,6 @@ interface CmiInspectionHistoryProps {
   idRegistro: number;
   novoCodigo: string;
   novaValidade: Date;
-}
-
-export interface CmiInspectionModalProps {
-  Id: number;
-  Predio: string;
-  Title: string;
-
-  history: Array<CmiInspectionHistoryProps>;
 }
 
 export interface CmiInspectionFiltersProps {

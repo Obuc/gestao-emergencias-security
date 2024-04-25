@@ -7,7 +7,15 @@ export interface DeaProps {
   Conforme: boolean;
 }
 
-interface DeaHistoryProps {
+export interface DeaModalProps {
+  Id: number;
+  Title: string;
+  Predio: string;
+  Codigo: string;
+  LocEsp: string;
+}
+
+export interface DeaHistoryProps {
   Id: number;
   Created: Date;
   tipo: string;
@@ -17,16 +25,6 @@ interface DeaHistoryProps {
   idRegistro: number;
   novoCodigo: string;
   novaValidade: Date;
-}
-
-export interface DeaModalProps {
-  Id: number;
-  Title: string;
-  Predio: string;
-  Codigo: string;
-  LocEsp: string;
-
-  history: Array<DeaHistoryProps>;
 }
 
 export interface DeaFiltersProps {

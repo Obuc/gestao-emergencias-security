@@ -4,7 +4,12 @@ export interface AmbulanceCheckProps {
   Conforme: boolean;
 }
 
-interface AmbulanceCheckHistoryProps {
+export interface AmbulanceCheckModalProps {
+  Id: number;
+  Title: string;
+}
+
+export interface AmbulanceCheckHistoryProps {
   Id: number;
   Created: Date;
   tipo: string;
@@ -14,13 +19,6 @@ interface AmbulanceCheckHistoryProps {
   idRegistro: number;
   novoCodigo: string;
   novaValidade: Date;
-}
-
-export interface AmbulanceCheckModalProps {
-  Id: number;
-  Title: string;
-
-  history: Array<AmbulanceCheckHistoryProps>;
 }
 
 export interface AmbulanceCheckFiltersProps {

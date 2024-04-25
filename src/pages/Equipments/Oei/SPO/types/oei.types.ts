@@ -7,7 +7,14 @@ export interface OeiProps {
   Conforme: boolean;
 }
 
-interface OeiHistoryProps {
+export interface OeiModalProps {
+  Id: number;
+  Predio: string;
+  Title: string;
+  LocEsp: string;
+}
+
+export interface OeiHistoryProps {
   Id: number;
   Created: Date;
   tipo: string;
@@ -17,15 +24,6 @@ interface OeiHistoryProps {
   idRegistro: number;
   novoCodigo: string;
   novaValidade: Date;
-}
-
-export interface OeiModalProps {
-  Id: number;
-  Predio: string;
-  Title: string;
-  LocEsp: string;
-
-  history: Array<OeiHistoryProps>;
 }
 
 export interface OeiFiltersProps {

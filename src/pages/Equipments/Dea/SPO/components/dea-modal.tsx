@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import Modal from '@/components/Modal';
+import years from '@/utils/years.mock';
+import { Select } from '@/components/Select';
 import TextField from '@/components/TextField';
 import { useDeaModal } from '../hooks/dea-modal.hook';
 import CardEmpy from '../../../components/ui/CardEmpy';
@@ -14,7 +16,7 @@ export const DeaModal = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  const { deaModalData } = useDeaModal();
+  const { deaModalData, historyModalData, setYear, year } = useDeaModal();
   const [valveItem, setValveItem] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -79,11 +81,38 @@ export const DeaModal = () => {
         </div>
 
         <div className="py-4 px-8">
-          {!deaModalData.data?.history?.length && !deaModalData.isLoading && <CardEmpy />}
-          {deaModalData.isLoading && <CardSkeleton />}
+          <div className="pb-4 flex gap-2 items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="font-[500]">Selecione o ano de exibição das verificações</span>
 
-          {deaModalData.data?.history &&
-            deaModalData.data?.history.map((item) => {
+              <Select.Component
+                id="year"
+                name="year"
+                value={year.toString()}
+                className="w-[7.5rem]"
+                popperWidth="w-[7.5rem]"
+                mode="gray"
+                variant="outline"
+                onValueChange={(value) => setYear(+value)}
+              >
+                {years.map((year) => (
+                  <Select.Item key={year} value={year}>
+                    {year}
+                  </Select.Item>
+                ))}
+              </Select.Component>
+            </div>
+
+            {historyModalData.data && historyModalData.data?.length > 0 && (
+              <span className="font-[500]">Total registros: {historyModalData.data?.length}</span>
+            )}
+          </div>
+
+          {!historyModalData.data?.length && !historyModalData.isLoading && <CardEmpy />}
+          {historyModalData.isLoading && <CardSkeleton />}
+
+          {historyModalData.data &&
+            historyModalData.data?.map((item) => {
               const cardVariant = item.tipo === 'Normal' ? 'new' : item.tipo === 'Novo' ? 'modification' : 'noncompliant';
 
               const cardTitle =

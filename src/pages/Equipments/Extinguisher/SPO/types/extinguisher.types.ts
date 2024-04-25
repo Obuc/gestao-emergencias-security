@@ -9,18 +9,6 @@ export interface ExtinguisherProps {
   Title: string; // Código do local
 }
 
-interface ExtinguisherHistoryProps {
-  Id: number;
-  Created: Date;
-  tipo: string;
-  idEquipamento: number;
-  responsavel: string;
-  item: string;
-  idRegistro: number;
-  novoCodigo: string;
-  novaValidade: Date;
-}
-
 export interface ExtinguisherModalProps {
   Id: number;
   Title: string; // Código do local
@@ -31,7 +19,18 @@ export interface ExtinguisherModalProps {
   LocEsp: string;
   Tipo: string;
   peso_extintor?: string;
-  history: Array<ExtinguisherHistoryProps>;
+}
+
+export interface ExtinguisherHistoryModalProps {
+  Id: number;
+  Created: Date;
+  tipo: string;
+  idEquipamento: number;
+  responsavel: string;
+  item: string;
+  idRegistro: number;
+  novoCodigo: string;
+  novaValidade: Date;
 }
 
 export interface ExtinguisherFiltersProps {

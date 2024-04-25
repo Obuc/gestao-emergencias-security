@@ -7,7 +7,15 @@ export interface EmergencyDoorsProps {
   Conforme: boolean;
 }
 
-interface EmergencyDoorsHistoryProps {
+export interface EmergencyDoorsModalProps {
+  Id: number;
+  Predio: string;
+  Tipo: string;
+  Pavimento: string;
+  Title: string;
+}
+
+export interface EmergencyDoorsHistoryProps {
   Id: number;
   Created: Date;
   tipo: string;
@@ -17,16 +25,6 @@ interface EmergencyDoorsHistoryProps {
   idRegistro: number;
   novoCodigo: string;
   novaValidade: Date;
-}
-
-export interface EmergencyDoorsModalProps {
-  Id: number;
-  Predio: string;
-  Tipo: string;
-  Pavimento: string;
-  Title: string;
-
-  history: Array<EmergencyDoorsHistoryProps>;
 }
 
 export interface EmergencyDoorsFiltersProps {

@@ -7,7 +7,14 @@ export interface ValveProps {
   Conforme: boolean;
 }
 
-interface ValveHistoryProps {
+export interface ValveModalProps {
+  Id: number;
+  Codigo: string;
+  Predio: string;
+  LocEsp?: string;
+  Title: string;
+}
+export interface ValveHistoryProps {
   Id: number;
   Created: Date;
   tipo: string;
@@ -17,16 +24,6 @@ interface ValveHistoryProps {
   idRegistro: number;
   novoCodigo: string;
   novaValidade: Date;
-}
-
-export interface ValveModalProps {
-  Id: number;
-  Codigo: string;
-  Predio: string;
-  LocEsp?: string;
-  Title: string;
-
-  history: Array<ValveHistoryProps>;
 }
 
 export interface ValveFiltersProps {

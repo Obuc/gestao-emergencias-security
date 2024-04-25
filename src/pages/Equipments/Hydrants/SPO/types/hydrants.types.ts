@@ -11,18 +11,6 @@ export interface HydrantsProps {
   Conforme: boolean;
 }
 
-interface HydrantsHistoryProps {
-  Id: number;
-  Created: Date;
-  tipo: string;
-  idEquipamento: number;
-  responsavel: string;
-  item: string;
-  idRegistro: number;
-  novoCodigo: string;
-  novaValidade: Date;
-}
-
 export interface HydrantsModalProps {
   Id: number;
   Title: string; // Código do local
@@ -36,10 +24,19 @@ export interface HydrantsModalProps {
   Conforme: boolean;
   diametro?: string;
   comprimento?: string;
-
-  history: Array<HydrantsHistoryProps>;
 }
 
+export interface HydrantsHistoryProps {
+  Id: number;
+  Created: Date;
+  tipo: string;
+  idEquipamento: number;
+  responsavel: string;
+  item: string;
+  idRegistro: number;
+  novoCodigo: string;
+  novaValidade: Date;
+}
 export interface HydrantsFiltersProps {
   id: string | null;
   numero_hidrante: string | null;

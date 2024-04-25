@@ -5,7 +5,13 @@ export interface CmiTestProps {
   Conforme: boolean;
 }
 
-interface CmiTestHistoryProps {
+export interface CmiTestModalProps {
+  Id: number;
+  Predio: string;
+  Title: string;
+}
+
+export interface CmiTestHistoryProps {
   Id: number;
   Created: Date;
   tipo: string;
@@ -15,14 +21,6 @@ interface CmiTestHistoryProps {
   idRegistro: number;
   novoCodigo: string;
   novaValidade: Date;
-}
-
-export interface CmiTestModalProps {
-  Id: number;
-  Predio: string;
-  Title: string;
-
-  history: Array<CmiTestHistoryProps>;
 }
 
 export interface CmiTestFiltersProps {

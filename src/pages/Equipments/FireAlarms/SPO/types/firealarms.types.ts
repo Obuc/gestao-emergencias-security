@@ -5,7 +5,13 @@ export interface FireAlarmsProps {
   Conforme: boolean;
 }
 
-interface FireAlarmsHistoryProps {
+export interface FireAlarmsModalProps {
+  Id: number;
+  Predio: string;
+  Title: string;
+}
+
+export interface FireAlarmsHistoryProps {
   Id: number;
   Created: Date;
   tipo: string;
@@ -15,14 +21,6 @@ interface FireAlarmsHistoryProps {
   idRegistro: number;
   novoCodigo: string;
   novaValidade: Date;
-}
-
-export interface FireAlarmsModalProps {
-  Id: number;
-  Predio: string;
-  Title: string;
-
-  history: Array<FireAlarmsHistoryProps>;
 }
 
 export interface FireAlarmsFiltersProps {
