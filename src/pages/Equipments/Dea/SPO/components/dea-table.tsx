@@ -6,32 +6,27 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UseInfiniteQueryResult, UseMutationResult } from '@tanstack/react-query';
 
 import Toast from '@/components/Toast';
+import { DeaModal } from './dea-modal';
 import isAtBottom from '@/utils/isAtBottom';
+import { DeaProps } from '../types/dea.types';
 import CustomDataGrid from '@/components/DataGrid';
 import PopoverTables from '@/components/PopoverTables';
 import RemoveItem from '@/components/AppModals/RemoveItem';
-import { AmbulanceCheckModal } from './ambulancecheck-modal';
-import { AmbulanceCheckProps } from '../types/ambulancecheck.types';
 import DataGridLoadMore from '@/components/DataGrid/DataGridLoadMore';
 
-interface AmbulanceCheckTableProps {
-  ambulanceCheckData: UseInfiniteQueryResult<any, unknown>;
+interface DeaTableProps {
+  deaData: UseInfiniteQueryResult<any, unknown>;
   mutateRemove: UseMutationResult<void, unknown, number, unknown>;
   sortColumns: readonly SortColumn[];
   setSortColumns: React.Dispatch<React.SetStateAction<readonly SortColumn[]>>;
 }
 
-export const AmbulanceCheckTable = ({
-  ambulanceCheckData,
-  mutateRemove,
-  setSortColumns,
-  sortColumns,
-}: AmbulanceCheckTableProps) => {
+export const DeaTable = ({ deaData, mutateRemove, setSortColumns, sortColumns }: DeaTableProps) => {
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/ambulance_check/${id}`);
+    navigate(`/equipments/dea/${id}`);
   };
 
   const handleRemove = async () => {
@@ -41,20 +36,26 @@ export const AmbulanceCheckTable = ({
     }
   };
 
-  const columns: readonly Column<AmbulanceCheckProps>[] = [
+  const columns: readonly Column<DeaProps>[] = [
     { key: 'Id', name: '#', resizable: true },
     { key: 'Title', name: 'Código Local', resizable: true },
+    { key: 'Codigo', name: 'Código Equipamento', resizable: true },
+    { key: 'Predio', name: 'Prédio', resizable: true },
+    { key: 'LocEsp', name: 'Local', resizable: true },
     { key: 'Conforme', name: 'Conformidade', resizable: true },
 
     { key: 'buttons', name: 'Ações', resizable: true, sortable: false },
   ];
 
   const mappedRows =
-    ambulanceCheckData.data?.pages.flatMap(
+    deaData.data?.pages.flatMap(
       (page) =>
-        page?.data?.value?.map((item: AmbulanceCheckProps) => ({
+        page?.data?.value?.map((item: DeaProps) => ({
           Id: <div className="pl-4">{item.Id}</div>,
           Title: item?.Title ? item.Title : '',
+          Codigo: item?.Codigo ? item.Codigo : '',
+          Predio: item?.Predio ? item.Predio : '',
+          LocEsp: item?.LocEsp ? item.LocEsp : '',
 
           Conforme: (
             <div className="flex items-center h-full w-full">
@@ -82,7 +83,7 @@ export const AmbulanceCheckTable = ({
 
   const handleScroll = async (event: React.UIEvent<HTMLDivElement>) => {
     if (!isAtBottom(event)) return;
-    ambulanceCheckData.fetchNextPage();
+    deaData.fetchNextPage();
   };
 
   return (
@@ -101,10 +102,10 @@ export const AmbulanceCheckTable = ({
           setSortColumns={setSortColumns}
         />
 
-        {ambulanceCheckData.isFetchingNextPage && <DataGridLoadMore />}
+        {deaData.isFetchingNextPage && <DataGridLoadMore />}
       </div>
 
-      <AmbulanceCheckModal />
+      <DeaModal />
 
       {removeItem !== null && (
         <RemoveItem

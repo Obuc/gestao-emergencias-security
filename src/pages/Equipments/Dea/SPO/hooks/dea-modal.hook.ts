@@ -2,23 +2,23 @@ import { parseISO } from 'date-fns';
 import { useLocation, useParams } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
+import { DeaModalProps } from '../types/dea.types';
 import { sharepointContext } from '@/context/sharepointContext';
-import { AmbulanceCheckModalProps } from '../types/ambulancecheck.types';
 
-export const useAmbulanceCheckModal = () => {
+export const useDeaModal = () => {
   const params = useParams();
   const location = useLocation();
   const { crudParent } = sharepointContext();
   const user_site = localStorage.getItem('user_site');
 
   const fetchEquipments = async () => {
-    const pathModal = `?$Select=Id,Title&$filter=(Id eq ${params.id}) and (Tipo eq 'Ambulancia')`;
+    const pathModal = `?$Select=Id,Title,Predio,Codigo,LocEsp&$filter=(Id eq ${params.id}) and (Tipo eq 'DEA')`;
     const resp = await crudParent.getListItemsv2('Diversos_Equipamentos', pathModal);
     return resp.results[0];
   };
 
   const fetchHistory = async (codigo: string) => {
-    const pathModal = `?$Select=Id,Created,tipo,idEquipamento,responsavel,item,idRegistro,novoCodigo,novaValidade&$orderby=Created desc&$filter=(idEquipamento eq ${codigo}) and (item eq 'Ambulancia')`;
+    const pathModal = `?$Select=Id,Created,tipo,idEquipamento,responsavel,item,idRegistro,novoCodigo,novaValidade&$orderby=Created desc&$filter=(idEquipamento eq ${codigo}) and (item eq 'DEA')`;
 
     const resp = await crudParent.getListItemsv2('Historico_Equipamentos', pathModal);
 
@@ -47,15 +47,15 @@ export const useAmbulanceCheckModal = () => {
     return dataWithTransformations;
   };
 
-  const ambulanceCheckModalData: UseQueryResult<AmbulanceCheckModalProps> = useQuery({
-    queryKey: ['equipments_ambulancecheck_data_modal', params.id],
+  const deaModalData: UseQueryResult<DeaModalProps> = useQuery({
+    queryKey: ['equipments_dea_data_modal', params.id],
     queryFn: async () => {
       if (params.id) {
-        const ambulanceCheck = await fetchEquipments();
-        const history = ambulanceCheck && (await fetchHistory(ambulanceCheck.Id));
+        const dea = await fetchEquipments();
+        const history = dea && (await fetchHistory(dea.Id));
 
         return {
-          ...ambulanceCheck,
+          ...dea,
           history: history,
         };
       } else {
@@ -64,13 +64,14 @@ export const useAmbulanceCheckModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/equipments/ambulance_check'),
+    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/equipments/dea'),
   });
 
-  const qrCodeValue = `Ambulancia;SP;São Paulo;SPO - Site São Paulo;${ambulanceCheckModalData.data?.Title}`;
+  const qrCodeValue = `DEA;SP;São Paulo;SPO - Site São Paulo;${deaModalData.data?.Predio};${deaModalData.data?.LocEsp};${deaModalData.data?.Codigo};${deaModalData.data?.Title}`;
+  // DEA;SP;São Paulo;SPO;SPO - Site São Paulo;Prédio 501;9º Andar;869091;30551
 
   return {
-    ambulanceCheckModalData,
+    deaModalData,
     qrCodeValue,
   };
 };

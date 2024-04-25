@@ -10,17 +10,17 @@ import { Table } from '@/components/Table';
 import Checkbox from '@/components/Checkbox';
 import { Button } from '@/components/Button';
 import TextField from '@/components/TextField';
+import { DeaQrcodePdf } from './dea-qrcode-pdf';
 import { pageSizeData } from '@/utils/pageData.mock';
-import { AmbulanceCheckQrcodePdf } from './ambulancecheck-qrcode-pdf';
+import { useDeaQrCode } from '../hooks/dea-qrcode.hook';
 import { SelectAutoComplete } from '@/components/SelectAutocomplete';
-import { useAmbulanceCheckQrCode } from '../hooks/ambulancecheck-qrcode.hook';
 
-interface AmbulanceCheckQrcodeModalProps {
+interface DeaQrcodeModalProps {
   open: boolean | null;
   onOpenChange: () => void;
 }
 
-export const AmbulanceCheckQrcodeModal = ({ open, onOpenChange }: AmbulanceCheckQrcodeModalProps) => {
+export const DeaQrcodeModal = ({ open, onOpenChange }: DeaQrcodeModalProps) => {
   const site_value = localStorage.getItem('user_site');
 
   const {
@@ -30,21 +30,19 @@ export const AmbulanceCheckQrcodeModal = ({ open, onOpenChange }: AmbulanceCheck
     setPageSize,
     generatePdf,
     setGeneratePdf,
-    selectedItemsAmbulanceCheck,
-    ambulanceCheckQrCodeData,
+    selectedItemsDea,
+    deaQrCodeData,
     toggleSelectAll,
     toggleSelectItem,
     selectAll,
-  } = useAmbulanceCheckQrCode();
+  } = useDeaQrCode();
 
   const exportToPdf = async () => {
     if (!pageSize) return;
 
     setGeneratePdf(true);
-    const blob = await pdf(
-      <AmbulanceCheckQrcodePdf data={selectedItemsAmbulanceCheck} pageSize={pageSize.value as StandardPageSize} />,
-    ).toBlob();
-    saveAs(blob, `QRCode Verificação de Ambulância - ${site_value}.pdf`);
+    const blob = await pdf(<DeaQrcodePdf data={selectedItemsDea} pageSize={pageSize.value as StandardPageSize} />).toBlob();
+    saveAs(blob, `QRCode Desfibrilador Automático (DEA) - ${site_value}.pdf`);
     setGeneratePdf(false);
   };
 
@@ -53,7 +51,7 @@ export const AmbulanceCheckQrcodeModal = ({ open, onOpenChange }: AmbulanceCheck
       className="min-w-[68.75rem]"
       open={open !== null}
       onOpenChange={onOpenChange}
-      title={`Gerar QRCodes: Verificação de Ambulância`}
+      title={`Gerar QRCodes: Desfibrilador Automático (DEA)`}
     >
       <div className="flex flex-col gap-2 px-8 py-6 text-primary-font">
         <span className="text-lg py-4">Selecione abaixo os equipamentos que deseja gerar os QRCodes.</span>
@@ -90,31 +88,34 @@ export const AmbulanceCheckQrcodeModal = ({ open, onOpenChange }: AmbulanceCheck
                     <Checkbox checked={selectAll} onClick={toggleSelectAll} />
                   </Table.Th>
                   <Table.Th>#</Table.Th>
-                  <Table.Th>Código</Table.Th>
+                  <Table.Th>Código Setor</Table.Th>
+                  <Table.Th>Código Equipamento</Table.Th>
+                  <Table.Th>Prédio</Table.Th>
+                  <Table.Th>Local</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody className="overflow-y-scroll">
-                {ambulanceCheckQrCodeData.data?.length === 0 && (
+                {deaQrCodeData.data?.length === 0 && (
                   <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                    <Table.Td colSpan={3} className="text-center text-primary-font">
+                    <Table.Td colSpan={6} className="text-center text-primary-font">
                       Nenhum extintor encontrado!
                     </Table.Td>
                   </Table.Tr>
                 )}
 
-                {ambulanceCheckQrCodeData.isError && (
+                {deaQrCodeData.isError && (
                   <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
-                    <Table.Td colSpan={3} className="text-center text-primary-font">
+                    <Table.Td colSpan={6} className="text-center text-primary-font">
                       Ops, ocorreu um erro, recarregue a página e tente novamente!
                     </Table.Td>
                   </Table.Tr>
                 )}
 
-                {ambulanceCheckQrCodeData.isLoading && (
+                {deaQrCodeData.isLoading && (
                   <>
                     {Array.from({ length: 15 }).map((_, index) => (
                       <Table.Tr key={index}>
-                        <Table.Td className="h-14 px-4" colSpan={3}>
+                        <Table.Td className="h-14 px-4" colSpan={6}>
                           <Skeleton height="3.5rem" animation="wave" />
                         </Table.Td>
                       </Table.Tr>
@@ -122,17 +123,20 @@ export const AmbulanceCheckQrcodeModal = ({ open, onOpenChange }: AmbulanceCheck
                   </>
                 )}
 
-                {ambulanceCheckQrCodeData.data &&
-                  ambulanceCheckQrCodeData.data.map((item) => (
+                {deaQrCodeData.data &&
+                  deaQrCodeData.data.map((item) => (
                     <Table.Tr key={item.Id + (item.Title ? item.Title : '0')}>
                       <Table.Td className="pl-8">
                         <Checkbox
-                          checked={selectedItemsAmbulanceCheck.some((selectedItem) => selectedItem.Id === item.Id)}
+                          checked={selectedItemsDea.some((selectedItem) => selectedItem.Id === item.Id)}
                           onClick={() => toggleSelectItem(item)}
                         />
                       </Table.Td>
                       <Table.Td>{item.Id}</Table.Td>
                       <Table.Td>{item.Title ?? '-'}</Table.Td>
+                      <Table.Td>{item.Codigo ?? '-'}</Table.Td>
+                      <Table.Td>{item.Predio ?? '-'}</Table.Td>
+                      <Table.Td>{item.LocEsp ?? '-'}</Table.Td>
                     </Table.Tr>
                   ))}
               </Table.Tbody>
@@ -144,7 +148,7 @@ export const AmbulanceCheckQrcodeModal = ({ open, onOpenChange }: AmbulanceCheck
               fill
               onClick={exportToPdf}
               className="min-w-[12rem] h-10"
-              disabled={generatePdf || !selectedItemsAmbulanceCheck.length || pageSize === null}
+              disabled={generatePdf || !selectedItemsDea.length || pageSize === null}
             >
               {generatePdf ? (
                 <Button.Spinner />

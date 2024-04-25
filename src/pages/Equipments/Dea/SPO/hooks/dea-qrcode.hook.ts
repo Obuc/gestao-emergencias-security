@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
+import { DeaProps } from '../types/dea.types';
 import { sharepointContext } from '@/context/sharepointContext';
-import { AmbulanceCheckProps } from '../types/ambulancecheck.types';
 
-export const useAmbulanceCheckQrCode = () => {
+export const useDeaQrCode = () => {
   const location = useLocation();
   const { crudParent } = sharepointContext();
 
@@ -15,15 +15,15 @@ export const useAmbulanceCheckQrCode = () => {
 
   const [selectAll, setSelectAll] = useState(false);
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
-  const [selectedItemsAmbulanceCheck, setSelectedItemsAmbulanceCheck] = useState<AmbulanceCheckProps[]>([]);
+  const [selectedItemsDea, setSelectedItemsDea] = useState<DeaProps[]>([]);
 
-  const ambulanceCheckQrCodeData: UseQueryResult<Array<AmbulanceCheckProps>> = useQuery({
-    queryKey: ['equipments_ambulancecheck_data_qrcode_spo', filterValue],
+  const deaQrCodeData: UseQueryResult<Array<DeaProps>> = useQuery({
+    queryKey: ['equipments_dea_data_qrcode_spo', filterValue],
     queryFn: async () => {
-      let path = `?$Select=Id,Tipo,Title,Conforme,Excluido&$orderby=Modified desc&$Filter=(Excluido eq 'false') and (Tipo eq 'Ambulancia')`;
+      let path = `?$Select=Id,Modified,Predio,Codigo,LocEsp,Tipo,Title,Conforme,Excluido&$orderby=Modified desc&$Filter=(Excluido eq 'false') and (Tipo eq 'DEA')`;
 
       if (filterValue) {
-        path += ` and (Id eq ${filterValue}) or (substringof('${filterValue}', Title))`;
+        path += ` and (Id eq ${filterValue}) or (substringof('${filterValue}', Title) or substringof('${filterValue}', Codigo) or substringof('${filterValue}', LocEsp) or substringof('${filterValue}', Predio) or substringof('${filterValue}', Conforme))`;
       }
 
       const resp = await crudParent.getListItems('Diversos_Equipamentos', path);
@@ -40,20 +40,20 @@ export const useAmbulanceCheckQrCode = () => {
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/ambulance_check'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/dea'),
   });
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
-    if (!selectAll && ambulanceCheckQrCodeData.data) {
-      setSelectedItemsAmbulanceCheck(ambulanceCheckQrCodeData.data);
+    if (!selectAll && deaQrCodeData.data) {
+      setSelectedItemsDea(deaQrCodeData.data);
     } else {
-      setSelectedItemsAmbulanceCheck([]);
+      setSelectedItemsDea([]);
     }
   };
 
-  const toggleSelectItem = (item: AmbulanceCheckProps) => {
-    setSelectedItemsAmbulanceCheck((prevSelected) => {
+  const toggleSelectItem = (item: DeaProps) => {
+    setSelectedItemsDea((prevSelected) => {
       if (prevSelected.some((selectedItem) => selectedItem.Id === item.Id)) {
         return prevSelected.filter((selectedItem) => selectedItem.Id !== item.Id);
       } else if (prevSelected.length < 10) {
@@ -70,8 +70,8 @@ export const useAmbulanceCheckQrCode = () => {
     setPageSize,
     generatePdf,
     setGeneratePdf,
-    selectedItemsAmbulanceCheck,
-    ambulanceCheckQrCodeData,
+    selectedItemsDea,
+    deaQrCodeData,
     toggleSelectAll,
     toggleSelectItem,
     selectAll,

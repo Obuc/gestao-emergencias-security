@@ -9,6 +9,7 @@ import AlarmsSPO from '../pages/Records/Alarms/SPO';
 import HydrantSPO from '../pages/Records/Hydrant/SPO';
 import TestCmiSPO from '../pages/Records/TestCmi/SPO';
 import EquipmentsOeiSPO from '../pages/Equipments/Oei/SPO';
+import EquipmentsDeaSPO from '../pages/Equipments/Dea/SPO';
 import EquipmentsValveSPO from '../pages/Equipments/Valve/SPO';
 import ExtinguisherSPO from '../pages/Records/Extinguisher/SPO';
 import InspectionCmiSPO from '../pages/Records/InspectionCmi/SPO';
@@ -107,6 +108,10 @@ export const SpoRoutes = () => {
       {/* Equipments - Ambulance Check */}
       <Route path="/equipments/ambulance_check" element={<EquipmentsAmbulanceCheckSPO />} />
       <Route path="/equipments/ambulance_check/:id" element={<EquipmentsAmbulanceCheckSPO />} />
+
+      {/* Equipments - DEA */}
+      <Route path="/equipments/dea" element={<EquipmentsDeaSPO />} />
+      <Route path="/equipments/dea/:id" element={<EquipmentsDeaSPO />} />
     </Routes>
   );
 };

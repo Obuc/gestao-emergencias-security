@@ -1,18 +1,18 @@
 import { Button } from '@/components/Button';
 import TextField from '@/components/TextField';
 import { Popover } from '@/components/Popover';
+import { DeaFiltersProps } from '../types/dea.types';
 import { SelectAutoComplete } from '@/components/SelectAutocomplete';
-import { AmbulanceCheckFiltersProps } from '../types/ambulancecheck.types';
 
 interface IFilters {
-  tempTableFilters: AmbulanceCheckFiltersProps;
-  setTempTableFilters: React.Dispatch<React.SetStateAction<AmbulanceCheckFiltersProps>>;
+  tempTableFilters: DeaFiltersProps;
+  setTempTableFilters: React.Dispatch<React.SetStateAction<DeaFiltersProps>>;
   handleRemoveAllFilters: () => void;
   countAppliedFilters: () => number;
   handleApplyFilters: () => void;
 }
 
-export const AmbulanceCheckFilters = ({
+export const DeaFilters = ({
   tempTableFilters,
   setTempTableFilters,
   handleRemoveAllFilters,
@@ -53,6 +53,36 @@ export const AmbulanceCheckFilters = ({
             value={tempTableFilters.numero_etiqueta || ''}
             onChange={(event) => {
               setTempTableFilters((prev) => ({ ...prev, numero_etiqueta: event.target.value }));
+            }}
+          />
+
+          <TextField
+            label="Prédio"
+            id="Predio"
+            name="Predio"
+            value={tempTableFilters.Predio || ''}
+            onChange={(event) => {
+              setTempTableFilters((prev) => ({ ...prev, Predio: event.target.value }));
+            }}
+          />
+
+          <TextField
+            label="Código"
+            id="Codigo"
+            name="Codigo"
+            value={tempTableFilters.Codigo || ''}
+            onChange={(event) => {
+              setTempTableFilters((prev) => ({ ...prev, Codigo: event.target.value }));
+            }}
+          />
+
+          <TextField
+            label="Local Específico"
+            id="LocEsp"
+            name="LocEsp"
+            value={tempTableFilters.LocEsp || ''}
+            onChange={(event) => {
+              setTempTableFilters((prev) => ({ ...prev, LocEsp: event.target.value }));
             }}
           />
 

@@ -3,20 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { faDownload, faExpand } from '@fortawesome/free-solid-svg-icons';
 
 import Toast from '@/components/Toast';
+import { useDea } from './hooks/dea.hook';
 import LayoutBase from '@/layout/LayoutBase';
 import { Button } from '@/components/Button';
-import { useAmbulanceCheck } from './hooks/ambulancecheck.hook';
-import { AmbulanceCheckTable } from './components/ambulancecheck-table';
-import { AmbulanceCheckFilters } from './components/ambulancecheck-filters';
-import { AmbulanceCheckQrcodeModal } from './components/ambulancecheck-qrcode-modal';
+import { DeaTable } from './components/dea-table';
+import { DeaFilters } from './components/dea-filters';
+import { DeaQrcodeModal } from './components/dea-qrcode-modal';
 
-const EquipmentsAmbulanceCheckSPO = () => {
+const EquipmentsDeaSPO = () => {
   const navigate = useNavigate();
   const localSite = localStorage.getItem('user_site');
   const [openModalGenerateQRCode, setOpenModalGenerateQRCode] = useState<boolean | null>(null);
 
   const {
-    ambulanceCheckData,
+    deaData,
     mutateRemove,
     sortColumns,
     setSortColumns,
@@ -26,7 +26,7 @@ const EquipmentsAmbulanceCheckSPO = () => {
     handleRemoveAllFilters,
     setTempTableFilters,
     tempTableFilters,
-  } = useAmbulanceCheck();
+  } = useDea();
 
   useEffect(() => {
     if (localSite === null) {
@@ -42,7 +42,7 @@ const EquipmentsAmbulanceCheckSPO = () => {
             <div className="flex pb-8 items-center w-full justify-between">
               <div className="flex w-full items-center gap-2 text-2xl text-primary-font font-semibold">
                 <div className="w-3 h-3 rounded-full bg-primary" />
-                <h2>Verificação de Ambulância</h2>
+                <h2>Desfibrilador Automático (DEA)</h2>
               </div>
 
               <div className="flex gap-2">
@@ -66,7 +66,7 @@ const EquipmentsAmbulanceCheckSPO = () => {
                   <Button.Icon icon={faExpand} />
                 </Button.Root>
 
-                <AmbulanceCheckFilters
+                <DeaFilters
                   countAppliedFilters={countAppliedFilters}
                   handleApplyFilters={handleApplyFilters}
                   handleRemoveAllFilters={handleRemoveAllFilters}
@@ -76,8 +76,8 @@ const EquipmentsAmbulanceCheckSPO = () => {
               </div>
             </div>
 
-            <AmbulanceCheckTable
-              ambulanceCheckData={ambulanceCheckData}
+            <DeaTable
+              deaData={deaData}
               mutateRemove={mutateRemove}
               sortColumns={sortColumns}
               setSortColumns={setSortColumns}
@@ -86,7 +86,7 @@ const EquipmentsAmbulanceCheckSPO = () => {
         </div>
 
         {openModalGenerateQRCode && (
-          <AmbulanceCheckQrcodeModal open={openModalGenerateQRCode} onOpenChange={() => setOpenModalGenerateQRCode(null)} />
+          <DeaQrcodeModal open={openModalGenerateQRCode} onOpenChange={() => setOpenModalGenerateQRCode(null)} />
         )}
       </LayoutBase>
 
@@ -105,4 +105,4 @@ const EquipmentsAmbulanceCheckSPO = () => {
   );
 };
 
-export default EquipmentsAmbulanceCheckSPO;
+export default EquipmentsDeaSPO;

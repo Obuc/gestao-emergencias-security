@@ -5,10 +5,10 @@ import { useLocation } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import buildOrderByQuery from '@/utils/buildOrderByQuery';
+import { DeaFiltersProps, DeaProps } from '../types/dea.types';
 import { sharepointContext } from '@/context/sharepointContext';
-import { AmbulanceCheckFiltersProps, AmbulanceCheckProps } from '../types/ambulancecheck.types';
 
-export const useAmbulanceCheck = () => {
+export const useDea = () => {
   const { crudParent } = sharepointContext();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -16,34 +16,43 @@ export const useAmbulanceCheck = () => {
 
   const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([{ columnKey: 'Modified', direction: 'DESC' }]);
 
-  const sessionFiltersActions = sessionStorage.getItem('session_filters_equipments_ambulancecheck_spo');
-  const sessionFiltersActionsJSON: AmbulanceCheckFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
+  const sessionFiltersActions = sessionStorage.getItem('session_filters_equipments_dea_spo');
+  const sessionFiltersActionsJSON: DeaFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
 
   const initialFiltersValues = {
     Id: sessionFiltersActionsJSON?.Id ? sessionFiltersActionsJSON.Id : null,
     numero_etiqueta: sessionFiltersActionsJSON?.numero_etiqueta ? sessionFiltersActionsJSON.numero_etiqueta : null,
+    Predio: sessionFiltersActionsJSON?.Predio ? sessionFiltersActionsJSON.Predio : null,
+    Codigo: sessionFiltersActionsJSON?.Codigo ? sessionFiltersActionsJSON.Codigo : null,
+    LocEsp: sessionFiltersActionsJSON?.LocEsp ? sessionFiltersActionsJSON.LocEsp : null,
     Conforme: sessionFiltersActionsJSON?.Conforme ? sessionFiltersActionsJSON.Conforme : null,
   };
 
-  const [tableFilters, setTableFilters] = useState<AmbulanceCheckFiltersProps>(initialFiltersValues);
-  const [tempTableFilters, setTempTableFilters] = useState<AmbulanceCheckFiltersProps>(initialFiltersValues);
+  const [tableFilters, setTableFilters] = useState<DeaFiltersProps>(initialFiltersValues);
+  const [tempTableFilters, setTempTableFilters] = useState<DeaFiltersProps>(initialFiltersValues);
 
   const handleRemoveAllFilters = () => {
     const filters = {
       Id: null,
       numero_etiqueta: null,
+      Predio: null,
+      Codigo: null,
+      LocEsp: null,
       Conforme: null,
     };
 
     setTableFilters(filters);
     setTempTableFilters(filters);
-    sessionStorage.removeItem('session_filters_equipments_ambulancecheck_spo');
+    sessionStorage.removeItem('session_filters_equipments_dea_spo');
   };
 
   const countAppliedFilters = () => {
     let count = 0;
     if (tableFilters.Id) count++;
     if (tableFilters.numero_etiqueta) count++;
+    if (tableFilters.Predio) count++;
+    if (tableFilters.Codigo) count++;
+    if (tableFilters.LocEsp) count++;
     if (tableFilters.Conforme) count++;
 
     return count;
@@ -51,20 +60,32 @@ export const useAmbulanceCheck = () => {
 
   const handleApplyFilters = () => {
     setTableFilters(tempTableFilters);
-    sessionStorage.setItem('session_filters_equipments_ambulancecheck_spo', JSON.stringify(tempTableFilters));
+    sessionStorage.setItem('session_filters_equipments_dea_spo', JSON.stringify(tempTableFilters));
   };
 
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
     const orderByQuery = buildOrderByQuery(sortColumns);
 
-    let path = `?$Select=Id,Modified,Tipo,Title,Conforme,Excluido&$Top=25&${orderByQuery}&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Ambulancia')`;
+    let path = `?$Select=Id,Modified,Predio,Codigo,LocEsp,Tipo,Title,Conforme,Excluido&$Top=25&${orderByQuery}&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'DEA')`;
 
     if (tableFilters?.Id) {
       path += ` and ( Id eq '${tableFilters?.Id}')`;
     }
 
     if (tableFilters?.numero_etiqueta) {
-      path += ` and ( Title eq '${tableFilters?.numero_etiqueta}')`;
+      path += ` and (substringof('${tableFilters?.numero_etiqueta}',Title))`;
+    }
+
+    if (tableFilters?.Predio) {
+      path += ` and (substringof('${tableFilters?.Predio}',Predio))`;
+    }
+
+    if (tableFilters?.Codigo) {
+      path += ` and (substringof('${tableFilters?.Codigo}',Codigo))`;
+    }
+
+    if (tableFilters?.LocEsp) {
+      path += ` and (substringof('${tableFilters?.LocEsp}',LocEsp))`;
     }
 
     if (tableFilters?.Conforme?.value === 'Sim') {
@@ -97,12 +118,12 @@ export const useAmbulanceCheck = () => {
     };
   };
 
-  const ambulanceCheckData = useInfiniteQuery({
-    queryKey: ['equipments_ambulancecheck_data_spo', user_site, tableFilters, sortColumns],
+  const deaData = useInfiniteQuery({
+    queryKey: ['equipments_dea_data_spo', user_site, tableFilters, sortColumns],
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/ambulance_check'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/dea'),
   });
 
   const mutateRemove = useMutation({
@@ -117,7 +138,7 @@ export const useAmbulanceCheck = () => {
   });
 
   const fetchAllEquipments = async () => {
-    let path = `?$Select=Id,Tipo,Title,Conforme,Excluido&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Ambulancia')`;
+    let path = `?$Select=Id,Modified,Predio,Codigo,LocEsp,Tipo,Title,Conforme,Excluido&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'DEA')`;
 
     const response = await crudParent.getListItems('Diversos_Equipamentos', path);
 
@@ -137,7 +158,7 @@ export const useAmbulanceCheck = () => {
     mutationFn: async () => {
       const data = await fetchAllEquipments();
 
-      const columns: (keyof AmbulanceCheckProps)[] = ['Id', 'Conforme', 'Title'];
+      const columns: (keyof DeaProps)[] = ['Id', 'Predio', 'Codigo', 'LocEsp', 'Conforme', 'Title'];
 
       const headerRow = columns.map((column) => column.toString());
 
@@ -155,14 +176,14 @@ export const useAmbulanceCheck = () => {
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-        XLSX.utils.book_append_sheet(wb, ws, 'Verificação de Ambulância');
-        XLSX.writeFile(wb, `Equipamentos - Verificação de Ambulância.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, 'Desfibrilador Automático (DEA)');
+        XLSX.writeFile(wb, `Equipamentos - Desfibrilador Automático (DEA).xlsx`);
       }
     },
   });
 
   return {
-    ambulanceCheckData,
+    deaData,
     tempTableFilters,
     setTempTableFilters,
     handleRemoveAllFilters,

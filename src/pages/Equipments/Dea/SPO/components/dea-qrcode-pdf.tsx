@@ -2,19 +2,13 @@ import { StandardPageSize } from '@react-pdf/types/page';
 import { Page, Text, View, Document, Image } from '@react-pdf/renderer';
 
 import SPOLogo from '@/assets/SPO.png';
+import { DeaProps } from '../types/dea.types';
 import HeaderBg from '@/assets/Caminho 3692.png';
 import { stylesQRCode } from '@/utils/PDFStyles';
-import { AmbulanceCheckProps } from '../types/ambulancecheck.types';
 
-export const AmbulanceCheckQrcodePdf = ({
-  data,
-  pageSize,
-}: {
-  data: Array<AmbulanceCheckProps>;
-  pageSize: StandardPageSize;
-}) => {
+export const DeaQrcodePdf = ({ data, pageSize }: { data: Array<DeaProps>; pageSize: StandardPageSize }) => {
   const generateQRCodeURL = (value: any) => {
-    const qrCodeValue = `Ambulancia;SP;São Paulo;SPO - Site São Paulo;${value?.Title}`;
+    const qrCodeValue = `DEA;SP;São Paulo;SPO - Site São Paulo;${value?.Predio};${value?.LocEsp};${value?.Codigo};${value?.Title}`;
 
     return `https://quickchart.io/qr?text=${qrCodeValue}`;
   };
@@ -31,7 +25,9 @@ export const AmbulanceCheckQrcodePdf = ({
 
             <View style={stylesQRCode.containerQrCode}>
               <Image src={generateQRCodeURL(value)} />
-              <Text style={stylesQRCode.footerTitle}>{`Ambulancia/${value?.Title || ''}`}</Text>
+              <Text style={stylesQRCode.footerTitle}>{`DEA/${value?.Predio || ''}/${value?.LocEsp || ''}/${
+                value?.Title || ''
+              }`}</Text>
 
               <Image src={SPOLogo} style={stylesQRCode.siteLogo} />
             </View>
