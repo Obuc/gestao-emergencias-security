@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
+import { HydrantProps } from '../types/hydrants.types';
 import { sharepointContext } from '@/context/sharepointContext';
-import { ExtinguisherProps } from '../types/extinguisher.types';
 
-const useExtinguisherQrCode = () => {
+export const useHydrantQrCode = () => {
   const location = useLocation();
   const { crud } = sharepointContext();
 
@@ -14,18 +14,18 @@ const useExtinguisherQrCode = () => {
 
   const [selectAll, setSelectAll] = useState(false);
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
-  const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<ExtinguisherProps[]>([]);
+  const [selectedItemsHydrant, setSelectedItemsHydrant] = useState<HydrantProps[]>([]);
 
-  const extinguisherQrCodeData: UseQueryResult<Array<ExtinguisherProps>> = useQuery({
-    queryKey: ['equipments_extinguisher_data_qrcode', filterValue],
+  const hydrantQrCodeData: UseQueryResult<Array<HydrantProps>> = useQuery({
+    queryKey: ['equipments_hydrant_data_qrcode_bxo', filterValue],
     queryFn: async () => {
-      let path = `?$Select=Id,cod_qrcode,predio/Title,tipo_extintor/Title,pavimento/Title,local/Title,site/Title,cod_extintor,conforme&$expand=tipo_extintor,predio,site,pavimento,local&$Filter=(site/Title eq 'BXO')`;
+      let path = `?$Select=Id,site/Title,predio/Title,pavimento/Title,local/Title,cod_hidrante,cod_qrcode,possui_abrigo,conforme,excluido,Modified&$expand=site,predio,pavimento,local&$Filter=(site/Title eq 'BXO')`;
 
       if (filterValue) {
-        path += ` and (substringof('${filterValue}', Id) or substringof('${filterValue}', cod_extintor) or substringof('${filterValue}', predio/Title) or substringof('${filterValue}', local/Title) or substringof('${filterValue}', pavimento/Title))`;
+        path += ` and (Id eq ${filterValue}) or substringof('${filterValue}', cod_hidrante) or substringof('${filterValue}', predio/Title) or substringof('${filterValue}', local/Title) or substringof('${filterValue}', pavimento/Title) or substringof('${filterValue}', cod_qrcode)`;
       }
 
-      const resp = await crud.getListItems('extintores', path);
+      const resp = await crud.getListItems('hidrantes', path);
 
       const dataWithTransformations = await Promise.all(
         resp.map(async (item: any) => {
@@ -35,7 +35,6 @@ const useExtinguisherQrCode = () => {
             pavimento: item.pavimento?.Title,
             site: item.site?.Title,
             predio: item.predio?.Title,
-            tipo_extintor: item.tipo_extintor?.Title,
           };
         }),
       );
@@ -44,20 +43,20 @@ const useExtinguisherQrCode = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: location.pathname.includes('/equipments/extinguisher'),
+    enabled: location.pathname.includes('/equipments/hydrant'),
   });
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
-    if (!selectAll && extinguisherQrCodeData.data) {
-      setSelectedItemsExtinguisher(extinguisherQrCodeData.data);
+    if (!selectAll && hydrantQrCodeData.data) {
+      setSelectedItemsHydrant(hydrantQrCodeData.data);
     } else {
-      setSelectedItemsExtinguisher([]);
+      setSelectedItemsHydrant([]);
     }
   };
 
-  const toggleSelectItem = (item: ExtinguisherProps) => {
-    setSelectedItemsExtinguisher((prevSelected) => {
+  const toggleSelectItem = (item: HydrantProps) => {
+    setSelectedItemsHydrant((prevSelected) => {
       if (prevSelected.some((selectedItem) => selectedItem.Id === item.Id)) {
         return prevSelected.filter((selectedItem) => selectedItem.Id !== item.Id);
       } else if (prevSelected.length < 10) {
@@ -74,12 +73,10 @@ const useExtinguisherQrCode = () => {
     setPageSize,
     generatePdf,
     setGeneratePdf,
-    selectedItemsExtinguisher,
-    extinguisherQrCodeData,
+    selectedItemsHydrant,
+    hydrantQrCodeData,
     toggleSelectAll,
     toggleSelectItem,
     selectAll,
   };
 };
-
-export default useExtinguisherQrCode;

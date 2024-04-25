@@ -94,7 +94,7 @@ const useEqHydrants = (eqHydrantsFilters?: IEqHydrantsFiltersProps) => {
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: params.form === 'hydrants' && location.pathname === '/equipments/hydrants',
+    enabled: params.form === 'hydrants' && location.pathname === '/equipments/hydrant',
   });
 
   const fetchEqHydrantData = async () => {
@@ -113,8 +113,7 @@ const useEqHydrants = (eqHydrantsFilters?: IEqHydrantsFiltersProps) => {
   };
 
   const { data: eqHydrantModal, isLoading: isLoadingEqHydrantModal }: UseQueryResult<IEqHydrantModal> = useQuery({
-    queryKey:
-      params.id && params.form === 'hydrants' ? ['eq_hydrant_modal', params.id, params.form] : ['eq_hydrant_modal'],
+    queryKey: params.id && params.form === 'hydrants' ? ['eq_hydrant_modal', params.id, params.form] : ['eq_hydrant_modal'],
     queryFn: async () => {
       if (params.id && params.form === 'hydrants') {
         const eqHydrantData = await fetchEqHydrantData();
@@ -164,7 +163,7 @@ const useEqHydrants = (eqHydrantsFilters?: IEqHydrantsFiltersProps) => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.form === 'hydrants' && location.pathname === '/equipments/hydrants',
+    enabled: params.form === 'hydrants' && location.pathname === '/equipments/hydrant',
   });
 
   const { mutateAsync: mutateRemoveEqHydrant, isLoading: isLoadingMutateRemoveEqHydrant } = useMutation({

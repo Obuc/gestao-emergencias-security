@@ -75,7 +75,7 @@ const useHydrantModalSPO = () => {
 
       const timeoutId = setTimeout(() => {
         setHydrantItem(null);
-        navigate('/records/hydrants');
+        navigate('/records/hydrant');
       }, +timeDelayToRedirectPage);
       return () => clearTimeout(timeoutId);
     },

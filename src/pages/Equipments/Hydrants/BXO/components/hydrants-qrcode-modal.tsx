@@ -11,16 +11,16 @@ import Checkbox from '@/components/Checkbox';
 import { Button } from '@/components/Button';
 import TextField from '@/components/TextField';
 import { pageSizeData } from '@/utils/pageData.mock';
-import ExtinguisherQrcodePdf from './extinguisher-qrcode-pdf';
+import { HydrantQrcodePdf } from './hydrants-qrcode-pdf';
+import { useHydrantQrCode } from '../hooks/hydrants-qrcode.hook';
 import { SelectAutoComplete } from '@/components/SelectAutocomplete';
-import useextinguisherQrCodeData from '../hooks/extinguisher-qrcode.hook';
 
-interface ExtinguisherQrcodeModalProps {
+interface HydrantQrcodeModalProps {
   open: boolean | null;
   onOpenChange: () => void;
 }
 
-const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModalProps) => {
+export const HydrantQrcodeModal = ({ open, onOpenChange }: HydrantQrcodeModalProps) => {
   const site_value = localStorage.getItem('user_site');
 
   const {
@@ -30,21 +30,21 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
     setPageSize,
     generatePdf,
     setGeneratePdf,
-    selectedItemsExtinguisher,
-    extinguisherQrCodeData,
+    selectedItemsHydrant,
+    hydrantQrCodeData,
     toggleSelectAll,
     toggleSelectItem,
     selectAll,
-  } = useextinguisherQrCodeData();
+  } = useHydrantQrCode();
 
   const exportToPdf = async () => {
     if (!pageSize) return;
 
     setGeneratePdf(true);
     const blob = await pdf(
-      <ExtinguisherQrcodePdf data={selectedItemsExtinguisher} pageSize={pageSize.value as StandardPageSize} />,
+      <HydrantQrcodePdf data={selectedItemsHydrant} pageSize={pageSize.value as StandardPageSize} />,
     ).toBlob();
-    saveAs(blob, `QRCode Extintores - ${site_value}.pdf`);
+    saveAs(blob, `QRCode Hidrantes - ${site_value}.pdf`);
     setGeneratePdf(false);
   };
 
@@ -85,14 +85,14 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
                     <Checkbox checked={selectAll} onClick={toggleSelectAll} />
                   </Table.Th>
                   <Table.Th>#</Table.Th>
-                  <Table.Th>Cód. Extintor</Table.Th>
+                  <Table.Th>Cód. Hidrant</Table.Th>
                   <Table.Th>Predio</Table.Th>
                   <Table.Th>Local</Table.Th>
                   <Table.Th>Pavimento</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody className="overflow-y-scroll">
-                {extinguisherQrCodeData.data?.length === 0 && (
+                {hydrantQrCodeData.data?.length === 0 && (
                   <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
                     <Table.Td colSpan={6} className="text-center text-primary-font">
                       Nenhum extintor encontrado!
@@ -100,7 +100,7 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
                   </Table.Tr>
                 )}
 
-                {extinguisherQrCodeData.isError && (
+                {hydrantQrCodeData.isError && (
                   <Table.Tr className="h-14 shadow-xsm text-center font-medium bg-white duration-200">
                     <Table.Td colSpan={6} className="text-center text-primary-font">
                       Ops, ocorreu um erro, recarregue a página e tente novamente!
@@ -108,7 +108,7 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
                   </Table.Tr>
                 )}
 
-                {extinguisherQrCodeData.isLoading && (
+                {hydrantQrCodeData.isLoading && (
                   <>
                     {Array.from({ length: 15 }).map((_, index) => (
                       <Table.Tr key={index}>
@@ -120,17 +120,17 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
                   </>
                 )}
 
-                {extinguisherQrCodeData.data &&
-                  extinguisherQrCodeData.data.map((item) => (
+                {hydrantQrCodeData.data &&
+                  hydrantQrCodeData.data.map((item) => (
                     <Table.Tr key={item.Id}>
                       <Table.Td className="pl-8">
                         <Checkbox
-                          checked={selectedItemsExtinguisher.some((selectedItem) => selectedItem.Id === item.Id)}
+                          checked={selectedItemsHydrant.some((selectedItem) => selectedItem.Id === item.Id)}
                           onClick={() => toggleSelectItem(item)}
                         />
                       </Table.Td>
                       <Table.Td>{item.Id}</Table.Td>
-                      <Table.Td>{item.cod_extintor ?? '-'}</Table.Td>
+                      <Table.Td>{item.cod_hidrante ?? '-'}</Table.Td>
                       <Table.Td>{item.predio}</Table.Td>
                       <Table.Td>{item.local}</Table.Td>
                       <Table.Td>{item.pavimento}</Table.Td>
@@ -145,7 +145,7 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
               fill
               onClick={exportToPdf}
               className="min-w-[12rem] h-10"
-              disabled={generatePdf || !selectedItemsExtinguisher.length || pageSize === null}
+              disabled={generatePdf || !selectedItemsHydrant.length || pageSize === null}
             >
               {generatePdf ? (
                 <Button.Spinner />
@@ -162,5 +162,3 @@ const ExtinguisherQrcodeModal = ({ open, onOpenChange }: ExtinguisherQrcodeModal
     </Modal>
   );
 };
-
-export default ExtinguisherQrcodeModal;

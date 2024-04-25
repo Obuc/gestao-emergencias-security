@@ -10,13 +10,13 @@ import TextField from '@/components/TextField';
 import CardEmpy from '../../../components/ui/CardEmpy';
 import { EquipmentCard } from '../../../components/ui/Card';
 import CardSkeleton from '../../../components/ui/CardSkeleton';
-import useextinguisherModalData from '../hooks/extinguisher-modal.hook';
+import { useHydrantModal } from '../hooks/hydrants-modal.hook';
 
-const ExtinguisherModal = () => {
+export const HydrantModal = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  const { extinguisherModalData, historyModalData, year, setYear } = useextinguisherModalData();
+  const { hydrantModalData, historyModalData, year, setYear } = useHydrantModal();
   const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const ExtinguisherModal = () => {
 
   const handleOnOpenChange = () => {
     setExtinguisherItem(null);
-    navigate('/equipments/extinguisher');
+    navigate('/equipments/hydrant');
   };
 
   return (
@@ -35,18 +35,19 @@ const ExtinguisherModal = () => {
       className="w-[65.125rem]"
       open={extinguisherItem !== null}
       onOpenChange={handleOnOpenChange}
-      title={`Registro Extintor N°${params.id}`}
+      title={`Equipamento Hidrante N°${params.id}`}
     >
       <>
         <div className="pt-6 px-8">
           <div className="flex gap-2 py-2">
             <TextField
               disabled
-              id="cod_extintor"
-              name="cod_extintor"
-              label="N° Extintor"
-              value={extinguisherModalData.data?.cod_extintor ?? ''}
-              isLoading={extinguisherModalData.isLoading}
+              id="cod_hidrante"
+              name="cod_hidrante"
+              label="N° Hidrante"
+              width="w-[10rem]"
+              value={hydrantModalData.data?.cod_hidrante ?? ''}
+              isLoading={hydrantModalData.isLoading}
             />
 
             <TextField
@@ -55,8 +56,8 @@ const ExtinguisherModal = () => {
               name="site"
               label="Site"
               width="w-[10rem]"
-              value={extinguisherModalData.data?.site ?? ''}
-              isLoading={extinguisherModalData.isLoading}
+              value={hydrantModalData.data?.site ?? ''}
+              isLoading={hydrantModalData.isLoading}
             />
 
             <TextField
@@ -65,48 +66,38 @@ const ExtinguisherModal = () => {
               name="predio"
               label="Prédio"
               width="w-[10rem]"
-              value={extinguisherModalData.data?.predio ?? ''}
-              isLoading={extinguisherModalData.isLoading}
+              value={hydrantModalData.data?.predio ?? ''}
+              isLoading={hydrantModalData.isLoading}
             />
 
             <TextField
               disabled
-              id="tipo_extintor"
-              name="tipo_extintor"
-              label="Tipo Extintor"
-              width="w-[12rem]"
-              value={extinguisherModalData.data?.tipo_extintor ?? ''}
-              isLoading={extinguisherModalData.isLoading}
+              id="pavimento"
+              name="pavimento"
+              label="Pavimento"
+              value={hydrantModalData.data?.pavimento ?? ''}
+              isLoading={hydrantModalData.isLoading}
             />
           </div>
 
           <div className="flex gap-2 py-2">
             <TextField
               disabled
-              id="pavimento"
-              name="pavimento"
-              label="Pavimento"
-              value={extinguisherModalData.data?.pavimento ?? ''}
-              isLoading={extinguisherModalData.isLoading}
-            />
-
-            <TextField
-              disabled
               id="local"
               name="local"
               label="Local"
-              value={extinguisherModalData.data?.local ?? ''}
-              isLoading={extinguisherModalData.isLoading}
+              value={hydrantModalData.data?.local ?? ''}
+              isLoading={hydrantModalData.isLoading}
             />
 
             <TextField
               disabled
-              id="massa"
-              name="massa"
-              label="Massa"
-              width="w-[8rem]"
-              value={extinguisherModalData.data?.massa ?? ''}
-              isLoading={extinguisherModalData.isLoading}
+              id="possui_abrigo"
+              name="possui_abrigo"
+              label="Possui Abrigo ?"
+              width="w-[10rem]"
+              value={hydrantModalData.data?.possui_abrigo ? 'Sim' : 'Não' ?? ''}
+              isLoading={hydrantModalData.isLoading}
             />
           </div>
         </div>
@@ -142,29 +133,16 @@ const ExtinguisherModal = () => {
           {!historyModalData.data?.length && !historyModalData.isLoading && <CardEmpy />}
           {historyModalData.isLoading && <CardSkeleton />}
 
-          {historyModalData.data &&
+          {historyModalData &&
             historyModalData.data?.map((item) => {
-              const cardVariant =
-                item.conforme && !item.novo ? 'new' : item.conforme && item.novo ? 'modification' : 'noncompliant';
-
-              const cardTitle =
-                item.conforme && !item.novo
-                  ? 'Nova Verificação'
-                  : item.conforme && item.novo
-                  ? 'Alteração do Equipamento'
-                  : 'Verificação Inconforme';
-
+              const cardVariant = item.conforme ? 'new' : 'noncompliant';
+              const cardTitle = item.conforme ? 'Nova Verificação' : 'Verificação Inconforme';
               const cardDate = format(new Date(item.Created), 'dd MMM yyyy', { locale: ptBR });
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/extinguisher/${item.Id}`} />
-                  <EquipmentCard.Content
-                    date={cardDate}
-                    responsible={item.bombeiro_id.Title}
-                    action={item.observacao}
-                    cod={item?.cod_extintor}
-                  />
+                  <EquipmentCard.Header title={cardTitle} link={`/records/hydrant/${item.Id}`} />
+                  <EquipmentCard.Content date={cardDate} responsible={item.bombeiro.Title} action={item.observacao} />
                 </EquipmentCard.Root>
               );
             })}
@@ -173,5 +151,3 @@ const ExtinguisherModal = () => {
     </Modal>
   );
 };
-
-export default ExtinguisherModal;

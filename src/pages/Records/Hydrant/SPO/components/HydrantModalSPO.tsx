@@ -33,7 +33,7 @@ const HydrantModalSPO = () => {
 
   const handleOnOpenChange = () => {
     setHydrantItem(null);
-    navigate('/records/hydrants');
+    navigate('/records/hydrant');
   };
 
   const exportToPdf = async () => {

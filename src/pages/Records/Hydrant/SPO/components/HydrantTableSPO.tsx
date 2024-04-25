@@ -29,11 +29,11 @@ const HydrantTableSPO = ({ hydrant, mutateRemove, setSortColumns, sortColumns }:
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (Id: number) => {
-    navigate(`/records/hydrants/${Id}?edit=false`);
+    navigate(`/records/hydrant/${Id}?edit=false`);
   };
 
   const handleEdit = (Id: number) => {
-    navigate(`/records/hydrants/${Id}?edit=true`);
+    navigate(`/records/hydrant/${Id}?edit=true`);
   };
 
   const handleRemoveItem = async () => {

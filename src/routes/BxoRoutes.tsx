@@ -9,8 +9,10 @@ import HydrantBXO from '../pages/Records/Hydrant/BXO';
 import LoadRatio from '../pages/Records/LoadRatio/BXO';
 import ExtinguisherBXO from '../pages/Records/Extinguisher/BXO';
 import InspectionCmiBXO from '../pages/Records/InspectionCmi/BXO';
+import EquipmentsHydrantBXO from '../pages/Equipments/Hydrants/BXO';
 import GeneralChecklist from '../pages/Records/GeneralChecklist/BXO';
 import GovernanceValveBXO from '../pages/Records/GovernanceValve/BXO';
+import EquipmentsExtinguisherBXO from '../pages/Equipments/Extinguisher/BXO';
 
 export const BxoRoutes = () => {
   return (
@@ -28,8 +30,8 @@ export const BxoRoutes = () => {
       <Route path="/records/extinguisher/:id" element={<ExtinguisherBXO />} />
 
       {/* Hydrant  */}
-      <Route path="/records/hydrants" element={<HydrantBXO />} />
-      <Route path="/records/hydrants/:id" element={<HydrantBXO />} />
+      <Route path="/records/hydrant" element={<HydrantBXO />} />
+      <Route path="/records/hydrant/:id" element={<HydrantBXO />} />
 
       {/* Valves  */}
       <Route path="/records/valve" element={<GovernanceValveBXO />} />
@@ -55,14 +57,13 @@ export const BxoRoutes = () => {
       <Route path="/equipments/:form" element={<Equipments />} />
       <Route path="/equipments/:form/:id" element={<Equipments />} />
 
-      {/* <Route
-        path="/equipments/extinguisher"
-        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsExtinguisherSPO />}
-      />
-      <Route
-        path="/equipments/extinguisher/:id"
-        element={localSite === 'BXO' ? <EquipmentsExtinguisherBXO /> : <EquipmentsExtinguisherSPO />}
-      /> */}
+      {/* Equipments - Extinguisher */}
+      <Route path="/equipments/extinguisher" element={<EquipmentsExtinguisherBXO />} />
+      <Route path="/equipments/extinguisher/:id" element={<EquipmentsExtinguisherBXO />} />
+
+      {/* Equipments - Hydrant */}
+      <Route path="/equipments/hydrant" element={<EquipmentsHydrantBXO />} />
+      <Route path="/equipments/hydrant/:id" element={<EquipmentsHydrantBXO />} />
     </Routes>
   );
 };

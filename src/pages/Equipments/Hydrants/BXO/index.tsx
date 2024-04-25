@@ -5,18 +5,18 @@ import { faDownload, faExpand } from '@fortawesome/free-solid-svg-icons';
 import Toast from '@/components/Toast';
 import LayoutBase from '@/layout/LayoutBase';
 import { Button } from '@/components/Button';
-import useExtinguisher from './hooks/extinguisher.hook';
-import ExtinguisherTable from './components/extinguisher-table';
-import ExtinguisherFilters from './components/extinguisher-filters';
-import EquipmentsExtinguisherQrcodeModal from './components/extinguisher-qrcode-modal';
+import { useHydrant } from './hooks/hydrants.hook';
+import { HydrantTable } from './components/hydrants-table';
+import { HydrantFilters } from './components/hydrants-filters';
+import { HydrantQrcodeModal } from './components/hydrants-qrcode-modal';
 
-const EquipmentsExtinguisherBXO = () => {
+const EquipmentsHydrantBXO = () => {
   const navigate = useNavigate();
   const localSite = localStorage.getItem('user_site');
   const [openModalGenerateQRCode, setOpenModalGenerateQRCode] = useState<boolean | null>(null);
 
   const {
-    extinguisherData,
+    hydrantData,
     mutateRemove,
     sortColumns,
     setSortColumns,
@@ -26,7 +26,7 @@ const EquipmentsExtinguisherBXO = () => {
     handleRemoveAllFilters,
     setTempTableFilters,
     tempTableFilters,
-  } = useExtinguisher();
+  } = useHydrant();
 
   useEffect(() => {
     if (localSite === null) {
@@ -42,7 +42,7 @@ const EquipmentsExtinguisherBXO = () => {
             <div className="flex pb-8 items-center w-full justify-between">
               <div className="flex w-full items-center gap-2 text-2xl text-primary-font font-semibold">
                 <div className="w-3 h-3 rounded-full bg-primary" />
-                <h2>Extintores</h2>
+                <h2>Hidrantes</h2>
               </div>
 
               <div className="flex gap-2">
@@ -66,7 +66,7 @@ const EquipmentsExtinguisherBXO = () => {
                   <Button.Icon icon={faExpand} />
                 </Button.Root>
 
-                <ExtinguisherFilters
+                <HydrantFilters
                   countAppliedFilters={countAppliedFilters}
                   handleApplyFilters={handleApplyFilters}
                   handleRemoveAllFilters={handleRemoveAllFilters}
@@ -76,8 +76,8 @@ const EquipmentsExtinguisherBXO = () => {
               </div>
             </div>
 
-            <ExtinguisherTable
-              extinguisherData={extinguisherData}
+            <HydrantTable
+              hydrantData={hydrantData}
               mutateRemove={mutateRemove}
               sortColumns={sortColumns}
               setSortColumns={setSortColumns}
@@ -86,10 +86,7 @@ const EquipmentsExtinguisherBXO = () => {
         </div>
 
         {openModalGenerateQRCode && (
-          <EquipmentsExtinguisherQrcodeModal
-            open={openModalGenerateQRCode}
-            onOpenChange={() => setOpenModalGenerateQRCode(null)}
-          />
+          <HydrantQrcodeModal open={openModalGenerateQRCode} onOpenChange={() => setOpenModalGenerateQRCode(null)} />
         )}
       </LayoutBase>
 
@@ -108,4 +105,4 @@ const EquipmentsExtinguisherBXO = () => {
   );
 };
 
-export default EquipmentsExtinguisherBXO;
+export default EquipmentsHydrantBXO;

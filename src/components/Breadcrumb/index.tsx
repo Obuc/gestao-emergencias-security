@@ -23,7 +23,7 @@ const Breadcrumb = () => {
     reports: 'Laudos',
     new: 'Novo Laudo',
     extinguisher: 'Extintores',
-    hydrants: 'Hidrantes',
+    hydrant: 'Hidrantes',
     valve: 'Válvulas de Governo',
     cmi_test: 'Teste CMI',
     cmi_inspection: 'Inspeção CMI',

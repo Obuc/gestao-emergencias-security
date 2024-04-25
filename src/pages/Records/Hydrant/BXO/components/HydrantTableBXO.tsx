@@ -29,11 +29,11 @@ const HydrantTableBXO = ({ hydrant, mutateRemove, setSortColumns, sortColumns }:
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (Id: number) => {
-    navigate(`/records/hydrants/${Id}?edit=false`);
+    navigate(`/records/hydrant/${Id}?edit=false`);
   };
 
   const handleEdit = (Id: number) => {
-    navigate(`/records/hydrants/${Id}?edit=true`);
+    navigate(`/records/hydrant/${Id}?edit=true`);
   };
 
   const handleRemoveItem = async () => {
@@ -109,7 +109,9 @@ const HydrantTableBXO = ({ hydrant, mutateRemove, setSortColumns, sortColumns }:
         <CustomDataGrid
           columns={columns.map((column) => ({
             ...column,
-            headerCellClass: `${column.key === 'Id' && 'pl-4'} flex items-center text-primary-font-font font-medium text-lg bg-[#F9F9F9]`,
+            headerCellClass: `${
+              column.key === 'Id' && 'pl-4'
+            } flex items-center text-primary-font-font font-medium text-lg bg-[#F9F9F9]`,
           }))}
           mappedRows={mappedRows}
           handleScroll={handleScroll}

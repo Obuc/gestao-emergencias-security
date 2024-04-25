@@ -6,27 +6,27 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Toast from '@/components/Toast';
 import isAtBottom from '@/utils/isAtBottom';
+import { HydrantModal } from './hydrants-modal';
 import CustomDataGrid from '@/components/DataGrid';
-import ExtinguisherModal from './extinguisher-modal';
 import PopoverTables from '@/components/PopoverTables';
+import { HydrantProps } from '../types/hydrants.types';
 import RemoveItem from '@/components/AppModals/RemoveItem';
-import { ExtinguisherProps } from '../types/extinguisher.types';
 import DataGridLoadMore from '@/components/DataGrid/DataGridLoadMore';
 import { UseInfiniteQueryResult, UseMutationResult } from '@tanstack/react-query';
 
-interface ExtinguisherTableProps {
-  extinguisherData: UseInfiniteQueryResult<any, unknown>;
+interface HydrantTableProps {
+  hydrantData: UseInfiniteQueryResult<any, unknown>;
   mutateRemove: UseMutationResult<void, unknown, number, unknown>;
   sortColumns: readonly SortColumn[];
   setSortColumns: React.Dispatch<React.SetStateAction<readonly SortColumn[]>>;
 }
 
-const ExtinguisherTable = ({ extinguisherData, mutateRemove, setSortColumns, sortColumns }: ExtinguisherTableProps) => {
+export const HydrantTable = ({ hydrantData, mutateRemove, setSortColumns, sortColumns }: HydrantTableProps) => {
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/extinguisher/${id}`);
+    navigate(`/equipments/hydrant/${id}`);
   };
 
   const handleRemove = async () => {
@@ -36,28 +36,26 @@ const ExtinguisherTable = ({ extinguisherData, mutateRemove, setSortColumns, sor
     }
   };
 
-  const columns: readonly Column<ExtinguisherProps>[] = [
+  const columns: readonly Column<HydrantProps>[] = [
     { key: 'Id', name: '#', resizable: true },
     { key: 'site/Title', name: 'Site', resizable: true },
     { key: 'pavimento/Title', name: 'Pavimento', resizable: true },
     { key: 'local/Title', name: 'Local', resizable: true, width: 200 },
-    { key: 'tipo_extintor/Title', name: 'Tipo Extintor', resizable: true },
-    { key: 'cod_extintor', name: 'N° Extintor', resizable: true },
+    { key: 'cod_hidrante', name: 'N° Hidrante', resizable: true },
     { key: 'conforme', name: 'Conformidade', resizable: true },
 
     { key: 'buttons', name: 'Ações', resizable: true, sortable: false },
   ];
 
   const mappedRows =
-    extinguisherData.data?.pages.flatMap(
+    hydrantData.data?.pages.flatMap(
       (page) =>
-        page?.data?.value?.map((item: ExtinguisherProps) => ({
+        page?.data?.value?.map((item: HydrantProps) => ({
           Id: <div className="pl-4">{item.Id}</div>,
           'site/Title': item?.site ? item.site : '',
           'pavimento/Title': item?.pavimento ? item.pavimento : '',
           'local/Title': item?.local ? item.local : '',
-          'tipo_extintor/Title': item?.tipo_extintor ? item.tipo_extintor : '',
-          cod_extintor: item?.cod_extintor ? item.cod_extintor : '',
+          cod_hidrante: item?.cod_hidrante ? item.cod_hidrante : '',
 
           conforme: (
             <div className="flex items-center h-full w-full">
@@ -85,7 +83,7 @@ const ExtinguisherTable = ({ extinguisherData, mutateRemove, setSortColumns, sor
 
   const handleScroll = async (event: React.UIEvent<HTMLDivElement>) => {
     if (!isAtBottom(event)) return;
-    extinguisherData.fetchNextPage();
+    hydrantData.fetchNextPage();
   };
 
   return (
@@ -104,10 +102,10 @@ const ExtinguisherTable = ({ extinguisherData, mutateRemove, setSortColumns, sor
           setSortColumns={setSortColumns}
         />
 
-        {extinguisherData.isFetchingNextPage && <DataGridLoadMore />}
+        {hydrantData.isFetchingNextPage && <DataGridLoadMore />}
       </div>
 
-      <ExtinguisherModal />
+      <HydrantModal />
 
       {removeItem !== null && (
         <RemoveItem
@@ -132,5 +130,3 @@ const ExtinguisherTable = ({ extinguisherData, mutateRemove, setSortColumns, sor
     </>
   );
 };
-
-export default ExtinguisherTable;

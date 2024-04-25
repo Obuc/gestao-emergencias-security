@@ -40,7 +40,7 @@ const EqEqHydrantsTable = () => {
   const { local, pavimento } = appContext();
 
   const handleView = (id: number) => {
-    navigate(`/equipments/hydrants/${id}`);
+    navigate(`/equipments/hydrant/${id}`);
   };
 
   const handleRemoveAllFilters = () => {

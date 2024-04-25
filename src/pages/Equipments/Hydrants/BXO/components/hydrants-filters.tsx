@@ -2,25 +2,25 @@ import useParams from '@/hooks/useParams';
 import { Button } from '@/components/Button';
 import TextField from '@/components/TextField';
 import { Popover } from '@/components/Popover';
+import { HydrantFiltersProps } from '../types/hydrants.types';
 import { SelectAutoComplete } from '@/components/SelectAutocomplete';
-import { ExtinguisherFiltersProps } from '../types/extinguisher.types';
 
 interface IFilters {
-  tempTableFilters: ExtinguisherFiltersProps;
-  setTempTableFilters: React.Dispatch<React.SetStateAction<ExtinguisherFiltersProps>>;
+  tempTableFilters: HydrantFiltersProps;
+  setTempTableFilters: React.Dispatch<React.SetStateAction<HydrantFiltersProps>>;
   handleRemoveAllFilters: () => void;
   countAppliedFilters: () => number;
   handleApplyFilters: () => void;
 }
 
-const ExtinguisherFilters = ({
+export const HydrantFilters = ({
   tempTableFilters,
   setTempTableFilters,
   handleRemoveAllFilters,
   countAppliedFilters,
   handleApplyFilters,
 }: IFilters) => {
-  const { pavimento, local, tipo_extintor } = useParams();
+  const { pavimento, local } = useParams();
 
   return (
     <Popover.Root>
@@ -50,12 +50,12 @@ const ExtinguisherFilters = ({
           />
 
           <TextField
-            label="Cód. Extintor"
-            id="extinguisherId"
-            name="extinguisherId"
-            value={tempTableFilters.extinguisherId || ''}
+            label="Cód. Hidrante"
+            id="hydrantId"
+            name="hydrantId"
+            value={tempTableFilters.hydrantId || ''}
             onChange={(event) => {
-              setTempTableFilters((prev) => ({ ...prev, extinguisherId: event.target.value }));
+              setTempTableFilters((prev) => ({ ...prev, hydrantId: event.target.value }));
             }}
           />
 
@@ -91,17 +91,17 @@ const ExtinguisherFilters = ({
           />
 
           <SelectAutoComplete.Fixed
-            id="extinguisherType"
-            name="extinguisherType"
-            label="Tipo de extintor"
+            id="hasShelter"
+            name="hasShelter"
+            label="Possui Abrigo"
             isSearchable
-            value={tempTableFilters.extinguisherType}
-            options={tipo_extintor.data?.map((item) => ({
-              value: item.Id,
-              label: item.Title,
-            }))}
+            value={tempTableFilters.hasShelter}
+            options={[
+              { value: 'Possui Abrigo: Sim', label: 'Sim' },
+              { value: 'Possui Abrigo: Não', label: 'Não' },
+            ]}
             onChange={(value: any) => {
-              setTempTableFilters((prev) => ({ ...prev, extinguisherType: value }));
+              setTempTableFilters((prev) => ({ ...prev, hasShelter: value.value }));
             }}
           />
 
@@ -141,5 +141,3 @@ const ExtinguisherFilters = ({
     </Popover.Root>
   );
 };
-
-export default ExtinguisherFilters;

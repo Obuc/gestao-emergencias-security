@@ -54,8 +54,7 @@ const Equipments = () => {
       (form) => (form.todos_sites === true || form.site.Title === localSite) && form.Title !== 'Veículos de emergência',
     );
 
-  const filteredSubMenu =
-    submenu && submenu.filter((form) => form.todos_sites === true || form.site.Title === localSite);
+  const filteredSubMenu = submenu && submenu.filter((form) => form.todos_sites === true || form.site.Title === localSite);
 
   const handleExportToExcel = () => {
     switch (formValue) {

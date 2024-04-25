@@ -59,7 +59,8 @@ const useHydrantModalBXO = () => {
 
         const dataCriadoIsoDate = hydrantsData.Created && parseISO(hydrantsData.Created);
 
-        const dataCriado = dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
+        const dataCriado =
+          dataCriadoIsoDate && new Date(dataCriadoIsoDate.getTime() + dataCriadoIsoDate.getTimezoneOffset() * 60000);
 
         const hidrante = await fetchHidranteData(hydrantsData.hidrante_id.Id);
         const respostas = await fetchRespostasHidrante();
@@ -91,7 +92,7 @@ const useHydrantModalBXO = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && pathname === `/records/hydrants/${params.id}` && user_site === 'BXO',
+    enabled: params.id !== undefined && pathname === `/records/hydrant/${params.id}` && user_site === 'BXO',
   });
 
   const mutateEdit = useMutation({
@@ -149,7 +150,7 @@ const useHydrantModalBXO = () => {
 
       const timeoutId = setTimeout(() => {
         setHydrantItem(null);
-        navigate('/records/extinguisher');
+        navigate('/records/hydrant');
       }, +timeDelayToRedirectPage);
       return () => clearTimeout(timeoutId);
     },
