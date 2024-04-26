@@ -2,12 +2,12 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
-import Toast from '../../../../components/Toast';
-import { Button } from '../../../../components/Button';
-import LayoutBase from '../../../../layout/LayoutBase';
-import useEmergencyDoorSPO from './hooks/emergency-door-spo.hook';
-import EmergencyDoorTableSPO from './components/emergency-door-table-spo';
-import EmergencyDoorFiltersSPO from './components/emergency-door-filters-spo';
+import Toast from '@/components/Toast';
+import { Button } from '@/components/Button';
+import LayoutBase from '@/layout/LayoutBase';
+import { useEmergencyDoorSPO } from './hooks/emergency-door.hook';
+import { EmergencyDoorTableSPO } from './components/emergency-door-table';
+import { EmergencyDoorFiltersSPO } from './components/emergency-door-filters';
 
 const EmergencyDoorSPO = () => {
   const navigate = useNavigate();

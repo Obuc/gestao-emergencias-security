@@ -35,7 +35,7 @@ const useValveModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/equipments/valve'),
+    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/spo/equipments/valve'),
   });
 
   const historyModalData: UseQueryResult<Array<ValveHistoryProps>> = useQuery({

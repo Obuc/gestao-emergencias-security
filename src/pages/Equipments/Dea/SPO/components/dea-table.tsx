@@ -26,7 +26,7 @@ export const DeaTable = ({ deaData, mutateRemove, setSortColumns, sortColumns }:
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/dea/${id}`);
+    navigate(`/spo/equipments/dea/${id}`);
   };
 
   const handleRemove = async () => {

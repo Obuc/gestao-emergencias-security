@@ -39,7 +39,7 @@ export const useCmiTestModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && location.pathname.includes('/equipments/cmi_test'),
+    enabled: params.id !== undefined && location.pathname.includes('/bxo/equipments/cmi_test'),
   });
 
   const historyModalData: UseQueryResult<Array<CmiTestHistoryProps>> = useQuery({

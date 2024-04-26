@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
@@ -12,13 +12,14 @@ import BayerLogoWhite from '../../components/Icons/BayerLogoWhite';
 
 const Home = () => {
   const navigate = useNavigate();
+  // const { pathname } = useLocation();
   const { sites, isLoadingSites } = appContext();
 
   const [site, setSite] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
 
-  const localSite = localStorage.getItem('user_site');
-  const equipments_value = localStorage.getItem('equipments_value');
+  // const equipments_value = pathname.split('/')[2];
+  // const localSite = localStorage.getItem('user_site');
 
   const handleStart = () => {
     if (!site) return;
@@ -28,15 +29,15 @@ const Home = () => {
     //   return;
     // }
 
+    navigate(`/${site.toLowerCase()}/records/extinguisher`);
     localStorage.setItem('user_site', site);
-    navigate('/records/extinguisher');
   };
 
-  useEffect(() => {
-    if (localSite?.length) {
-      navigate(`/records/${equipments_value?.length ? equipments_value?.length : 'extinguisher'}`);
-    }
-  }, [localSite, equipments_value]);
+  // useEffect(() => {
+  //   if (localSite && localSite?.length > 0) {
+  //     navigate(`/records/${equipments_value?.length > 0 ? equipments_value : 'extinguisher'}`);
+  //   }
+  // }, [localSite, equipments_value]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-cover relative">

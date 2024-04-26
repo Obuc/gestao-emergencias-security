@@ -42,7 +42,7 @@ export const useExtinguisherModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && location.pathname.includes('/equipments/extinguisher'),
+    enabled: params.id !== undefined && location.pathname.includes('/bxo/equipments/extinguisher'),
   });
 
   const historyModalData: UseQueryResult<Array<ExtinguisherHistoryModalProps>> = useQuery({

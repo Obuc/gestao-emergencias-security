@@ -31,7 +31,7 @@ export const AmbulanceCheckTable = ({
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/ambulance_check/${id}`);
+    navigate(`/spo/equipments/ambulance_check/${id}`);
   };
 
   const handleRemove = async () => {

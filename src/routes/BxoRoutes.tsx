@@ -3,17 +3,17 @@ import { Route, Routes } from 'react-router-dom';
 import Home from '../pages/Home';
 import Report from '../pages/Report';
 import Schedule from '../pages/Schedule';
-import Equipments from '../pages/Equipments';
-import TestCmiBXO from '../pages/Records/TestCmi/BXO';
+import TestCmiBXO from '../pages/Records/CmiTest/BXO';
 import HydrantBXO from '../pages/Records/Hydrant/BXO';
 import LoadRatio from '../pages/Records/LoadRatio/BXO';
+import GovernanceValveBXO from '../pages/Records/Valve/BXO';
 import EquipmentsValveBXO from '../pages/Equipments/Valve/BXO';
 import ExtinguisherBXO from '../pages/Records/Extinguisher/BXO';
-import InspectionCmiBXO from '../pages/Records/InspectionCmi/BXO';
+import InspectionCmiBXO from '../pages/Records/CmiInspection/BXO';
 import EquipmentsCmiTestBXO from '../pages/Equipments/CmiTest/BXO';
 import EquipmentsHydrantBXO from '../pages/Equipments/Hydrants/BXO';
 import GeneralChecklist from '../pages/Records/GeneralChecklist/BXO';
-import GovernanceValveBXO from '../pages/Records/GovernanceValve/BXO';
+import EquipmentsLoadRatioBXO from '../pages/Equipments/LoadRatio/BXO';
 import EquipmentsExtinguisherBXO from '../pages/Equipments/Extinguisher/BXO';
 import EquipmentsCmiInspectionBXO from '../pages/Equipments/CmiInspection/BXO';
 import { EquipmentsGeneralChecklistBXO } from '../pages/Equipments/GeneralChecklist/BXO';
@@ -57,10 +57,6 @@ export const BxoRoutes = () => {
       <Route path={`/records/general_checklist`} element={<GeneralChecklist />} />
       <Route path={`/records/general_checklist/:id`} element={<GeneralChecklist />} />
 
-      {/* Equipments */}
-      <Route path="/equipments/:form" element={<Equipments />} />
-      <Route path="/equipments/:form/:id" element={<Equipments />} />
-
       {/* Equipments - Extinguisher */}
       <Route path="/equipments/extinguisher" element={<EquipmentsExtinguisherBXO />} />
       <Route path="/equipments/extinguisher/:id" element={<EquipmentsExtinguisherBXO />} />
@@ -84,6 +80,10 @@ export const BxoRoutes = () => {
       {/* Equipments - General Checklist*/}
       <Route path="/equipments/general_checklist" element={<EquipmentsGeneralChecklistBXO />} />
       <Route path="/equipments/general_checklist/:id" element={<EquipmentsGeneralChecklistBXO />} />
+
+      {/* Equipments - LoadRatio  */}
+      <Route path={`/equipments/:form`} element={<EquipmentsLoadRatioBXO />} />
+      <Route path={`/equipments/:form/:id`} element={<EquipmentsLoadRatioBXO />} />
     </Routes>
   );
 };

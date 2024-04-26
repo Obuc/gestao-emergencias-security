@@ -40,7 +40,7 @@ export const useOeiQrCode = () => {
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/oei_operation'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/spo/equipments/oei_operation'),
   });
 
   const toggleSelectAll = () => {

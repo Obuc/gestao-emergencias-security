@@ -39,7 +39,7 @@ export const useCmiInspectionModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && location.pathname.includes('/equipments/cmi_inspection'),
+    enabled: params.id !== undefined && location.pathname.includes('/bxo/equipments/cmi_inspection'),
   });
 
   const historyModalData: UseQueryResult<Array<CmiInspectionHistoryProps>> = useQuery({

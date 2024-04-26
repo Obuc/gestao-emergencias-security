@@ -40,7 +40,7 @@ export const useValveModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && location.pathname.includes('/equipments/valve'),
+    enabled: params.id !== undefined && location.pathname.includes('/bxo/equipments/valve'),
   });
 
   const historyModalData: UseQueryResult<Array<ValveHistoryProps>> = useQuery({

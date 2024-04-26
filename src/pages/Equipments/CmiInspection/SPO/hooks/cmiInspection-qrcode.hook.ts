@@ -40,7 +40,7 @@ export const useCmiInspectionQrCode = () => {
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/cmi_inspection'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/spo/equipments/cmi_inspection'),
   });
 
   const toggleSelectAll = () => {

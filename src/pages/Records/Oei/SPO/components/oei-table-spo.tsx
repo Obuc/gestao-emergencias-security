@@ -8,13 +8,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { UseInfiniteQueryResult, UseMutationResult } from '@tanstack/react-query';
 
 import { Oei } from '../types/oei.types';
-import OeiModalSPO from './oei-modal-spo';
-import Toast from '../../../../../components/Toast';
-import isAtBottom from '../../../../../utils/isAtBottom';
-import CustomDataGrid from '../../../../../components/DataGrid';
-import PopoverTables from '../../../../../components/PopoverTables';
-import RemoveItem from '../../../../../components/AppModals/RemoveItem';
-import DataGridLoadMore from '../../../../../components/DataGrid/DataGridLoadMore';
+import Toast from '@/components/Toast';
+import isAtBottom from '@/utils/isAtBottom';
+import { OeiModalSPO } from './oei-modal-spo';
+import CustomDataGrid from '@/components/DataGrid';
+import PopoverTables from '@/components/PopoverTables';
+import RemoveItem from '@/components/AppModals/RemoveItem';
+import DataGridLoadMore from '@/components/DataGrid/DataGridLoadMore';
 
 interface ITableProps {
   oei: UseInfiniteQueryResult<any, unknown>;
@@ -23,17 +23,17 @@ interface ITableProps {
   setSortColumns: React.Dispatch<React.SetStateAction<readonly SortColumn[]>>;
 }
 
-const OeiTableSPO = ({ oei, mutateRemove, setSortColumns, sortColumns }: ITableProps) => {
+export const OeiTableSPO = ({ oei, mutateRemove, setSortColumns, sortColumns }: ITableProps) => {
   const navigate = useNavigate();
 
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (Id: number) => {
-    navigate(`/records/oei_operation/${Id}?edit=false`);
+    navigate(`/spo/records/oei_operation/${Id}?edit=false`);
   };
 
   const handleEdit = (Id: number) => {
-    navigate(`/records/oei_operation/${Id}?edit=true`);
+    navigate(`/spo/records/oei_operation/${Id}?edit=true`);
   };
 
   const handleRemoveItem = async () => {
@@ -149,5 +149,3 @@ const OeiTableSPO = ({ oei, mutateRemove, setSortColumns, sortColumns }: ITableP
     </>
   );
 };
-
-export default OeiTableSPO;

@@ -40,7 +40,7 @@ export const useEmergencyDoorsQrCode = () => {
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/emergency_doors'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/spo/equipments/emergency_doors'),
   });
 
   const toggleSelectAll = () => {

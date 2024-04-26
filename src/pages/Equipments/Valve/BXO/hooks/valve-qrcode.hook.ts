@@ -43,7 +43,7 @@ export const useValveQrCode = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: location.pathname.includes('/equipments/valve'),
+    enabled: location.pathname.includes('/bxo/equipments/valve'),
   });
 
   const toggleSelectAll = () => {

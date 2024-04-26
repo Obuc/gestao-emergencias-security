@@ -43,7 +43,7 @@ export const useHydrantQrCode = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: location.pathname.includes('/equipments/hydrant'),
+    enabled: location.pathname.includes('/bxo/equipments/hydrant'),
   });
 
   const toggleSelectAll = () => {

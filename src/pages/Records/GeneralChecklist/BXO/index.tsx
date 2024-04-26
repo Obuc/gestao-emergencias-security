@@ -2,14 +2,14 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
-import Toast from '../../../../components/Toast';
-import years from '../../../../utils/years.mock';
-import LayoutBase from '../../../../layout/LayoutBase';
-import { Select } from '../../../../components/Select';
-import { Button } from '../../../../components/Button';
-import useGeneralChecklistBXO from './hooks/useGeneralChecklistBXO';
-import GeneralChecklistTableBXO from './components/GeneralChecklistTableBXO';
-import GeneralChecklistFiltersBXO from './components/GeneralChecklistFiltersBXO';
+import Toast from '@/components/Toast';
+import years from '@/utils/years.mock';
+import LayoutBase from '@/layout/LayoutBase';
+import { Select } from '@/components/Select';
+import { Button } from '@/components/Button';
+import { useGeneralChecklistBXO } from './hooks/generalchecklist.hook';
+import { GeneralChecklistTableBXO } from './components/generalchecklist-table';
+import { GeneralChecklistFiltersBXO } from './components/generalchecklist-filters';
 
 const GeneralChecklist = () => {
   const navigate = useNavigate();

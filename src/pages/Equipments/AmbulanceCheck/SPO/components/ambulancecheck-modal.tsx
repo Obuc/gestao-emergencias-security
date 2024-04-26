@@ -27,7 +27,7 @@ export const AmbulanceCheckModal = () => {
 
   const handleOnOpenChange = () => {
     setValveItem(null);
-    navigate('/equipments/ambulance_check');
+    navigate('/spo/equipments/ambulance_check');
   };
 
   return (
@@ -97,7 +97,7 @@ export const AmbulanceCheckModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/ambulance_check/${item.idRegistro}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/spo/records/ambulance_check/${item.idRegistro}`} />
                   <EquipmentCard.Content
                     date={cardDate}
                     responsible={item.responsavel}

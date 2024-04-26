@@ -2,15 +2,15 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
-import Toast from '../../../../components/Toast';
-import years from '../../../../utils/years.mock';
-import months from '../../../../utils/month.mock';
-import useHydrantSPO from './hooks/useHydrantSPO';
-import { Select } from '../../../../components/Select';
-import { Button } from '../../../../components/Button';
-import LayoutBase from '../../../../layout/LayoutBase';
-import HydrantTableSPO from './components/HydrantTableSPO';
-import HydrantFiltersSPO from './components/HydrantFiltersSPO';
+import Toast from '@/components/Toast';
+import years from '@/utils/years.mock';
+import months from '@/utils/month.mock';
+import { Select } from '@/components/Select';
+import { Button } from '@/components/Button';
+import LayoutBase from '@/layout/LayoutBase';
+import { useHydrantSPO } from './hooks/hydrant.hook';
+import { HydrantTableSPO } from './components/hydrant-table';
+import { HydrantFiltersSPO } from './components/hydrant-filters';
 
 const HydrantSPO = () => {
   const navigate = useNavigate();

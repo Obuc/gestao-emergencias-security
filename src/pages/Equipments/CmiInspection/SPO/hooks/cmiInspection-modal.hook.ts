@@ -35,7 +35,7 @@ export const useCmiInspectionModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/equipments/cmi_inspection'),
+    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/spo/equipments/cmi_inspection'),
   });
 
   const historyModalData: UseQueryResult<Array<CmiInspectionHistoryProps>> = useQuery({

@@ -31,7 +31,7 @@ export const CmiInspectionTable = ({
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/cmi_inspection/${id}`);
+    navigate(`/spo/equipments/cmi_inspection/${id}`);
   };
 
   const handleRemove = async () => {

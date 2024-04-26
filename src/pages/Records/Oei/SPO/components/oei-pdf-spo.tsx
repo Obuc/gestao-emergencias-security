@@ -3,12 +3,12 @@ import { ptBR } from 'date-fns/locale';
 import { Page, Text, View, Document } from '@react-pdf/renderer';
 
 import { OeiModal } from '../types/oei.types';
-import { styles } from '../../../../../utils/PDFStyles';
-import PDFInput from '../../../../../components/PDFComponents/PDFInput';
-import PDFHeader from '../../../../../components/PDFComponents/PDFHeader';
-import PDFFooter from '../../../../../components/PDFComponents/PDFFooter';
-import PDFTextArea from '../../../../../components/PDFComponents/PDFTextArea';
-import { PDFContainer } from '../../../../../components/PDFComponents/PDFContainer';
+import { styles } from '@/utils/PDFStyles';
+import PDFInput from '@/components/PDFComponents/PDFInput';
+import PDFHeader from '@/components/PDFComponents/PDFHeader';
+import PDFFooter from '@/components/PDFComponents/PDFFooter';
+import PDFTextArea from '@/components/PDFComponents/PDFTextArea';
+import { PDFContainer } from '@/components/PDFComponents/PDFContainer';
 
 interface IPdfProps {
   data: OeiModal;

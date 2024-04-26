@@ -44,7 +44,7 @@ export const useExtinguisherQrCode = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: location.pathname.includes('/equipments/extinguisher'),
+    enabled: location.pathname.includes('/bxo/equipments/extinguisher'),
   });
 
   const toggleSelectAll = () => {

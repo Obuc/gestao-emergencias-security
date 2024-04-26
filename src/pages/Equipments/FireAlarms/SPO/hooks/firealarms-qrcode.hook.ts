@@ -40,7 +40,7 @@ export const useFireAlarmsQrCode = () => {
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/fire_alarms'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/spo/equipments/fire_alarms'),
   });
 
   const toggleSelectAll = () => {

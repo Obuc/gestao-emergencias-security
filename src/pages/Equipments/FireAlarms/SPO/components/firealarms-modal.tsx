@@ -27,7 +27,7 @@ export const FireAlarmsModal = () => {
 
   const handleOnOpenChange = () => {
     setValveItem(null);
-    navigate('/equipments/fire_alarms');
+    navigate('/spo/equipments/fire_alarms');
   };
 
   return (
@@ -106,7 +106,7 @@ export const FireAlarmsModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/fire_alarms/${item.idRegistro}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/spo/records/fire_alarms/${item.idRegistro}`} />
                   <EquipmentCard.Content
                     date={cardDate}
                     responsible={item.responsavel}

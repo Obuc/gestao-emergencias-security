@@ -16,63 +16,65 @@ interface ILayoutBaseProps {
 const LayoutBase = ({ children, showMenu }: ILayoutBaseProps) => {
   const localSite = localStorage.getItem('user_site');
 
+  const localSiteLowerCase = localSite?.toLowerCase();
+
   const recordsItems: SubItem[] = [
-    { label: 'Extintores', path: '/records/extinguisher' },
-    { label: 'Hidrantes', path: '/records/hydrant' },
-    { label: 'Válvulas de Governo', path: '/records/valve' },
-    { label: 'Teste CMI', path: '/records/cmi_test' },
-    { label: 'Inspeção CMI', path: '/records/cmi_inspection' },
+    { label: 'Extintores', path: `/${localSiteLowerCase}/records/extinguisher` },
+    { label: 'Hidrantes', path: `/${localSiteLowerCase}/records/hydrant` },
+    { label: 'Válvulas de Governo', path: `/${localSiteLowerCase}/records/valve` },
+    { label: 'Teste CMI', path: `/${localSiteLowerCase}/records/cmi_test` },
+    { label: 'Inspeção CMI', path: `/${localSiteLowerCase}/records/cmi_inspection` },
   ];
 
   if (localSite === 'SPO') {
     recordsItems.push(
-      { label: 'Portas de Emergência', path: '/records/emergency_doors' },
-      { label: 'Operação OEI', path: '/records/oei_operation' },
-      { label: 'Alarmes de Incêndio', path: '/records/fire_alarms' },
-      { label: 'Verificação de Ambulância', path: '/records/ambulance_check' },
-      { label: 'DEA', path: '/records/dea' },
+      { label: 'Portas de Emergência', path: '/spo/records/emergency_doors' },
+      { label: 'Operação OEI', path: '/spo/records/oei_operation' },
+      { label: 'Alarmes de Incêndio', path: '/spo/records/fire_alarms' },
+      { label: 'Verificação de Ambulância', path: '/spo/records/ambulance_check' },
+      { label: 'DEA', path: '/spo/records/dea' },
     );
   }
 
   if (localSite === 'BXO') {
     recordsItems.push(
-      { label: 'Checklist Geral', path: '/records/general_checklist' },
-      { label: 'Scania', path: '/records/scania' },
-      { label: 'S10', path: '/records/s10' },
-      { label: 'Mercedes', path: '/records/mercedes' },
-      { label: 'Furgão', path: '/records/van' },
-      { label: 'Ambulância Sprinter', path: '/records/sprinter' },
-      { label: 'Ambulância Iveco', path: '/records/iveco' },
+      { label: 'Checklist Geral', path: '/bxo/records/general_checklist' },
+      { label: 'Scania', path: '/bxo/records/scania' },
+      { label: 'S10', path: '/bxo/records/s10' },
+      { label: 'Mercedes', path: '/bxo/records/mercedes' },
+      { label: 'Furgão', path: '/bxo/records/van' },
+      { label: 'Ambulância Sprinter', path: '/bxo/records/sprinter' },
+      { label: 'Ambulância Iveco', path: '/bxo/records/iveco' },
     );
   }
 
   const equipmentsItems: SubItem[] = [
-    { label: 'Extintores', path: '/equipments/extinguisher' },
-    { label: 'Hidrantes', path: '/equipments/hydrant' },
-    { label: 'Válvulas de Governo', path: '/equipments/valve' },
-    { label: 'Teste CMI', path: '/equipments/cmi_test' },
-    { label: 'Inspeção CMI', path: '/equipments/cmi_inspection' },
+    { label: 'Extintores', path: `/${localSiteLowerCase}/equipments/extinguisher` },
+    { label: 'Hidrantes', path: `/${localSiteLowerCase}/equipments/hydrant` },
+    { label: 'Válvulas de Governo', path: `/${localSiteLowerCase}/equipments/valve` },
+    { label: 'Teste CMI', path: `/${localSiteLowerCase}/equipments/cmi_test` },
+    { label: 'Inspeção CMI', path: `/${localSiteLowerCase}/equipments/cmi_inspection` },
   ];
 
   if (localSite === 'SPO') {
     equipmentsItems.push(
-      { label: 'Portas de Emergência', path: '/equipments/emergency_doors' },
-      { label: 'Operação OEI', path: '/equipments/oei_operation' },
-      { label: 'Alarmes de Incêndio', path: '/equipments/fire_alarms' },
-      { label: 'Verificação de Ambulância', path: '/equipments/ambulance_check' },
-      { label: 'DEA', path: '/equipments/dea' },
+      { label: 'Portas de Emergência', path: '/spo/equipments/emergency_doors' },
+      { label: 'Operação OEI', path: '/spo/equipments/oei_operation' },
+      { label: 'Alarmes de Incêndio', path: '/spo/equipments/fire_alarms' },
+      { label: 'Verificação de Ambulância', path: '/spo/equipments/ambulance_check' },
+      { label: 'DEA', path: '/spo/equipments/dea' },
     );
   }
 
   if (localSite === 'BXO') {
     equipmentsItems.push(
-      { label: 'Checklist Geral', path: '/equipments/general_checklist' },
-      { label: 'Scania', path: '/equipments/scania' },
-      { label: 'S10', path: '/equipments/s10' },
-      { label: 'Mercedes', path: '/equipments/mercedes' },
-      { label: 'Furgão', path: '/equipments/van' },
-      { label: 'Ambulância Sprinter', path: '/equipments/sprinter' },
-      { label: 'Ambulância Iveco', path: '/equipments/iveco' },
+      { label: 'Checklist Geral', path: '/bxo/equipments/general_checklist' },
+      { label: 'Scania', path: '/bxo/equipments/scania' },
+      { label: 'S10', path: '/bxo/equipments/s10' },
+      { label: 'Mercedes', path: '/bxo/equipments/mercedes' },
+      { label: 'Furgão', path: '/bxo/equipments/van' },
+      { label: 'Ambulância Sprinter', path: '/bxo/equipments/sprinter' },
+      { label: 'Ambulância Iveco', path: '/bxo/equipments/iveco' },
     );
   }
 

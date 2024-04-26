@@ -109,7 +109,7 @@ export const useCmiInspection = () => {
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/cmi_inspection'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/spo/equipments/cmi_inspection'),
   });
 
   const mutateRemove = useMutation({

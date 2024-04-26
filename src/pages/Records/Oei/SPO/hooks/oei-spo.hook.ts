@@ -6,10 +6,10 @@ import { format, getYear, parseISO } from 'date-fns';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { OeiFilters } from '../types/oei.types';
-import buildOrderByQuery from '../../../../../utils/buildOrderByQuery';
-import { sharepointContext } from '../../../../../context/sharepointContext';
+import buildOrderByQuery from '@/utils/buildOrderByQuery';
+import { sharepointContext } from '@/context/sharepointContext';
 
-const useOeiSPO = () => {
+export const useOeiSPO = () => {
   const { pathname } = useLocation();
   const { crud, crudParent } = sharepointContext();
   const queryClient = useQueryClient();
@@ -143,7 +143,7 @@ const useOeiSPO = () => {
     queryFn: fetch,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: pathname.includes('/records/oei_operation') && user_site === 'SPO',
+    enabled: pathname.includes('/spo/records/oei_operation') && user_site === 'SPO',
   });
 
   const mutateRemove = useMutation({
@@ -237,5 +237,3 @@ const useOeiSPO = () => {
     setYear,
   };
 };
-
-export default useOeiSPO;

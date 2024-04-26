@@ -35,7 +35,8 @@ export const useAmbulanceCheckModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/equipments/ambulance_check'),
+    enabled:
+      user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/spo/equipments/ambulance_check'),
   });
 
   const historyModalData: UseQueryResult<Array<AmbulanceCheckHistoryProps>> = useQuery({

@@ -6,16 +6,16 @@ import { useEffect, useState } from 'react';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
+import Toast from '@/components/Toast';
+import Modal from '@/components/Modal';
 import { OeiPdfSPO } from './oei-pdf-spo';
-import Toast from '../../../../../components/Toast';
-import Modal from '../../../../../components/Modal';
-import { Button } from '../../../../../components/Button';
-import useOeiModalSPO from '../hooks/oei-modal-spo.hook';
-import TextArea from '../../../../../components/TextArea';
-import TextField from '../../../../../components/TextField';
-import { Answers } from '../../../../../components/Answers';
+import { Button } from '@/components/Button';
+import TextArea from '@/components/TextArea';
+import TextField from '@/components/TextField';
+import { Answers } from '@/components/Answers';
+import { useOeiModalSPO } from '../hooks/oei-modal-spo.hook';
 
-const OeiModalSPO = () => {
+export const OeiModalSPO = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -33,7 +33,7 @@ const OeiModalSPO = () => {
 
   const handleOnOpenChange = () => {
     setOeiItem(null);
-    navigate('/records/oei_operation');
+    navigate('/spo/records/oei_operation');
   };
 
   const exportToPdf = async () => {
@@ -211,7 +211,6 @@ const OeiModalSPO = () => {
                   </Answers.Content>
                 </Answers.Root>
 
-
                 <Answers.Root label="Interfone" isLoading={oeiModal.isLoading}>
                   <Answers.Content>
                     <Answers.ContentItem isLoading={oeiModal.isLoading}>
@@ -305,5 +304,3 @@ const OeiModalSPO = () => {
     </>
   );
 };
-
-export default OeiModalSPO;

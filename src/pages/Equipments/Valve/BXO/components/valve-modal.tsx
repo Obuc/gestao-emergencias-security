@@ -27,7 +27,7 @@ export const ValveModal = () => {
 
   const handleOnOpenChange = () => {
     setValveItem(null);
-    navigate('/equipments/valve');
+    navigate('/bxo/equipments/valve');
   };
 
   return (
@@ -131,7 +131,7 @@ export const ValveModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/valve/${item.Id}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/bxo/records/valve/${item.Id}`} />
                   <EquipmentCard.Content
                     date={cardDate}
                     responsible={item.bombeiro_id.Title}

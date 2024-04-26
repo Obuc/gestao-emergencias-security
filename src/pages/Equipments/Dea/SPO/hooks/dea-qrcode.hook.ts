@@ -40,7 +40,7 @@ export const useDeaQrCode = () => {
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/dea'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/spo/equipments/dea'),
   });
 
   const toggleSelectAll = () => {

@@ -26,7 +26,7 @@ export const FireAlarmsTable = ({ fireAlarmsData, mutateRemove, setSortColumns, 
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/fire_alarms/${id}`);
+    navigate(`/spo/equipments/fire_alarms/${id}`);
   };
 
   const handleRemove = async () => {

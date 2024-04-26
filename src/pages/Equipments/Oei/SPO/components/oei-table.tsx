@@ -26,7 +26,7 @@ export const OeiTable = ({ oeiData, mutateRemove, setSortColumns, sortColumns }:
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/oei_operation/${id}`);
+    navigate(`/spo/equipments/oei_operation/${id}`);
   };
 
   const handleRemove = async () => {

@@ -40,7 +40,7 @@ const useHydrantQrCode = () => {
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/hydrant'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/spo/equipments/hydrant'),
   });
 
   const toggleSelectAll = () => {

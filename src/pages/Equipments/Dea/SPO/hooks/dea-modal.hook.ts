@@ -35,7 +35,7 @@ export const useDeaModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/equipments/dea'),
+    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/spo/equipments/dea'),
   });
 
   const historyModalData: UseQueryResult<Array<DeaHistoryProps>> = useQuery({

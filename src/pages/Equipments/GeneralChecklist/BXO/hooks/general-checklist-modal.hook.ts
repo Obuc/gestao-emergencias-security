@@ -37,7 +37,7 @@ export const useGeneralChecklistModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && location.pathname.includes('/equipments/general_checklist'),
+    enabled: params.id !== undefined && location.pathname.includes('/bxo/equipments/general_checklist'),
   });
 
   const historyModalData: UseQueryResult<Array<GeneralChecklistHistoryModalProps>> = useQuery({

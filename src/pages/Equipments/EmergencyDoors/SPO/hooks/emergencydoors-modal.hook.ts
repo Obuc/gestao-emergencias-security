@@ -35,7 +35,8 @@ export const useEmergencyDoorsModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/equipments/emergency_doors'),
+    enabled:
+      user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/spo/equipments/emergency_doors'),
   });
 
   const historyModalData: UseQueryResult<Array<EmergencyDoorsHistoryProps>> = useQuery({

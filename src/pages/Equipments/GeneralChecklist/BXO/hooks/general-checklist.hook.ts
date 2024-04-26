@@ -1,5 +1,6 @@
 import * as XLSX from 'xlsx';
 import { useState } from 'react';
+import { parseISO } from 'date-fns';
 import { SortColumn } from 'react-data-grid';
 import { useLocation } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -7,7 +8,6 @@ import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-q
 import buildOrderByQuery from '@/utils/buildOrderByQuery';
 import { sharepointContext } from '@/context/sharepointContext';
 import { GeneralChecklistFiltersProps, GeneralChecklistProps } from '../types/general-checklist.types';
-import { parseISO } from 'date-fns';
 
 export const useGeneralChecklist = () => {
   const { crud } = sharepointContext();
@@ -109,7 +109,7 @@ export const useGeneralChecklist = () => {
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: user_site === 'BXO' && location.pathname.includes('/equipments/general_checklist'),
+    enabled: user_site === 'BXO' && location.pathname.includes('/bxo/equipments/general_checklist'),
   });
 
   const mutateRemove = useMutation({

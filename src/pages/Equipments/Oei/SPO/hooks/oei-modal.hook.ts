@@ -35,7 +35,7 @@ export const useOeiModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/equipments/oei_operation'),
+    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/spo/equipments/oei_operation'),
   });
 
   const historyModalData: UseQueryResult<Array<OeiHistoryProps>> = useQuery({

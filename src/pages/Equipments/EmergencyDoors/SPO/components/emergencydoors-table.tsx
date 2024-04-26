@@ -31,7 +31,7 @@ export const EmergencyDoorsTable = ({
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/emergency_doors/${id}`);
+    navigate(`/spo/equipments/emergency_doors/${id}`);
   };
 
   const handleRemove = async () => {

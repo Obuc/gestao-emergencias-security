@@ -31,7 +31,7 @@ export const ExtinguisherTable = ({
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/extinguisher/${id}`);
+    navigate(`/spo/equipments/extinguisher/${id}`);
   };
 
   const handleRemove = async () => {

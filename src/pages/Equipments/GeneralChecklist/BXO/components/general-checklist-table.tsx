@@ -31,7 +31,7 @@ export const GeneralChecklistTable = ({
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/general_checklist/${id}`);
+    navigate(`/bxo/equipments/general_checklist/${id}`);
   };
 
   const handleRemove = async () => {

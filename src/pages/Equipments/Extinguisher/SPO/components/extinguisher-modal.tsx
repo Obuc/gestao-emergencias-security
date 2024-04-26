@@ -27,7 +27,7 @@ export const ExtinguisherModal = () => {
 
   const handleOnOpenChange = () => {
     setExtinguisherItem(null);
-    navigate('/equipments/extinguisher');
+    navigate('/spo/equipments/extinguisher');
   };
 
   return (
@@ -148,7 +148,7 @@ export const ExtinguisherModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/extinguisher/${item.Id}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/spo/records/extinguisher/${item.Id}`} />
                   <EquipmentCard.Content
                     date={cardDate}
                     responsible={item.responsavel}

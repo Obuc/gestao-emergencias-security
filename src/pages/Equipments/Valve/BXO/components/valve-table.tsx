@@ -26,7 +26,7 @@ export const ValveTable = ({ valveData, mutateRemove, setSortColumns, sortColumn
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/valve/${id}`);
+    navigate(`/bxo/equipments/valve/${id}`);
   };
 
   const handleRemove = async () => {

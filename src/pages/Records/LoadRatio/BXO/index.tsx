@@ -1,19 +1,22 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
-import Toast from '../../../../components/Toast';
-import years from '../../../../utils/years.mock';
-import LayoutBase from '../../../../layout/LayoutBase';
-import { Select } from '../../../../components/Select';
-import { Button } from '../../../../components/Button';
-import useLoadRatioBXO from './hooks/useLoadRatioBXO';
-import LoadRatioTableBXO from './components/LoadRatioTableBXO';
-import LoadRatioFiltersBXO from './components/LoadRatioFiltersBXO';
+import Toast from '@/components/Toast';
+import years from '@/utils/years.mock';
+import LayoutBase from '@/layout/LayoutBase';
+import { Select } from '@/components/Select';
+import { Button } from '@/components/Button';
+import { useLoadRatioBXO } from './hooks/loadratio.hook';
+import { LoadRatioTableBXO } from './components/loadratio-table';
+import { LoadRatioFiltersBXO } from './components/loadratio-filters';
 
 const LoadRatio = () => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const localSite = localStorage.getItem('user_site');
+
+  const equipments_value = pathname.split('/')[3];
 
   const {
     mutateExportExcel,
@@ -40,16 +43,49 @@ const LoadRatio = () => {
     }
   }, [localSite, navigate]);
 
+  let caseEquipmentsValue: string = '';
+
+  switch (equipments_value) {
+    case 'scania':
+      caseEquipmentsValue = 'Scania';
+      break;
+
+    case 's10':
+      caseEquipmentsValue = 'S10';
+      break;
+
+    case 'mercedes':
+      caseEquipmentsValue = 'Mercedes';
+      break;
+
+    case 'van':
+      caseEquipmentsValue = 'Furgão';
+      break;
+
+    case 'iveco':
+      caseEquipmentsValue = 'Ambulância Iveco';
+      break;
+
+    case 'sprinter':
+      caseEquipmentsValue = 'Ambulância Sprinter';
+      break;
+  }
+
   return (
     <>
       <LayoutBase showMenu>
         <div className="flex flex-col h-full w-full justify-between bg-[#F1F1F1]">
           <div className="flex h-full flex-col p-8">
             <div className="flex pb-8 items-center w-full justify-end">
+              <div className="flex w-full items-center gap-2 text-2xl text-primary-font font-semibold">
+                <div className="w-3 h-3 rounded-full bg-primary" />
+                <h2>{caseEquipmentsValue}</h2>
+              </div>
+
               <div className="flex gap-2">
                 <Button.Root
                   fill
-                  className="min-w-[10rem] h-10"
+                  className="min-w-[12rem] h-10"
                   disabled={mutateExportExcel.isLoading}
                   onClick={() => mutateExportExcel.mutate()}
                 >

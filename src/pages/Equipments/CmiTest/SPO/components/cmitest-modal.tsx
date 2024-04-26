@@ -27,7 +27,7 @@ export const CmiTestModal = () => {
 
   const handleOnOpenChange = () => {
     setValveItem(null);
-    navigate('/equipments/cmi_test');
+    navigate('/spo/equipments/cmi_test');
   };
 
   return (
@@ -106,7 +106,7 @@ export const CmiTestModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/cmi_test/${item.idRegistro}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/spo/records/cmi_test/${item.idRegistro}`} />
                   <EquipmentCard.Content
                     date={cardDate}
                     responsible={item.responsavel}

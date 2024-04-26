@@ -6,9 +6,9 @@ import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
 
 import { CollapsedMenuRoot } from './CollapsedMenuRoot';
 import { CollapsedMenuItemRoot } from './CollapsedMenuItemRoot';
+import { CollapsedMenuItemIcon } from './CollapsedMenuItemIcon';
 import { CollapsedMenuItemLabel } from './CollapsedMenuItemLabel';
 import { CollapsedMenuItemAction } from './CollapsedMenuItemAction';
-import { CollapsedMenuItemIcon } from './CollapsedMenuItemIcon';
 
 export interface SubItem {
   label: string;
@@ -60,6 +60,8 @@ const CollapsedMenu = ({ items }: { items: Array<MenuItem> }) => {
       {items.map((item, index) => {
         const isLocationActivePartial =
           item.path?.split('/')[1] && localtion.pathname.split('/')[1].includes(item.path?.split('/')[1]); //localtion.pathname.split('/')[1] === item.path?.split('/')[1];
+
+        console.log(isLocationActivePartial);
 
         const handleCollapsedMenuItemAction = () => {
           if (item.path) return handleNavigate(item.path);

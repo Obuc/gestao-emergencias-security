@@ -27,7 +27,7 @@ export const CmiInspectionModal = () => {
 
   const handleOnOpenChange = () => {
     setCmiInspectionItem(null);
-    navigate('/equipments/cmi_inspection');
+    navigate('/bxo/equipments/cmi_inspection');
   };
 
   return (
@@ -127,7 +127,7 @@ export const CmiInspectionModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/cmi_inspection/${item.Id}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/bxo/records/cmi_inspection/${item.Id}`} />
                   <EquipmentCard.Content
                     date={cardDate}
                     responsible={item.bombeiro_id.Title}

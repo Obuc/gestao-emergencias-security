@@ -116,7 +116,7 @@ export const useEmergencyDoors = () => {
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/emergency_doors'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/spo/equipments/emergency_doors'),
   });
 
   const mutateRemove = useMutation({

@@ -2,12 +2,12 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
-import Toast from '../../../../components/Toast';
-import { Button } from '../../../../components/Button';
-import LayoutBase from '../../../../layout/LayoutBase';
-import useAmbulanceCheckSPO from './hooks/ambulance-check-spo.hook';
-import AmbulanceCheckTableSPO from './components/ambulance-check-table-spo';
-import AmbulanceCheckFiltersSPO from './components/ambulance-check-filters-spo';
+import Toast from '@/components/Toast';
+import { Button } from '@/components/Button';
+import LayoutBase from '@/layout/LayoutBase';
+import { useAmbulanceCheckSPO } from './hooks/ambulance-check.hook';
+import { AmbulanceCheckTableSPO } from './components/ambulance-check-table';
+import { AmbulanceCheckFiltersSPO } from './components/ambulance-check-filters';
 
 const AmbulanceCheckSPO = () => {
   const navigate = useNavigate();

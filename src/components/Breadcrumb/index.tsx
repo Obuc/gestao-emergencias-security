@@ -1,5 +1,5 @@
 import { Breadcrumbs } from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -40,6 +40,9 @@ const Breadcrumb = () => {
     fire_alarms: 'Alarmes de Incêndio',
     ambulance_check: 'Verificação de Ambulância',
     dea: 'DEA',
+
+    spo: 'São Paulo',
+    bxo: 'Belford Roxo',
   };
 
   return (
@@ -52,15 +55,15 @@ const Breadcrumb = () => {
           <span className="text-primary-font font-montserrat text-base">Gestão Sistema de Emergência</span>
 
           {breadcrumbLinks.map((item, index) => (
-            <a
+            <Link
               className={`transition-all ease-in delay-75 px-1 text-primary-font font-montserrat text-base ${
                 breadcrumbItems.length - 1 === index && 'font-semibold'
               }`}
               key={index}
-              href={item.url}
+              to={item.url}
             >
               {labelMappings[item.label] || item.label}
-            </a>
+            </Link>
           ))}
         </Breadcrumbs>
       </div>

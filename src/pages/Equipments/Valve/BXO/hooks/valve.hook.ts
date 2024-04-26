@@ -130,7 +130,7 @@ export const useValve = () => {
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: user_site === 'BXO' && location.pathname.includes('/equipments/valve'),
+    enabled: user_site === 'BXO' && location.pathname.includes('/bxo/equipments/valve'),
   });
 
   const mutateRemove = useMutation({

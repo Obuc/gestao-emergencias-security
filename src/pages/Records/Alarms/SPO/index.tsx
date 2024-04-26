@@ -2,12 +2,12 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
-import Toast from '../../../../components/Toast';
-import useAlarmsSPO from './hooks/alarms-spo.hook';
-import { Button } from '../../../../components/Button';
-import LayoutBase from '../../../../layout/LayoutBase';
-import AlarmsTableSPO from './components/alarms-table-spo';
-import AlarmsFiltersSPO from './components/alarms-filters-spo';
+import Toast from '@/components/Toast';
+import { Button } from '@/components/Button';
+import LayoutBase from '@/layout/LayoutBase';
+import { useAlarmsSPO } from './hooks/alarms.hook';
+import { AlarmsTableSPO } from './components/alarms-table';
+import { AlarmsFiltersSPO } from './components/alarms-filters';
 
 const AlarmsSPO = () => {
   const navigate = useNavigate();

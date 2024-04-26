@@ -27,7 +27,7 @@ export const EmergencyDoorsModal = () => {
 
   const handleOnOpenChange = () => {
     setValveItem(null);
-    navigate('/equipments/emergency_doors');
+    navigate('/spo/equipments/emergency_doors');
   };
 
   return (
@@ -115,7 +115,7 @@ export const EmergencyDoorsModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/emergency_doors/${item.idRegistro}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/spo/records/emergency_doors/${item.idRegistro}`} />
                   <EquipmentCard.Content
                     date={cardDate}
                     responsible={item.responsavel}

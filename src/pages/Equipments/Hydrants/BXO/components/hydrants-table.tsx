@@ -26,7 +26,7 @@ export const HydrantTable = ({ hydrantData, mutateRemove, setSortColumns, sortCo
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/hydrant/${id}`);
+    navigate(`/bxo/equipments/hydrant/${id}`);
   };
 
   const handleRemove = async () => {

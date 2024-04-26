@@ -1,7 +1,6 @@
-import { IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 import Avatar from '../Avatar';
 import Tooltip from '../Tooltip';
@@ -30,7 +29,6 @@ const Header = () => {
 
   const handleChangeSite = () => {
     localStorage.removeItem('user_site');
-    localStorage.removeItem('equipments_value');
 
     navigate('/');
   };
@@ -62,19 +60,19 @@ const Header = () => {
             </div>
           </Tooltip>
 
-          <Tooltip label="Inicio">
+          {/* <Tooltip label="Inicio">
             <IconButton onClick={() => navigate('/')}>
               <FontAwesomeIcon
                 className={`transition-all ease-in delay-150 w-7 h-7 cursor-pointer text-3xl text-primary-font`}
                 icon={faHouse}
               />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
 
           {user && (
             <>
               <div className="w-11 h-11 rounded-full shadow flex justify-center items-center ">
-                <Avatar image={user.photo ? user.photo : undefined} username={user?.Title} />
+                <Avatar image={user.photo} username={user?.Title} />
               </div>
               <div className="flex flex-col gap-1 select-none ml-3">
                 <span className="font-bold text-primary-font">{user?.Title}</span>

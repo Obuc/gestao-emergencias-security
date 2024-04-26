@@ -116,7 +116,7 @@ export const useOei = () => {
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/oei_operation'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/spo/equipments/oei_operation'),
   });
 
   const mutateRemove = useMutation({

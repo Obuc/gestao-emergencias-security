@@ -40,7 +40,7 @@ export const useExtinguisherQrCode = () => {
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/extinguisher'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/spo/equipments/extinguisher'),
   });
 
   const toggleSelectAll = () => {

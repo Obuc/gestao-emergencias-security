@@ -40,7 +40,7 @@ export const useAmbulanceCheckQrCode = () => {
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/ambulance_check'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/spo/equipments/ambulance_check'),
   });
 
   const toggleSelectAll = () => {

@@ -42,7 +42,7 @@ export const useCmiTestQrCode = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: location.pathname.includes('/equipments/cmi_test'),
+    enabled: location.pathname.includes('/bxo/equipments/cmi_test'),
   });
 
   const toggleSelectAll = () => {

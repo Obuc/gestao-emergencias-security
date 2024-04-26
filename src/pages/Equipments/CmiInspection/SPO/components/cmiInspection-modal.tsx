@@ -27,7 +27,7 @@ export const CmiInspectionModal = () => {
 
   const handleOnOpenChange = () => {
     setValveItem(null);
-    navigate('/equipments/cmi_inspection');
+    navigate('/spo/equipments/cmi_inspection');
   };
 
   return (
@@ -106,7 +106,7 @@ export const CmiInspectionModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/cmi_inspection/${item.idRegistro}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/spo/records/cmi_inspection/${item.idRegistro}`} />
                   <EquipmentCard.Content
                     date={cardDate}
                     responsible={item.responsavel}

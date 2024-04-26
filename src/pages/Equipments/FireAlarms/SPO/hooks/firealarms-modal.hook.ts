@@ -35,7 +35,7 @@ export const useFireAlarmsModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/equipments/fire_alarms'),
+    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/spo/equipments/fire_alarms'),
   });
 
   const historyModalData: UseQueryResult<Array<FireAlarmsHistoryProps>> = useQuery({

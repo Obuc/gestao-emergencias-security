@@ -2,12 +2,12 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
-import useOeiSPO from './hooks/oei-spo.hook';
-import Toast from '../../../../components/Toast';
-import OeiTableSPO from './components/oei-table-spo';
-import { Button } from '../../../../components/Button';
-import LayoutBase from '../../../../layout/LayoutBase';
-import OeiFiltersSPO from './components/oei-filters-spo';
+import Toast from '@/components/Toast';
+import { Button } from '@/components/Button';
+import LayoutBase from '@/layout/LayoutBase';
+import { useOeiSPO } from './hooks/oei-spo.hook';
+import { OeiTableSPO } from './components/oei-table-spo';
+import { OeiFiltersSPO } from './components/oei-filters-spo';
 
 const OeiSPO = () => {
   const navigate = useNavigate();

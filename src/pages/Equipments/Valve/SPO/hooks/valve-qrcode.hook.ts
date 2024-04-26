@@ -40,7 +40,7 @@ const useValveQrCode = () => {
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && location.pathname.includes('/equipments/valve'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/spo/equipments/valve'),
   });
 
   const toggleSelectAll = () => {

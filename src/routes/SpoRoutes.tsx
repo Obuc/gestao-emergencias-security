@@ -7,17 +7,17 @@ import OeiSPO from '../pages/Records/Oei/SPO';
 import DeaSPO from '../pages/Records/Dea/SPO';
 import AlarmsSPO from '../pages/Records/Alarms/SPO';
 import HydrantSPO from '../pages/Records/Hydrant/SPO';
-import TestCmiSPO from '../pages/Records/TestCmi/SPO';
+import { TestCmiSPO } from '../pages/Records/CmiTest/SPO';
 import EquipmentsOeiSPO from '../pages/Equipments/Oei/SPO';
 import EquipmentsDeaSPO from '../pages/Equipments/Dea/SPO';
+import GovernanceValveSPO from '../pages/Records/Valve/SPO';
 import EquipmentsValveSPO from '../pages/Equipments/Valve/SPO';
 import ExtinguisherSPO from '../pages/Records/Extinguisher/SPO';
-import InspectionCmiSPO from '../pages/Records/InspectionCmi/SPO';
+import InspectionCmiSPO from '../pages/Records/CmiInspection/SPO';
 import EmergencyDoorSPO from '../pages/Records/EmergencyDoor/SPO';
 import EquipmentsCmiTestSPO from '../pages/Equipments/CmiTest/SPO';
 import EquipmentsHydrantSPO from '../pages/Equipments/Hydrants/SPO';
 import AmbulanceCheckSPO from '../pages/Records/AmbulanceCheck/SPO';
-import GovernanceValveSPO from '../pages/Records/GovernanceValve/SPO';
 import EquipmentsFireAlarmsSPO from '../pages/Equipments/FireAlarms/SPO';
 import EquipmentsExtinguisherSPO from '../pages/Equipments/Extinguisher/SPO';
 import EquipmentsCmiInspectionSPO from '../pages/Equipments/CmiInspection/SPO';
@@ -28,6 +28,7 @@ export const SpoRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+
       <Route path="/reports" element={<Report />} />
       <Route path="/reports/:id" element={<Report />} />
       <Route path="/schedule" element={<Schedule />} />

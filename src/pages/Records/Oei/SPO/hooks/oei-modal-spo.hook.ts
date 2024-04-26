@@ -5,9 +5,9 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { OeiModal } from '../types/oei.types';
-import { sharepointContext } from '../../../../../context/sharepointContext';
+import { sharepointContext } from '@/context/sharepointContext';
 
-const useOeiModalSPO = () => {
+export const useOeiModalSPO = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -46,7 +46,7 @@ const useOeiModalSPO = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: params.id !== undefined && pathname === `/records/oei_operation/${params.id}` && user_site === 'SPO',
+    enabled: params.id !== undefined && pathname === `/spo/records/oei_operation/${params.id}` && user_site === 'SPO',
   });
 
   const mutateEdit = useMutation({
@@ -70,7 +70,7 @@ const useOeiModalSPO = () => {
 
       const timeoutId = setTimeout(() => {
         setOeiItem(null);
-        navigate('/records/oei_operation');
+        navigate('/spo/records/oei_operation');
       }, +timeDelayToRedirectPage);
       return () => clearTimeout(timeoutId);
     },
@@ -121,5 +121,3 @@ const useOeiModalSPO = () => {
     formik,
   };
 };
-
-export default useOeiModalSPO;

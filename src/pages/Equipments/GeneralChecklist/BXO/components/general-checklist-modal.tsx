@@ -27,7 +27,7 @@ export const GeneralChecklistModal = () => {
 
   const handleOnOpenChange = () => {
     setGeneralChecklistItem(null);
-    navigate('/equipments/general_checklist');
+    navigate('/bxo/equipments/general_checklist');
   };
 
   return (
@@ -119,7 +119,7 @@ export const GeneralChecklistModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/records/general_checklist/${item.Id}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/bxo/records/general_checklist/${item.Id}`} />
                   <EquipmentCard.Content date={cardDate} responsible={item.bombeiro.Title} observation={item.observacao} />
                 </EquipmentCard.Root>
               );

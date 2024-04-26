@@ -1,11 +1,18 @@
+import { Route, Routes } from 'react-router-dom';
+
+import Home from './pages/Home';
 import { BxoRoutes } from './routes/BxoRoutes';
 import { SpoRoutes } from './routes/SpoRoutes';
 
 const App = () => {
-  const localSite = localStorage.getItem('user_site');
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
 
-  if (localSite === 'BXO') return <BxoRoutes />;
-  if (localSite === 'SPO') return <SpoRoutes />;
+      <Route path="/bxo/*" element={<BxoRoutes />} />
+      <Route path="/spo/*" element={<SpoRoutes />} />
+    </Routes>
+  );
 };
 
 export default App;

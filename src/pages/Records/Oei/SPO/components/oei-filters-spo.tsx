@@ -1,9 +1,9 @@
+import { Button } from '@/components/Button';
+import { Popover } from '@/components/Popover';
+import TextField from '@/components/TextField';
 import { OeiFilters } from '../types/oei.types';
-import { Button } from '../../../../../components/Button';
-import { Popover } from '../../../../../components/Popover';
-import TextField from '../../../../../components/TextField';
-import DatePicker from '../../../../../components/DatePicker';
-import { SelectAutoComplete } from '../../../../../components/SelectAutocomplete';
+import DatePicker from '@/components/DatePicker';
+import { SelectAutoComplete } from '@/components/SelectAutocomplete';
 
 interface IFilters {
   tempTableFilters: OeiFilters;
@@ -13,7 +13,7 @@ interface IFilters {
   handleApplyFilters: () => void;
 }
 
-const OeiFiltersSPO = ({
+export const OeiFiltersSPO = ({
   tempTableFilters,
   setTempTableFilters,
   handleRemoveAllFilters,
@@ -119,5 +119,3 @@ const OeiFiltersSPO = ({
     </Popover.Root>
   );
 };
-
-export default OeiFiltersSPO;

@@ -2,15 +2,15 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
-import Toast from '../../../../components/Toast';
-import years from '../../../../utils/years.mock';
-import months from '../../../../utils/month.mock';
-import LayoutBase from '../../../../layout/LayoutBase';
-import { Select } from '../../../../components/Select';
-import { Button } from '../../../../components/Button';
-import useExtinguisherSPO from './hooks/useExtinguisherSPO';
-import ExtinguisherTableSPO from './components/ExtinguisherTableSPO';
-import ExtinguisherFiltersSPO from './components/ExtinguisherFiltersSPO';
+import Toast from '@/components/Toast';
+import years from '@/utils/years.mock';
+import months from '@/utils/month.mock';
+import LayoutBase from '@/layout/LayoutBase';
+import { Select } from '@/components/Select';
+import { Button } from '@/components/Button';
+import { useExtinguisherSPO } from './hooks/extinguisher.hook';
+import { ExtinguisherTableSPO } from './components/extinguisher-table';
+import { ExtinguisherFiltersSPO } from './components/extinguisher-filters';
 
 const ExtinguisherSPO = () => {
   const navigate = useNavigate();

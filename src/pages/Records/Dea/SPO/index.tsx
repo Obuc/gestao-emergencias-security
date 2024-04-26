@@ -2,12 +2,12 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
-import useDeaSPO from './hooks/dea-spo.hook';
-import Toast from '../../../../components/Toast';
-import DeaTableSPO from './components/dea-table-spo';
-import { Button } from '../../../../components/Button';
-import LayoutBase from '../../../../layout/LayoutBase';
-import DeaFiltersSPO from './components/dea-filters-spo';
+import Toast from '@/components/Toast';
+import { Button } from '@/components/Button';
+import LayoutBase from '@/layout/LayoutBase';
+import { useDeaSPO } from './hooks/dea.hook';
+import { DeaTableSPO } from './components/dea-table';
+import { DeaFiltersSPO } from './components/dea-filters';
 
 const DeaSPO = () => {
   const navigate = useNavigate();

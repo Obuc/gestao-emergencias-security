@@ -41,7 +41,7 @@ export const useGeneralChecklistQrCode = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: location.pathname.includes('/equipments/general_checklist'),
+    enabled: location.pathname.includes('/bxo/equipments/general_checklist'),
   });
 
   const toggleSelectAll = () => {

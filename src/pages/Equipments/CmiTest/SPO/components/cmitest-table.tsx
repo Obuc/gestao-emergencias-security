@@ -26,7 +26,7 @@ export const CmiTestTable = ({ cmiTestData, mutateRemove, setSortColumns, sortCo
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/cmi_test/${id}`);
+    navigate(`/spo/equipments/cmi_test/${id}`);
   };
 
   const handleRemove = async () => {

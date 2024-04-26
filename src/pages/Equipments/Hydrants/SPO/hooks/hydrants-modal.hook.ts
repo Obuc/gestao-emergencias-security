@@ -35,7 +35,7 @@ const useHydrantModal = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/equipments/hydrant'),
+    enabled: user_site === 'SPO' && params.id !== undefined && location.pathname.includes('/spo/equipments/hydrant'),
   });
 
   const historyModalData: UseQueryResult<Array<HydrantsHistoryProps>> = useQuery({
