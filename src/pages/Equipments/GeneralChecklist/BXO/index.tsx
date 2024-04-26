@@ -5,18 +5,18 @@ import { faDownload, faExpand } from '@fortawesome/free-solid-svg-icons';
 import Toast from '@/components/Toast';
 import LayoutBase from '@/layout/LayoutBase';
 import { Button } from '@/components/Button';
-import { useExtinguisher } from './hooks/extinguisher.hook';
-import { ExtinguisherTable } from './components/extinguisher-table';
-import { ExtinguisherFilters } from './components/extinguisher-filters';
-import { ExtinguisherQrcodeModal } from './components/extinguisher-qrcode-modal';
+import { useGeneralChecklist } from './hooks/general-checklist.hook';
+import { GeneralChecklistTable } from './components/general-checklist-table';
+import { GeneralChecklistFilters } from './components/general-checklist-filters';
+import { GeneralChecklistQrcodeModal } from './components/general-checklist-qrcode-modal';
 
-const EquipmentsExtinguisherBXO = () => {
+export const EquipmentsGeneralChecklistBXO = () => {
   const navigate = useNavigate();
   const localSite = localStorage.getItem('user_site');
   const [openModalGenerateQRCode, setOpenModalGenerateQRCode] = useState<boolean | null>(null);
 
   const {
-    extinguisherData,
+    generalChecklistData,
     mutateRemove,
     sortColumns,
     setSortColumns,
@@ -26,7 +26,7 @@ const EquipmentsExtinguisherBXO = () => {
     handleRemoveAllFilters,
     setTempTableFilters,
     tempTableFilters,
-  } = useExtinguisher();
+  } = useGeneralChecklist();
 
   useEffect(() => {
     if (localSite === null) {
@@ -42,7 +42,7 @@ const EquipmentsExtinguisherBXO = () => {
             <div className="flex pb-8 items-center w-full justify-between">
               <div className="flex w-full items-center gap-2 text-2xl text-primary-font font-semibold">
                 <div className="w-3 h-3 rounded-full bg-primary" />
-                <h2>Extintores</h2>
+                <h2>Checklist Geral</h2>
               </div>
 
               <div className="flex gap-2">
@@ -66,7 +66,7 @@ const EquipmentsExtinguisherBXO = () => {
                   <Button.Icon icon={faExpand} />
                 </Button.Root>
 
-                <ExtinguisherFilters
+                <GeneralChecklistFilters
                   countAppliedFilters={countAppliedFilters}
                   handleApplyFilters={handleApplyFilters}
                   handleRemoveAllFilters={handleRemoveAllFilters}
@@ -76,8 +76,8 @@ const EquipmentsExtinguisherBXO = () => {
               </div>
             </div>
 
-            <ExtinguisherTable
-              extinguisherData={extinguisherData}
+            <GeneralChecklistTable
+              generalChecklistData={generalChecklistData}
               mutateRemove={mutateRemove}
               sortColumns={sortColumns}
               setSortColumns={setSortColumns}
@@ -86,7 +86,10 @@ const EquipmentsExtinguisherBXO = () => {
         </div>
 
         {openModalGenerateQRCode && (
-          <ExtinguisherQrcodeModal open={openModalGenerateQRCode} onOpenChange={() => setOpenModalGenerateQRCode(null)} />
+          <GeneralChecklistQrcodeModal
+            open={openModalGenerateQRCode}
+            onOpenChange={() => setOpenModalGenerateQRCode(null)}
+          />
         )}
       </LayoutBase>
 
@@ -104,5 +107,3 @@ const EquipmentsExtinguisherBXO = () => {
     </>
   );
 };
-
-export default EquipmentsExtinguisherBXO;

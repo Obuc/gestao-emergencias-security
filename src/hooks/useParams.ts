@@ -1,9 +1,11 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
+import { ITipoVeiculo } from '../types/TipoVeiculo';
 import { sharepointContext } from '../context/sharepointContext';
 
 const useParams = () => {
   const { crud } = sharepointContext();
+  const localSite = localStorage.getItem('user_site');
 
   const local: UseQueryResult<Array<{ Id: string; Title: string }>> = useQuery({
     queryKey: ['local'],
@@ -51,11 +53,30 @@ const useParams = () => {
     refetchOnWindowFocus: false,
   });
 
+  const tipo_veiculo: UseQueryResult<Array<ITipoVeiculo>> = useQuery({
+    queryKey: ['tipo_veiculo', localSite],
+    queryFn: async () => {
+      if (localSite) {
+        const resp = await crud.getListItems(
+          'tipo_veiculo',
+          `?$Select=Id,Title,site/Title&$expand=site&$orderby=Title asc&$Filter=(site/Title eq '${localSite}')`,
+        );
+        return resp;
+      } else {
+        return [];
+      }
+    },
+    staleTime: Infinity, // 5 Minute
+    refetchOnWindowFocus: false,
+    enabled: !!localSite,
+  });
+
   return {
     local,
     pavimento,
     predio,
     tipo_extintor,
+    tipo_veiculo,
   };
 };
 

@@ -6,7 +6,7 @@ import { endOfYear, format, getYear, startOfYear } from 'date-fns';
 import { sharepointContext } from '@/context/sharepointContext';
 import { ExtinguisherHistoryModalProps, ExtinguisherModalProps } from '../types/extinguisher.types';
 
-const useExtinguisherModal = () => {
+export const useExtinguisherModal = () => {
   const params = useParams();
   const location = useLocation();
   const { crud } = sharepointContext();
@@ -76,5 +76,3 @@ const useExtinguisherModal = () => {
     setYear,
   };
 };
-
-export default useExtinguisherModal;

@@ -4,17 +4,17 @@ import { Page, Text, View, Document, Image } from '@react-pdf/renderer';
 import BXOLogo from '@/assets/BXOLogo.png';
 import HeaderBg from '@/assets/Caminho 3692.png';
 import { stylesQRCode } from '@/utils/PDFStyles';
-import { ExtinguisherProps } from '../types/extinguisher.types';
+import { GeneralChecklistProps } from '../types/general-checklist.types';
 
-export const ExtinguisherQrcodePdf = ({
+export const GeneralChecklistQrcodePdf = ({
   data,
   pageSize,
 }: {
-  data: Array<ExtinguisherProps>;
+  data: Array<GeneralChecklistProps>;
   pageSize: StandardPageSize;
 }) => {
   const generateQRCodeURL = (value: any) => {
-    const qrCodeValue = `Extintor${value?.site};${value?.cod_qrcode}`;
+    const qrCodeValue = `VeiculosCheckGeral${value?.site};${value?.cod_qrcode};${value?.tipo_veiculo}`;
 
     return `https://quickchart.io/qr?text=${qrCodeValue}`;
   };
@@ -31,7 +31,7 @@ export const ExtinguisherQrcodePdf = ({
 
             <View style={stylesQRCode.containerQrCode}>
               <Image src={generateQRCodeURL(value)} />
-              <Text style={stylesQRCode.footerTitle}>{`Extintor/${value?.site}/${value?.predio}/${value?.pavimento}`}</Text>
+              <Text style={stylesQRCode.footerTitle}>{`Geral/${value?.site}/${value?.placa}/${value?.tipo_veiculo}`}</Text>
 
               <Image src={BXOLogo} style={stylesQRCode.siteLogo} />
             </View>

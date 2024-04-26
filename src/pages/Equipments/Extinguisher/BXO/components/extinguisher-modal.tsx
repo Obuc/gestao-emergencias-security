@@ -10,13 +10,13 @@ import TextField from '@/components/TextField';
 import CardEmpy from '../../../components/ui/CardEmpy';
 import { EquipmentCard } from '../../../components/ui/Card';
 import CardSkeleton from '../../../components/ui/CardSkeleton';
-import useextinguisherModalData from '../hooks/extinguisher-modal.hook';
+import { useExtinguisherModal } from '../hooks/extinguisher-modal.hook';
 
-const ExtinguisherModal = () => {
+export const ExtinguisherModal = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  const { extinguisherModalData, historyModalData, year, setYear } = useextinguisherModalData();
+  const { extinguisherModalData, historyModalData, year, setYear } = useExtinguisherModal();
   const [extinguisherItem, setExtinguisherItem] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -173,5 +173,3 @@ const ExtinguisherModal = () => {
     </Modal>
   );
 };
-
-export default ExtinguisherModal;

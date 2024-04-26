@@ -3,24 +3,24 @@ import { Button } from '@/components/Button';
 import TextField from '@/components/TextField';
 import { Popover } from '@/components/Popover';
 import { SelectAutoComplete } from '@/components/SelectAutocomplete';
-import { ExtinguisherFiltersProps } from '../types/extinguisher.types';
+import { GeneralChecklistFiltersProps } from '../types/general-checklist.types';
 
 interface IFilters {
-  tempTableFilters: ExtinguisherFiltersProps;
-  setTempTableFilters: React.Dispatch<React.SetStateAction<ExtinguisherFiltersProps>>;
+  tempTableFilters: GeneralChecklistFiltersProps;
+  setTempTableFilters: React.Dispatch<React.SetStateAction<GeneralChecklistFiltersProps>>;
   handleRemoveAllFilters: () => void;
   countAppliedFilters: () => number;
   handleApplyFilters: () => void;
 }
 
-export const ExtinguisherFilters = ({
+export const GeneralChecklistFilters = ({
   tempTableFilters,
   setTempTableFilters,
   handleRemoveAllFilters,
   countAppliedFilters,
   handleApplyFilters,
 }: IFilters) => {
-  const { pavimento, local, tipo_extintor } = useParams();
+  const { tipo_veiculo } = useParams();
 
   return (
     <Popover.Root>
@@ -49,59 +49,28 @@ export const ExtinguisherFilters = ({
             }}
           />
 
+          <SelectAutoComplete.Fixed
+            id="vehicleType"
+            name="vehicleType"
+            label="Tipo de veículo"
+            isSearchable
+            value={tempTableFilters.vehicleType}
+            options={tipo_veiculo.data?.map((item) => ({
+              value: String(item.Id),
+              label: item.Title,
+            }))}
+            onChange={(value: any) => {
+              setTempTableFilters((prev) => ({ ...prev, vehicleType: value }));
+            }}
+          />
+
           <TextField
-            label="Cód. Extintor"
-            id="extinguisherId"
-            name="extinguisherId"
-            value={tempTableFilters.extinguisherId || ''}
+            label="Placa"
+            id="plate"
+            name="plate"
+            value={tempTableFilters.plate || ''}
             onChange={(event) => {
-              setTempTableFilters((prev) => ({ ...prev, extinguisherId: event.target.value }));
-            }}
-          />
-
-          <SelectAutoComplete.Fixed
-            id="pavement"
-            name="pavement"
-            label="Pavimento"
-            isSearchable
-            value={tempTableFilters.pavement}
-            options={pavimento.data?.map((item) => ({
-              value: item.Id,
-              label: item.Title,
-            }))}
-            onChange={(value: any) => {
-              setTempTableFilters((prev) => ({ ...prev, pavement: value }));
-            }}
-          />
-
-          <SelectAutoComplete.Fixed
-            id="place"
-            name="place"
-            label="Local"
-            isMulti
-            isSearchable
-            value={tempTableFilters.place}
-            options={local.data?.map((item) => ({
-              value: item.Id,
-              label: item.Title,
-            }))}
-            onChange={(value: any) => {
-              setTempTableFilters((prev) => ({ ...prev, place: value }));
-            }}
-          />
-
-          <SelectAutoComplete.Fixed
-            id="extinguisherType"
-            name="extinguisherType"
-            label="Tipo de extintor"
-            isSearchable
-            value={tempTableFilters.extinguisherType}
-            options={tipo_extintor.data?.map((item) => ({
-              value: item.Id,
-              label: item.Title,
-            }))}
-            onChange={(value: any) => {
-              setTempTableFilters((prev) => ({ ...prev, extinguisherType: value }));
+              setTempTableFilters((prev) => ({ ...prev, plate: event.target.value }));
             }}
           />
 

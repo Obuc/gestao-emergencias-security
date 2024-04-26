@@ -3,9 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
 import { sharepointContext } from '@/context/sharepointContext';
-import { ExtinguisherProps } from '../types/extinguisher.types';
+import { GeneralChecklistProps } from '../types/general-checklist.types';
 
-export const useExtinguisherQrCode = () => {
+export const useGeneralChecklistQrCode = () => {
   const location = useLocation();
   const { crud } = sharepointContext();
 
@@ -14,28 +14,25 @@ export const useExtinguisherQrCode = () => {
 
   const [selectAll, setSelectAll] = useState(false);
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
-  const [selectedItemsExtinguisher, setSelectedItemsExtinguisher] = useState<ExtinguisherProps[]>([]);
+  const [selectedItemsGeneralChecklist, setSelectedItemsGeneralChecklist] = useState<GeneralChecklistProps[]>([]);
 
-  const extinguisherQrCodeData: UseQueryResult<Array<ExtinguisherProps>> = useQuery({
-    queryKey: ['equipments_extinguisher_data_qrcode', filterValue],
+  const generalChecklistQrCodeData: UseQueryResult<Array<GeneralChecklistProps>> = useQuery({
+    queryKey: ['equipments_general_checklist_data_qrcode', filterValue],
     queryFn: async () => {
-      let path = `?$Select=Id,cod_qrcode,predio/Title,tipo_extintor/Title,pavimento/Title,local/Title,site/Title,cod_extintor,conforme&$expand=tipo_extintor,predio,site,pavimento,local&$Filter=(site/Title eq 'BXO')`;
+      let path = `?$Select=Id,cod_qrcode,Modified,site/Title,tipo_veiculo/Title,placa,ultima_inspecao,conforme_check_geral,excluido_check_geral&$Top=25&$expand=site,tipo_veiculo&$Filter=(site/Title eq 'BXO')`;
 
       if (filterValue) {
-        path += ` and (substringof('${filterValue}', Id) or substringof('${filterValue}', cod_extintor) or substringof('${filterValue}', predio/Title) or substringof('${filterValue}', local/Title) or substringof('${filterValue}', pavimento/Title))`;
+        path += ` and substringof('${filterValue}', Id) or substringof('${filterValue}', tipo_veiculo/Title) or substringof('${filterValue}', placa) or substringof('${filterValue}', cod_qrcode)`;
       }
 
-      const resp = await crud.getListItems('extintores', path);
+      const resp = await crud.getListItems('veiculos_emergencia', path);
 
       const dataWithTransformations = await Promise.all(
         resp.map(async (item: any) => {
           return {
             ...item,
-            local: item.local?.Title,
-            pavimento: item.pavimento?.Title,
+            tipo_veiculo: item.tipo_veiculo?.Title,
             site: item.site?.Title,
-            predio: item.predio?.Title,
-            tipo_extintor: item.tipo_extintor?.Title,
           };
         }),
       );
@@ -44,20 +41,20 @@ export const useExtinguisherQrCode = () => {
     },
     staleTime: 5000 * 60, // 5 Minute
     refetchOnWindowFocus: false,
-    enabled: location.pathname.includes('/equipments/extinguisher'),
+    enabled: location.pathname.includes('/equipments/general_checklist'),
   });
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
-    if (!selectAll && extinguisherQrCodeData.data) {
-      setSelectedItemsExtinguisher(extinguisherQrCodeData.data);
+    if (!selectAll && generalChecklistQrCodeData.data) {
+      setSelectedItemsGeneralChecklist(generalChecklistQrCodeData.data);
     } else {
-      setSelectedItemsExtinguisher([]);
+      setSelectedItemsGeneralChecklist([]);
     }
   };
 
-  const toggleSelectItem = (item: ExtinguisherProps) => {
-    setSelectedItemsExtinguisher((prevSelected) => {
+  const toggleSelectItem = (item: GeneralChecklistProps) => {
+    setSelectedItemsGeneralChecklist((prevSelected) => {
       if (prevSelected.some((selectedItem) => selectedItem.Id === item.Id)) {
         return prevSelected.filter((selectedItem) => selectedItem.Id !== item.Id);
       } else if (prevSelected.length < 10) {
@@ -74,8 +71,8 @@ export const useExtinguisherQrCode = () => {
     setPageSize,
     generatePdf,
     setGeneratePdf,
-    selectedItemsExtinguisher,
-    extinguisherQrCodeData,
+    selectedItemsGeneralChecklist,
+    generalChecklistQrCodeData,
     toggleSelectAll,
     toggleSelectItem,
     selectAll,

@@ -8,30 +8,30 @@ import Toast from '@/components/Toast';
 import isAtBottom from '@/utils/isAtBottom';
 import CustomDataGrid from '@/components/DataGrid';
 import PopoverTables from '@/components/PopoverTables';
-import { ExtinguisherModal } from './extinguisher-modal';
 import RemoveItem from '@/components/AppModals/RemoveItem';
-import { ExtinguisherProps } from '../types/extinguisher.types';
+import { GeneralChecklistModal } from './general-checklist-modal';
 import DataGridLoadMore from '@/components/DataGrid/DataGridLoadMore';
+import { GeneralChecklistProps } from '../types/general-checklist.types';
 import { UseInfiniteQueryResult, UseMutationResult } from '@tanstack/react-query';
 
-interface ExtinguisherTableProps {
-  extinguisherData: UseInfiniteQueryResult<any, unknown>;
+interface GeneralChecklistTableProps {
+  generalChecklistData: UseInfiniteQueryResult<any, unknown>;
   mutateRemove: UseMutationResult<void, unknown, number, unknown>;
   sortColumns: readonly SortColumn[];
   setSortColumns: React.Dispatch<React.SetStateAction<readonly SortColumn[]>>;
 }
 
-export const ExtinguisherTable = ({
-  extinguisherData,
+export const GeneralChecklistTable = ({
+  generalChecklistData,
   mutateRemove,
   setSortColumns,
   sortColumns,
-}: ExtinguisherTableProps) => {
+}: GeneralChecklistTableProps) => {
   const navigate = useNavigate();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 
   const handleView = (id: number) => {
-    navigate(`/equipments/extinguisher/${id}`);
+    navigate(`/equipments/general_checklist/${id}`);
   };
 
   const handleRemove = async () => {
@@ -41,32 +41,28 @@ export const ExtinguisherTable = ({
     }
   };
 
-  const columns: readonly Column<ExtinguisherProps>[] = [
+  const columns: readonly Column<GeneralChecklistProps>[] = [
     { key: 'Id', name: '#', resizable: true },
     { key: 'site/Title', name: 'Site', resizable: true },
-    { key: 'pavimento/Title', name: 'Pavimento', resizable: true },
-    { key: 'local/Title', name: 'Local', resizable: true, width: 200 },
-    { key: 'tipo_extintor/Title', name: 'Tipo Extintor', resizable: true },
-    { key: 'cod_extintor', name: 'N° Extintor', resizable: true },
+    { key: 'placa', name: 'Placa', resizable: true },
+    { key: 'tipo_veiculo/Title', name: 'Tipo de Veículo', resizable: true, width: 200 },
     { key: 'conforme', name: 'Conformidade', resizable: true },
 
     { key: 'buttons', name: 'Ações', resizable: true, sortable: false },
   ];
 
   const mappedRows =
-    extinguisherData.data?.pages.flatMap(
+    generalChecklistData.data?.pages.flatMap(
       (page) =>
-        page?.data?.value?.map((item: ExtinguisherProps) => ({
+        page?.data?.value?.map((item: GeneralChecklistProps) => ({
           Id: <div className="pl-4">{item.Id}</div>,
           'site/Title': item?.site ? item.site : '',
-          'pavimento/Title': item?.pavimento ? item.pavimento : '',
-          'local/Title': item?.local ? item.local : '',
-          'tipo_extintor/Title': item?.tipo_extintor ? item.tipo_extintor : '',
-          cod_extintor: item?.cod_extintor ? item.cod_extintor : '',
+          placa: item?.placa ? item.placa : '',
+          'tipo_veiculo/Title': item?.tipo_veiculo ? item.tipo_veiculo : '',
 
           conforme: (
             <div className="flex items-center h-full w-full">
-              {item?.conforme ? (
+              {item?.conforme_check_geral ? (
                 <div className="flex justify-center items-center gap-2 px-4 py-1 rounded-full bg-[#EBFFE2] h-10 max-w-[8.4375rem]">
                   <div className="w-3 h-3 rounded-full bg-[#70EC36]" />
                   <span>Conforme</span>
@@ -90,7 +86,7 @@ export const ExtinguisherTable = ({
 
   const handleScroll = async (event: React.UIEvent<HTMLDivElement>) => {
     if (!isAtBottom(event)) return;
-    extinguisherData.fetchNextPage();
+    generalChecklistData.fetchNextPage();
   };
 
   return (
@@ -109,10 +105,10 @@ export const ExtinguisherTable = ({
           setSortColumns={setSortColumns}
         />
 
-        {extinguisherData.isFetchingNextPage && <DataGridLoadMore />}
+        {generalChecklistData.isFetchingNextPage && <DataGridLoadMore />}
       </div>
 
-      <ExtinguisherModal />
+      <GeneralChecklistModal />
 
       {removeItem !== null && (
         <RemoveItem

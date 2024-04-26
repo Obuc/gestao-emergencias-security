@@ -16,6 +16,7 @@ import GeneralChecklist from '../pages/Records/GeneralChecklist/BXO';
 import GovernanceValveBXO from '../pages/Records/GovernanceValve/BXO';
 import EquipmentsExtinguisherBXO from '../pages/Equipments/Extinguisher/BXO';
 import EquipmentsCmiInspectionBXO from '../pages/Equipments/CmiInspection/BXO';
+import { EquipmentsGeneralChecklistBXO } from '../pages/Equipments/GeneralChecklist/BXO';
 
 export const BxoRoutes = () => {
   return (
@@ -79,6 +80,10 @@ export const BxoRoutes = () => {
       {/* Equipments - Cmi Inspection*/}
       <Route path="/equipments/cmi_inspection" element={<EquipmentsCmiInspectionBXO />} />
       <Route path="/equipments/cmi_inspection/:id" element={<EquipmentsCmiInspectionBXO />} />
+
+      {/* Equipments - General Checklist*/}
+      <Route path="/equipments/general_checklist" element={<EquipmentsGeneralChecklistBXO />} />
+      <Route path="/equipments/general_checklist/:id" element={<EquipmentsGeneralChecklistBXO />} />
     </Routes>
   );
 };
