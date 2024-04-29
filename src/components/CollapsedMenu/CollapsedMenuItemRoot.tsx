@@ -9,7 +9,7 @@ interface ICollapsedMenuItemRootProps {
 export const CollapsedMenuItemRoot = ({ children, label, isSub }: ICollapsedMenuItemRootProps) => {
   return (
     <Tooltip label={label}>
-      <div className={`flex flex-col ${isSub && 'ml-2'} mb-6 h-12 cursor-pointer`}>{children}</div>
+      <div className={`flex flex-col ${isSub && 'ml-2'} h-12 cursor-pointer`}>{children}</div>
     </Tooltip>
   );
 };

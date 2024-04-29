@@ -6,7 +6,7 @@ interface IRadioGroupLabelProps extends ComponentProps<'label'> {
 
 export const RadioGroupLabel = ({ children, ...props }: IRadioGroupLabelProps) => {
   return (
-    <label {...props} className="text-primary leading-none h-full">
+    <label {...props} className="text-primary-font leading-none h-full">
       {children}
     </label>
   );

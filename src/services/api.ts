@@ -156,11 +156,32 @@ class CrudSharepoint {
         this.digestToken = await this.getDigest();
       }
 
-      const listName = `${list[0].toUpperCase()}${list.substring(1)}`;
+      const formattedListName = list
+        .split('_')
+        .map((word, index) => (index === 0 ? word.charAt(0).toUpperCase() + word.substring(1) : word.toLowerCase()))
+        .join('_x005f_');
+
+      const listName = `${formattedListName}ListItem`;
+
       const dataToSend = {
         ...data,
         __metadata: {
-          type: `SP.Data.${listName}ListItem`,
+          type:
+            list === 'Valvulas_de_Governo'
+              ? 'SP.Data.Valvulas_x005f_de_x005f_IncendioListItem'
+              : list === 'Casa_de_Bombas'
+              ? 'SP.Data.Casa_x005f_de_x005f_BombasListItem'
+              : list === 'Bombas_de_Incendio'
+              ? 'SP.Data.Bombas_x005f_de_x005f_IncendioListItem'
+              : list === 'Alarmes_de_Incendio'
+              ? 'SP.Data.Alarmes_x005f_de_x005f_IncendioListItem'
+              : list === 'Operacao_OEI'
+              ? 'SP.Data.Operacao_x005f_OEIListItem'
+              : list === 'Portas_de_Emergencia'
+              ? 'SP.Data.Portas_x005f_de_x005f_EmergenciaListItem'
+              : list === 'Passagem_Bombeiro'
+              ? 'SP.Data.Passagem_x005f_BombeiroListItem'
+              : `SP.Data.${listName}`,
         },
       };
 
@@ -191,7 +212,23 @@ class CrudSharepoint {
         .map((word, index) => (index === 0 ? word.charAt(0).toUpperCase() + word.substring(1) : word.toLowerCase()))
         .join('_x005f_');
 
-      const listName = `${formattedListName}ListItem`;
+      const listName =
+        list === 'Valvulas_de_Governo'
+          ? 'Valvulas_x005f_de_x005f_IncendioListItem'
+          : list === 'Casa_de_Bombas'
+          ? 'Casa_x005f_de_x005f_BombasListItem'
+          : list === 'Bombas_de_Incendio'
+          ? 'Bombas_x005f_de_x005f_IncendioListItem'
+          : list === 'Alarmes_de_Incendio'
+          ? 'Alarmes_x005f_de_x005f_IncendioListItem'
+          : list === 'Operacao_OEI'
+          ? 'Operacao_x005f_OEIListItem'
+          : list === 'Portas_de_Emergencia'
+          ? 'Portas_x005f_de_x005f_EmergenciaListItem'
+          : list === 'Passagem_Bombeiro'
+          ? 'Passagem_x005f_BombeiroListItem'
+          : `${formattedListName}ListItem`;
+
       const url = `${this.baseUrl}/_api/web/lists/GetByTitle('${list}')/items(${id})`;
 
       const headers = {

@@ -1,7 +1,6 @@
-import { IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 import Avatar from '../Avatar';
 import Tooltip from '../Tooltip';
@@ -30,7 +29,6 @@ const Header = () => {
 
   const handleChangeSite = () => {
     localStorage.removeItem('user_site');
-    localStorage.removeItem('equipments_value');
 
     navigate('/');
   };
@@ -43,7 +41,7 @@ const Header = () => {
         <div className="flex items-center">
           <img className="w-16 h-16 mr-9" src={BayerLogo} alt="Logo da Bayer" />
 
-          <div className="flex text-2xl gap-2 text-primary select-none">
+          <div className="flex text-2xl gap-2 text-primary-font select-none">
             <h2>Business Security Brasil</h2>
             <span className=" font-bold text-red">///</span>
             <h1 className="font-bold">Gestão Sistema de Emergência</h1>
@@ -54,7 +52,7 @@ const Header = () => {
           <Tooltip label="Alterar Site">
             <div
               onClick={handleChangeSite}
-              className="cursor-pointer px-4 py-2 bg-[#F6F6F6] shadow-xs-primary-app text-primary flex justify-center items-center gap-2"
+              className="cursor-pointer px-4 py-2 bg-[#F6F6F6] shadow-xs-primary-app text-primary-font flex justify-center items-center gap-2"
             >
               {site === 'BXO' && <BXOLogo />}
               {site === 'SPO' && <SPOLogo />}
@@ -62,23 +60,23 @@ const Header = () => {
             </div>
           </Tooltip>
 
-          <Tooltip label="Inicio">
+          {/* <Tooltip label="Inicio">
             <IconButton onClick={() => navigate('/')}>
               <FontAwesomeIcon
-                className={`transition-all ease-in delay-150 w-7 h-7 cursor-pointer text-3xl text-primary`}
+                className={`transition-all ease-in delay-150 w-7 h-7 cursor-pointer text-3xl text-primary-font`}
                 icon={faHouse}
               />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
 
           {user && (
             <>
               <div className="w-11 h-11 rounded-full shadow flex justify-center items-center ">
-                <Avatar image={user.photo ? user.photo : undefined} username={user?.Title} />
+                <Avatar image={user.photo} username={user?.Title} />
               </div>
               <div className="flex flex-col gap-1 select-none ml-3">
-                <span className="font-bold text-primary">{user?.Title}</span>
-                <span className="text-[.875rem] italic text-primary">
+                <span className="font-bold text-primary-font">{user?.Title}</span>
+                <span className="text-[.875rem] italic text-primary-font">
                   {user?.isAdmin ? 'Administrador' : 'Usuário Comum'}
                 </span>
               </div>

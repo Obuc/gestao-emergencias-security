@@ -38,7 +38,10 @@ interface IPopoverItemProps extends React.InputHTMLAttributes<HTMLDivElement> {
 
 const PopoverItem = ({ label, icon, ...props }: IPopoverItemProps) => {
   return (
-    <div {...props} className="cursor-pointer h-10 flex px-6 items-center gap-3 hover:bg-primary-opacity text-primary">
+    <div
+      {...props}
+      className="cursor-pointer h-10 flex px-6 items-center gap-3 hover:bg-primary-opacity text-primary-font"
+    >
       {icon}
       <span>{label}</span>
     </div>

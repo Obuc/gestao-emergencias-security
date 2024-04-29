@@ -9,27 +9,50 @@ interface ITextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElemen
   errors?: string;
   touched?: boolean;
   isLoading?: boolean;
+  showLength?: boolean;
+  isEdit?: boolean;
 }
 
-const TextArea = ({ label, name, placeholder = '', width, errors, touched, isLoading, ...props }: ITextAreaProps) => {
+const TextArea = ({
+  label,
+  name,
+  placeholder = '',
+  width,
+  errors,
+  touched,
+  isLoading,
+  showLength = false,
+  isEdit,
+  ...props
+}: ITextAreaProps) => {
   return (
-    <div className={`flex flex-col text-primary ${width ? width : 'w-full'}`}>
-      <label htmlFor={name} className="pb-2 flex gap-2 justify-between">
+    <div className={`flex flex-col text-primary-font ${width ? width : 'w-full'}`}>
+      <label htmlFor={name} className="pb-2 flex gap-2 justify-between font-[500]">
         {label}
-        <span className={`text-primary ${props.value?.toString().length! > 250 && 'text-pink'}`}>
-          {props.value?.toString().length!}/{255}
-        </span>
+        {showLength && (
+          <span className={`text-primary-font ${props.value?.toString().length! > 1000 && 'text-pink'}`}>
+            {props.value?.toString().length!}/{1000}
+          </span>
+        )}
       </label>
-      {!isLoading && (
+      {!isLoading && isEdit && (
         <textarea
           {...props}
           id={name}
-          className={`${
-            errors && touched && 'border-pink'
-          } outline-none border shadow-xs-app p-2 h-[5rem] text-primary min-h-[2.5rem] max-h-[5rem] bg-white`}
+          data-errors={errors && touched}
+          className={twMerge(
+            'data-[errors=true]:border-pink outline-none border shadow-xs-app p-2 h-[6rem] text-primary-font min-h-[2.5rem] max-h-[8.125rem] bg-white',
+            props.className,
+          )}
           placeholder={placeholder}
-          maxLength={255}
+          maxLength={3000}
         />
+      )}
+
+      {!isLoading && !isEdit && (
+        <div className="outline-none border shadow-xs-app p-2 h-auto break-words block text-primary-font min-h-[2.5rem] bg-white ">
+          {props.value}
+        </div>
       )}
 
       {isLoading && <Skeleton className={twMerge('p-10', props.className)} />}

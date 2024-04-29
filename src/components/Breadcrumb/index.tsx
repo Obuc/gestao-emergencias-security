@@ -1,5 +1,5 @@
 import { Breadcrumbs } from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -23,8 +23,8 @@ const Breadcrumb = () => {
     reports: 'Laudos',
     new: 'Novo Laudo',
     extinguisher: 'Extintores',
-    hydrants: 'Hidrantes',
-    valves: 'Válvulas de Governo',
+    hydrant: 'Hidrantes',
+    valve: 'Válvulas de Governo',
     cmi_test: 'Teste CMI',
     cmi_inspection: 'Inspeção CMI',
     general_checklist: 'Checklist Geral',
@@ -34,27 +34,42 @@ const Breadcrumb = () => {
     van: 'Furgão',
     sprinter: 'Ambulância Sprinter',
     iveco: 'Ambulância Iveco',
+
+    emergency_doors: 'Portas de Emergência',
+    oei_operation: 'Operação OEI',
+    fire_alarms: 'Alarmes de Incêndio',
+    ambulance_check: 'Verificação de Ambulância',
+    dea: 'DEA',
+
+    spo: 'São Paulo',
+    bxo: 'Belford Roxo',
   };
 
   return (
     <>
       <div className="w-screen h-14 px-16 py-4 flex items-center">
         <Breadcrumbs
-          separator={<FontAwesomeIcon icon={faAngleRight} className="text-primary" />}
+          separator={<FontAwesomeIcon icon={faAngleRight} className="text-primary-font" />}
           aria-label="breadcrumb"
         >
-          <span className="text-primary font-montserrat text-base">Gestão Sistema de Emergência</span>
+          <Link
+            to={'/'}
+            onClick={() => localStorage.removeItem('user_site')}
+            className="text-primary-font font-montserrat text-base"
+          >
+            Início
+          </Link>
 
           {breadcrumbLinks.map((item, index) => (
-            <a
-              className={`transition-all ease-in delay-75 px-1 text-primary font-montserrat text-base ${
+            <span
+              className={`px-1 text-primary-font font-montserrat text-base ${
                 breadcrumbItems.length - 1 === index && 'font-semibold'
               }`}
               key={index}
-              href={item.url}
+              // to={item.url}
             >
               {labelMappings[item.label] || item.label}
-            </a>
+            </span>
           ))}
         </Breadcrumbs>
       </div>
