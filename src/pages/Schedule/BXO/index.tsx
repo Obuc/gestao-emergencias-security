@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Calendar from './components/Calendar';
-import LayoutBase from '../../layout/LayoutBase';
+import LayoutBase from '@/layout/LayoutBase';
+import { Schedule } from './components/schedule';
 
-const Schedule = () => {
+const ScheduleBXO = () => {
   const navigate = useNavigate();
   const localSite = localStorage.getItem('user_site');
 
@@ -18,11 +18,11 @@ const Schedule = () => {
     <LayoutBase showMenu>
       <div className="flex flex-col w-full justify-between bg-[#FBFBFB]">
         <div className="flex flex-col p-8 h-full">
-          <Calendar />
+          <Schedule />
         </div>
       </div>
     </LayoutBase>
   );
 };
 
-export default Schedule;
+export default ScheduleBXO;

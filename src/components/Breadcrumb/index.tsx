@@ -52,18 +52,24 @@ const Breadcrumb = () => {
           separator={<FontAwesomeIcon icon={faAngleRight} className="text-primary-font" />}
           aria-label="breadcrumb"
         >
-          <span className="text-primary-font font-montserrat text-base">Gestão Sistema de Emergência</span>
+          <Link
+            to={'/'}
+            onClick={() => localStorage.removeItem('user_site')}
+            className="text-primary-font font-montserrat text-base"
+          >
+            Início
+          </Link>
 
           {breadcrumbLinks.map((item, index) => (
-            <Link
+            <span
               className={`px-1 text-primary-font font-montserrat text-base ${
                 breadcrumbItems.length - 1 === index && 'font-semibold'
               }`}
               key={index}
-              to={item.url}
+              // to={item.url}
             >
               {labelMappings[item.label] || item.label}
-            </Link>
+            </span>
           ))}
         </Breadcrumbs>
       </div>

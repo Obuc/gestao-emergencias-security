@@ -2,9 +2,9 @@ import { Route, Routes } from 'react-router-dom';
 
 import Home from '../pages/Home';
 import Report from '../pages/Report';
-import Schedule from '../pages/Schedule';
 import OeiSPO from '../pages/Records/Oei/SPO';
 import DeaSPO from '../pages/Records/Dea/SPO';
+import ScheduleSpo from '../pages/Schedule/SPO';
 import AlarmsSPO from '../pages/Records/Alarms/SPO';
 import HydrantSPO from '../pages/Records/Hydrant/SPO';
 import { TestCmiSPO } from '../pages/Records/CmiTest/SPO';
@@ -31,8 +31,9 @@ export const SpoRoutes = () => {
 
       <Route path="/reports" element={<Report />} />
       <Route path="/reports/:id" element={<Report />} />
-      <Route path="/schedule" element={<Schedule />} />
-      <Route path="/schedule/:id" element={<Schedule />} />
+
+      <Route path="/schedule" element={<ScheduleSpo />} />
+      <Route path="/schedule/:id" element={<ScheduleSpo />} />
 
       {/* Extinguisher  */}
       <Route path="/records/extinguisher" element={<ExtinguisherSPO />} />

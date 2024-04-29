@@ -2,17 +2,17 @@ import { ptBR } from 'date-fns/locale';
 import { Skeleton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { differenceInDays } from 'date-fns/esm';
-import { format, isBefore, isSameDay, isToday, subDays } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { format, isBefore, isSameDay, isToday, subDays } from 'date-fns';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
-import { useSchedule } from '../hooks/useSchedule';
-import { Button } from '../../../components/Button';
-import { Select } from '../../../components/Select';
-import { DataEquipments } from '../types/DataEquipments';
-import CalendarEquipmentModal from './CalendarEquipmentModal';
+import { Button } from '@/components/Button';
+import { Select } from '@/components/Select';
+import { useSchedule } from '../hooks/schedule';
+import { ScheduleModal } from './schedule-modal';
+import { DataEquipments } from '../types/schedule';
 
-const Calendar = () => {
+export const Schedule = () => {
   const {
     dateSelected,
     setDateSected,
@@ -43,7 +43,7 @@ const Calendar = () => {
 
   const handleOpenModalViewEquipment = (equipment: { id: number; type: string }) => {
     if (equipment) {
-      navigate(`/schedule/${equipment.id}?equipment=${equipment.type}`);
+      navigate(`/bxo/schedule/${equipment.id}?equipment=${equipment.type}`);
     }
   };
 
@@ -133,9 +133,7 @@ const Calendar = () => {
                           dataEquipments &&
                           dataEquipments.some((equipment) => {
                             return (
-                              isDayInMonth &&
-                              equipment.realizada_fora_do_prazo &&
-                              isSameDay(equipment.ultima_inspecao, day)
+                              isDayInMonth && equipment.realizada_fora_do_prazo && isSameDay(equipment.ultima_inspecao, day)
                             );
                           });
 
@@ -382,9 +380,7 @@ const Calendar = () => {
         </div>
       </div>
 
-      <CalendarEquipmentModal />
+      <ScheduleModal />
     </>
   );
 };
-
-export default Calendar;

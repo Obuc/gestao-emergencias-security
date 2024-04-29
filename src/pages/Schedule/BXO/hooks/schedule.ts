@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { addDays, differenceInDays, parseISO } from 'date-fns';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { addDays, differenceInDays, parseISO } from 'date-fns';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
-import { sharepointContext } from '../../../context/sharepointContext';
-import { DataEquipments, DataEquipmentsModal } from '../types/DataEquipments';
+import { sharepointContext } from '@/context/sharepointContext';
+import { DataEquipments, DataEquipmentsModal } from '../types/schedule';
 
 export const useSchedule = () => {
   const { crud } = sharepointContext();
@@ -143,9 +143,7 @@ export const useSchedule = () => {
       const ultimaInspecaoIsoDate = parseISO(extinguisher.ultima_inspecao);
       const dataInspecaoBase = parseISO(extinguisher.data_inspecao_base);
 
-      const ultimaInspecao = new Date(
-        ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
-      );
+      const ultimaInspecao = new Date(ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000);
 
       const inspecaoBase = new Date(dataInspecaoBase.getTime() + dataInspecaoBase.getTimezoneOffset() * 60000);
 
@@ -186,9 +184,7 @@ export const useSchedule = () => {
 
     const data = resp.results.map((equipment: any) => {
       const ultimaInspecaoIsoDate = parseISO(equipment.ultima_inspecao);
-      const ultimaInspecao = new Date(
-        ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
-      );
+      const ultimaInspecao = new Date(ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000);
       const timeToExpiration = calculateTimeToExpiration(equipment.tipo_equipamento.Title);
 
       const dates = [];
@@ -220,9 +216,7 @@ export const useSchedule = () => {
 
     const data = resp.results.map((equipment: any) => {
       const ultimaInspecaoIsoDate = parseISO(equipment.ultima_inspecao);
-      const ultimaInspecao = new Date(
-        ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000,
-      );
+      const ultimaInspecao = new Date(ultimaInspecaoIsoDate.getTime() + ultimaInspecaoIsoDate.getTimezoneOffset() * 60000);
       const timeToExpiration = calculateTimeToExpiration('Hidrantes');
 
       const dates = [];

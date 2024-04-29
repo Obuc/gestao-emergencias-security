@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import Home from '../pages/Home';
 import Report from '../pages/Report';
-import Schedule from '../pages/Schedule';
+import ScheduleBXO from '../pages/Schedule/BXO';
 import TestCmiBXO from '../pages/Records/CmiTest/BXO';
 import HydrantBXO from '../pages/Records/Hydrant/BXO';
 import LoadRatio from '../pages/Records/LoadRatio/BXO';
@@ -26,8 +26,8 @@ export const BxoRoutes = () => {
       <Route path="/reports" element={<Report />} />
       <Route path="/reports/:id" element={<Report />} />
 
-      <Route path="/schedule" element={<Schedule />} />
-      <Route path="/schedule/:id" element={<Schedule />} />
+      <Route path="/schedule" element={<ScheduleBXO />} />
+      <Route path="/schedule/:id" element={<ScheduleBXO />} />
 
       {/* Extinguisher  */}
       <Route path="/records/extinguisher" element={<ExtinguisherBXO />} />

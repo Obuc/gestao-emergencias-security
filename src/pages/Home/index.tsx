@@ -3,17 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 
-import Spinner from '../../components/Spinner';
-import { Button } from '../../components/Button';
-import { Select } from '../../components/Select';
-import { appContext } from '../../context/appContext';
-import BackgroundImage from '../../assets/bombeiros.png';
-import BayerLogoWhite from '../../components/Icons/BayerLogoWhite';
+import Spinner from '@/components/Spinner';
+import { useHome } from './hooks/home.hook';
+import { Button } from '@/components/Button';
+import { Select } from '@/components/Select';
+import BackgroundImage from '@/assets/bombeiros.png';
+import BayerLogoWhite from '@/components/Icons/BayerLogoWhite';
 
 const Home = () => {
   const navigate = useNavigate();
   // const { pathname } = useLocation();
-  const { sites, isLoadingSites } = appContext();
+  const { sites } = useHome();
 
   const [site, setSite] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
@@ -85,11 +85,11 @@ const Home = () => {
                     popperWidth="w-[22.25rem]"
                     mode="gray"
                     value={site}
-                    isLoading={isLoadingSites}
+                    isLoading={sites.isLoading}
                     onValueChange={(value) => setSite(value)}
                   >
-                    {sites?.length &&
-                      sites.map((item) => (
+                    {sites.data?.length &&
+                      sites.data.map((item) => (
                         <Select.Item key={item.Id} value={item.Title}>
                           {item.Title}
                         </Select.Item>

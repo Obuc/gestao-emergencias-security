@@ -1,13 +1,13 @@
-import { format, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useEffect, useState } from 'react';
+import { format, isBefore } from 'date-fns';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
-import Modal from '../../../components/Modal';
-import { useSchedule } from '../hooks/useSchedule';
-import TextField from '../../../components/TextField';
+import Modal from '@/components/Modal';
+import TextField from '@/components/TextField';
+import { useSchedule } from '../hooks/schedule';
 
-const CalendarEquipmentModal = () => {
+export const ScheduleModal = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -24,7 +24,7 @@ const CalendarEquipmentModal = () => {
 
   const handleOnOpenChange = () => {
     setModalViewEquipment(null);
-    navigate('/schedule');
+    navigate('/bxo/schedule');
   };
 
   return (
@@ -137,5 +137,3 @@ const CalendarEquipmentModal = () => {
     </Modal>
   );
 };
-
-export default CalendarEquipmentModal;

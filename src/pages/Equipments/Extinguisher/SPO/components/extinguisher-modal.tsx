@@ -148,7 +148,7 @@ export const ExtinguisherModal = () => {
 
               return (
                 <EquipmentCard.Root key={item.Id} variant={cardVariant}>
-                  <EquipmentCard.Header title={cardTitle} link={`/spo/records/extinguisher/${item.Id}`} />
+                  <EquipmentCard.Header title={cardTitle} link={`/spo/records/extinguisher/${item.idRegistro}`} />
                   <EquipmentCard.Content
                     date={cardDate}
                     responsible={item.responsavel}
