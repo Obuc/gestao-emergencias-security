@@ -40,5 +40,5 @@ export interface IReportsFiltersProps {
   endDate: Date | null;
   emission: Date | null;
   validity: Date | null;
-  reportType: string | null;
+  reportType: { label: string; value: string } | null;
 }

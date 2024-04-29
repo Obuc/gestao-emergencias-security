@@ -56,7 +56,7 @@ const Breadcrumb = () => {
 
           {breadcrumbLinks.map((item, index) => (
             <Link
-              className={`transition-all ease-in delay-75 px-1 text-primary-font font-montserrat text-base ${
+              className={`px-1 text-primary-font font-montserrat text-base ${
                 breadcrumbItems.length - 1 === index && 'font-semibold'
               }`}
               key={index}

@@ -16,7 +16,7 @@ export const LoadRatioModal = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const equipments_value = pathname.split('/')[2];
+  const equipments_value = pathname.split('/')[3];
 
   const { loadRatioModalData, historyModalData, year, setYear } = useLoadRatioModal();
   const [loadRatioItem, setLoadRatioItem] = useState<boolean | null>(null);

@@ -26,7 +26,7 @@ interface ITableProps {
 export const LoadRatioTableBXO = ({ loadRatio, mutateRemove, setSortColumns, sortColumns }: ITableProps) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const equipments_value = pathname.split('/')[2];
+  const equipments_value = pathname.split('/')[3];
 
   const [removeItem, setRemoveItem] = useState<number | null>(null);
 

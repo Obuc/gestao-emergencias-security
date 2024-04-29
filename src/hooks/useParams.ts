@@ -1,7 +1,9 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
+import { ISite } from '../types/Site';
 import { ITipoVeiculo } from '../types/TipoVeiculo';
 import { sharepointContext } from '../context/sharepointContext';
+import { ITipoLaudo } from '../pages/Report/types/report.types';
 
 const useParams = () => {
   const { crud } = sharepointContext();
@@ -71,12 +73,34 @@ const useParams = () => {
     enabled: !!localSite,
   });
 
+  const sites: UseQueryResult<Array<ISite>> = useQuery({
+    queryKey: ['sites'],
+    queryFn: async () => {
+      const resp = await crud.getListItemsv2('site', '?$Select=Id,Title');
+      return resp.results;
+    },
+    staleTime: 5000 * 60, // 5 Minute
+    refetchOnWindowFocus: false,
+  });
+
+  const tipoLaudo: UseQueryResult<Array<ITipoLaudo>> = useQuery({
+    queryKey: ['tipo_laudo'],
+    queryFn: async () => {
+      const patch = `?$Select=Id,Title,site/Title&$expand=site&$Orderby=Title asc`;
+
+      const resp = await crud.getListItemsv2('tipo_laudo', patch);
+      return resp.results;
+    },
+  });
+
   return {
     local,
     pavimento,
     predio,
     tipo_extintor,
     tipo_veiculo,
+    sites,
+    tipoLaudo,
   };
 };
 

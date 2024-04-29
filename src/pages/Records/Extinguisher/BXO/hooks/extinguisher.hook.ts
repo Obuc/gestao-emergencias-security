@@ -198,7 +198,7 @@ export const useExtinguisherBXO = () => {
   };
 
   const extinguisher = useInfiniteQuery({
-    queryKey: ['extinguisher_data', user_site, tableFilters, sortColumns, year, month, pathname],
+    queryKey: ['extinguisher_data', user_site, tableFilters, sortColumns, year, month],
     queryFn: fetchExtinguisher,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,

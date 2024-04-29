@@ -30,10 +30,10 @@ const CollapsedMenu = ({ items }: { items: Array<MenuItem> }) => {
   const [openMenus, setOpenMenus] = useState<boolean[]>(
     items.map((item) => {
       if (item.path) {
-        return location.pathname === item.path;
+        return location.pathname.includes(item.path);
       }
       if (item.subitems) {
-        return item.subitems.some((subitem) => localtion.pathname === subitem.path);
+        return item.subitems.some((subitem) => localtion.pathname.includes(subitem.path));
       }
       return false;
     }),
@@ -59,9 +59,7 @@ const CollapsedMenu = ({ items }: { items: Array<MenuItem> }) => {
     <CollapsedMenuRoot>
       {items.map((item, index) => {
         const isLocationActivePartial =
-          item.path?.split('/')[1] && localtion.pathname.split('/')[1].includes(item.path?.split('/')[1]); //localtion.pathname.split('/')[1] === item.path?.split('/')[1];
-
-        console.log(isLocationActivePartial);
+          item.path?.split('/')[2] && localtion.pathname.split('/')[2].includes(item.path?.split('/')[2]);
 
         const handleCollapsedMenuItemAction = () => {
           if (item.path) return handleNavigate(item.path);
@@ -88,7 +86,7 @@ const CollapsedMenu = ({ items }: { items: Array<MenuItem> }) => {
             </CollapsedMenuItemRoot>
 
             {item.subitems && (
-              <Collapse in={openMenus[index]} timeout="auto" unmountOnExit>
+              <Collapse in={openMenus[index]}>
                 {item.subitems.map((subitem) => {
                   const collpseLocationActivePartial = localtion.pathname.includes(subitem.path);
 

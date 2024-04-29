@@ -22,7 +22,7 @@ export const LoadRatioModalBXO = () => {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const isEdit = searchParams.get('edit') === 'true' ? true : false;
-  const equipments_value = pathname.split('/')[2];
+  const equipments_value = pathname.split('/')[3];
 
   const { loadRatioModal, mutateEdit, loadRatioItem, setLoadRatioItem, formik } = useLoadRatioModalBXO();
 

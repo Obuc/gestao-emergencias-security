@@ -91,12 +91,12 @@ const LayoutBase = ({ children, showMenu }: ILayoutBaseProps) => {
     },
     {
       icon: Calendar,
-      path: '/schedule',
+      path: `/${localSiteLowerCase}/schedule`,
       label: 'Agenda',
     },
     {
       icon: Reports,
-      path: '/reports',
+      path: `/${localSiteLowerCase}/reports`,
       label: 'Laudos',
     },
     {
@@ -106,7 +106,7 @@ const LayoutBase = ({ children, showMenu }: ILayoutBaseProps) => {
     },
     {
       icon: Actions,
-      path: 'https://bayergroup.sharepoint.com/sites/005070/system/plano_de_acao.html',
+      path: 'https://bayergroup.sharepoint.com/sites/005070/action_plan/index.html',
       label: 'Ações',
     },
   ];

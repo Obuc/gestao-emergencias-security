@@ -25,7 +25,7 @@ export const LoadRatioTable = ({ loadRatioData, mutateRemove, setSortColumns, so
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [removeItem, setRemoveItem] = useState<number | null>(null);
-  const equipments_value = pathname.split('/')[2];
+  const equipments_value = pathname.split('/')[3];
 
   const handleView = (id: number) => {
     navigate(`/bxo/equipments/${equipments_value}/${id}`);
