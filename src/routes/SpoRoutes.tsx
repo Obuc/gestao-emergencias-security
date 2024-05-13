@@ -18,6 +18,7 @@ import EmergencyDoorSPO from '../pages/Records/EmergencyDoor/SPO';
 import EquipmentsCmiTestSPO from '../pages/Equipments/CmiTest/SPO';
 import EquipmentsHydrantSPO from '../pages/Equipments/Hydrants/SPO';
 import AmbulanceCheckSPO from '../pages/Records/AmbulanceCheck/SPO';
+import { EyewashShowerSPO } from '../pages/Records/EyewashShower/SPO';
 import EquipmentsFireAlarmsSPO from '../pages/Equipments/FireAlarms/SPO';
 import EquipmentsExtinguisherSPO from '../pages/Equipments/Extinguisher/SPO';
 import EquipmentsCmiInspectionSPO from '../pages/Equipments/CmiInspection/SPO';
@@ -74,6 +75,10 @@ export const SpoRoutes = () => {
       {/* Ambulance Check */}
       <Route path={`/records/ambulance_check`} element={<AmbulanceCheckSPO />} />
       <Route path={`/records/ambulance_check/:id`} element={<AmbulanceCheckSPO />} />
+
+      {/* Eyewash Shower */}
+      <Route path={`/records/eyewash_shower`} element={<EyewashShowerSPO />} />
+      <Route path={`/records/eyewash_shower/:id`} element={<EyewashShowerSPO />} />
 
       {/* Equipments - Extinguisher */}
       <Route path="/equipments/extinguisher" element={<EquipmentsExtinguisherSPO />} />

@@ -33,6 +33,7 @@ const LayoutBase = ({ children, showMenu }: ILayoutBaseProps) => {
       { label: 'Alarmes de Incêndio', path: '/spo/records/fire_alarms' },
       { label: 'Verificação de Ambulância', path: '/spo/records/ambulance_check' },
       { label: 'DEA', path: '/spo/records/dea' },
+      { label: 'Chuveiro Lava-Olhos', path: '/spo/records/eyewash_shower' },
     );
   }
 

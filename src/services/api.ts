@@ -181,6 +181,8 @@ class CrudSharepoint {
               ? 'SP.Data.Portas_x005f_de_x005f_EmergenciaListItem'
               : list === 'Passagem_Bombeiro'
               ? 'SP.Data.Passagem_x005f_BombeiroListItem'
+              : list === 'Chuveiro Lava Olhos'
+              ? 'SP.Data.Chuveiro_x0020_Lava_x0020_OlhosListItem'
               : `SP.Data.${listName}`,
         },
       };
@@ -227,6 +229,8 @@ class CrudSharepoint {
           ? 'Portas_x005f_de_x005f_EmergenciaListItem'
           : list === 'Passagem_Bombeiro'
           ? 'Passagem_x005f_BombeiroListItem'
+          : list === 'Chuveiro Lava Olhos'
+          ? 'Chuveiro_x0020_Lava_x0020_OlhosListItem'
           : `${formattedListName}ListItem`;
 
       const url = `${this.baseUrl}/_api/web/lists/GetByTitle('${list}')/items(${id})`;
