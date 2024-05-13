@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
   mainTitle: {
     fontSize: '18px',
     fontWeight: 600,
+    maxWidth: '70%',
   },
   infoArea: {
     width: 125,

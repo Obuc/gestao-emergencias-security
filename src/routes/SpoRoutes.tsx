@@ -11,6 +11,7 @@ import { TestCmiSPO } from '../pages/Records/CmiTest/SPO';
 import EquipmentsOeiSPO from '../pages/Equipments/Oei/SPO';
 import EquipmentsDeaSPO from '../pages/Equipments/Dea/SPO';
 import GovernanceValveSPO from '../pages/Records/Valve/SPO';
+import { SpillKitSPO } from '../pages/Records/SpillKit/SPO';
 import EquipmentsValveSPO from '../pages/Equipments/Valve/SPO';
 import ExtinguisherSPO from '../pages/Records/Extinguisher/SPO';
 import InspectionCmiSPO from '../pages/Records/CmiInspection/SPO';
@@ -79,6 +80,10 @@ export const SpoRoutes = () => {
       {/* Eyewash Shower */}
       <Route path={`/records/eyewash_shower`} element={<EyewashShowerSPO />} />
       <Route path={`/records/eyewash_shower/:id`} element={<EyewashShowerSPO />} />
+
+      {/* Spill Kit */}
+      <Route path={`/records/spill_kit`} element={<SpillKitSPO />} />
+      <Route path={`/records/spill_kit/:id`} element={<SpillKitSPO />} />
 
       {/* Equipments - Extinguisher */}
       <Route path="/equipments/extinguisher" element={<EquipmentsExtinguisherSPO />} />

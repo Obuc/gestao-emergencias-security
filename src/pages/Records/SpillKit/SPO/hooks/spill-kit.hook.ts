@@ -7,9 +7,9 @@ import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-q
 
 import buildOrderByQuery from '@/utils/buildOrderByQuery';
 import { sharepointContext } from '@/context/sharepointContext';
-import { IEyewashShowerFiltersProps } from '../types/eyewash-shower.types';
+import { ISpillKitFiltersProps } from '../types/spill-kit.types';
 
-export const useEyewashShower = () => {
+export const useSpillKit = () => {
   const { pathname } = useLocation();
   const { crudParent } = sharepointContext();
   const queryClient = useQueryClient();
@@ -18,8 +18,8 @@ export const useEyewashShower = () => {
   const [year, setYear] = useState(getYear(new Date()));
   const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([{ columnKey: 'Created', direction: 'DESC' }]);
 
-  const sessionFiltersActions = sessionStorage.getItem('session_filters_eyewash_shower_spo');
-  const sessionFiltersActionsJSON: IEyewashShowerFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
+  const sessionFiltersActions = sessionStorage.getItem('session_filters_spill_kit_spo');
+  const sessionFiltersActionsJSON: ISpillKitFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
 
   const initialFiltersValues = {
     responsible: sessionFiltersActionsJSON?.responsible ? sessionFiltersActionsJSON.responsible : null,
@@ -30,8 +30,8 @@ export const useEyewashShower = () => {
     conformity: sessionFiltersActionsJSON?.conformity ? sessionFiltersActionsJSON.conformity : null,
   };
 
-  const [tableFilters, setTableFilters] = useState<IEyewashShowerFiltersProps>(initialFiltersValues);
-  const [tempTableFilters, setTempTableFilters] = useState<IEyewashShowerFiltersProps>(initialFiltersValues);
+  const [tableFilters, setTableFilters] = useState<ISpillKitFiltersProps>(initialFiltersValues);
+  const [tempTableFilters, setTempTableFilters] = useState<ISpillKitFiltersProps>(initialFiltersValues);
 
   const handleRemoveAllFilters = () => {
     const filters = {
@@ -45,7 +45,7 @@ export const useEyewashShower = () => {
 
     setTableFilters(filters);
     setTempTableFilters(filters);
-    sessionStorage.removeItem('session_filters_eyewash_shower_spo');
+    sessionStorage.removeItem('session_filters_spill_kit_spo');
   };
 
   const countAppliedFilters = () => {
@@ -62,13 +62,13 @@ export const useEyewashShower = () => {
 
   const handleApplyFilters = () => {
     setTableFilters(tempTableFilters);
-    sessionStorage.setItem('session_filters_eyewash_shower_spo', JSON.stringify(tempTableFilters));
+    sessionStorage.setItem('session_filters_spill_kit_spo', JSON.stringify(tempTableFilters));
   };
 
   const fetch = async ({ pageParam }: { pageParam?: string }) => {
     const orderByQuery = buildOrderByQuery(sortColumns);
 
-    let path = `?$Select=Id,Created,Responsavel/Title,Local,Sin,Obs,Insp,Press,Agua&$Expand=Responsavel&$Top=25&${orderByQuery}&$Filter=(Id ge 0)`;
+    let path = `?$Select=Id,Created,Responsavel/Title,Local,Sin,Obs,Lacre,Compl,Validade&$Expand=Responsavel&$Top=25&${orderByQuery}&$Filter=(Id ge 0)`;
 
     if (year) {
       const startDate = format(new Date(year, 0, 1), "yyyy-MM-dd'T'00:00:00'Z'");
@@ -105,7 +105,9 @@ export const useEyewashShower = () => {
       path += ` and ( substringof('${tableFilters.place}', Local ))`;
     }
 
-    const response = await crudParent.getPaged(pageParam ? { nextUrl: pageParam } : { list: 'Chuveiro Lava Olhos', path });
+    const response = await crudParent.getPaged(
+      pageParam ? { nextUrl: pageParam } : { list: 'Kit_Derramamento_Quimico', path },
+    );
 
     const dataWithTransformations = await Promise.all(
       response?.data?.value?.map(async (item: any) => {
@@ -117,7 +119,7 @@ export const useEyewashShower = () => {
           ...item,
           Created: dataCriado,
           Responsavel: item?.Responsavel?.Title,
-          conforme: item.Sin && item.Obs && item.Insp && item.Press && item.Agua,
+          conforme: item.Sin && item.Obs && item.Lacre && item.Compl && item.Validade,
         };
       }),
     );
@@ -131,31 +133,31 @@ export const useEyewashShower = () => {
     };
   };
 
-  const eyewashShower = useInfiniteQuery({
-    queryKey: ['eyewash_shower_data_spo', user_site, tableFilters, sortColumns, year],
+  const spillKit = useInfiniteQuery({
+    queryKey: ['spill_kit_data_spo', user_site, tableFilters, sortColumns, year],
     queryFn: fetch,
     getNextPageParam: (lastPage, _) => lastPage.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: pathname.includes('/spo/records/eyewash_shower') && user_site === 'SPO',
+    enabled: pathname.includes('/spo/records/spill_kit') && user_site === 'SPO',
   });
 
   const mutateRemove = useMutation({
     mutationFn: async (itemId: number) => {
       if (itemId) {
-        await crudParent.deleteItemList('Chuveiro Lava Olhos', itemId);
+        await crudParent.deleteItemList('Kit_Derramamento_Quimico', itemId);
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['eyewash_shower_data_spo', user_site, tableFilters, sortColumns, year],
+        queryKey: ['spill_kit_data_spo', user_site, tableFilters, sortColumns, year],
       });
     },
   });
 
   const fetchAllRecords = async () => {
-    const path = `?$Select=Id,Created,Responsavel/Title,Local,Sin,Obs,Insp,Press,Agua&$Expand=Responsavel&$Orderby=Created desc`;
+    const path = `?$Select=Id,Created,Responsavel/Title,Local,Sin,Obs,Lacre,Compl,Validade&$Expand=Responsavel&$Orderby=Created desc`;
 
-    const response = await crudParent.getListItems('Chuveiro Lava Olhos', path);
+    const response = await crudParent.getListItems('Kit_Derramamento_Quimico', path);
 
     const dataWithTransformations = await Promise.all(
       response.map(async (item: any) => {
@@ -167,7 +169,7 @@ export const useEyewashShower = () => {
           ...item,
           Created: dataCriado,
           Responsavel: item?.Responsavel?.Title,
-          conforme: item.Sin && item.Obs && item.Insp && item.Press && item.Agua ? 'CONFORME' : 'NÃO CONFORME',
+          conforme: item.Sin && item.Obs && item.Lacre && item.Compl && item.Validade ? 'CONFORME' : 'NÃO CONFORME',
         };
       }),
     );
@@ -209,14 +211,14 @@ export const useEyewashShower = () => {
         ws['!rows'] = wsrows;
         ws['!cols'] = wscols;
 
-        XLSX.utils.book_append_sheet(wb, ws, 'Chuveiro Lava-Olhos');
-        XLSX.writeFile(wb, `SPO - Registros - Chuveiro Lava-Olhos.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, 'Kit de Derramamento Químico');
+        XLSX.writeFile(wb, `SPO - Registros - Kit de Derramamento Químico.xlsx`);
       }
     },
   });
 
   return {
-    eyewashShower,
+    spillKit,
     mutateRemove,
     tempTableFilters,
     setTempTableFilters,
