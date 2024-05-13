@@ -40,6 +40,8 @@ const Breadcrumb = () => {
     fire_alarms: 'Alarmes de Incêndio',
     ambulance_check: 'Verificação de Ambulância',
     dea: 'DEA',
+    eyewash_shower: 'Chuveiro Lava-Olhos',
+    spill_kit: 'Kit de Derramamento Químico',
 
     spo: 'São Paulo',
     bxo: 'Belford Roxo',
