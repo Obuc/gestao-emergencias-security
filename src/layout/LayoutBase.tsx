@@ -66,6 +66,7 @@ const LayoutBase = ({ children, showMenu }: ILayoutBaseProps) => {
       { label: 'Verificação de Ambulância', path: '/spo/equipments/ambulance_check' },
       { label: 'DEA', path: '/spo/equipments/dea' },
       { label: 'Chuveiro Lava-Olhos', path: '/spo/equipments/eyewash_shower' },
+      { label: 'Kit de Derramamento Químico', path: '/spo/equipments/spill_kit' },
     );
   }
 

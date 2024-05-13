@@ -6,9 +6,9 @@ import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-q
 
 import buildOrderByQuery from '@/utils/buildOrderByQuery';
 import { sharepointContext } from '@/context/sharepointContext';
-import { EyewashShowerFiltersProps, EyewashShowerProps } from '../types/eyewash-shower.types';
+import { SpillKitFiltersProps, SpillKitProps } from '../types/spill-kit.types';
 
-export const useEyewashShower = () => {
+export const useSpillKit = () => {
   const { crudParent } = sharepointContext();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -16,8 +16,8 @@ export const useEyewashShower = () => {
 
   const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([{ columnKey: 'Modified', direction: 'DESC' }]);
 
-  const sessionFiltersActions = sessionStorage.getItem('session_filters_equipments_eyewash_shower_spo');
-  const sessionFiltersActionsJSON: EyewashShowerFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
+  const sessionFiltersActions = sessionStorage.getItem('session_filters_equipments_spill_kit_spo');
+  const sessionFiltersActionsJSON: SpillKitFiltersProps = sessionFiltersActions && JSON.parse(sessionFiltersActions);
 
   const initialFiltersValues = {
     Id: sessionFiltersActionsJSON?.Id ? sessionFiltersActionsJSON.Id : null,
@@ -27,8 +27,8 @@ export const useEyewashShower = () => {
     Conforme: sessionFiltersActionsJSON?.Conforme ? sessionFiltersActionsJSON.Conforme : null,
   };
 
-  const [tableFilters, setTableFilters] = useState<EyewashShowerFiltersProps>(initialFiltersValues);
-  const [tempTableFilters, setTempTableFilters] = useState<EyewashShowerFiltersProps>(initialFiltersValues);
+  const [tableFilters, setTableFilters] = useState<SpillKitFiltersProps>(initialFiltersValues);
+  const [tempTableFilters, setTempTableFilters] = useState<SpillKitFiltersProps>(initialFiltersValues);
 
   const handleRemoveAllFilters = () => {
     const filters = {
@@ -41,7 +41,7 @@ export const useEyewashShower = () => {
 
     setTableFilters(filters);
     setTempTableFilters(filters);
-    sessionStorage.removeItem('session_filters_equipments_eyewash_shower_spo');
+    sessionStorage.removeItem('session_filters_equipments_spill_kit_spo');
   };
 
   const countAppliedFilters = () => {
@@ -57,13 +57,13 @@ export const useEyewashShower = () => {
 
   const handleApplyFilters = () => {
     setTableFilters(tempTableFilters);
-    sessionStorage.setItem('session_filters_equipments_eyewash_shower_spo', JSON.stringify(tempTableFilters));
+    sessionStorage.setItem('session_filters_equipments_spill_kit_spo', JSON.stringify(tempTableFilters));
   };
 
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
     const orderByQuery = buildOrderByQuery(sortColumns);
 
-    let path = `?$Select=Id,Modified,Tipo,Predio,Pavimento,Title,Conforme,Excluido&$Top=25&${orderByQuery}&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Chuveiro')`;
+    let path = `?$Select=Id,Modified,Tipo,Predio,Pavimento,Title,Conforme,Excluido&$Top=25&${orderByQuery}&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Kit Químicos')`;
 
     if (tableFilters?.Id) {
       path += ` and ( Id eq '${tableFilters?.Id}')`;
@@ -111,12 +111,12 @@ export const useEyewashShower = () => {
     };
   };
 
-  const eyewashShowerData = useInfiniteQuery({
-    queryKey: ['equipments_eyewash_shower_data_spo', user_site, tableFilters, sortColumns],
+  const spillkitData = useInfiniteQuery({
+    queryKey: ['equipments_spill_kit_data_spo', user_site, tableFilters, sortColumns],
     queryFn: fetchEquipments,
     getNextPageParam: (lastPage, _) => lastPage?.data['odata.nextLink'] ?? undefined,
     staleTime: 1000 * 60,
-    enabled: user_site === 'SPO' && location.pathname.includes('/spo/equipments/eyewash_shower'),
+    enabled: user_site === 'SPO' && location.pathname.includes('/spo/equipments/spill_kit'),
   });
 
   const mutateRemove = useMutation({
@@ -125,13 +125,13 @@ export const useEyewashShower = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['equipments_eyewash_shower_data_spo', user_site, tableFilters, sortColumns],
+        queryKey: ['equipments_spill_kit_data_spo', user_site, tableFilters, sortColumns],
       });
     },
   });
 
   const fetchAllEquipments = async () => {
-    let path = `?$Select=Id,Tipo,Predio,Pavimento,Title,Conforme,Excluido&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Chuveiro')`;
+    let path = `?$Select=Id,Tipo,Predio,Pavimento,Title,Conforme,Excluido&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Kit Químicos')`;
 
     const response = await crudParent.getListItems('Diversos_Equipamentos', path);
 
@@ -151,7 +151,7 @@ export const useEyewashShower = () => {
     mutationFn: async () => {
       const data = await fetchAllEquipments();
 
-      const columns: (keyof EyewashShowerProps)[] = ['Id', 'Predio', 'Pavimento', 'Conforme', 'Title'];
+      const columns: (keyof SpillKitProps)[] = ['Id', 'Predio', 'Pavimento', 'Conforme', 'Title'];
 
       const headerRow = columns.map((column) => column.toString());
 
@@ -169,14 +169,14 @@ export const useEyewashShower = () => {
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-        XLSX.utils.book_append_sheet(wb, ws, 'Chuveiro Lava-Olhos');
-        XLSX.writeFile(wb, `Equipamentos - Chuveiro Lava-Olhos.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, 'Kit de Derramamento Químico');
+        XLSX.writeFile(wb, `Equipamentos - Kit de Derramamento Químico.xlsx`);
       }
     },
   });
 
   return {
-    eyewashShowerData,
+    spillkitData,
     tempTableFilters,
     setTempTableFilters,
     handleRemoveAllFilters,

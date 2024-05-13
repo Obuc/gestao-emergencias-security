@@ -19,6 +19,7 @@ import EmergencyDoorSPO from '../pages/Records/EmergencyDoor/SPO';
 import EquipmentsCmiTestSPO from '../pages/Equipments/CmiTest/SPO';
 import EquipmentsHydrantSPO from '../pages/Equipments/Hydrants/SPO';
 import AmbulanceCheckSPO from '../pages/Records/AmbulanceCheck/SPO';
+import EquipmentsSpillKitSPO from '../pages/Equipments/SpillKit/SPO';
 import { EyewashShowerSPO } from '../pages/Records/EyewashShower/SPO';
 import EquipmentsFireAlarmsSPO from '../pages/Equipments/FireAlarms/SPO';
 import EquipmentsExtinguisherSPO from '../pages/Equipments/Extinguisher/SPO';
@@ -129,6 +130,10 @@ export const SpoRoutes = () => {
       {/* Equipments - Eyewash Shower */}
       <Route path="/equipments/eyewash_shower" element={<EquipmentsEyewashShowerSPO />} />
       <Route path="/equipments/eyewash_shower/:id" element={<EquipmentsEyewashShowerSPO />} />
+
+      {/* Equipments - Spill Kit */}
+      <Route path="/equipments/spill_kit" element={<EquipmentsSpillKitSPO />} />
+      <Route path="/equipments/spill_kit/:id" element={<EquipmentsSpillKitSPO />} />
     </Routes>
   );
 };

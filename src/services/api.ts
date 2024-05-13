@@ -185,6 +185,8 @@ class CrudSharepoint {
               ? 'SP.Data.Chuveiro_x0020_Lava_x0020_OlhosListItem'
               : list === 'Kit_Derramamento_Quimico'
               ? 'SP.Data.Kit_x005f_Derramamento_x005f_QuimicoListItem'
+              : list === 'Diversos_Equipamentos'
+              ? 'SP.Data.Diversos_x005f_EquipamentosListItem'
               : `SP.Data.${listName}`,
         },
       };
@@ -235,6 +237,8 @@ class CrudSharepoint {
           ? 'Chuveiro_x0020_Lava_x0020_OlhosListItem'
           : list === 'Kit_Derramamento_Quimico'
           ? 'Kit_x005f_Derramamento_x005f_QuimicoListItem'
+          : list === 'Diversos_Equipamentos'
+          ? 'Diversos_x005f_EquipamentosListItem'
           : `${formattedListName}ListItem`;
 
       const url = `${this.baseUrl}/_api/web/lists/GetByTitle('${list}')/items(${id})`;
