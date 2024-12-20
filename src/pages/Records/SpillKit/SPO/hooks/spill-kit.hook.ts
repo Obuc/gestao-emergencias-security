@@ -155,7 +155,7 @@ export const useSpillKit = () => {
   });
 
   const fetchAllRecords = async () => {
-    const path = `?$Select=Id,Created,Responsavel/Title,Local,Sin,Obs,Lacre,Compl,Validade&$Expand=Responsavel&$Orderby=Created desc`;
+    const path = `?$Select=Id,Created,Responsavel/Title,Local,Sin,Obs,Lacre,Compl,Area,Validade&$Expand=Responsavel&$Orderby=Created desc`;
 
     const response = await crudParent.getListItems('Kit_Derramamento_Quimico', path);
 
@@ -170,6 +170,7 @@ export const useSpillKit = () => {
           Created: dataCriado,
           Responsavel: item?.Responsavel?.Title,
           conforme: item.Sin && item.Obs && item.Lacre && item.Compl && item.Validade ? 'CONFORME' : 'NÃO CONFORME',
+          Area: item.Area,
         };
       }),
     );
@@ -181,15 +182,17 @@ export const useSpillKit = () => {
     mutationFn: async () => {
       const data = await fetchAllRecords();
 
-      const columns = ['Responsavel', 'Id', 'Local', 'Created', 'conforme'];
+      const columns = ['Responsável', 'Prédio', 'Pavimento', 'Data da Inspeção', 'Resultado'];
 
-      const headerRow = columns.map((column) => column.toString());
+      const headerRow = columns.map((column) => column);
 
       const dataFiltered = data?.map((item) => {
         const newItem: { [key: string]: any } = {};
-        columns.forEach((column) => {
-          newItem[column] = item[column];
-        });
+        newItem['Responsável'] = item.Responsavel;
+        newItem['Prédio'] = item.Area;
+        newItem['Pavimento'] = item.Local;
+        newItem['Data da Inspeção'] = item.Created;
+        newItem['Resultado'] = item.conforme;
         return newItem;
       });
 
@@ -199,9 +202,7 @@ export const useSpillKit = () => {
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-        const wscols = [{ wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
-
-        dataArray[0][0] = { t: 's', v: 'Texto com\nQuebra de Linha' };
+        const wscols = [{ wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 25 }, { wch: 15 }];
 
         const firstRowHeight = 30;
         const wsrows = [{ hpx: firstRowHeight }];
@@ -212,6 +213,7 @@ export const useSpillKit = () => {
         ws['!cols'] = wscols;
 
         XLSX.utils.book_append_sheet(wb, ws, 'Kit de Derramamento Químico');
+
         XLSX.writeFile(wb, `SPO - Registros - Kit de Derramamento Químico.xlsx`);
       }
     },
