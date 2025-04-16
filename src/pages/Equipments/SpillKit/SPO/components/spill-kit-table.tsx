@@ -40,6 +40,7 @@ export const SpillKitTable = ({ spillKitData, mutateRemove, setSortColumns, sort
     { key: 'Id', name: '#', resizable: true },
     { key: 'Predio', name: 'Prédio', resizable: true },
     { key: 'Pavimento', name: 'Pavimento', resizable: true },
+    { key: 'LocEsp', name: 'Local', resizable: true },
     { key: 'Title', name: 'Código Local', resizable: true },
     { key: 'Conforme', name: 'Conformidade', resizable: true },
 
@@ -53,6 +54,7 @@ export const SpillKitTable = ({ spillKitData, mutateRemove, setSortColumns, sort
           Id: <div className="pl-4">{item.Id}</div>,
           Predio: item?.Predio ? item.Predio : '',
           Pavimento: item?.Pavimento ? item.Pavimento : '',
+          LocEsp: item?.LocEsp ? item.LocEsp : '',
           Title: item?.Title ? item.Title : '',
 
           Conforme: (

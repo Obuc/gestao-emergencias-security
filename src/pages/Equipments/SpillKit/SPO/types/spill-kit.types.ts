@@ -4,6 +4,7 @@ export interface SpillKitProps {
   Pavimento: string;
   Title: string;
   Conforme: boolean;
+  LocEsp?: string
 }
 
 export interface SpillKitModalProps {

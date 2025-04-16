@@ -63,7 +63,7 @@ export const useSpillKit = () => {
   const fetchEquipments = async ({ pageParam }: { pageParam?: string }) => {
     const orderByQuery = buildOrderByQuery(sortColumns);
 
-    let path = `?$Select=Id,Modified,Tipo,Predio,Pavimento,Title,Conforme,Excluido&$Top=25&${orderByQuery}&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Kit Químicos')`;
+    let path = `?$Select=Id,Modified,Tipo,LocEsp,Predio,Pavimento,Title,Conforme,Excluido&$Top=25&${orderByQuery}&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Kit Químicos')`;
 
     if (tableFilters?.Id) {
       path += ` and ( Id eq '${tableFilters?.Id}')`;
