@@ -153,7 +153,7 @@ export const useEyewashShower = () => {
   });
 
   const fetchAllRecords = async () => {
-    const path = `?$Select=Id,Created,Responsavel/Title,Local,Sin,Obs,Insp,Press,Agua&$Expand=Responsavel&$Orderby=Created desc`;
+    const path = `?$Select=Id,Created,Responsavel/Title,Local,Sin,Obs,Insp,Press,Agua,Area&$Expand=Responsavel&$Orderby=Created desc`;
 
     const response = await crudParent.getListItems('Chuveiro Lava Olhos', path);
 
@@ -168,6 +168,7 @@ export const useEyewashShower = () => {
           Created: dataCriado,
           Responsavel: item?.Responsavel?.Title,
           conforme: item.Sin && item.Obs && item.Insp && item.Press && item.Agua ? 'CONFORME' : 'NÃO CONFORME',
+          Area: item.Area,
         };
       }),
     );
@@ -178,10 +179,9 @@ export const useEyewashShower = () => {
   const mutateExportExcel = useMutation({
     mutationFn: async () => {
       const data = await fetchAllRecords();
+      const columns = ['Responsavel', 'Area', 'Local', 'Created', 'conforme'];
 
-      const columns = ['Responsavel', 'Id', 'Local', 'Created', 'conforme'];
-
-      const headerRow = columns.map((column) => column.toString());
+      const headerRow = ['Responsável', 'Prédio', 'Pavimento', 'Data da Inspeção', 'Resultado'];
 
       const dataFiltered = data?.map((item) => {
         const newItem: { [key: string]: any } = {};
@@ -197,10 +197,7 @@ export const useEyewashShower = () => {
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
-        const wscols = [{ wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
-
-        dataArray[0][0] = { t: 's', v: 'Texto com\nQuebra de Linha' };
-
+        const wscols = [{ wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 25 }, { wch: 15 }];
         const firstRowHeight = 30;
         const wsrows = [{ hpx: firstRowHeight }];
         const filterRange = { ref: `A1:E1` };
