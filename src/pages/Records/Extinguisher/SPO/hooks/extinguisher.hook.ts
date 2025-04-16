@@ -244,7 +244,7 @@ export const useExtinguisherSPO = () => {
   });
 
   const fetchExtinguisherAllRecords = async () => {
-    const path = `?$Select=Id,Created,Responsavel1/Title,DataVenc,DataPesagem,Title,Local,Pavimento,LocalEsp,OData__x004d_an1,OData__x004d_an2,OData__x0043_ar1,OData__x0043_ar2,OData__x0043_il2,OData__x0043_il1,OData__x0043_il3,OData__x0053_in1,OData__x0053_in2,OData__x004c_tv1,OData__x004c_tv2,Obst1,Obst2&$Expand=Responsavel1&$Orderby=Created desc`;
+    const path = `?$Select=Id,codExtintor/peso_extintor,codExtintor/Tipo,Created,Responsavel1/Title,DataVenc,DataPesagem,Title,Local,Pavimento,LocalEsp,OData__x004d_an1,OData__x004d_an2,OData__x0043_ar1,OData__x0043_ar2,OData__x0043_il2,OData__x0043_il1,OData__x0043_il3,OData__x0053_in1,OData__x0053_in2,OData__x004c_tv1,OData__x004c_tv2,Obst1,Obst2&$Expand=Responsavel1,codExtintor&$Orderby=Created desc`;
 
     const response = await crudParent.getListItems('Extintores', path);
 
@@ -269,6 +269,8 @@ export const useExtinguisherSPO = () => {
           DataVenc: dataVenc,
           DataPesagem: dataPesagem,
           Responsavel1: item?.Responsavel1?.Title,
+          Peso: item?.codExtintor?.peso_extintor,
+          Tipo: item?.codExtintor?.Tipo,
           conforme:
             item.OData__x004d_an1 &&
             item.OData__x004d_an2 &&
@@ -305,10 +307,26 @@ export const useExtinguisherSPO = () => {
         'Local',
         'Pavimento',
         'LocalEsp',
+        'Peso',
+        'Tipo',
         'conforme',
       ];
 
-      const headerRow = columns.map((column) => column.toString());
+      const columnHeaders = [
+        'Responsável',
+        'Data de Criação',
+        'Data de Vencimento',
+        'Data de Pesagem',
+        'Código',
+        'Prédio',
+        'Pavimento',
+        'Localização Específica',
+        'Peso (kg)',
+        'Tipo de Extintor',
+        'Conforme',
+      ];
+
+      const headerRow = columnHeaders.map((header) => header.toString());
 
       const dataFiltered = data?.map((item) => {
         const newItem: { [key: string]: any } = {};
@@ -325,22 +343,22 @@ export const useExtinguisherSPO = () => {
         const ws = XLSX.utils.aoa_to_sheet(dataArray);
 
         const wscols = [
-          { wch: 20 },
-          { wch: 15 },
-          { wch: 15 },
-          { wch: 15 },
-          { wch: 15 },
-          { wch: 15 },
-          { wch: 15 },
-          { wch: 25 },
-          { wch: 15 },
+          { wch: 20 }, // Responsável
+          { wch: 18 }, // Data de Criação
+          { wch: 20 }, // Data de Vencimento
+          { wch: 18 }, // Data de Pesagem
+          { wch: 15 }, // Código
+          { wch: 18 }, // Prédio
+          { wch: 15 }, // Pavimento
+          { wch: 30 }, // Localização Específica
+          { wch: 12 }, // Peso (kg)
+          { wch: 20 }, // Tipo de Extintor
+          { wch: 15 }, // Conforme
         ];
-
-        dataArray[0][0] = { t: 's', v: 'Texto com\nQuebra de Linha' };
 
         const firstRowHeight = 30;
         const wsrows = [{ hpx: firstRowHeight }];
-        const filterRange = { ref: `A1:I1` };
+        const filterRange = { ref: `A1:K1` };
 
         ws['!autofilter'] = filterRange;
         ws['!rows'] = wsrows;

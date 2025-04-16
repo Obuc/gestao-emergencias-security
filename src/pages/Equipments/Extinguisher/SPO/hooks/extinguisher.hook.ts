@@ -79,23 +79,23 @@ export const useExtinguisher = () => {
     }
 
     if (tableFilters?.codExtintor) {
-      path += ` and (substringof('${tableFilters?.codExtintor}',codExtintor)`;
+      path += ` and (substringof('${tableFilters?.codExtintor}',codExtintor))`;
     }
 
     if (tableFilters?.predio) {
-      path += ` and (substringof('${tableFilters?.predio}',Predio)`;
+      path += ` and (substringof('${tableFilters?.predio}',Predio))`;
     }
 
     if (tableFilters?.pavimento) {
-      path += ` and (substringof('${tableFilters?.pavimento}',Pavimento)`;
+      path += ` and (substringof('${tableFilters?.pavimento}',Pavimento))`;
     }
 
     if (tableFilters?.local) {
-      path += ` and (substringof('${tableFilters?.local}',LocEsp)`;
+      path += ` and (substringof('${tableFilters?.local}',LocEsp))`;
     }
 
     if (tableFilters?.tipo) {
-      path += ` and (substringof('${tableFilters?.tipo}',Tipo)`;
+      path += ` and (substringof('${tableFilters?.tipo}',Tipo))`;
     }
 
     if (tableFilters?.conforme?.value === 'Sim') {
@@ -107,7 +107,7 @@ export const useExtinguisher = () => {
     }
 
     if (tableFilters?.cod_local) {
-      path += ` and (substringof('${tableFilters?.cod_local}',Title)`;
+      path += ` and (substringof('${tableFilters?.cod_local}',Title))`;
     }
 
     const response = await crudParent.getPaged(
