@@ -131,7 +131,7 @@ export const useSpillKit = () => {
   });
 
   const fetchAllEquipments = async () => {
-    let path = `?$Select=Id,Tipo,Predio,Pavimento,Title,Conforme,Excluido&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Kit Químicos')`;
+    let path = `?$Select=Id,Tipo,Predio,LocEsp,Pavimento,Title,Conforme,Excluido&$Filter=(Excluido eq 'false' or Excluido eq null) and (Tipo eq 'Kit Químicos')`;
 
     const response = await crudParent.getListItems('Diversos_Equipamentos', path);
 
@@ -151,14 +151,20 @@ export const useSpillKit = () => {
     mutationFn: async () => {
       const data = await fetchAllEquipments();
 
-      const columns: (keyof SpillKitProps)[] = ['Id', 'Predio', 'Pavimento', 'Conforme', 'Title'];
+      const columns: (keyof SpillKitProps)[] = ['Id', 'Predio', 'Pavimento', 'Conforme', 'Title', 'LocEsp'];
 
-      const headerRow = columns.map((column) => column.toString());
+      const columnHeaders = ['Código', 'Prédio', 'Pavimento', 'Conforme', 'Identificação', 'Local'];
+
+      const headerRow = columnHeaders.map((header) => header.toString());
 
       const dataFiltered = data?.map((item) => {
         const newItem: { [key: string]: any } = {};
         columns.forEach((column) => {
-          newItem[column] = item[column];
+          if (column === 'Conforme') {
+            newItem[column] = item[column] === true ? 'Sim' : 'Não';
+          } else {
+            newItem[column] = item[column];
+          }
         });
         return newItem;
       });
@@ -168,6 +174,22 @@ export const useSpillKit = () => {
 
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet(dataArray);
+
+        const wscols = [
+          { wch: 10 }, // Código
+          { wch: 20 }, // Prédio
+          { wch: 15 }, // Pavimento
+          { wch: 12 }, // Conforme
+          { wch: 30 }, // Identificação
+        ];
+
+        const firstRowHeight = 25;
+        const wsrows = [{ hpx: firstRowHeight }];
+        const filterRange = { ref: `A1:E1` };
+
+        ws['!autofilter'] = filterRange;
+        ws['!rows'] = wsrows;
+        ws['!cols'] = wscols;
 
         XLSX.utils.book_append_sheet(wb, ws, 'Kit de Derramamento Químico');
         XLSX.writeFile(wb, `Equipamentos - Kit de Derramamento Químico.xlsx`);
